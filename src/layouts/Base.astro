@@ -57,8 +57,9 @@ const jsonLd = {
 <html lang="zh-TW">
   <head>
     <!-- Google Analytics（GA4）流量統計：gtag.js 延到頁面載入完才注入，避免佔用首次渲染的主執行緒；
-         事件在此之前先排入 dataLayer，載入後照樣送出 -->
-    <script is:inline>
+         事件在此之前先排入 dataLayer，載入後照樣送出。
+         noindex 頁面（草稿／不公開頁）完全不輸出 GA 腳本，不會被統計 -->
+    {!noindex && <script is:inline>
       // 只統計正式網站；localhost、區域網路 IP 與其他預覽網址完全不載入 GA4。
       var analyticsHosts = ['aixwang.dev', 'www.aixwang.dev'];
       if (analyticsHosts.indexOf(window.location.hostname) !== -1) {
@@ -100,7 +101,7 @@ const jsonLd = {
           }
         });
       }
-    </script>
+    </script>}
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
