@@ -1,5 +1,5 @@
 ---
-title: Codex 安裝教學（上）：VS Code + Codex 插件版，Windows／Mac 都適用
+title: Codex 安裝教學（上）：VS Code + Codex 插件版，不用碰終端機
 description: 不用碰終端機：安裝 VS Code，再從擴充套件商店安裝 OpenAI 官方 Codex 插件並登入，10 分鐘開始讓 AI 讀你的專案、幫你改檔案。Windows 和 Mac 步驟相同。
 slug: codex-windows-wsl-install
 status: published

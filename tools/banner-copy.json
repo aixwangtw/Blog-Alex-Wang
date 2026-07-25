@@ -9,7 +9,7 @@
     "badge": "安裝教學",
     "platform": "",
     "title": "Codex 安裝教學（上）\nVS Code＋插件版",
-    "subtitle": "Windows／Mac 都適用，10 分鐘開始用",
+    "subtitle": "10 分鐘開始用",
     "logos": ["vscode", "codex"]
   },
   "codex-cli-wsl2-windows": {
