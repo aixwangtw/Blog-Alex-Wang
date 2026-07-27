@@ -1,7 +1,6 @@
 ---
 import { Image } from 'astro:assets';
 import instructorPortrait from '../assets/instructor-shirt.jpg';
-import tookaCoverImage from '../assets/tooka-cover.jpg';
 import Card from '../components/Card.astro';
 import CheckItem from '../components/CheckItem.astro';
 import Cta from '../components/Cta.astro';
@@ -80,23 +79,29 @@ const schema = [
     </a>
 
     <SectionHeading size="md" class="mt-14">代表作品：Tooka</SectionHeading>
-    <div class="mt-6 overflow-hidden rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)]">
-      <a href="https://tooka.js0980420.workers.dev/" target="_blank" rel="noreferrer">
-        <Image src={tookaCoverImage} alt="Tooka 開源社群圖文模板框架封面" class="w-full object-cover" />
-      </a>
-      <div class="p-7">
-        <p class="leading-8 text-stone-300/85">
-          我開源的社群圖文模板框架：用中文描述需求，AI Agent 就能生成整組 1080×1350
-          的 IG 輪播圖文——文字用程式渲染、版型用模板鎖定，不跑版、不失真，還能一鍵發佈到
-          Facebook、Instagram、Threads。
-        </p>
-        <video
-          src="/videos/tooka-workflow-demo.mp4"
-          controls
-          preload="metadata"
-          playsinline
-          class="mt-5 w-full rounded-2xl border border-sky-200/80"
-        ></video>
+    <Card padded={false} class="mt-6 overflow-hidden">
+      <video
+        src="/videos/tooka-workflow-demo.mp4"
+        controls
+        preload="metadata"
+        playsinline
+        class="w-full"
+      ></video>
+      <div class="p-6">
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div class="rounded-2xl border border-sky-200/80 bg-sky-50/60 px-4 py-3">
+            <p class="font-semibold text-slate-900">中文描述需求</p>
+            <p class="mt-1 text-sm leading-6 text-slate-600">AI Agent 生成整組 1080×1350 IG 輪播圖文</p>
+          </div>
+          <div class="rounded-2xl border border-sky-200/80 bg-sky-50/60 px-4 py-3">
+            <p class="font-semibold text-slate-900">不跑版、不失真</p>
+            <p class="mt-1 text-sm leading-6 text-slate-600">文字用程式渲染、版型用模板鎖定</p>
+          </div>
+          <div class="rounded-2xl border border-sky-200/80 bg-sky-50/60 px-4 py-3">
+            <p class="font-semibold text-slate-900">一鍵發佈</p>
+            <p class="mt-1 text-sm leading-6 text-slate-600">Facebook、Instagram、Threads 同步上稿</p>
+          </div>
+        </div>
         <div class="mt-5 flex flex-wrap gap-4">
           <a
             href="https://tooka.js0980420.workers.dev/"
@@ -116,7 +121,7 @@ const schema = [
           </a>
         </div>
       </div>
-    </div>
+    </Card>
 
     <SectionHeading size="md" class="mt-14">經歷與代表作品</SectionHeading>
     <ul class="mt-6 space-y-4">
