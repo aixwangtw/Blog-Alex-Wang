@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import taichungLectureImage from '../assets/taichung-lecture.jpg';
+import instructorPortrait from '../assets/instructor-shirt.jpg';
 import tookaCoverImage from '../assets/tooka-cover.jpg';
 import CheckItem from '../components/CheckItem.astro';
 import Cta from '../components/Cta.astro';
@@ -34,17 +34,17 @@ const schema = [
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '關於講師' }]} class="mb-8" />
     <h1 class="text-3xl font-semibold text-stone-50 md:text-5xl">關於講師 {AUTHOR.name}</h1>
 
-    <p class="mt-8 text-lg leading-9 text-stone-200/90">
-      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是 AI 講師，也是全職接案工程師與 21 萬人 OpenClaw 中文社群的版主。我教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成，只需第一次使用前的安裝、串接成本，一次性教學，受用好幾次。目前提供<strong class="text-amber-200">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-amber-200">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的——完整過程寫在<a href="/blog/from-part-time-to-freelance/" class="text-amber-300 underline underline-offset-4 hover:text-amber-200">我的轉職故事</a>。
-    </p>
-
-    <figure class="mt-10 overflow-hidden rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)]">
+    <figure class="mx-auto mt-8 max-w-md overflow-hidden rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)]">
       <Image
-        src={taichungLectureImage}
-        alt={`AI 講師 ${AUTHOR.name} 台中場「AI 製作社群貼文」講座授課現場`}
+        src={instructorPortrait}
+        alt={`AI 講師 ${AUTHOR.name} 形象照`}
         class="w-full object-cover"
       />
     </figure>
+
+    <p class="mt-8 text-lg leading-9 text-stone-200/90">
+      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是 AI 講師，也是全職接案工程師與 21 萬人 OpenClaw 中文社群的版主。我教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成，只需第一次使用前的安裝、串接成本，一次性教學，受用好幾次。目前提供<strong class="text-amber-200">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-amber-200">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的——完整過程寫在<a href="/blog/from-part-time-to-freelance/" class="text-amber-300 underline underline-offset-4 hover:text-amber-200">我的轉職故事</a>。
+    </p>
 
     <SectionHeading size="md" class="mt-14">代表作品：Tooka</SectionHeading>
     <div class="mt-6 overflow-hidden rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)]">
