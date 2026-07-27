@@ -48,6 +48,12 @@ const schema = [
     </p>
 
     <SectionHeading size="md" class="mt-14">一對一教學經歷</SectionHeading>
+    <a
+      href="/services/one-on-one/"
+      class="mt-4 inline-block rounded-full bg-[#1688e8] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0874c9]"
+    >
+      查看完整教學案例與收費方式 →
+    </a>
     <p class="mt-4 leading-8 text-stone-300/85">帶過的學員從工程師到完全非技術背景都有，雙北實體與線上教學皆可預約。</p>
     <div class="mt-6 grid gap-4 sm:grid-cols-2">
       {TEACHING_CASES.map((item) => (
@@ -60,11 +66,14 @@ const schema = [
         </Card>
       ))}
     </div>
-    <a href="/services/one-on-one/" class="mt-5 inline-block font-semibold text-[#1688e8] hover:underline hover:underline-offset-4">
-      查看完整教學案例與收費方式 →
-    </a>
 
     <SectionHeading size="md" class="mt-14">公眾演講經歷</SectionHeading>
+    <a
+      href="/services/speaking/"
+      class="mt-4 inline-block rounded-full bg-[#1688e8] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0874c9]"
+    >
+      查看演講紀錄與邀約方式 →
+    </a>
     <p class="mt-4 leading-8 text-stone-300/85">全部現場實機演示、帶聽眾動手做；企業、學校與社群的演講或工作坊都可規劃。</p>
     <div class="mt-6 grid gap-4 sm:grid-cols-2">
       {SPEAKING_ENGAGEMENTS.map((item) => (
@@ -74,9 +83,6 @@ const schema = [
         </Card>
       ))}
     </div>
-    <a href="/services/speaking/" class="mt-5 inline-block font-semibold text-[#1688e8] hover:underline hover:underline-offset-4">
-      查看演講紀錄與邀約方式 →
-    </a>
 
     <SectionHeading size="md" class="mt-14">代表作品：Tooka</SectionHeading>
     <Card padded={false} class="mt-6 overflow-hidden">
