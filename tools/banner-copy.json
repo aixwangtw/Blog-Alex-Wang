@@ -18,5 +18,11 @@
     "title": "Codex 安裝教學（下）\nCodex CLI＋WSL2",
     "subtitle": "終端機與自動化的進階安裝",
     "logos": ["windows", "codex"]
+  },
+  "codex-usage-limit-reset": {
+    "badge": "省額度教學",
+    "platform": "Codex",
+    "title": "Codex 額度燒完\n怎麼辦？",
+    "subtitle": "省 Token＋手動重置"
   }
 }
