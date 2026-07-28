@@ -28,7 +28,7 @@ faqs:
 
 這段經歷最初發布在 Threads，也引發不少人詢問如何找案源、判斷案子與準備作品集。你可以先看[原始 Threads 貼文與完整留言討論](https://www.threads.com/@alex_wang.ai/post/DZUGRTQEmVG)，本文則將完整過程與留言中的常見問題整理成較容易閱讀的版本。
 
-一年期間，我接過 CRM、約會配對網站、Line LIFF 網頁、教師監控平台、Line 預約客服；教過 4 位[一對一手把手教學](/services/one-on-one/)，參與過兩次[公眾演講](/services/speaking/)，成為 Zeabur 的合作夥伴，也加入 20 萬人的 OpenClaw FB 社團成為其中一位版主。
+一年期間，我接過 CRM、約會配對網站、Line LIFF 網頁、教師監控平台、Line 預約客服；教過 4 位[一對一手把手教學](/services/one-on-one/)，參與過兩次[公眾演講](/services/speaking/)，也加入 20 萬人的 OpenClaw FB 社團成為其中一位版主。
 
 以下分享我如何在沒有進過軟體業的情況下自學，開始接到第一個案子。
 

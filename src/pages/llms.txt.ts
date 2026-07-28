@@ -29,7 +29,7 @@ export const GET: APIRoute = async () => {
 
 - [AI 一對一私人教學](${SITE.url}/services/one-on-one/)：手把手帶零基礎學員完成桌面版 AI Agent 安裝、Meta API 串接與自動發文系統，雙北實體或線上皆可。
 - [AI 演講與企業內訓](${SITE.url}/services/speaking/)：AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計等主題，曾與 Mixerbox、Zeabur 合作。
-- [關於講師 Alex](${SITE.url}/about/)：21 萬人 OpenClaw 中文社群版主、HyperFrames 開源專案協作者、Zeabur 合作夥伴。
+- [關於講師 Alex](${SITE.url}/about/)：21 萬人 OpenClaw 中文社群版主、HyperFrames 開源專案協作者。
 
 ## 部落格文章
 
