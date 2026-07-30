@@ -108,3 +108,25 @@ body {
 .prose-blog tbody tr:nth-child(even) {
   @apply bg-sky-50/60;
 }
+
+/* Threads／IG 靜態引用卡（fetch_post.js --embed 產生）：
+   用 aside 不用 blockquote，避免被文章頁的複製按鈕 script 選中。
+   文字留在 HTML 裡（SEO），數字是擷取當下的快照，卡片內標明日期。 */
+.prose-blog .social-quote {
+  @apply my-6 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm;
+}
+.prose-blog .social-quote-header {
+  @apply mb-2 flex items-center justify-between gap-3 text-sm;
+}
+.prose-blog .social-quote-author {
+  @apply font-semibold text-slate-800;
+}
+.prose-blog .social-quote-badge {
+  @apply rounded-full bg-slate-100 px-2.5 py-0.5 text-xs text-slate-500;
+}
+.prose-blog .social-quote-body {
+  @apply whitespace-pre-line text-slate-700;
+}
+.prose-blog .social-quote-meta {
+  @apply mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500;
+}
