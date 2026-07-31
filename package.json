@@ -6,11 +6,20 @@
   "scripts": {
     "dev": "astro dev --port=3000 --host=0.0.0.0",
     "predev": "node tools/optimize-blog-banners.mjs && node tools/optimize-profile-images.mjs",
+    "stats": "node tools/content-stats.mjs",
     "check:banners": "node tools/check-blog-banners.mjs",
     "check:page-banners": "node tools/check-page-banners.mjs",
     "optimize:banners": "node tools/optimize-blog-banners.mjs",
     "optimize:profile": "node tools/optimize-profile-images.mjs",
     "generate:banners": "node tools/generate-blog-banner-draft.mjs",
+    "views:create-fields": "node tools/create-views-fields.mjs",
+    "views:sync": "node tools/sync-ga4-views.mjs",
+    "insights:create-collection": "node tools/create-content-stats-collection.mjs",
+    "insights:write-stats": "node tools/write-content-stats.mjs",
+    "insights:create-dashboard": "node tools/create-insights-dashboard.mjs",
+    "test:views": "node --test tools/lib/*.test.mjs",
+    "test:content-stats": "node --test tools/lib/content-stats-lib.test.mjs",
+    "test:insights": "node --test tools/lib/insights-dashboard-lib.test.mjs",
     "build": "npm run check:banners && npm run check:page-banners && npm run optimize:banners && npm run optimize:profile && astro build && pagefind --site dist",
     "preview": "astro preview",
     "clean": "rm -rf dist",
@@ -27,6 +36,7 @@
     "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
+    "@google-analytics/data": "^6.1.0",
     "pagefind": "^1.5.2",
     "satori": "^0.28.2",
     "wrangler": "^4.113.0"
