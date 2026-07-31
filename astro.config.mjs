@@ -18,9 +18,10 @@ const blogLastModified = new Map(
 
 export default defineConfig({
   site: 'https://aixwang.dev',
-  redirects: {
-    '/blog/meta-api-application/': '/blog/threads-api-tutorial/',
-  },
+  // 目前沒有任何舊網址轉址（2026-07-31 移除 meta-api-application 那條，站內已無連結指向它）。
+  // 之後若要加轉址，寫在 public/_redirects，不要用 Astro 的 redirects 設定：
+  // Astro 產出 _redirects 時會把 key 的尾斜線去掉（有斜線、無斜線兩種都寫也只會產生重複的同一條），
+  // 導致含尾斜線的網址打不到轉址、直接 404，而本站連結的正規形式就是含尾斜線。
   // 預設全站仍是靜態預渲染；adapter 讓之後的 API 路由（如 /api/chat）能跑在 Cloudflare Workers
   adapter: cloudflare(),
   integrations: [
