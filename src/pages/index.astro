@@ -1,39 +1,32 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import Card from '../components/Card.astro';
-import Cta from '../components/Cta.astro';
-import FaqList from '../components/FaqList.astro';
-import PillButton from '../components/PillButton.astro';
-import SectionHeading from '../components/SectionHeading.astro';
+// ============================================================
+// 首頁（2026-08 改版第三階段）
+// ------------------------------------------------------------
+// 版面、字級、字距補償、全形問號修剪、捲動揭露的唯一真實來源是
+// public/_preview/home-b4-lean.html（變體 B-v4「精簡版」）。
+// 這個檔案是把該原型做進 Astro，頁首與頁尾改由 src/layouts/Base.astro 提供。
+//
+// 改版前是 239 行、七個區塊（免費資源、教學案例、演講經歷、教學內容、
+// 精選文章、FAQ、CTA）。原型的結論是：首頁字放到 96px 也救不了資訊過載，
+// 所以砍到六個單元 —— 頁首／Hero／四個入口／信任證明／結尾 CTA／頁尾。
+//
+// 被移除的區塊都另有去處，沒有內容因此消失：
+//   TEACHING_CASES      → /services/one-on-one/、/about/
+//   SPEAKING_ENGAGEMENTS→ /services/speaking/、/about/
+//   TEACHING_CONTENT    → /services/one-on-one/
+//   HOME_FAQS           → /faq/
+//   精選文章             → /blog/
+//   VIDEOS              → /resources/（本階段一併新建；VIDEOS 原本只有首頁在用）
+//
+// schema 的兩個處理，方向相反，不可弄錯：
+//   Course  保留。它的 teaches 來自 SYLLABUS，而 SYLLABUS 本來就不 render 成畫面、
+//           只餵 schema，因此區塊移除不影響它，資料與 schema 都留著。
+//   FAQPage 移除。/faq/ 已經有 2 份 FAQPage（HOME_FAQS ＋ 各文章 FAQ），
+//           首頁那份從一開始就是重複的。
+// ============================================================
 import { AUTHOR, LINKS, SITE, pageBannerUrl } from '../consts';
-import { HOME_FAQS } from '../data/faqs';
-import { SYLLABUS, VIDEOS } from '../data/home';
-import {
-  SPEAKING_ENGAGEMENTS,
-  TEACHING_CASES,
-  TEACHING_CONTENT,
-} from '../data/services';
+import { SYLLABUS } from '../data/home';
 import Base from '../layouts/Base.astro';
-
-const allPosts = (await getCollection('blog', ({ data }) => !data.unlisted)).sort(
-  (a, b) =>
-    b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
-    (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
-);
-
-// 精選文章的顯示順序（與部落格列表一致）
-const FEATURED_ORDER = [
-  'how-to-start-learning-ai',
-  'free-resources',
-  'from-part-time-to-freelance',
-  'why-i-built-tooka',
-  'threads-api-tutorial',
-  'instagram-api-tutorial',
-];
-const featured = allPosts
-  .filter((post) => post.data.featured)
-  .sort((a, b) => FEATURED_ORDER.indexOf(a.id) - FEATURED_ORDER.indexOf(b.id));
 
 const schema = [
   {
@@ -47,14 +40,6 @@ const schema = [
     courseMode: ['onsite', 'online'],
     teaches: SYLLABUS.map((s) => s.title),
   },
-  {
-    '@type': 'FAQPage',
-    mainEntity: HOME_FAQS.map((f) => ({
-      '@type': 'Question',
-      name: f.question,
-      acceptedAnswer: { '@type': 'Answer', text: f.answer },
-    })),
-  },
 ];
 ---
 
@@ -65,175 +50,625 @@ const schema = [
   ogImageAlt="AI 新手教學｜從工具到自動化"
   schema={schema}
 >
-  <!-- 區塊一：加 LINE 描述需求（免費優先） -->
-  <section class="px-6 pt-8 md:pt-16">
-    <div class="mx-auto max-w-6xl">
-      <div class="mx-auto max-w-3xl text-center">
-        <h1 class="text-2xl font-semibold leading-snug tracking-tight text-ink md:text-5xl md:leading-snug">
-          AI 工具很多，不知道哪個適合你？我提供免費諮詢
-        </h1>
-        <p class="mt-4 text-base leading-7 text-ink-2 md:mt-6 md:text-lg md:leading-8">
-          我是 {AUTHOR.name}——AI 講師、全職接案工程師、全台最大龍蝦（OpenClaw）社團版主（21
-          萬人）。我教你 <strong>4 大 AI Agent 的安裝使用、生圖、拍片</strong>，以及<strong>讓 AI 跟你的社群軟體互動的 API 串接</strong>——例如用 LINE 跟 AI 對話，整理其他平台的訊息——全部打包成「對話就能完成」的工作流，<strong>一次學習，多次受用</strong>。
-        </p>
-        <div class="mt-6 flex flex-wrap justify-center gap-3 md:mt-8">
-          <PillButton href={LINKS.line} variant="line" external>LINE 免費諮詢</PillButton>
-          <PillButton href="/blog/free-resources/">先看免費資源</PillButton>
+  <div class="home" id="home-root">
+    <div class="home-shell">
+      <!-- 1／Hero -->
+      <section class="hero" aria-labelledby="hero-h">
+        <h1 class="q q--display hero-reveal" id="hero-h" style="--d:0ms"><span class="lat">AI</span> 工具<br class="brk-s" />這麼多<br />我該從<br class="brk-s" />哪一個<br /><span class="nb">開始<span class="qt">？</span></span></h1>
+        <div class="reply">
+          <div class="hero-reveal" style="--d:70ms">
+            <p class="by"><span class="by-name micro"><span class="lat">ALEX</span></span></p>
+            <p class="lede">先裝一套<strong>桌面版的 <span class="lat">AI Agent</span></strong>，把工具權限拿到手，再動手做出第一個真實作品。網頁版聊天只能回答；<span class="lat">Agent</span> 拿到權限後會自己讀寫檔案、跑腳本，你只負責用中文下指令跟驗收。</p>
+          </div>
+          <div class="actions hero-reveal" style="--d:140ms">
+            <a class="btn btn-primary" href="/resources/"><span class="btn-l">先看免費資源</span><span class="arw" aria-hidden="true">→</span></a>
+          </div>
         </div>
-        <p class="mt-5 text-sm leading-6 text-ink-3 md:text-base md:leading-7">
-          加 LINE 描述需求：<a href="/blog/free-resources/" class="text-accent underline underline-offset-4">免費文章、影片</a>有提到的內容<strong>完全免費</strong>；想有人手把手帶著學，再考慮<a href="/services/one-on-one/" class="text-accent underline underline-offset-4">實體或線上一對一</a>。
-        </p>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- 區塊二：我的免費資源 -->
-  <section id="free-resources" class="px-6 py-20">
-    <div class="mx-auto max-w-6xl">
-      <div class="flex items-end justify-between gap-4">
-        <SectionHeading>我的免費資源</SectionHeading>
-        <a href="/blog/free-resources/" class="text-sm font-semibold text-accent">全部免費資源 →</a>
-      </div>
-      <p class="mt-4 max-w-3xl leading-8 text-ink-2">
-        教學影片照著做就能跑通；開源工具 Tooka 做社群圖文＋一鍵發佈。卡關了再來找我就好。
-      </p>
-      <div class="mt-10 grid gap-6 lg:grid-cols-3">
-        {VIDEOS.map((video) => (
-          <Card as="article" padded={false} class="overflow-hidden">
-            <div class="aspect-video w-full bg-black">
-              {video.embedId ? (
-                <iframe
-                  class="h-full w-full"
-                  src={`https://www.youtube-nocookie.com/embed/${video.embedId}`}
-                  title={video.title}
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerpolicy="strict-origin-when-cross-origin"
-                  allowfullscreen
-                />
-              ) : (
-                <video class="h-full w-full" src={video.src} controls preload="metadata" playsinline />
-              )}
-            </div>
-            <div class="p-6">
-              <span class="rounded-full border border-rule-2 bg-paper-2 px-3 py-1 text-xs uppercase tracking-wide text-ink-2">{video.tag}</span>
-              <h3 class="mt-4 text-xl font-semibold text-ink">{video.title}</h3>
-              <p class="mt-3 leading-7 text-ink-2">{video.description}</p>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
-  </section>
+      <!-- 2／四個入口 -->
+      <section class="paths" aria-labelledby="paths-h">
+        <h2 class="q q--sec reveal" id="paths-h">我的服務</h2>
+        <ul class="paths-list reveal" style="--d:70ms">
+          <li>
+            <a href="/resources/">
+              <h3 class="p-t">免費資源</h3>
+              <span class="p-go" aria-hidden="true">→</span>
+              <p class="p-d">教學影片與開源工具 <span class="lat">Tooka</span>，照著做就能跑通</p>
+            </a>
+          </li>
+          <li>
+            <a href="/blog/">
+              <h3 class="p-t">部落格</h3>
+              <span class="p-go" aria-hidden="true">→</span>
+              <p class="p-d">從工具安裝、<span class="lat">API</span> 申請到自動發文的實作教學</p>
+            </a>
+          </li>
+          <li>
+            <a href="/services/one-on-one/">
+              <h3 class="p-t">一對一教學</h3>
+              <span class="p-go" aria-hidden="true">→</span>
+              <p class="p-d">雙北實體或線上，從安裝帶到做出第一個成品</p>
+            </a>
+          </li>
+          <li>
+            <a href="/services/speaking/">
+              <h3 class="p-t">演講邀約</h3>
+              <span class="p-go" aria-hidden="true">→</span>
+              <p class="p-d">企業、學校、社群都接，<span class="lat">1</span> 小時演講到整天工作坊</p>
+            </a>
+          </li>
+        </ul>
 
-  <!-- 區塊三：一對一教學經歷 -->
-  <section id="teaching-cases" class="px-6 py-16">
-    <div class="mx-auto max-w-6xl">
-      <div class="flex items-end justify-between gap-4">
-        <SectionHeading>一對一教學經歷</SectionHeading>
-        <a href="/services/one-on-one/" class="text-sm font-semibold text-accent">一對一教學詳情 →</a>
-      </div>
-      <p class="mt-4 max-w-3xl leading-8 text-ink-2">
-        實際帶過的一對一教學案例——從工程師到完全非技術背景的學員都有。
-      </p>
-      <div class="mt-10 grid gap-5 md:grid-cols-2">
-        {TEACHING_CASES.map((item) => (
-          <Card>
-            <div class="flex items-center gap-3">
-              <Image src={item.image} alt={item.imageAlt} width={96} class="h-10 w-10 shrink-0 rounded-xl object-contain" />
-              <h3 class="text-lg font-semibold leading-snug text-ink">{item.topic}</h3>
-            </div>
-            <p class="mt-3 text-sm text-accent">學員背景：{item.student}</p>
-            <p class="mt-3 leading-7 text-ink-2">{item.description}</p>
-          </Card>
-        ))}
-      </div>
-    </div>
-  </section>
+        <!-- 3／信任證明：一行，不做成卡片 -->
+        <p class="trust reveal" style="--d:140ms"><b><span class="lat">21</span> 萬人 <span class="lat">OpenClaw</span> 中文社群版主</b><span class="sep" aria-hidden="true">・</span>開源工具 <span class="lat">Tooka</span> 作者<span class="sep" aria-hidden="true">・</span><span class="lat">HyperFrames</span> 協作者<span class="sep" aria-hidden="true">・</span>曾受 <span class="lat">MixerBox</span>、<span class="lat">TAIA</span> 台灣人工智慧協會邀請演講</p>
+      </section>
 
-  <!-- 區塊四：公眾演講經歷 -->
-  <section id="speaking" class="px-6 py-16">
-    <div class="mx-auto max-w-6xl">
-      <div class="flex items-end justify-between gap-4">
-        <SectionHeading>公眾演講經歷</SectionHeading>
-        <a href="/services/speaking/" class="text-sm font-semibold text-accent">演講邀約詳情 →</a>
-      </div>
-      <div class="mt-10 grid gap-5 md:grid-cols-2">
-        {SPEAKING_ENGAGEMENTS.map((item) => (
-          <Card padded={false} class="overflow-hidden">
-            <Image src={item.image} alt={item.imageAlt} class="h-48 w-full object-cover" />
-            <div class="p-6">
-              <p class="text-xs uppercase tracking-[0.26em] text-accent">{item.host}</p>
-              <h3 class="mt-3 text-lg font-semibold text-ink">{item.topic}</h3>
-              <p class="mt-3 leading-7 text-ink-2">{item.description}</p>
-              {item.link && (
-                <a href={item.link} target="_blank" rel="noreferrer" class="mt-4 inline-block text-sm font-semibold text-accent">
-                  {item.linkLabel}
-                </a>
-              )}
-            </div>
-          </Card>
-        ))}
-      </div>
+      <!-- 4／結尾 CTA -->
+      <section class="closer" aria-labelledby="closer-h">
+        <h2 class="q q--sec reveal" id="closer-h"><span class="nb">不確定自己適合哪一種<span class="qt">？</span></span></h2>
+        <div class="reveal" style="--d:70ms">
+          <p class="closer-p">加 <span class="lat">LINE</span> 直接說你想自動化什麼。我會告訴你該走哪一條，也可能直接告訴你哪篇免費文章就能解決。</p>
+          <div class="actions">
+            <a class="btn btn-primary" href={LINKS.line} target="_blank" rel="noreferrer"><span class="btn-l">加 <span class="lat">LINE</span> 免費諮詢</span><span class="arw" aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
+  </div>
 
-  <!-- 區塊五：我主要的教學內容 -->
-  <section id="teaching-content" class="px-6 py-16">
-    <div class="mx-auto max-w-6xl">
-      <SectionHeading>我主要的教學內容</SectionHeading>
-      <p class="mt-4 max-w-3xl leading-8 text-ink-2">
-        想先自己試試看，可以從<a href="/blog/free-resources/" class="text-accent underline underline-offset-4">我的免費資源</a>開始——教學影片和開源工具都在那裡。
-      </p>
-      <div class="mt-10 grid gap-5 md:grid-cols-2">
-        {TEACHING_CONTENT.map((item) => (
-          <Card>
-            <h3 class="text-xl font-semibold text-ink">{item.category}</h3>
-            <p class="mt-3 leading-7 text-ink-2">{item.detail}</p>
-            {item.logos && (
-              <div class="mt-4 flex items-center gap-3">
-                {item.logos.map((logo) => (
-                  <Image src={logo.image} alt={logo.alt} class="h-8 w-8 rounded-lg object-contain" />
-                ))}
-              </div>
-            )}
-          </Card>
-        ))}
-      </div>
-    </div>
-  </section>
+  <script is:inline>
+    /* 逐段浮現：內容 100% 寫在初始 HTML 裡，只有「顯示與否」交給 CSS。
+       `js` 這個 class 加在 #home-root（不是 <html>）上，因為這一頁的樣式是
+       Astro 的元件範圍樣式——選擇器會被加上 data-astro-cid-*，
+       掛在 <html> 上的 class 選不到。
+       三層保險，任何一層失效內容都仍然完整可見：
+         1. 沒有 JS（或這段拋例外）→ `js` 不會加上 → 所有 .reveal 維持原樣可見
+         2. IntersectionObserver 不存在／被停用／行為異常 → 2 秒逾時強制顯示
+         3. prefers-reduced-motion → 直接全部顯示，且 CSS 也把過渡關掉 */
+    (function () {
+      var root = document.getElementById('home-root');
+      if (!root) return;
+      var reveals = root.querySelectorAll('.reveal, .hero-reveal');
 
-  <!-- 區塊六：精選文章 -->
-  <section id="featured" class="px-6 py-16">
-    <div class="mx-auto max-w-6xl">
-      <div class="flex items-end justify-between gap-4">
-        <SectionHeading>精選文章</SectionHeading>
-        <a href="/blog/" class="text-sm font-semibold text-accent">所有文章 →</a>
-      </div>
-      <p class="mt-4 max-w-3xl leading-8 text-ink-2">從零基礎入門路線、免費資源到我的轉職故事——先從這幾篇開始讀。</p>
-      <div class="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {featured.map((post) => (
-          <a
-            href={`/blog/${post.id}/`}
-            class="flex flex-col justify-between rounded-2xl border border-rule bg-surface/80 p-5 shadow-[0_8px_24px_rgba(22,22,26,0.05)] transition hover:border-accent-line-2 hover:shadow-[0_10px_28px_rgba(22,22,26,0.1)]"
-          >
-            <span class="text-xs uppercase tracking-wide text-accent">{post.data.tags[0]}</span>
-            <h3 class="mt-3 text-sm font-semibold leading-6 text-ink">{post.data.title}</h3>
-            <span class="mt-4 text-xs font-semibold text-accent">閱讀全文 →</span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
+      function revealAll() {
+        for (var i = 0; i < reveals.length; i++) reveals[i].classList.add('is-in');
+      }
 
-  <!-- 區塊七：一對一教學 FAQ -->
-  <section id="faq" class="px-6 py-16">
-    <div class="mx-auto max-w-4xl">
-      <SectionHeading>一對一教學常見問題</SectionHeading>
-      <div class="mt-10">
-        <FaqList faqs={HOME_FAQS} />
-      </div>
-      <Cta />
-    </div>
-  </section>
+      try {
+        root.classList.add('js');
+
+        // 保險 1：先掛逾時，再做任何可能爆炸的事
+        var ioAlive = false;
+        setTimeout(function () {
+          if (!ioAlive) revealAll();
+        }, 2000);
+
+        var reduce =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // 首屏：立刻揭露（0 / 70 / 140ms 延遲，各 200ms → 總揭露 340ms）
+        var hero = root.querySelectorAll('.hero-reveal');
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            for (var i = 0; i < hero.length; i++) hero[i].classList.add('is-in');
+          });
+        });
+
+        if (reduce || !('IntersectionObserver' in window)) {
+          revealAll();
+          return;
+        }
+
+        var io = new IntersectionObserver(
+          function (entries) {
+            ioAlive = true; // 觀察器確實會回呼 → 逾時保險不必動作
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+        );
+
+        var scrollReveals = root.querySelectorAll('.reveal');
+        for (var k = 0; k < scrollReveals.length; k++) io.observe(scrollReveals[k]);
+      } catch (err) {
+        revealAll(); // 保險 2
+      }
+    })();
+  </script>
+
+  <style>
+    /* ============================================================
+       首頁專屬排版。這裡的每一條都只作用在首頁，不外洩到內頁：
+       - 展示級 H1（96px）與襯線體是首頁專用（設計語言定案 #1）
+       - 字距分級只套在拉丁字段（.lat）上，中文一律 0
+       - 顏色一律用 global.css @theme 的 --color-*，這裡不重新定義任何顏色
+       - 內頁字級 .t-h1／.t-h2／.t-h3 這裡完全不碰
+       ============================================================ */
+    .home {
+      /* ---- 字距分級（依光學尺寸，不是一個值套到底）----
+         只套在拉丁字段（.lat）上；中文一律 0。
+         --ls-display 供 ≥72px 的字段使用。H1 是 clamp(56,8vw,96)，
+         8vw 在 viewport 900px 時剛好等於 72px，因此 display 級只在
+         min-width:900px 之後才接上；900px 以下 H1 是 56–71.9px，留在 title 級。 */
+      --ls-display: -0.06em;
+      --ls-title: -0.028em;
+      --ls-body: -0.011em;
+      --ls-micro: 0.12em;
+      --ls: var(--ls-body); /* 拉丁字段預設用內文級 */
+
+      color: var(--color-ink-2);
+      font-size: 16px;
+      line-height: 1.9;
+      letter-spacing: 0; /* 中文：0，不商量 */
+    }
+
+    /* 版心對齊 Base 的頁首頁尾（.hd-cap／.ft-wrap 都是 max-width:72rem、
+       padding 20/40px）。原型的 .shell 是 1120px，這裡改用 72rem＝1152px，
+       為的是 H1 的左緣跟頁首字標、頁尾品牌塊落在同一條垂直線上——
+       兩者差 32px 時，捲動經過頁首那條線會看得出來。 */
+    .home-shell {
+      width: 100%;
+      max-width: 72rem;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    @media (min-width: 768px) {
+      .home-shell {
+        padding: 0 40px;
+      }
+    }
+
+    /* ---- 拉丁字段：字距只加在這裡，並補回「尾字距」----
+       CSS 的 letter-spacing 會在字段最後一個字元「後面」也加一份間距，
+       負值會把後面的中文吸過來、正值會推開。用等量反向的 margin 補回。
+       原型是用 .lat 包裹、由 Python 腳本在建置期產生；Astro 沒有那一步，
+       首頁內容已砍到 470 字上下，.lat 的位置不多，直接手寫在模板裡。 */
+    .lat {
+      font-style: normal;
+      letter-spacing: var(--ls, 0em);
+      margin-inline-end: calc(-1 * var(--ls, 0em));
+    }
+
+    /* 12–13px 小標籤：唯一反向加字距的地方（正值，中文也適用），
+       同樣要補回尾字距，否則標籤右側會多出一份空白。 */
+    .micro {
+      letter-spacing: var(--ls-micro);
+      margin-inline-end: calc(-1 * var(--ls-micro));
+      --ls: 0em; /* 內層 .lat 不再疊加 */
+    }
+
+    /* ============================================================
+       全形問號的左空白修剪
+       ------------------------------------------------------------
+       問題：96px 下句末的全形「？」左邊留一個 27px 的空洞。
+       實測（Noto Serif TC，upm 1000）：
+         U+FF1F  advance 1.000em，墨跡 0.254em → 0.730em
+                 左空白 0.254em、右空白 0.270em
+         相鄰漢字 始 rsb 0.043em／大 rsb 0.049em／哪 lsb 0.068em
+       → 漢字對漢字的墨跡間距約 0.068em，漢字對「？」是 0.297em，差 3.7 倍。
+         Chrome 147／96px 實際渲染量測：始？＝28px，始始＝7px。
+
+       ---- 三條「正規解法」全部驗證過，全部不能用 ----
+       1. font-feature-settings:"palt" 1
+          ／font-variant-east-asian:proportional-width
+          Noto Serif TC 的 GPOS 裡「沒有 palt」。108 個子集抽驗 3 個
+          （含實際含 U+FF1F 的那個），GPOS 只有 chws/halt/kern/vchw/vhal/vpal。
+          halt 的涵蓋範圍只有「」（）！ 等六個字符，chws 只處理成對括號，
+          兩者都不含 U+FF1F。實測結果：間距 26px 完全不動。
+          同一段 CSS 換成 Noto Sans TC 就有效（27px → 12px）——Sans 有 palt
+          且涵蓋 U+FF1F（XPlacement −134／XAdvance −283）。
+          也就是說語法沒錯，是這支襯線字型沒有這個功能。
+          另外 font-variant-east-asian:proportional-width 對應的是 pwid 而非
+          palt，連 Noto Sans TC 都沒有效果（實測 27px 不動）。
+       2. text-spacing-trim（CSS Text Level 4）
+          Chrome 147 只接受 normal / trim-start / space-all；
+          trim-both、trim-all、auto 全部 invalid（CSS.supports 回 false）。
+          功能本身確實有在運作：trim-start 會把行首的「切掉左半格
+          （墨跡左緣 163px → 115px，正好 0.5em）。
+          但三個合法值對「？」的渲染結果一模一樣（26px 不動）——
+          規格只裁全形的「開頭／結尾標點」，全形問號、驚嘆號不在裡面。
+       3. GSUB 的 hwid／pwid 寬度替代字符
+          Noto Serif TC 的 GSUB 只有 ccmp/liga/locl/vert/vrt2，沒有寬度替代。
+
+       ---- 結論與作法 ----
+       這支字型沒有任何 OpenType 或 CSS 標準機制可用，只剩光學修剪一條路。
+       修剪量不是喬出來的：0.254em（？的左空白）− 0.05em（保留的殘餘空白）
+       = 0.204em。留下的 0.05em 讓「？」的墨跡間距落回漢字的節奏上。
+       實測驗收（Chrome 147／96px）：始？ 28px → 9px（對照 始始 ＝ 7px）、
+                                     大？ 26px → 7px（對照 大大 ＝ 5px）。
+       比漢字節奏鬆 2px，這是對的——問號本來就該比字距多留一點點氣。
+
+       副作用與圍堵：
+       - 只作用在被 .qt 包起來的那一個字元。頁面其他地方的「，」「。」
+         完全不受影響（實測 大，大 加不加 .qt 都是 41/43px）。
+       - 修剪量是 em，隨字級等比縮放，所有斷點的光學結果一致，
+         不需要為不同字級各補一次。
+       - 換行風險：用 .nb（white-space:nowrap）把「開始？」綁成一個
+         不可斷的單位，「？」永遠不可能落到行首，也就不會把負 margin
+         拉到容器左緣外面。
+       - 字型 fallback 風險：若 Noto Serif TC 沒載入，改用 Songti TC 等
+         備援字型時修剪量可能不完全匹配。只有在備援字型的「？」左空白
+         小於 0.204em 時才會過修——絕大多數中文字型都是 0.24–0.28em，
+         風險低，但這條無法在本機驗證，仍屬已知風險。
+       ============================================================ */
+    .qt {
+      margin-inline-start: -0.204em;
+    }
+    .nb {
+      white-space: nowrap;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      padding-top: 52px;
+    }
+    @media (min-width: 768px) {
+      .hero {
+        padding-top: 88px;
+      }
+    }
+    @media (min-width: 1200px) {
+      .hero {
+        padding-top: 104px;
+      }
+    }
+
+    /* 提問＝襯線，回答＝無襯線。這組雙聲音系統是首頁專用的（設計語言定案 #1）。
+       原型刻意不把提問放進暖灰面板：面板是「泡泡」的親戚，而且會把標題的
+       可用寬度砍掉 64px，正好吃掉氣勢的來源。 */
+    .q {
+      font-family: var(--font-serif);
+      /* 字重寫 600 而不是原型的 700／560：全站只自架 Noto Serif TC 600
+         與 Noto Sans TC 400/600（見 global.css 開頭的實測字重清單），
+         寫 600 才是精準命中已載入的那個字面，不必經過 CSS 的近似匹配。 */
+      font-weight: 600;
+      color: var(--color-ink);
+      letter-spacing: 0; /* 中文 0 */
+      --ls: var(--ls-title); /* 拉丁字段收 -.028em */
+      overflow-wrap: break-word;
+    }
+    /* 首屏大標：line-height 恰為 1 —— 中文的下限。
+       Noto Serif TC 墨跡 0.859 + 0.094 = 0.953em，
+       line-height 1 時上下行墨跡淨空 = .047em（96px 下 4.51px）。
+       絕不可用 .84：那是英文數值，96px 下兩行墨跡會重疊 10.8px。 */
+    .q--display {
+      font-size: clamp(56px, 8vw, 96px);
+      line-height: 1;
+      padding-bottom: 0.04em; /* 墨跡略低於行框底 .0265em，留一點 */
+    }
+    /* 8vw 在 900px 時 = 72px：到這裡 H1 才進入 display 字距級。 */
+    @media (min-width: 900px) {
+      .q--display {
+        --ls: var(--ls-display);
+      }
+    }
+
+    /* 區塊提問：實測淨空 = 1.15 − 0.953 = .197em。
+       上限 28px 與內頁的 .t-h2 同一階（global.css 已如此定義），
+       但這裡不套 .t-h2——首頁的 h2 是襯線提問、行高 1.15，
+       跟內頁那顆無襯線 1.25 的 h2 是兩種聲音。 */
+    .q--sec {
+      font-size: clamp(20px, 3vw, 28px);
+      line-height: 1.15;
+    }
+
+    /* 大字斷行：96px 的中文一行只放得下約 10 個字，讓瀏覽器自己斷會斷在
+       「我該從哪一個開／始？」這種位置。改成意群硬斷。
+       大字標題一律不放中文標點（全形「，。」自帶半個字身空白，大字下會炸出一個洞），
+       用 <br> 取代。
+       ≥480px：AI 工具這麼多／我該從哪一個／開始？（固定三行）
+       ≤479px：再加兩刀 → AI 工具／這麼多／我該從／哪一個／開始？
+               每行 ≤3.6em，在 320px 的 280px 淨寬內仍有餘裕，
+               最短一行也是完整意群（3 字），不會出現孤字。 */
+    .brk-s {
+      display: none;
+    }
+    @media (max-width: 479px) {
+      .brk-s {
+        display: inline;
+      }
+    }
+
+    /* 回答：縮排 ＋ 酒紅細軌 ＋ 無襯線 */
+    .reply {
+      position: relative;
+      margin-top: 30px;
+      padding-left: 20px;
+      border-left: 2px solid var(--color-accent-line);
+    }
+    .reply::before {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 0;
+      width: 2px;
+      height: 34px;
+      background: var(--color-accent);
+    }
+    @media (min-width: 900px) {
+      .reply {
+        margin-left: 88px;
+        padding-left: 30px;
+        margin-top: 34px;
+      }
+    }
+    @media (min-width: 1200px) {
+      .reply {
+        margin-left: 132px;
+      }
+    }
+
+    .by {
+      margin-bottom: 12px;
+    }
+    .by-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+    .reply p {
+      max-width: 60ch;
+    }
+    .lede {
+      font-size: 16.5px;
+      line-height: 1.95;
+      color: var(--color-ink-2);
+    }
+    @media (min-width: 768px) {
+      .lede {
+        font-size: 17.5px;
+      }
+    }
+    .reply strong {
+      color: var(--color-ink);
+      font-weight: 600;
+    }
+
+    /* ---------- 按鈕 ---------- */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14.5px;
+      font-weight: 500;
+      text-decoration: none;
+      padding: 12px 22px;
+      border-radius: 3px;
+      line-height: 1.4;
+      /* 44px 觸控目標：12+12 內距 ＋ 14.5×1.4 行框 ≈ 44.3px */
+      min-height: 44px;
+      transition:
+        background-color 0.18s var(--ease),
+        border-color 0.18s var(--ease),
+        color 0.18s var(--ease),
+        transform 0.18s var(--ease);
+    }
+    .btn-primary {
+      background: var(--color-accent);
+      color: var(--color-surface);
+      border: 1px solid var(--color-accent);
+    }
+    /* 按鈕文字必須是「一個」flex 子項。若讓文字節點直接當子項，
+       包裹拉丁字段用的 .lat 會被 blockify 成 flex item，gap:8px 就會
+       把「加 LINE 免費諮詢」拆成三塊。 */
+    .btn-l {
+      display: inline;
+    }
+    .btn .arw {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      opacity: 0.85;
+      --ls: 0em;
+    }
+
+    /* ---------- 四個入口：髮絲線橫列 ---------- */
+    .paths {
+      padding-top: 76px;
+    }
+    @media (min-width: 768px) {
+      .paths {
+        padding-top: 120px;
+      }
+    }
+    .paths-list {
+      margin-top: 26px;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--color-rule);
+    }
+    @media (min-width: 768px) {
+      .paths-list {
+        margin-top: 34px;
+      }
+    }
+    .paths-list li {
+      border-bottom: 1px solid var(--color-rule);
+    }
+    .paths-list a {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 5px 20px;
+      align-items: baseline;
+      /* 從五列改成四列後，每列加高補回區塊份量 */
+      padding: 22px 2px;
+      text-decoration: none;
+      transition: background-color 0.2s var(--ease);
+    }
+    /* 入口列的字級對照 jisto 的 .j-work-row h2（實測 clamp(28px,3.5vw,58px)、列高 216px）。
+       本站上限收在 44px 而非 58px：jisto 那一列有縮圖佔掉左欄 .34fr，標題只填中欄；
+       這裡沒有縮圖、標題橫跨整列，58px 的中文會逼出換行。 */
+    .p-t {
+      font-size: clamp(26px, 3.2vw, 44px);
+      font-weight: 600;
+      color: var(--color-ink);
+      line-height: 1.16;
+      --ls: var(--ls-title);
+      transition: color 0.18s var(--ease);
+    }
+    .p-d {
+      grid-column: 1 / -1;
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--color-ink-3);
+      max-width: 52ch;
+    }
+    .p-go {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--color-accent);
+      --ls: 0em;
+    }
+    @media (min-width: 768px) {
+      .paths-list a {
+        /* 標題放大到 44px 後改成兩欄：左欄堆疊標題與描述、右欄是箭頭。
+           原本三欄（標題｜描述｜箭頭）是給 24px 小標題並排用的，
+           44px 標題並排 15px 描述會頭重腳輕。
+           列高比照 jisto 的 .j-work-row（min-height 216px）加厚。 */
+        grid-template-columns: 1fr auto;
+        gap: 0 36px;
+        align-items: center;
+        padding: 40px 2px;
+        min-height: 148px;
+      }
+      .p-t {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .p-d {
+        grid-column: 1;
+        grid-row: 2;
+        margin-top: 10px;
+      }
+      .p-go {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        align-self: center;
+      }
+    }
+
+    /* ---------- 信任證明：一行，不做成卡片 ---------- */
+    /* 規格是「一行」，所以桌機不設 max-width——這是一行資歷，不是要讀的內文，
+       量到 74ch（約 496px）會讓它斷成兩行。窄螢幕本來就放不下，讓它自然換行。 */
+    .trust {
+      margin-top: 26px;
+      font-size: 13.5px;
+      line-height: 1.95;
+      color: var(--color-ink-3);
+    }
+    .trust b {
+      color: var(--color-ink-2);
+      font-weight: 500;
+    }
+    /* 分隔點用 rule-3 而不是 rule-2：它是裝飾字元，但仍要看得見。 */
+    .trust .sep {
+      color: var(--color-rule-3);
+      padding: 0 2px;
+    }
+
+    /* ---------- 結尾 CTA ---------- */
+    .closer {
+      padding-top: 76px;
+    }
+    @media (min-width: 768px) {
+      .closer {
+        padding-top: 120px;
+      }
+    }
+    .closer-p {
+      margin-top: 18px;
+      font-size: 15.5px;
+      line-height: 1.95;
+      color: var(--color-ink-2);
+      max-width: 52ch;
+    }
+
+    /* ============================================================
+       hover 一律加裝置條件：觸控裝置上 :hover 會「黏住」，
+       點過的元件會停在 hover 狀態直到點別的地方。
+       :focus-visible 另外寫一份、不設任何條件。
+       ============================================================ */
+    @media (hover: hover) and (pointer: fine) {
+      .btn-primary:hover {
+        background: var(--color-accent-2);
+        border-color: var(--color-accent-2);
+        transform: translateY(-1px);
+      }
+      .paths-list a:hover {
+        background: rgb(255 255 255 / 60%);
+      }
+      .paths-list a:hover .p-t {
+        color: var(--color-accent);
+      }
+    }
+
+    /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
+    .paths-list a:focus-visible {
+      background: rgb(255 255 255 / 60%);
+    }
+    .paths-list a:focus-visible .p-t {
+      color: var(--color-accent);
+    }
+
+    /* ============================================================
+       逐段浮現：內容一律寫在 HTML 裡，只有「顯示與否」交給 CSS。
+       沒有 JS 時 .js 不會加上，全部維持完整可見。
+       IntersectionObserver 掛掉時另有 2 秒逾時強制顯示（見上方 script）。
+       ============================================================ */
+    .home.js .reveal {
+      opacity: 0.3;
+      transform: translateY(30px);
+      transition:
+        opacity 0.6s var(--ease) var(--d, 0ms),
+        transform 0.6s var(--ease) var(--d, 0ms);
+    }
+    .home.js .reveal.is-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 首屏：0 + 70 + 140ms 延遲，各 200ms —— 總揭露 340ms */
+    .home.js .hero-reveal {
+      opacity: 0.3;
+      transform: translateY(30px);
+      transition:
+        opacity 0.2s var(--ease) var(--d, 0ms),
+        transform 0.2s var(--ease) var(--d, 0ms);
+    }
+    .home.js .hero-reveal.is-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .home.js .reveal,
+      .home.js .hero-reveal,
+      .home.js .reveal.is-in,
+      .home.js .hero-reveal.is-in {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      /* 只關過渡，不寫任何 :hover 選擇器。
+         「所有 hover 收在 @media (hover:hover) and (pointer:fine) 裡」是硬規則，
+         在這裡補一條 .btn-primary:hover{transform:none} 會是全站唯一一條沒有裝置
+         條件的 hover 規則。而且它也沒有必要：那顆按鈕的 translateY(-1px) 本來就
+         只在有滑鼠的裝置上生效，過渡一關就是瞬間位移，不構成前庭風險的動態。 */
+      .btn,
+      .paths-list a,
+      .p-t {
+        transition: none !important;
+      }
+    }
+  </style>
 </Base>

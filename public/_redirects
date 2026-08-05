@@ -1,0 +1,15 @@
+# Cloudflare 轉址規則
+#
+# 為什麼寫在這裡而不是 astro.config.mjs 的 redirects 設定：
+# Astro 產出 _redirects 時會把 key 的尾斜線去掉（有斜線、無斜線兩種都寫也只會
+# 產生重複的同一條），導致含尾斜線的網址打不到轉址、直接 404——
+# 而本站連結的正規形式就是含尾斜線的。這個坑記在 astro.config.mjs 的註解裡。
+# 自己寫這個檔就沒有那個問題，但兩種形式都要各寫一條。
+
+# 免費資源：從文章改成常設頁面（2026-08-06）
+# 原本是 /blog/free-resources/（Directus id=4），內容改寫進 src/pages/resources.astro，
+# 文章在 CMS 下架。備份見 docs/code-fence-backup/free-resources-article-backup.json。
+# 仍有 2 篇已發布文章的內文連向舊網址（threads-api-tutorial、codex-cli-wsl2-windows），
+# 靠這兩條接住，那兩篇的內文不動。
+/blog/free-resources/   /resources/   301
+/blog/free-resources    /resources/   301

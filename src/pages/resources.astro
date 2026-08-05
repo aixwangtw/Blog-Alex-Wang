@@ -1,0 +1,207 @@
+---
+// ============================================================
+// /resources/ — 免費資源專區（2026-08 改版第三階段一併新建）
+// ------------------------------------------------------------
+// 為什麼要有這一頁：改版後的首頁四個入口第一個就是「免費資源 → /resources/」，
+// Hero 的主 CTA 也指向這裡。沒有這一頁，首頁最主要的兩個行動點都是 404。
+//
+// 內容從何而來：CMS 文章 free-resources 的內文，改寫成常設頁面的結構。
+// 事實（影片、工具、連結、動機說明）跟原文一致，沒有新增也沒有更動；
+// 改的只是敘事順序——原本是一篇「我來介紹一下」的文章，現在是一份常設清單。
+//
+// 為什麼不從 CMS 撈：那篇文章之後要下架，而公開 API 不回傳草稿，
+// 撈法會在下架當天讓這一頁沒有內容。頁面之後由站主直接改這個檔維護。
+//
+// 資料仍然集中在 src/data/：
+//   影片 → src/data/home.ts 的 VIDEOS（不在這裡複製一份標題與 embedId）
+//   FAQ  → src/data/faqs.ts 的 RESOURCES_FAQS
+//   HyperFrames → src/data/instructor.ts 的 EXPERIENCE
+//
+// ⚠ 已知的中間狀態：/resources/ 與 /blog/free-resources/ 會同時存在、內容重複。
+//    下架那篇文章與加轉址不在本階段範圍，由 coordinator 收尾。
+// ============================================================
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Cta from '../components/Cta.astro';
+import FaqList from '../components/FaqList.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { LINKS, SITE, breadcrumbSchema } from '../consts';
+import { RESOURCES_FAQS } from '../data/faqs';
+import { VIDEOS } from '../data/home';
+import { EXPERIENCE } from '../data/instructor';
+import Base from '../layouts/Base.astro';
+
+// VIDEOS 的兩種來源分屬兩個區塊，用「有沒有 embedId」切，而不是用陣列索引切：
+//   embedId（YouTube）→ 教學影片，是照著做的教材
+//   src（自架 mp4）    → Tooka 的工作流示範，屬於工具說明的一部分
+// 之後在 home.ts 加新的 YouTube 教學影片會自動落到「教學影片」，不用改這一頁。
+const tutorialVideos = VIDEOS.filter((video) => video.embedId);
+const tookaDemo = VIDEOS.find((video) => video.src);
+
+// HyperFrames 沒有獨立的資料結構，經歷條目就是唯一來源。用字串比對而不是索引，
+// 條目順序調整不會抓錯；哪天那條被刪掉，這裡會是 undefined 而不是抓到別條。
+const hyperFrames = EXPERIENCE.find((item) => item.text.includes('HyperFrames'));
+const [hyperFramesRole, hyperFramesDetail] = hyperFrames
+  ? hyperFrames.text.split(/：(.+)/s)
+  : [null, null];
+
+const schema = [
+  breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '免費資源' }]),
+];
+---
+
+<Base
+  title="免費資源｜AI 教學影片與開源工具 Tooka"
+  description="免費的 AI 學習資源：Threads / Instagram API 申請教學影片，以及開源的社群圖文模板框架 Tooka（線上版免安裝）。先照影片自學把流程跑一次，卡關再來找我。"
+  schema={schema}
+>
+  <div class="mx-auto max-w-3xl px-6 py-12">
+    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '免費資源' }]} />
+
+    <h1 class="t-h1 mt-8 font-semibold text-ink">免費資源</h1>
+    <p class="mt-6 text-lg leading-8 text-ink-2">
+      這一頁整理我所有的免費資源——教學影片跟開源工具，全部不用付費就能用。建議的用法：先照影片自學，把流程跑一次；卡關了再來<a
+        href="/services/one-on-one/"
+        class="text-accent underline underline-offset-4">找我一對一</a
+      >，把時間花在刀口上。
+    </p>
+
+    <!-- ---------- 教學影片 ---------- -->
+    <SectionHeading size="md" class="mt-14">教學影片</SectionHeading>
+    <ul class="mt-6">
+      {tutorialVideos.map((video) => (
+        <li class="grid gap-5 border-t border-rule px-0.5 py-7 sm:grid-cols-2 sm:gap-8">
+          <div class="aspect-video w-full bg-ink">
+            <iframe
+              class="h-full w-full"
+              src={`https://www.youtube-nocookie.com/embed/${video.embedId}`}
+              title={video.title}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            />
+          </div>
+          <div>
+            <!-- 標籤用等寬小標（同 Base 頁尾的 .ft-h 那一階），不做成藥丸標籤：
+                 改版後卡片與藥丸標籤全站移除，分類靠字級與字距分出來就夠了。 -->
+            <p class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">{video.tag}</p>
+            <h3 class="t-h3 mt-2 font-semibold text-ink">{video.title}</h3>
+            <p class="mt-3 leading-8 text-ink-2">{video.description}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="mt-6 text-sm leading-7 text-ink-2">
+      搭配文章：<a href="/blog/threads-api-tutorial/" class="text-accent underline underline-offset-4">Meta 三大 API 申請教學</a>。更多影片在我的<a
+        href={LINKS.youtube}
+        target="_blank"
+        rel="noreferrer"
+        class="text-accent underline underline-offset-4">YouTube 頻道</a
+      >。
+    </p>
+
+    <!-- ---------- 開源工具 Tooka ---------- -->
+    <!-- 標題只留「開源工具 Tooka」，原本那串「：社群圖卡模板＋一鍵發布 Meta 三大平台」
+         下移成副標。原因是實測：整串放在 28px 的 h2 裡、在 720px 內容欄下會斷成兩行，
+         而第二行只剩一個「台」字——中文標題最忌諱的孤字。文字一個都沒少，只是換了層級。 -->
+    <SectionHeading size="md" class="mt-16">開源工具 Tooka</SectionHeading>
+    <p class="mt-3 text-ink-3">社群圖卡模板＋一鍵發布 Meta 三大平台</p>
+    <p class="mt-6 leading-8 text-ink-2">
+      這是我用 Fable 5 參考 Open-Slide 簡報工具改寫的工具（Fable 5 真的很適合拿來做大規模重構——吃得下超長上下文，1～2 次就改好）。
+    </p>
+    <p class="mt-5 leading-8 text-ink-2">
+      會做它，是因為我自己 AI 生圖很常需要微調：經常跑版、<a
+        href="/blog/ig-carousel-size/"
+        class="text-accent underline underline-offset-4">超出 IG 尺寸</a
+      >、人物失真，叫 AI 重新生隨機性太高、而且等很久；用 GPT 連結 Canva 改完還要自己貼回 GPT，不夠省事。我很討厭這種繁瑣的步驟，所以把整個流程都自動化了：
+    </p>
+    <ol class="mt-6">
+      <li class="border-t border-rule px-0.5 py-6">
+        <h3 class="t-h3 font-semibold text-ink">AI 生完圖可以直接拖曳、修改文字</h3>
+        <p class="mt-2 leading-8 text-ink-2">不用等重新生成，用初階模型也可以。</p>
+      </li>
+      <li class="border-t border-rule px-0.5 py-6">
+        <h3 class="t-h3 font-semibold text-ink">Meta 三大 API 都做好串接面板</h3>
+        <p class="mt-2 leading-8 text-ink-2">
+          只要<a href="/blog/threads-api-tutorial/" class="text-accent underline underline-offset-4">申請好 API</a>
+          填進去，就會自動幫你建好 <code class="rounded bg-paper-2 px-1.5 py-0.5 text-sm text-ink">.env</code>；填進去的長期權杖（60
+          天）還會自動延期，第一次手動申請後就不用怕過期。
+        </p>
+      </li>
+      <li class="border-t border-rule px-0.5 py-6">
+        <h3 class="t-h3 font-semibold text-ink">每次的圖都可以固定版型</h3>
+        <p class="mt-2 leading-8 text-ink-2">都是 React 元件，做好一次視覺，之後改內容不改背景。</p>
+      </li>
+    </ol>
+
+    {tookaDemo && (
+      <figure class="mt-10">
+        <video
+          class="w-full bg-ink"
+          src={tookaDemo.src}
+          controls
+          preload="metadata"
+          playsinline
+        />
+        <figcaption class="mt-3 text-sm leading-7 text-ink-3">
+          實際工作流示範：{tookaDemo.description}
+        </figcaption>
+      </figure>
+    )}
+
+    <ul class="mt-8 space-y-3 leading-8 text-ink-2">
+      <li>
+        線上直接使用：<a
+          href="https://tooka.js0980420.workers.dev/"
+          target="_blank"
+          rel="noreferrer"
+          class="text-accent underline underline-offset-4">開啟 Tooka 線上版</a
+        >（免安裝、免 clone repo）
+      </li>
+      <li>
+        GitHub：<a
+          href="https://github.com/js0980420/tooka"
+          target="_blank"
+          rel="noreferrer"
+          class="text-accent underline underline-offset-4">js0980420/tooka</a
+        >（完整原始碼，開源免費）
+      </li>
+      <li>
+        開發故事：<a href="/blog/why-i-built-tooka/" class="text-accent underline underline-offset-4"
+          >我為什麼開發 Tooka</a
+        >
+      </li>
+    </ul>
+
+    <!-- ---------- HyperFrames ---------- -->
+    {hyperFramesRole && (
+      <>
+        <SectionHeading size="md" class="mt-16">一鍵拍片開源專案 HyperFrames</SectionHeading>
+        <p class="mt-6 leading-8 text-ink-2">{hyperFramesDetail ?? hyperFramesRole}</p>
+        <!-- 這一段只寫查得到的事：協作者身分來自 src/data/instructor.ts，
+             站上目前沒有 HyperFrames 的教學文章或示範影片，repo 裡也沒有它的網址，
+             所以這裡不放連結、也不寫任何「可以怎麼用」的宣稱。
+             站主要補連結時，加在 src/data/instructor.ts 或這一段即可。 -->
+        <p class="mt-4 text-sm leading-7 text-ink-3">我是這個專案的協作者。</p>
+      </>
+    )}
+
+    <!-- ---------- FAQ ---------- -->
+    <!-- 這一頁只輸出 BreadcrumbList，沒有 FAQPage schema：同一組 Q&A 在 /faq/ 已經宣告過，
+         再宣告一次是純重複——這正是本次把首頁那份 FAQPage 拿掉的同一個理由。
+         FAQ 的內容仍然留在頁面上給讀者看，只是不重複宣告結構化資料。 -->
+    <SectionHeading size="md" class="mt-16">常見問題</SectionHeading>
+    <div class="mt-6">
+      <FaqList faqs={RESOURCES_FAQS} />
+    </div>
+
+    <Cta
+      title="有問題想問？"
+      text="先照著影片和 Tooka 自己做一次，卡住了再來找我。免費資源解決不了的部分，一對一教學（雙北實體／線上）會直接帶你走一遍。"
+      links={[
+        { href: LINKS.facebookGroup, label: 'Facebook 社團', external: true },
+        { href: '/services/one-on-one/', label: '一對一教學' },
+      ]}
+    />
+  </div>
+</Base>
