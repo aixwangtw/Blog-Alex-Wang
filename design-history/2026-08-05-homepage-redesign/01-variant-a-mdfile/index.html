@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 工具很多，不知道哪個適合你？｜aixwang.dev</title>
+<meta name="description" content="Alex 是台灣的 AI 應用講師與全職接案工程師。教 AI Agent 工具使用、自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   aixwang.dev — 首頁原型 A：「.md 檔案感」
+   一份被渲染出來的 markdown 文件
+   ============================================================ */
+
+/* ---- reset ---- */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body,h1,h2,h3,p,figure,blockquote,dl,dd,ul,ol,pre{margin:0}
+ul,ol{padding:0;list-style:none}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+/* ---- tokens ---- */
+:root{
+  /* 紙 */
+  --paper:#F7F7F4;
+  --paper-hi:#FFFFFF;
+  --paper-lo:#F1F0EA;
+
+  /* 髮絲線 */
+  --rule:#E3E2DA;
+  --rule-2:#CFCDC2;
+
+  /* 墨 */
+  --ink:#1A1917;
+  --ink-2:#3C3B36;
+  --ink-3:#696760;
+  --ink-4:#A3A199;   /* 只給 aria-hidden 的語法標記與純標點用 */
+
+  /* 重點色：石榴石 */
+  --accent:#8A2B3C;
+  --accent-wash:rgba(138,43,60,.07);
+
+  /* 可執行區塊（唯一的深色面積） */
+  --term-bg:#1B1A17;
+  --term-fg:#EDEBE3;
+  --term-dim:#8B887C;
+  --term-str:#CF8A94;
+  --term-rule:rgba(237,235,227,.13);
+
+  --mono:'IBM Plex Mono','Noto Sans TC',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'Noto Sans TC','IBM Plex Mono',system-ui,-apple-system,'Segoe UI',sans-serif;
+
+  --head-h:57px;
+  --bleed:20px;
+}
+
+/* ---- base ---- */
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);
+  color:var(--ink-2);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.95;
+  letter-spacing:.01em;
+  font-feature-settings:"palt" 1;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+@media (min-width:760px){
+  body{font-size:16px}
+  :root{--head-h:64px;--bleed:24px}
+}
+
+::selection{background:var(--accent);color:var(--paper)}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:1px}
+
+.wrap{max-width:1160px;margin:0 auto;padding-inline:clamp(20px,4.2vw,48px)}
+
+.skip{position:absolute;left:-9999px;top:0;z-index:99}
+.skip:focus{left:12px;top:12px;background:var(--ink);color:var(--paper);
+  padding:.7em 1.1em;font:500 .8rem var(--mono)}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.head{
+  position:sticky;top:0;z-index:50;
+  background:rgba(247,247,244,.86);
+  -webkit-backdrop-filter:saturate(180%) blur(12px);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--rule);
+}
+.head-in{
+  height:var(--head-h);
+  display:flex;align-items:center;gap:clamp(14px,3vw,36px);
+}
+.brand{
+  font:600 .875rem/1 var(--mono);
+  letter-spacing:-.01em;color:var(--ink);
+  white-space:nowrap;flex:none;
+}
+.brand .path{font-weight:400;color:var(--ink-4)}
+
+.nav{
+  display:flex;align-items:center;gap:clamp(12px,2vw,22px);
+  overflow-x:auto;scrollbar-width:none;flex:1 1 auto;
+  -webkit-overflow-scrolling:touch;
+  mask-image:linear-gradient(90deg,#000 88%,transparent 100%);
+}
+.nav::-webkit-scrollbar{display:none}
+.nav a{
+  font:400 .78rem/1 var(--mono);color:var(--ink-3);
+  white-space:nowrap;padding:.5em 0;
+  border-bottom:1px solid transparent;
+  transition:color .18s ease,border-color .18s ease;
+}
+.nav a:hover{color:var(--ink);border-bottom-color:var(--accent)}
+@media (min-width:900px){.nav{mask-image:none;justify-content:flex-end}}
+
+.head-cta{display:none}
+@media (min-width:760px){
+  .head-cta{
+    display:inline-block;flex:none;
+    font:500 .76rem/1 var(--mono);
+    color:var(--paper);background:var(--ink);
+    padding:.72em 1.1em;transition:background .18s ease;
+  }
+  .head-cta:hover{background:var(--accent)}
+}
+
+/* ============================================================
+   markdown 語法標記（全部 aria-hidden，不進無障礙樹）
+   ============================================================ */
+.mdhr{
+  font:400 .8rem/1 var(--mono);
+  color:var(--ink-4);letter-spacing:.24em;
+  user-select:none;
+}
+
+/* 行內 code */
+.ic{
+  font-family:var(--mono);font-size:.88em;color:var(--ink);
+  background:var(--paper-hi);border:1px solid var(--rule);
+  border-radius:2px;padding:.1em .38em;
+}
+
+/* ============================================================
+   HERO / frontmatter
+   ============================================================ */
+.hero{padding-top:clamp(34px,6vw,68px);padding-bottom:clamp(30px,5vw,56px)}
+.hero-in{max-width:860px}
+
+.fm{margin:14px 0}
+.fm-row{
+  display:grid;grid-template-columns:84px minmax(0,1fr);
+  gap:0 10px;padding:1.5px 0;
+}
+@media (min-width:760px){.fm-row{grid-template-columns:96px minmax(0,1fr)}}
+.fm dt{
+  font:400 .76rem/1.9 var(--mono);color:var(--ink-3);
+  white-space:nowrap;
+}
+.fm dt::after{content:":"}
+.fm dd{font:400 .8rem/1.9 var(--mono);color:var(--ink-2)}
+.fm .punc{color:var(--ink-4)}
+
+.h1{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(1.72rem,1.14rem + 2.5vw,2.85rem);
+  line-height:1.4;letter-spacing:-.015em;
+  color:var(--ink);margin-top:clamp(20px,3vw,34px);
+  /* 懸掛標記：# 落在字級外，換行後每一行文字仍對齊 */
+  padding-left:.61em;text-indent:-.61em;
+}
+/* 中文斷行以「意群」為單位，不從詞中間切開。
+   text-indent 會繼承，inline-block 會再套一次，必須歸零 */
+.h1 .cl{display:inline-block;text-indent:0}
+.h1::before{
+  content:"#";content:"#" / "";
+  font-family:var(--mono);font-weight:400;font-size:.55em;
+  color:var(--ink-4);padding-right:.5em;
+}
+/* 寬螢幕：# 直接掛進左邊界外，正文齊頭 */
+@media (min-width:1000px){.h1{padding-left:0}}
+
+.quote{
+  margin-top:clamp(16px,2.4vw,24px);
+  border-left:2px solid var(--rule-2);
+  padding:2px 0 2px 1.1em;
+  color:var(--ink-3);
+  max-width:38em;
+}
+.lead{margin-top:1.35em;max-width:40em}
+.lead strong{font-weight:700;color:var(--ink)}
+
+.byline{
+  margin-top:1.5em;
+  font:400 .74rem/1.7 var(--mono);color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.35em .8em;align-items:baseline;
+}
+.byline .sep{color:var(--ink-4)}
+
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:clamp(24px,3.4vw,34px)}
+
+.btn{
+  display:inline-flex;align-items:center;gap:.5em;
+  font:500 .82rem/1 var(--mono);
+  padding:1em 1.35em;border-radius:0;
+  transition:background .18s ease,color .18s ease,border-color .18s ease;
+}
+.btn-solid{background:var(--ink);border:1px solid var(--ink);color:var(--paper)}
+.btn-solid:hover{background:var(--accent);border-color:var(--accent)}
+.btn-line{border:1px solid var(--rule-2);color:var(--ink)}
+.btn-line:hover{border-color:var(--ink);background:var(--paper-hi)}
+.btn .arw{transition:transform .18s ease}
+.btn:hover .arw{transform:translateX(3px)}
+
+/* ============================================================
+   DOC 版面：目錄 + 內文
+   ============================================================ */
+.doc{padding-bottom:clamp(48px,7vw,90px)}
+@media (min-width:1100px){
+  .doc{
+    display:grid;grid-template-columns:172px minmax(0,1fr);
+    gap:0 64px;align-items:start;
+  }
+}
+
+/* --- 目錄 --- */
+.toc{
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  padding:16px 0;margin-bottom:clamp(30px,4vw,44px);
+}
+.toc-label{font:500 .68rem/1 var(--mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.toc ul{display:grid;gap:1px}
+@media (min-width:560px) and (max-width:1099px){
+  .toc ul{grid-template-columns:1fr 1fr;column-gap:24px}
+}
+.toc a{
+  display:block;position:relative;padding:.34em 0 .34em 1.1em;
+  font:400 .8rem/1.6 var(--mono);color:var(--ink-3);
+  transition:color .16s ease;
+}
+.toc a::before{
+  content:"-";content:"-" / "";
+  position:absolute;left:0;top:.34em;
+  color:var(--ink-4);transition:color .16s ease;
+}
+.toc a:hover{color:var(--ink)}
+.toc a[aria-current="true"]{color:var(--accent);font-weight:500}
+.toc a[aria-current="true"]::before{content:"-";content:"-" / "";color:var(--accent)}
+
+@media (min-width:1100px){
+  .toc{
+    position:sticky;top:calc(var(--head-h) + 32px);
+    border:0;border-left:1px solid var(--rule);
+    padding:2px 0 2px 16px;margin:0;
+  }
+  .toc-label{margin-bottom:12px}
+}
+
+/* --- section --- */
+.sec{padding-top:clamp(40px,5.5vw,68px);scroll-margin-top:calc(var(--head-h) + 26px)}
+.sec:first-child{padding-top:0}
+
+.sec-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:16px 20px;flex-wrap:wrap;
+}
+.h2{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(1.12rem,1.02rem + .45vw,1.38rem);
+  line-height:1.5;letter-spacing:-.01em;color:var(--ink);
+}
+.h2::before{
+  content:"##";content:"##" / "";
+  font-family:var(--mono);font-weight:400;color:var(--ink-4);
+  padding-right:.48em;letter-spacing:0;
+}
+.h3{
+  font-family:var(--sans);font-weight:700;font-size:.95rem;
+  line-height:1.6;color:var(--ink);margin-top:2.1em;
+}
+.h3::before{
+  content:"###";content:"###" / "";
+  font-family:var(--mono);font-weight:400;color:var(--ink-4);
+  padding-right:.5em;font-size:.92em;
+}
+.sec-more{
+  font:500 .78rem/1 var(--mono);color:var(--accent);
+  white-space:nowrap;border-bottom:1px solid transparent;
+  transition:border-color .18s ease;
+}
+.sec-more:hover{border-bottom-color:var(--accent)}
+.sec-intro{margin-top:1em;max-width:40em;color:var(--ink-2)}
+.sec-intro a{color:var(--accent);border-bottom:1px solid var(--accent);
+  padding-bottom:1px}
+.sec-intro a:hover{background:var(--accent-wash)}
+
+/* ============================================================
+   ROWS：髮絲線分隔的橫列（不是卡片）
+   ============================================================ */
+.rows{margin:1.6em calc(var(--bleed) * -1) 0}
+.rows + .h3{margin-left:0}
+.row{
+  display:grid;gap:2px 26px;
+  padding:18px var(--bleed);
+  border-top:1px solid var(--rule);
+  position:relative;
+  transition:background .16s ease,box-shadow .16s ease;
+}
+.rows > .row:last-child{border-bottom:1px solid var(--rule)}
+a.row:hover{background:var(--paper-hi);box-shadow:inset 2px 0 0 var(--accent)}
+
+@media (min-width:700px){
+  .row{grid-template-columns:168px minmax(0,1fr) auto;align-items:start}
+}
+
+.row-meta{
+  font:400 .72rem/1.8 var(--mono);color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.3em .6em;align-items:center;
+  padding-top:.25em;
+}
+.num{color:var(--ink-3);font-variant-numeric:tabular-nums}
+.tag{
+  display:inline-block;
+  font:500 .66rem/1 var(--mono);letter-spacing:.04em;
+  color:var(--ink-3);border:1px solid var(--rule-2);
+  border-radius:999px;padding:.36em .68em;white-space:nowrap;
+}
+.date{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.row-title{
+  font-family:var(--sans);font-weight:500;font-size:.97rem;line-height:1.7;
+  color:var(--ink);letter-spacing:0;
+}
+.row-desc{font-size:.87rem;line-height:1.85;color:var(--ink-3);margin-top:.3em;max-width:44em}
+.row-path{
+  display:inline-block;margin-top:.5em;
+  font:400 .72rem/1.7 var(--mono);color:var(--ink-3);
+}
+.row-path .lnk{color:var(--accent);border-bottom:1px solid rgba(138,43,60,.35)}
+.row-path .lnk:hover{border-bottom-color:var(--accent);background:var(--accent-wash)}
+.row-go{
+  font:400 .8rem/1.9 var(--mono);color:var(--ink-4);
+  align-self:center;transition:transform .18s ease,color .18s ease;
+}
+a.row:hover .row-go{color:var(--accent);transform:translateX(3px)}
+@media (max-width:699px){
+  .row-go{display:none}
+  .row-meta{padding-top:0;margin-bottom:.35em}
+}
+
+/* 純清單（- 開頭） */
+.md-list{margin-top:1.2em}
+.md-list li{position:relative;padding-left:1.25em;margin-top:.35em;max-width:40em}
+.md-list li::before{
+  content:"-";content:"-" / "";
+  position:absolute;left:0;top:0;
+  font-family:var(--mono);color:var(--ink-4);
+}
+
+/* ============================================================
+   可執行區塊 / 可帶走
+   ============================================================ */
+.take{margin-top:1.7em;display:grid;gap:14px}
+@media (min-width:920px){.take{grid-template-columns:1fr 1fr}}
+
+.term{
+  background:var(--term-bg);color:var(--term-fg);
+  border-radius:2px;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.term-bar,.prompt-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:.62em .9em;
+  font:400 .68rem/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;
+}
+.term-bar{border-bottom:1px solid var(--term-rule);color:var(--term-dim)}
+.term-body{
+  flex:1;padding:.95em .9em 1.1em;overflow-x:auto;
+  font:400 .8rem/1.95 var(--mono);white-space:pre;
+}
+.term-body::-webkit-scrollbar{height:6px}
+.term-body::-webkit-scrollbar-thumb{background:var(--term-rule)}
+.tp{color:var(--term-dim);user-select:none}
+.tc{color:var(--term-dim)}
+.ts{color:var(--term-str)}
+
+.prompt{background:var(--paper-hi);border:1px solid var(--rule);border-radius:2px;
+  display:flex;flex-direction:column}
+.prompt-bar{border-bottom:1px solid var(--rule);color:var(--ink-3)}
+.prompt blockquote{
+  border-left:2px solid var(--rule-2);
+  margin:.95em .9em 1.1em;padding-left:.9em;
+  font-size:.88rem;line-height:1.9;color:var(--ink-2);
+}
+.prompt blockquote .fill{
+  color:var(--accent);border-bottom:1px dashed var(--accent);
+}
+
+.copy{
+  font:500 .68rem/1 var(--mono);letter-spacing:.04em;
+  color:var(--term-dim);white-space:nowrap;
+  transition:color .16s ease;text-transform:none;
+}
+.term .copy:hover{color:var(--term-fg)}
+.prompt .copy{color:var(--ink-3)}
+.prompt .copy:hover{color:var(--accent)}
+.copy[data-done="1"]{color:var(--term-str)}
+.prompt .copy[data-done="1"]{color:var(--accent)}
+
+.take-note{
+  margin-top:1.1em;font:400 .74rem/1.85 var(--mono);color:var(--ink-3);
+  max-width:44em;
+}
+
+/* ============================================================
+   服務（單一入口）
+   ============================================================ */
+.svc{border-top:1px solid var(--ink);margin-top:1.6em}
+.svc .row{border-top:1px solid var(--rule)}
+.svc .row:first-child{border-top:0}
+
+.svc-foot{
+  display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;
+  padding:22px var(--bleed) 0;
+}
+.svc-foot .note{font:400 .74rem/1.8 var(--mono);color:var(--ink-3)}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq{margin-top:1.5em;border-bottom:1px solid var(--rule)}
+.faq details{border-top:1px solid var(--rule)}
+.faq summary{
+  display:grid;grid-template-columns:1.4em minmax(0,1fr);
+  gap:0 .3em;align-items:baseline;
+  padding:1rem 0;list-style:none;cursor:pointer;
+  font-family:var(--sans);font-weight:500;font-size:.95rem;line-height:1.7;
+  color:var(--ink);transition:color .16s ease;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{
+  content:"+";content:"+" / "";
+  font:400 .85rem/1.9 var(--mono);color:var(--ink-4);
+  transition:color .16s ease;
+}
+.faq details[open] summary::before{content:"−";content:"−" / "";color:var(--accent)}
+.faq summary:hover{color:var(--accent)}
+.faq-a{
+  padding:0 0 1.15rem 1.7em;
+  font-size:.89rem;line-height:1.95;color:var(--ink-3);max-width:44em;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.foot{border-top:1px solid var(--rule);background:var(--paper-lo)}
+.foot-in{padding:clamp(34px,5vw,56px) 0 clamp(26px,3vw,38px)}
+.foot-grid{display:grid;gap:28px 40px}
+@media (min-width:640px){.foot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.foot h4{
+  font:500 .68rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:12px;
+}
+.foot ul{display:grid;gap:1px}
+.foot li a{
+  display:inline-block;padding:.28em 0;
+  font:400 .78rem/1.6 var(--mono);color:var(--ink-3);
+  border-bottom:1px solid transparent;
+}
+.foot li a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.foot-end{
+  margin-top:clamp(28px,4vw,40px);padding-top:18px;
+  border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;
+  font:400 .72rem/1.8 var(--mono);color:var(--ink-3);
+}
+.eof{color:var(--ink-4)}
+
+/* ============================================================
+   進場：內容全在初始 HTML，只用 CSS 控制顯示
+   ============================================================ */
+@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+@keyframes draw{from{opacity:0;transform:scaleX(.35)}to{opacity:1;transform:none}}
+.rv{opacity:0;animation:rise .52s cubic-bezier(.22,.61,.36,1) forwards;animation-delay:var(--d,0ms)}
+.rv-hr{opacity:0;transform-origin:left;animation:draw .5s cubic-bezier(.22,.61,.36,1) forwards;animation-delay:var(--d,0ms)}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:1ms !important;animation-delay:0ms !important;
+    animation-iteration-count:1 !important;transition-duration:1ms !important;
+  }
+  .rv,.rv-hr{opacity:1 !important;transform:none !important}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">跳到主要內容</a>
+
+<header class="head">
+  <div class="wrap head-in">
+    <a class="brand" href="/">aixwang.dev<span class="path" aria-hidden="true">/index.md</span></a>
+    <nav class="nav" aria-label="主要導覽">
+      <a href="/blog/">/blog</a>
+      <a href="/services/one-on-one/">/one-on-one</a>
+      <a href="/services/speaking/">/speaking</a>
+      <a href="/faq/">/faq</a>
+      <a href="/about/">/about</a>
+    </nav>
+    <a class="head-cta" href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer">LINE 免費諮詢</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ========== HERO：frontmatter + H1 ========== -->
+  <section class="wrap hero">
+    <div class="hero-in">
+
+      <div class="mdhr rv-hr" aria-hidden="true" style="--d:0ms">---</div>
+
+      <dl class="fm">
+        <div class="fm-row rv" style="--d:40ms"><dt>author</dt><dd>Alex（王士麟）</dd></div>
+        <div class="fm-row rv" style="--d:80ms"><dt>role</dt><dd>AI 應用講師 / 全職接案工程師</dd></div>
+        <div class="fm-row rv" style="--d:120ms"><dt>updated</dt><dd>2026-08-05</dd></div>
+        <div class="fm-row rv" style="--d:160ms"><dt>tags</dt><dd><span class="punc">[</span>ai-agent<span class="punc">,</span> meta-api<span class="punc">,</span> 自動發文<span class="punc">,</span> 生圖<span class="punc">,</span> 拍片<span class="punc">]</span></dd></div>
+      </dl>
+
+      <div class="mdhr rv-hr" aria-hidden="true" style="--d:200ms">---</div>
+
+      <h1 class="h1 rv" style="--d:240ms"><span class="cl">AI 工具很多，</span><span class="cl">不知道哪個適合你？</span></h1>
+
+      <blockquote class="quote rv" style="--d:300ms">
+        免費文章、影片講過的內容，就完全免費。想有人手把手帶著學，再考慮一對一。
+      </blockquote>
+
+      <p class="lead rv" style="--d:340ms">
+        我教 <strong>4 大 AI Agent 的安裝使用、生圖、拍片</strong>，以及<strong>讓 AI 跟你的社群軟體互動的 API 串接</strong>——例如用 LINE 跟 AI 對話、整理其他平台的訊息。全部打包成「對話就能完成」的工作流，<strong>一次學習，多次受用</strong>。
+      </p>
+
+      <p class="byline rv" style="--d:380ms">
+        <span>全台最大 OpenClaw（龍蝦）中文社團版主</span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span>21 萬人</span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span>Tooka 作者、HyperFrames 協作者</span>
+      </p>
+
+      <div class="cta-row rv" style="--d:420ms">
+        <a class="btn btn-solid" href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer">
+          LINE 免費諮詢 <span class="arw" aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn-line" href="/blog/free-resources/">
+          先看免費資源 <span class="arw" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== DOC：目錄 + 內文 ========== -->
+  <div class="wrap doc">
+
+    <aside class="toc" aria-label="頁面目錄">
+      <div class="toc-label">on this page</div>
+      <ul>
+        <li><a href="#free">免費資源</a></li>
+        <li><a href="#blog">部落格文章</a></li>
+        <li><a href="#teach">我教什麼</a></li>
+        <li><a href="#cases">帶過的案例</a></li>
+        <li><a href="#takeaway">帶走這一頁</a></li>
+        <li><a href="#services">需要有人帶你做</a></li>
+        <li><a href="#faq">常見問題</a></li>
+      </ul>
+    </aside>
+
+    <div class="doc-main">
+
+      <!-- ---------- 免費資源 ---------- -->
+      <section class="sec" id="free">
+        <div class="sec-head">
+          <h2 class="h2">免費資源</h2>
+          <a class="sec-more" href="/blog/free-resources/">全部免費資源 →</a>
+        </div>
+        <p class="sec-intro">
+          教學影片照著做就能跑通；開源工具 Tooka 做社群圖文＋一鍵發佈。卡關了再來找我就好。
+        </p>
+
+        <h3 class="h3">教學影片</h3>
+        <div class="rows">
+          <a class="row" href="https://www.youtube.com/watch?v=nTYrG7EuFHA" target="_blank" rel="noreferrer">
+            <div class="row-meta"><span class="num">01</span><span class="tag">API 教學</span></div>
+            <div>
+              <div class="row-title">Threads API 申請教學</div>
+              <p class="row-desc">聚焦自動發文、留言回覆與 token 申請流程的實戰教學代表作。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="https://www.youtube.com/watch?v=O1qfeDIZRkQ" target="_blank" rel="noreferrer">
+            <div class="row-meta"><span class="num">02</span><span class="tag">API 教學</span></div>
+            <div>
+              <div class="row-title">Instagram API 申請教學：從 Meta 開發者後台到自動發文第一步</div>
+              <p class="row-desc">Instagram API 的申請流程實戰：從 Meta 開發者後台設定，一路做到自動發文的第一步。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="/blog/free-resources/">
+            <div class="row-meta"><span class="num">03</span><span class="tag">AI 圖文</span></div>
+            <div>
+              <div class="row-title">Tooka：AI 生成社群圖文的實際工作流</div>
+              <p class="row-desc">用中文描述需求，AI Agent 透過我開源的 Tooka 生成 1080×1350 輪播圖文並發佈的完整流程示範。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+        </div>
+
+        <h3 class="h3">開源工具</h3>
+        <div class="rows">
+          <div class="row">
+            <div class="row-meta"><span class="tag">MIT／免費</span></div>
+            <div>
+              <div class="row-title">Tooka — 社群圖文模板框架</div>
+              <p class="row-desc">AI Agent 用程式渲染生成 1080×1350 的 IG 輪播圖文，字是真的字不是畫的，所以不跑版、不失真，可一鍵發佈到 Instagram、Facebook、Threads。</p>
+              <div class="row-path">
+                <a class="lnk" href="https://github.com/js0980420/tooka" target="_blank" rel="noreferrer">github.com/js0980420/tooka</a>
+                &nbsp;·&nbsp;
+                <a class="lnk" href="https://tooka.js0980420.workers.dev/" target="_blank" rel="noreferrer">tooka.js0980420.workers.dev</a>
+                （線上版，免安裝）
+              </div>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta"><span class="tag">協作者</span></div>
+            <div>
+              <div class="row-title">HyperFrames — 一鍵拍片</div>
+              <p class="row-desc">從腳本、剪輯、字幕、真人配音、音樂、封面圖到多平台自動發佈，都能透過對話完成，大幅降低拍片的時間成本與技術門檻。</p>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- 部落格 ---------- -->
+      <section class="sec" id="blog">
+        <div class="sec-head">
+          <h2 class="h2">部落格文章</h2>
+          <a class="sec-more" href="/blog/">所有文章 →</a>
+        </div>
+        <p class="sec-intro">從零基礎入門路線、免費資源到我的轉職故事——先從這幾篇開始讀。</p>
+
+        <div class="rows">
+          <a class="row" href="/blog/how-to-start-learning-ai/">
+            <div class="row-meta"><span class="date">2026-07-14</span><span class="tag">新手入門</span></div>
+            <div>
+              <div class="row-title">學 AI 要學什麼？零基礎新手的 AI 入門教學路線</div>
+              <p class="row-desc">安裝桌面版 AI Agent、取得工具權限，然後做出第一個真實作品——例如社群自動發文系統。四步路線完整拆解。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="/blog/free-resources/">
+            <div class="row-meta"><span class="date">2026-07-22</span><span class="tag">免費資源</span></div>
+            <div>
+              <div class="row-title">我的免費資源：AI 教學影片與開源工具 Tooka</div>
+              <p class="row-desc">Threads / Instagram API 申請教學影片、Agent 實戰影片，以及開源的社群圖文模板框架 Tooka。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="/blog/from-part-time-to-freelance/">
+            <div class="row-meta"><span class="date">2026-07-22</span><span class="tag">轉職心得</span></div>
+            <div>
+              <div class="row-title">我如何從打工仔轉職成全職接案工程師：沒進過軟體業的自學路</div>
+              <p class="row-desc">從打零工維生、靠 AI 自學，到第一個案子、學會報價簽約、成為全職接案工程師的真實過程。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="/blog/why-i-built-tooka/">
+            <div class="row-meta"><span class="date">2026-07-22</span><span class="tag">AI 圖文生成</span></div>
+            <div>
+              <div class="row-title">AI 圖文生成工具怎麼選？我為什麼自己開發開源的 Tooka</div>
+              <p class="row-desc">生圖模型直出會失真跑版、Canva 類套版要手動排，模板框架＋AI Agent 是第三條路。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="/blog/threads-api-tutorial/">
+            <div class="row-meta"><span class="date">2026-07-22</span><span class="tag">Threads API</span></div>
+            <div>
+              <div class="row-title">Threads API 申請教學：從拿 Token、發出第一篇貼文到 Token 自動永久延期</div>
+              <p class="row-desc">17 張步驟截圖＋教學影片。含實測的防鎖規則：發文上限、spam 偵測、回覆頻率與 Token 60 天過期解法。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="/blog/instagram-api-tutorial/">
+            <div class="row-meta"><span class="date">2026-07-22</span><span class="tag">Instagram API</span></div>
+            <div>
+              <div class="row-title">Instagram API 申請教學：建立應用程式到自動發文，可透過企業管理後台取得永久 Token</div>
+              <p class="row-desc">IG 切換專業帳號，再到企業管理後台連結資產取得永久權限 Token——不像 Threads 要 60 天延期。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+        </div>
+      </section>
+
+      <!-- ---------- 我教什麼 ---------- -->
+      <section class="sec" id="teach">
+        <div class="sec-head">
+          <h2 class="h2">我教什麼</h2>
+        </div>
+        <p class="sec-intro">
+          想系統性學完整流程，可以看<a href="/blog/first-ai-lesson/">新手學 AI 的第一堂課（完整課綱）</a>。
+        </p>
+
+        <div class="rows">
+          <div class="row">
+            <div class="row-meta"><span class="num">01</span><span class="tag">install</span></div>
+            <div>
+              <div class="row-title">工具安裝</div>
+              <p class="row-desc">四大工具：Claude Code、Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）的安裝、工具權限與環境設定。</p>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta"><span class="num">02</span><span class="tag">api</span></div>
+            <div>
+              <div class="row-title">API 串接：自動發文、留言、私訊、收訊</div>
+              <p class="row-desc">Meta 三大 API（Facebook / Instagram / Threads）申請與帳號綁定，以及 LINE Messaging API 整合，方便做 AI 客服、自動管理客戶訊息，也方便統一管理雜亂的訊息。</p>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta"><span class="num">03</span><span class="tag">image</span></div>
+            <div>
+              <div class="row-title">生圖教學</div>
+              <p class="row-desc">用 AI 生成不跑版、不失真的社群圖文，並解決人物失真等常見問題。</p>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta"><span class="num">04</span><span class="tag">video</span></div>
+            <div>
+              <div class="row-title">拍片教學</div>
+              <p class="row-desc">用開源工具 HyperFrames，從腳本、剪輯、字幕、配音、封面圖到多平台發佈，只靠對話一條龍完成拍片。</p>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- 案例 ---------- -->
+      <section class="sec" id="cases">
+        <div class="sec-head">
+          <h2 class="h2">帶過的案例</h2>
+        </div>
+        <p class="sec-intro">實際帶過的一對一學員與公開演講——從工程師到完全非技術背景的都有。</p>
+
+        <h3 class="h3">一對一</h3>
+        <div class="rows">
+          <div class="row">
+            <div class="row-meta">WordPress 工程師</div>
+            <div>
+              <div class="row-title">安裝 Hermes 以及串接 WP 自動發文到 Threads</div>
+              <p class="row-desc">帶領完成 Codex 和 Hermes 安裝、Threads API 申請，以及 WordPress、LINE／Telegram 審核與 Threads 自動發文的完整工作流。</p>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta">香港行銷公司</div>
+            <div>
+              <div class="row-title">安裝 Codex 以及用來搜索 Threads 品牌輿情</div>
+              <p class="row-desc">於 VS Code 安裝 Codex、申請 Threads API、安裝輿情蒐集插件、撰寫搜尋腳本，並使用 GitHub CLI 上傳至公司端儲存庫。</p>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta">補教業</div>
+            <div>
+              <div class="row-title">安裝 Claude Code 並用 AI 整理 Email、行事曆並透過 LINE 提醒</div>
+              <p class="row-desc">帶領完成 Claude Code 安裝、Email 串接、LINE Messaging API 整合與排程腳本撰寫。</p>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta">精神科醫師</div>
+            <div>
+              <div class="row-title">OpenClaw 救援並協助串接免費地端模型 Gemma 4</div>
+              <p class="row-desc">於 OpenClaw GUI 介面找到設定檔、修復 JSON 格式，並將地端模型改為 Gemma 4 或串接 API。</p>
+            </div>
+            <div></div>
+          </div>
+        </div>
+
+        <h3 class="h3">公開演講</h3>
+        <div class="rows">
+          <div class="row">
+            <div class="row-meta">MixerBox</div>
+            <div>
+              <div class="row-title">如何讓 OpenClaw 斷線時自動恢復連線</div>
+              <p class="row-desc">使用 Tailscale 讓兩台 OpenClaw 互相連線，實現雙機互相救援，並在現場演示如何操作。</p>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta">TAIA 台灣人工智慧協會</div>
+            <div>
+              <div class="row-title">如何只靠對話就一條龍完成拍片</div>
+              <p class="row-desc">使用開源工具 HyperFrames，示範從腳本、剪輯、字幕、配音、音樂、封面圖到多平台自動上傳，只靠對話完成拍片的完整工作流。</p>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta">台中場講座</div>
+            <div>
+              <div class="row-title">如何用 AI 製作不跑版、不失真的社群圖文</div>
+              <p class="row-desc">現場帶大家實作用 AI 做社群圖文，解決跑版、失真、不會用設計工具的問題。因為發現現場多數人不會用 AI Agent，因此自行開發了開源的 Tooka，讓不熟 Agent 的人也能直接套用。</p>
+              <div class="row-path"><a class="lnk" href="https://github.com/js0980420/tooka" target="_blank" rel="noreferrer">Tooka 開源專案 →</a></div>
+            </div>
+            <div></div>
+          </div>
+          <div class="row">
+            <div class="row-meta">雲林場講座</div>
+            <div>
+              <div class="row-title">如何用 AI 製作不跑版、不失真的社群圖文</div>
+              <p class="row-desc">示範 AI 圖文常見的人物失真問題怎麼判斷與修復：小問題補照片重做、大問題直接重新生成，最後用 Canva 收尾排版。同樣改以自製的 Tooka 帶大家完成。</p>
+              <div class="row-path"><a class="lnk" href="https://github.com/js0980420/tooka" target="_blank" rel="noreferrer">Tooka 開源專案 →</a></div>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- 帶走 ---------- -->
+      <section class="sec" id="takeaway">
+        <div class="sec-head">
+          <h2 class="h2">帶走這一頁</h2>
+        </div>
+        <p class="sec-intro">
+          這個站的文章寫給人讀，也寫給 AI 讀。整站摘要放在 <code class="ic">llms.txt</code>，抓下來丟給你的 AI，它就知道這裡有什麼、哪一篇對應你的問題。
+        </p>
+
+        <div class="take">
+          <div class="term">
+            <div class="term-bar">
+              <span>bash</span>
+              <button class="copy" type="button" data-copy="curl -s https://aixwang.dev/llms.txt">[copy]</button>
+            </div>
+            <pre class="term-body"><code><span class="tc"># 整站摘要：服務、全部文章、開源專案、聯絡方式</span>
+<span class="tp">$</span> curl -s <span class="ts">https://aixwang.dev/llms.txt</span></code></pre>
+          </div>
+
+          <figure class="prompt">
+            <figcaption class="prompt-bar">
+              <span>prompt</span>
+              <button class="copy" type="button" data-copy="讀 https://aixwang.dev/llms.txt，
+然後照我的情況（我想做：____），
+告訴我要先裝哪個工具、第一步做什麼。">[copy]</button>
+            </figcaption>
+            <blockquote>讀 https://aixwang.dev/llms.txt，<br>然後照我的情況（我想做：<span class="fill">____</span>），<br>告訴我要先裝哪個工具、第一步做什麼。</blockquote>
+          </figure>
+        </div>
+
+        <p class="take-note">不用裝任何東西也行 — 直接把上面那行網址貼進 ChatGPT / Claude 就會讀。</p>
+      </section>
+
+      <!-- ---------- 服務（單一入口） ---------- -->
+      <section class="sec" id="services">
+        <div class="sec-head">
+          <h2 class="h2">需要有人帶你做？</h2>
+        </div>
+        <p class="sec-intro">上面的東西都免費。真的卡住、或想要有人直接把流程幫你跑完，這裡有三種合作方式。</p>
+
+        <div class="rows svc">
+          <a class="row" href="/services/one-on-one/">
+            <div class="row-meta"><span class="tag">一對一教學</span></div>
+            <div>
+              <div class="row-title">從安裝到做出第一個成品，帶你走一遍</div>
+              <p class="row-desc">雙北咖啡廳實體課，或 Google Meet／Discord 線上課。零基礎可上，帶筆電來即可；台灣各地與海外學員皆可預約線上。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="/services/speaking/">
+            <div class="row-meta"><span class="tag">演講邀約</span></div>
+            <div>
+              <div class="row-title">企業、學校、社群的 AI 主題演講與工作坊</div>
+              <p class="row-desc">AI Agent 入門、社群自動化實戰、AI 一鍵拍片、Skill 工作流設計。1 小時演講到整天工作坊皆可規劃。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+          <a class="row" href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer">
+            <div class="row-meta"><span class="tag">軟體開發</span></div>
+            <div>
+              <div class="row-title">接案開發：把重複的工作變成自動化流程</div>
+              <p class="row-desc">全職接案，做過 Line LIFF 網頁、AI 客服、CRM 後台管理系統等實際商業專案，以及 API 串接、RAG。先聊需求再報價。</p>
+            </div>
+            <div class="row-go" aria-hidden="true">→</div>
+          </a>
+        </div>
+
+        <div class="svc-foot">
+          <a class="btn btn-solid" href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer">
+            LINE 免費諮詢 <span class="arw" aria-hidden="true">→</span>
+          </a>
+          <a class="btn btn-line" href="mailto:js0980420@gmail.com">js0980420@gmail.com</a>
+          <span class="note">先說你想自動化什麼，我再建議適合的做法。</span>
+        </div>
+      </section>
+
+      <!-- ---------- FAQ ---------- -->
+      <section class="sec" id="faq">
+        <div class="sec-head">
+          <h2 class="h2">常見問題</h2>
+          <a class="sec-more" href="/faq/">完整常見問題 →</a>
+        </div>
+
+        <div class="faq">
+          <details open>
+            <summary>課前需要準備什麼？</summary>
+            <p class="faq-a">除了教學費用，還需要付費訂閱 AI。初學者只要先準備一個月 20 美元的額度就夠了。如果你要學的是自動發文或留言、私訊，才需要另外確認你有可用的 Facebook 帳號，能拿來登入 Meta 開發者後台並綁定其他要串接的帳號。</p>
+          </details>
+          <details>
+            <summary>沒有技術背景可以上嗎？</summary>
+            <p class="faq-a">可以。這門課用意在於把原本複雜的技術門檻，優化成只要對話就能完成的工作流，任何人只要會操作電腦就能上。</p>
+          </details>
+          <details>
+            <summary>為什麼不用網頁版或免費 AI？</summary>
+            <p class="faq-a">因為網頁版沒有 Agent 權限，也沒辦法做環境設定、填入申請完的 Meta API Key，更不能直接寫自動發文腳本，基本上只適合拿來問問題。免費 AI 的穩定度和能力也通常不如 Claude 或 Codex，很容易一直出錯，花掉的時間可能遠超過 20 美元。</p>
+          </details>
+          <details>
+            <summary>可以約線上教學嗎？</summary>
+            <p class="faq-a">可以，用 Google Meet 或 Discord，只要能分享螢幕畫面就可以上課；實體課則約雙北的咖啡廳。</p>
+          </details>
+          <details>
+            <summary>怎麼預約或詢問費用？</summary>
+            <p class="faq-a">直接加 LINE 免費諮詢，說明你的目標（例如想自動發文、想學 AI 拍片），我會建議適合的堂數與報價。</p>
+          </details>
+          <details>
+            <summary>Claude、Codex 預算只夠選一個的話選哪個？</summary>
+            <p class="faq-a">我會推薦 Codex。因為 5.5 更新後，額度比 Claude 多很多，而且也可以拿來當龍蝦或 Hermes 的飼料，不用太擔心被封號。</p>
+          </details>
+          <details>
+            <summary>FB、IG、Threads 的 API Token 有什麼不同？</summary>
+            <p class="faq-a">FB 跟 IG 可以透過企業管理後台（Business Manager）新增資產管理，取得永久權限的 Token；Threads 沒有這條路，只能在開發者後台申請長期 Token，效期 60 天需要延期——我開源的 Tooka 已內建自動延期，第一次手動申請後就不用怕過期。</p>
+          </details>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="mdhr" aria-hidden="true" style="margin-bottom:26px">---</div>
+
+    <div class="foot-grid">
+      <div>
+        <h4>找我</h4>
+        <ul>
+          <li><a href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer">LINE 免費諮詢</a></li>
+          <li><a href="mailto:js0980420@gmail.com">js0980420@gmail.com</a></li>
+          <li><a href="https://www.facebook.com/groups/3238547836318385" target="_blank" rel="noreferrer">Facebook 社團</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>在別的地方</h4>
+        <ul>
+          <li><a href="https://github.com/js0980420" target="_blank" rel="noreferrer">github.com/js0980420</a></li>
+          <li><a href="https://www.threads.com/@alex_wang.ai" target="_blank" rel="noreferrer">@alex_wang.ai · Threads</a></li>
+          <li><a href="https://www.instagram.com/alex_wang.ai/" target="_blank" rel="noreferrer">@alex_wang.ai · Instagram</a></li>
+          <li><a href="https://www.youtube.com/channel/UCQUY_h3ic_oPmuoRJrLvE3g" target="_blank" rel="noreferrer">YouTube 頻道</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>站台</h4>
+        <ul>
+          <li><a href="/llms.txt">/llms.txt</a></li>
+          <li><a href="/editorial-policy/">/editorial-policy</a></li>
+          <li><a href="/privacy/">/privacy</a></li>
+          <li><a href="/disclaimer/">/disclaimer</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-end">
+      <span>© 2026 Alex Wang · aixwang.dev</span>
+      <span class="eof" aria-hidden="true">&lt;!-- eof --&gt;</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* --- 複製按鈕：把可帶走的東西真的帶走 --- */
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var text = btn.getAttribute('data-copy') || '';
+      var done = function () {
+        var prev = btn.textContent;
+        btn.textContent = '[copied]';
+        btn.setAttribute('data-done', '1');
+        setTimeout(function () {
+          btn.textContent = prev;
+          btn.removeAttribute('data-done');
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  /* --- 目錄：標示目前所在段落 --- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var targets = links.map(function (a) {
+    return document.querySelector(a.getAttribute('href'));
+  });
+  if (!targets.length || targets.indexOf(null) !== -1) return;
+
+  var ticking = false;
+  function sync() {
+    ticking = false;
+    var head = parseFloat(getComputedStyle(document.documentElement)
+      .getPropertyValue('--head-h')) || 60;
+    var line = head + 90;
+    var active = 0;
+    for (var i = 0; i < targets.length; i++) {
+      if (targets[i].getBoundingClientRect().top <= line) active = i;
+    }
+    // 捲到底時固定停在最後一段
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 4) {
+      active = targets.length - 1;
+    }
+    links.forEach(function (a, i) {
+      if (i === active) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  function onScroll() {
+    if (!ticking) { ticking = true; requestAnimationFrame(sync); }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  sync();
+})();
+</script>
+
+</body>
+</html>

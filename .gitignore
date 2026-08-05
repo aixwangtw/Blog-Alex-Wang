@@ -29,3 +29,12 @@ public/images/IG_brand_asset_pack_2023/01 Static Glyph/03 Black Glyph/
 public/images/Zeabur合作.jpg
 public/images/claude-code.png
 public/images/新手學AI課程第一堂.png
+
+# 首頁原型預覽（暫時，比完刪除）
+public/_preview/
+local-preview/home-variants/
+
+# 設計紀錄：只版控首屏圖與 HTML；全頁截圖體積大且可從 HTML 重新產生
+design-history/**/desktop-1440.png
+design-history/**/desktop-1440.jpg
+design-history/**/mobile-375.png

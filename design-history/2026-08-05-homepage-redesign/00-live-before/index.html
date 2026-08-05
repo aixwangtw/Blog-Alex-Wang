@@ -1,0 +1,284 @@
+<!DOCTYPE html><html lang="zh-TW"><head><!-- Google Analytics（GA4）流量統計：gtag.js 延到頁面載入完才注入，避免佔用首次渲染的主執行緒；
+         事件在此之前先排入 dataLayer，載入後照樣送出。
+         noindex 頁面（草稿／不公開頁）完全不輸出 GA 腳本，不會被統計 --><script>
+      // 只統計正式網站；localhost、區域網路 IP 與其他預覽網址完全不載入 GA4。
+      var analyticsHosts = ['aixwang.dev', 'www.aixwang.dev'];
+      if (analyticsHosts.indexOf(window.location.hostname) !== -1) {
+        var preconnect = document.createElement('link');
+        preconnect.rel = 'preconnect';
+        preconnect.href = 'https://www.googletagmanager.com';
+        preconnect.crossOrigin = 'anonymous';
+        document.head.appendChild(preconnect);
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          window.dataLayer.push(arguments);
+        };
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-91Z2F673C0');
+
+        window.addEventListener('load', function () {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-91Z2F673C0';
+          document.head.appendChild(s);
+        });
+
+        // 自訂事件：追蹤關鍵轉換點擊（LINE 諮詢 / Tooka / YouTube）
+        document.addEventListener('click', function (e) {
+          var a = e.target.closest && e.target.closest('a[href]');
+          if (!a) return;
+          var href = a.href || '';
+          if (href.indexOf('line.me') !== -1) {
+            window.gtag('event', 'line_click', { link_url: href, page_path: location.pathname });
+          } else if (href.indexOf('/services/one-on-one') !== -1) {
+            window.gtag('event', 'one_on_one_click', { link_url: href, page_path: location.pathname });
+          } else if (href.indexOf('/services/speaking') !== -1) {
+            window.gtag('event', 'speaking_click', { link_url: href, page_path: location.pathname });
+          } else if (href.indexOf('tooka') !== -1) {
+            window.gtag('event', 'tooka_click', { link_url: href, page_path: location.pathname });
+          } else if (href.indexOf('youtube.com') !== -1 || href.indexOf('youtu.be') !== -1) {
+            window.gtag('event', 'youtube_click', { link_url: href, page_path: location.pathname });
+          }
+        });
+      }
+    </script><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI新手教學｜零基礎學 Claude Code / Codex 與社群自動發文</title><meta name="description" content="Alex 是台灣的 AI 應用講師與全職接案工程師。教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成。提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。"><!-- 允許 Google 搜尋／Discover 使用大圖預覽；unlisted 頁面則完全禁止索引 --><meta name="robots" content="max-image-preview:large"><link rel="icon" type="image/png" sizes="any" href="/favicon.png?v=2"><link rel="shortcut icon" type="image/png" href="/favicon.png?v=2"><link rel="apple-touch-icon" href="/aixwang-icon.png"><link rel="canonical" href="https://aixwang.dev/"><link rel="sitemap" href="/sitemap-index.xml"><meta property="og:type" content="website"><meta property="og:url" content="https://aixwang.dev/"><meta property="og:title" content="AI新手教學｜零基礎學 Claude Code / Codex 與社群自動發文"><meta property="og:description" content="Alex 是台灣的 AI 應用講師與全職接案工程師。教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成。提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。"><meta property="og:locale" content="zh_TW"><meta property="og:site_name" content="AI新手教學"><meta property="og:image" content="https://aixwang.dev/images/pages/home-v5.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="AI 新手教學｜從工具到自動化"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="AI新手教學｜零基礎學 Claude Code / Codex 與社群自動發文"><meta name="twitter:description" content="Alex 是台灣的 AI 應用講師與全職接案工程師。教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成。提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。"><meta name="twitter:image" content="https://aixwang.dev/images/pages/home-v5.png"><link rel="alternate" type="application/rss+xml" title="AI新手教學" href="/rss.xml"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://aixwang.dev/#website","name":"AI新手教學","alternateName":["AI Beginner Blog","aixwang"],"url":"https://aixwang.dev","description":"Alex 是台灣的 AI 應用講師與全職接案工程師。教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成。提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。","inLanguage":"zh-TW","publisher":{"@id":"https://aixwang.dev/about#person"}},{"@type":"Person","@id":"https://aixwang.dev/about#person","name":"Alex","alternateName":["王士麟","Alex Wang","艾克斯王","aixwang"],"jobTitle":"AI 應用講師 / 全職接案工程師","description":"全職接案工程師、21 萬人 OpenClaw 中文社群版主。AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片教學——盡可能把工作流程簡化成對話就能完成，只需第一次使用前的安裝、串接成本，一次性教學，受用好幾次。","knowsAbout":["AI Agent 工具","Claude Code","Codex","AI 生圖模板","Tooka","Meta API","對話式拍片","HyperFrames"],"email":"js0980420@gmail.com","url":"https://aixwang.dev/about/","image":["https://aixwang.dev/images/profile/alex-16x9.webp","https://aixwang.dev/images/profile/alex-4x3.webp","https://aixwang.dev/images/profile/alex-1x1.webp"],"sameAs":["https://www.facebook.com/groups/3238547836318385","https://www.threads.com/@alex_wang.ai","https://www.instagram.com/alex_wang.ai/","https://www.youtube.com/channel/UCQUY_h3ic_oPmuoRJrLvE3g","https://github.com/js0980420"]},{"@type":"Course","@id":"https://aixwang.dev/#course","name":"AI 新手實戰課：桌面版 Agent 與社群自動發文","description":"從桌面版 Claude Code / Codex 安裝、Meta 三大 API 串接、自動發文權限設定，到 Skill 工作流建立的零基礎 AI 實戰課程。提供一對一實體（雙北）與線上教學。","provider":{"@id":"https://aixwang.dev/about#person"},"inLanguage":"zh-TW","courseMode":["onsite","online"],"teaches":["為什麼一定要先用 Claude Code / Codex 桌面版","Threads API 申請與 Token 設定","測試自動發文與 Meta 權限設定","用 Skill 隨時修改文案與排程"]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"課前需要準備什麼？","acceptedAnswer":{"@type":"Answer","text":"除了教學費用，還需要付費訂閱 AI。初學者只要先準備一個月 20 美元的額度就夠了。如果你要學的是自動發文或留言、私訊，才需要另外確認你有可用的 Facebook 帳號，能拿來登入 Meta 開發者後台並綁定其他要串接的帳號。"}},{"@type":"Question","name":"沒有技術背景可以上嗎？","acceptedAnswer":{"@type":"Answer","text":"可以。這門課用意在於把原本複雜的技術門檻，優化成只要對話就能完成的工作流，任何人只要會操作電腦就能上。"}},{"@type":"Question","name":"為什麼不用網頁版或免費 AI？","acceptedAnswer":{"@type":"Answer","text":"因為網頁版沒有 Agent 權限，也沒辦法做環境設定、填入申請完的 Meta API Key，更不能直接寫自動發文腳本，基本上只適合拿來問問題。免費 AI 的穩定度和能力也通常不如 Claude 或 Codex，很容易一直出錯，花掉的時間可能遠超過 20 美元。"}},{"@type":"Question","name":"可以約線上教學嗎？","acceptedAnswer":{"@type":"Answer","text":"可以，用 Google Meet 或 Discord，只要能分享螢幕畫面就可以上課；實體課則約雙北的咖啡廳。"}},{"@type":"Question","name":"怎麼預約或詢問費用？","acceptedAnswer":{"@type":"Answer","text":"直接加 LINE 免費諮詢，說明你的目標（例如想自動發文、想學 AI 拍片），我會建議適合的堂數與報價。"}},{"@type":"Question","name":"Claude、Codex 預算只夠選一個的話選哪個？","acceptedAnswer":{"@type":"Answer","text":"我會推薦 Codex。因為 5.5 更新後，額度比 Claude 多很多，而且也可以拿來當龍蝦或 Hermes 的飼料，不用太擔心被封號。"}},{"@type":"Question","name":"FB、IG、Threads 的 API Token 有什麼不同？","acceptedAnswer":{"@type":"Answer","text":"FB 跟 IG 可以透過企業管理後台（Business Manager）新增資產管理，取得永久權限的 Token；Threads 沒有這條路，只能在開發者後台申請長期 Token，效期 60 天需要延期——我開源的 Tooka 已內建自動延期，第一次手動申請後就不用怕過期。"}}]}]}</script><link rel="stylesheet" href="/_astro/about.BV9tlBwv.css"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-91Z2F673C0"></script></head> <body class="min-h-screen bg-[#f7fbff] font-display text-slate-900 antialiased" style="background-image: radial-gradient(circle at 8% 0%, rgba(34, 211, 238, 0.12), transparent 28rem), radial-gradient(circle at 92% 12%, rgba(37, 99, 235, 0.08), transparent 32rem);"> <header class="fixed inset-x-0 top-0 z-50 border-b border-sky-100/80 bg-white/75 backdrop-blur-2xl"> <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4"> <a href="/" class="flex min-w-0 shrink items-center gap-2.5 sm:gap-3"> <img src="/aixwang-icon.png" alt="aixwang" width="40" height="40" class="h-9 w-9 shrink-0 rounded-2xl object-cover sm:h-10 sm:w-10"> <div class="min-w-0"> <div class="truncate text-base font-semibold tracking-tight text-[#101b4d] sm:text-lg">AI新手教學</div> <div class="hidden text-[0.65rem] uppercase tracking-[0.18em] text-slate-500 sm:block">AI Beginner Blog</div> </div> </a> <nav class="hidden items-center gap-6 text-sm text-slate-600 lg:flex"> <a href="/" class="transition hover:text-[#1688e8]">首頁</a><a href="/blog/" class="transition hover:text-[#1688e8]">部落格</a><a href="/services/one-on-one/" class="transition hover:text-[#1688e8]">一對一教學</a><a href="/services/speaking/" class="transition hover:text-[#1688e8]">演講邀約</a><a href="/faq/" class="transition hover:text-[#1688e8]">常見問題</a><a href="/about/" class="transition hover:text-[#1688e8]">關於講師</a> </nav> <div class="flex shrink-0 items-center gap-3 sm:gap-4"> <div id="search-container" class="relative"> <button id="search-toggle" type="button" aria-label="開啟搜尋" aria-expanded="false" aria-controls="search-popover" class="flex h-9 w-9 items-center justify-center rounded-full text-slate-600 transition hover:bg-sky-50 hover:text-[#1688e8] lg:hidden"> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-5 w-5" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle> <line x1="16.2" y1="16.2" x2="21" y2="21"></line> </svg> </button> <div id="search-popover" class="absolute right-0 top-full z-50 mt-3 hidden w-72 rounded-2xl border border-sky-100 bg-white p-3 shadow-xl lg:static lg:mt-0 lg:block lg:w-auto lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"> <input id="site-search" type="search" aria-label="搜尋文章" autocomplete="off" class="w-full rounded-full border border-sky-200 bg-white/90 px-3 py-1.5 text-sm text-slate-700 outline-none transition-all focus:border-sky-400 lg:w-40 lg:focus:w-56" style=""> <div id="search-examples" class="mt-3 lg:hidden"> <div class="mb-1 px-2 text-xs text-slate-400">搜尋範例</div> <button type="button" data-search-example="新手要怎麼學 AI" data-search-query="AI 入門" class="block w-full rounded-xl px-2 py-1.5 text-left text-sm text-slate-600 hover:bg-sky-50">新手要怎麼學 AI</button> <button type="button" data-search-example="如何做自動發文" data-search-query="自動發文" class="block w-full rounded-xl px-2 py-1.5 text-left text-sm text-slate-600 hover:bg-sky-50">如何做自動發文</button> <button type="button" data-search-example="如何自動拍片" data-search-query="教學影片" class="block w-full rounded-xl px-2 py-1.5 text-left text-sm text-slate-600 hover:bg-sky-50">如何自動拍片</button> </div> <div id="search-results" class="mt-3 hidden max-h-80 w-full overflow-y-auto rounded-2xl border border-sky-100 bg-white p-2 shadow-xl lg:absolute lg:right-0 lg:top-full lg:w-80"></div> </div> </div> <a href="https://www.facebook.com/groups/3238547836318385" target="_blank" rel="noreferrer" aria-label="Facebook 社團" class="hidden text-slate-500 transition hover:text-[#1688e8] lg:block"> <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true"> <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path> </svg> </a> <a href="https://www.threads.com/@alex_wang.ai" target="_blank" rel="noreferrer" aria-label="Threads 個人檔案" class="hidden text-slate-500 transition hover:text-[#1688e8] lg:block"> <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true"> <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.734 7.847c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221z"></path> </svg> </a> <a href="https://www.youtube.com/channel/UCQUY_h3ic_oPmuoRJrLvE3g" target="_blank" rel="noreferrer" aria-label="YouTube 頻道" class="hidden text-slate-500 transition hover:text-[#1688e8] lg:block"> <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true"> <path d="M23.498 6.186a3.003 3.003 0 0 0-2.112-2.123C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.386.563A3.003 3.003 0 0 0 .502 6.186 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .502 5.814 3.003 3.003 0 0 0 2.112 2.123C4.495 20.5 12 20.5 12 20.5s7.505 0 9.386-.563a3.003 3.003 0 0 0 2.112-2.123A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"></path> </svg> </a> <span class="hidden sm:block"> <a href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer" class="rounded-full text-sm font-semibold transition px-4 py-2 bg-[#06c755] text-white hover:bg-[#05b84d]"> 免費諮詢 </a> </span> <button id="menu-toggle" type="button" aria-label="開啟選單" aria-expanded="false" class="text-slate-600 transition-transform duration-300 hover:text-[#1688e8] lg:hidden"> <svg id="icon-burger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-6 w-6" aria-hidden="true"> <line x1="4" y1="6" x2="20" y2="6"></line> <line x1="4" y1="12" x2="20" y2="12"></line> <line x1="4" y1="18" x2="20" y2="18"></line> </svg> <svg id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="hidden h-6 w-6" aria-hidden="true"> <line x1="6" y1="6" x2="18" y2="18"></line> <line x1="18" y1="6" x2="6" y2="18"></line> </svg> </button> </div> </div> <div id="mobile-menu" class="max-h-0 overflow-hidden bg-white/95 px-6 opacity-0 transition-[max-height,opacity,padding] duration-300 ease-in-out lg:hidden"> <nav class="flex flex-col gap-1 text-slate-700"> <a href="/" class="rounded-xl px-3 py-2 transition hover:bg-sky-50 hover:text-[#1688e8]">首頁</a><a href="/blog/" class="rounded-xl px-3 py-2 transition hover:bg-sky-50 hover:text-[#1688e8]">部落格</a><a href="/services/one-on-one/" class="rounded-xl px-3 py-2 transition hover:bg-sky-50 hover:text-[#1688e8]">一對一教學</a><a href="/services/speaking/" class="rounded-xl px-3 py-2 transition hover:bg-sky-50 hover:text-[#1688e8]">演講邀約</a><a href="/faq/" class="rounded-xl px-3 py-2 transition hover:bg-sky-50 hover:text-[#1688e8]">常見問題</a><a href="/about/" class="rounded-xl px-3 py-2 transition hover:bg-sky-50 hover:text-[#1688e8]">關於講師</a> </nav> <div class="mt-4 flex items-center gap-5 border-t border-slate-100 px-3 pt-4"> <a href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer" aria-label="LINE 免費諮詢" class="text-[#06c755] transition hover:opacity-80"> <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true"> <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"></path> </svg> </a> <a href="https://www.facebook.com/groups/3238547836318385" target="_blank" rel="noreferrer" aria-label="Facebook 社團" class="text-slate-500 transition hover:text-[#1688e8]"> <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true"> <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path> </svg> </a> <a href="https://www.threads.com/@alex_wang.ai" target="_blank" rel="noreferrer" aria-label="Threads 個人檔案" class="text-slate-500 transition hover:text-[#1688e8]"> <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true"> <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.734 7.847c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221z"></path> </svg> </a> <a href="https://www.youtube.com/channel/UCQUY_h3ic_oPmuoRJrLvE3g" target="_blank" rel="noreferrer" aria-label="YouTube 頻道" class="text-slate-500 transition hover:text-[#1688e8]"> <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true"> <path d="M23.498 6.186a3.003 3.003 0 0 0-2.112-2.123C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.386.563A3.003 3.003 0 0 0 .502 6.186 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .502 5.814 3.003 3.003 0 0 0 2.112 2.123C4.495 20.5 12 20.5 12 20.5s7.505 0 9.386-.563a3.003 3.003 0 0 0 2.112-2.123A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"></path> </svg> </a> </div> </div> </header> <script>
+      (function () {
+        // 漢堡選單（滑順展開收合）
+        var btn = document.getElementById('menu-toggle');
+        var menu = document.getElementById('mobile-menu');
+        var iconBurger = document.getElementById('icon-burger');
+        var iconClose = document.getElementById('icon-close');
+        if (btn && menu) {
+          btn.addEventListener('click', function () {
+            var open = btn.getAttribute('aria-expanded') === 'true';
+            if (open) {
+              menu.style.maxHeight = '0';
+              menu.classList.add('opacity-0');
+              menu.classList.remove('border-t', 'border-slate-200', 'py-4');
+            } else {
+              menu.classList.add('border-t', 'border-slate-200', 'py-4');
+              menu.classList.remove('opacity-0');
+              menu.style.maxHeight = menu.scrollHeight + 40 + 'px';
+            }
+            btn.setAttribute('aria-expanded', String(!open));
+            btn.setAttribute('aria-label', open ? '開啟選單' : '關閉選單');
+            iconBurger.classList.toggle('hidden', !open);
+            iconClose.classList.toggle('hidden', open);
+            btn.style.transform = open ? '' : 'rotate(90deg)';
+          });
+        }
+
+        // 全站搜尋
+        var container = document.getElementById('search-container');
+        var toggle = document.getElementById('search-toggle');
+        var popover = document.getElementById('search-popover');
+        var input = document.getElementById('site-search');
+        var box = document.getElementById('search-results');
+        var examples = document.getElementById('search-examples');
+        var pagefind = null;
+        var pagefindPromise = null;
+        var fallbackIndex = null;
+        var debounceTimer = null;
+        var searchSequence = 0;
+        var activeResult = -1;
+        function isMobileSearch() {
+          return window.matchMedia('(max-width: 1023px)').matches;
+        }
+        function openSearch() {
+          if (!popover) return;
+          popover.classList.remove('hidden');
+          if (toggle) {
+            toggle.setAttribute('aria-expanded', 'true');
+            toggle.setAttribute('aria-label', '關閉搜尋');
+          }
+          window.setTimeout(function () { input && input.focus(); }, 0);
+        }
+        function closeSearch() {
+          if (isMobileSearch() && popover) popover.classList.add('hidden');
+          if (toggle) {
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.setAttribute('aria-label', '開啟搜尋');
+          }
+          if (box) box.classList.add('hidden');
+        }
+        function loadFallback() {
+          if (fallbackIndex) return Promise.resolve(fallbackIndex);
+          return fetch('/search-index.json')
+            .then(function (r) { return r.json(); })
+            .then(function (d) { fallbackIndex = d; return d; });
+        }
+        function loadPagefind() {
+          if (pagefind) return Promise.resolve(pagefind);
+          if (pagefindPromise) return pagefindPromise;
+          pagefindPromise = new Function('return import("/pagefind/pagefind.js")')()
+            .then(function (module) {
+              pagefind = module;
+              return pagefind.init().then(function () { return pagefind; });
+            })
+            .catch(function () {
+              pagefind = null;
+              pagefindPromise = null;
+              return null;
+            });
+          return pagefindPromise;
+        }
+        function escapeHtml(value) {
+          return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+        }
+        function render(list) {
+          activeResult = list.length ? 0 : -1;
+          if (!list.length) {
+            box.innerHTML = '<div class="px-3 py-2 text-sm text-slate-400">沒有符合的文章</div>';
+          } else {
+            box.innerHTML = list
+              .slice(0, 8)
+              .map(function (item, index) {
+                return '<a href="' + escapeHtml(item.u) + '" data-search-result="' + index + '" class="search-result-item block rounded-xl px-3 py-2 leading-5 text-slate-700 hover:bg-sky-50 ' + (index === 0 ? 'bg-sky-50' : '') + '">' +
+                  '<span class="block text-sm font-medium">' + escapeHtml(item.t) + '</span>' +
+                  (item.d ? '<span class="mt-1 block text-xs leading-5 text-slate-500">' + item.d + '</span>' : '') +
+                  '</a>';
+              })
+              .join('');
+          }
+          box.classList.remove('hidden');
+        }
+        function renderLoading() {
+          box.innerHTML = '<div class="px-3 py-2 text-sm text-slate-400">搜尋中…</div>';
+          box.classList.remove('hidden');
+        }
+        function updateActiveResult() {
+          box.querySelectorAll('.search-result-item').forEach(function (item, index) {
+            item.classList.toggle('bg-sky-50', index === activeResult);
+          });
+        }
+        function searchFallback(query, sequence) {
+          return loadFallback().then(function (items) {
+            if (sequence !== searchSequence) return;
+            var q = query.toLowerCase();
+            render(items
+              .filter(function (item) {
+                return (item.t + item.d + item.g).toLowerCase().indexOf(q) !== -1;
+              })
+              .map(function (item) {
+                return { u: item.u, t: item.t, d: escapeHtml(item.d) };
+              }));
+          });
+        }
+        function executeSearch(query) {
+          var sequence = ++searchSequence;
+          renderLoading();
+          loadPagefind().then(function (engine) {
+            if (!engine) return searchFallback(query, sequence);
+            return engine.search(query).then(function (search) {
+              return Promise.all(search.results.slice(0, 8).map(function (result) {
+                return result.data();
+              }));
+            }).then(function (results) {
+              if (!results || sequence !== searchSequence) return;
+              render(results.map(function (result) {
+                return {
+                  u: result.url,
+                  t: result.meta && result.meta.title ? result.meta.title : result.url,
+                  d: result.excerpt || '',
+                };
+              }));
+            }).catch(function () {
+              return searchFallback(query, sequence);
+            });
+          });
+        }
+        function searchFor(query, immediate) {
+          var q = query.trim().toLowerCase();
+          if (examples) examples.classList.toggle('hidden', !!q);
+          window.clearTimeout(debounceTimer);
+          if (!q) {
+            searchSequence++;
+            box.classList.add('hidden');
+            return;
+          }
+          if (immediate) executeSearch(q);
+          else debounceTimer = window.setTimeout(function () { executeSearch(q); }, 200);
+        }
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            var open = toggle.getAttribute('aria-expanded') === 'true';
+            if (open) closeSearch();
+            else openSearch();
+          });
+        }
+        if (input && box) {
+          input.addEventListener('focus', loadPagefind);
+          input.addEventListener('input', function () {
+            searchFor(input.value, false);
+          });
+          input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+              closeSearch();
+              if (toggle) toggle.focus();
+              return;
+            }
+            var results = box.querySelectorAll('.search-result-item');
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              if (results.length) {
+                activeResult = Math.min(activeResult + 1, results.length - 1);
+                updateActiveResult();
+                results[activeResult].scrollIntoView({ block: 'nearest' });
+              }
+              return;
+            }
+            if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              if (results.length) {
+                activeResult = Math.max(activeResult - 1, 0);
+                updateActiveResult();
+                results[activeResult].scrollIntoView({ block: 'nearest' });
+              }
+              return;
+            }
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              var a = results[activeResult] || results[0];
+              if (a) location.href = a.getAttribute('href');
+            }
+          });
+          if (examples) {
+            examples.addEventListener('click', function (e) {
+              var button = e.target.closest('[data-search-example]');
+              if (!button) return;
+              input.value = button.getAttribute('data-search-example') || '';
+              searchFor(button.getAttribute('data-search-query') || input.value, true);
+              input.focus();
+            });
+          }
+          document.addEventListener('click', function (e) {
+            if (container && !container.contains(e.target)) closeSearch();
+          });
+          document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+              e.preventDefault();
+              openSearch();
+            }
+          });
+        }
+      })();
+    </script> <main data-pagefind-body="" class="pt-28 lg:pt-20">   <section class="px-6 pt-8 md:pt-16"> <div class="mx-auto max-w-6xl"> <div class="mx-auto max-w-3xl text-center"> <h1 class="text-2xl font-semibold leading-snug tracking-tight text-slate-900 md:text-5xl md:leading-snug">
+AI 工具很多，不知道哪個適合你？我提供免費諮詢
+</h1> <p class="mt-4 text-base leading-7 text-slate-700 md:mt-6 md:text-lg md:leading-8">
+我是 Alex——AI 講師、全職接案工程師、全台最大龍蝦（OpenClaw）社團版主（21
+          萬人）。我教你 <strong>4 大 AI Agent 的安裝使用、生圖、拍片</strong>，以及<strong>讓 AI 跟你的社群軟體互動的 API 串接</strong>——例如用 LINE 跟 AI 對話，整理其他平台的訊息——全部打包成「對話就能完成」的工作流，<strong>一次學習，多次受用</strong>。
+</p> <div class="mt-6 flex flex-wrap justify-center gap-3 md:mt-8"> <a href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer" class="rounded-full text-sm font-semibold transition px-6 py-3 bg-[#06c755] text-white hover:bg-[#05b84d]"> LINE 免費諮詢 </a> <a href="/blog/free-resources/" class="rounded-full text-sm font-semibold transition px-6 py-3 border border-sky-200 bg-white/80 text-slate-800 hover:border-sky-400 hover:bg-sky-50"> 先看免費資源 </a> </div> <p class="mt-5 text-sm leading-6 text-slate-500 md:text-base md:leading-7">
+加 LINE 描述需求：<a href="/blog/free-resources/" class="text-[#1688e8] underline underline-offset-4">免費文章、影片</a>有提到的內容<strong>完全免費</strong>；想有人手把手帶著學，再考慮<a href="/services/one-on-one/" class="text-[#1688e8] underline underline-offset-4">實體或線上一對一</a>。
+</p> </div> </div> </section>  <section id="free-resources" class="px-6 py-20"> <div class="mx-auto max-w-6xl"> <div class="flex items-end justify-between gap-4"> <h2 class="font-semibold text-stone-50 text-3xl md:text-4xl"> 我的免費資源 </h2> <a href="/blog/free-resources/" class="text-sm font-semibold text-[#1688e8]">全部免費資源 →</a> </div> <p class="mt-4 max-w-3xl leading-8 text-slate-700">
+教學影片照著做就能跑通；開源工具 Tooka 做社群圖文＋一鍵發佈。卡關了再來找我就好。
+</p> <div class="mt-10 grid gap-6 lg:grid-cols-3"> <article class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] overflow-hidden">  <div class="aspect-video w-full bg-black"> <iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/nTYrG7EuFHA" title="Threads API 申請教學" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe> </div> <div class="p-6"> <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs uppercase tracking-wide text-slate-600">API 教學</span> <h3 class="mt-4 text-xl font-semibold text-slate-900">Threads API 申請教學</h3> <p class="mt-3 leading-7 text-slate-600">聚焦自動發文、留言回覆與 token 申請流程的實戰教學代表作。</p> </div>  </article><article class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] overflow-hidden">  <div class="aspect-video w-full bg-black"> <iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/O1qfeDIZRkQ" title="Instagram API 申請教學：從 Meta 開發者後台到自動發文第一步" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe> </div> <div class="p-6"> <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs uppercase tracking-wide text-slate-600">API 教學</span> <h3 class="mt-4 text-xl font-semibold text-slate-900">Instagram API 申請教學：從 Meta 開發者後台到自動發文第一步</h3> <p class="mt-3 leading-7 text-slate-600">Instagram API 的申請流程實戰：從 Meta 開發者後台設定，一路做到自動發文的第一步。</p> </div>  </article><article class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] overflow-hidden">  <div class="aspect-video w-full bg-black"> <video class="h-full w-full" src="/videos/tooka-workflow-demo.mp4" controls="" preload="metadata" playsinline=""></video> </div> <div class="p-6"> <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs uppercase tracking-wide text-slate-600">AI 圖文</span> <h3 class="mt-4 text-xl font-semibold text-slate-900">Tooka：AI 生成社群圖文的實際工作流</h3> <p class="mt-3 leading-7 text-slate-600">用中文描述需求，AI Agent 透過我開源的 Tooka 生成 1080×1350 輪播圖文並發佈的完整流程示範。</p> </div>  </article> </div> </div> </section>  <section id="teaching-cases" class="px-6 py-16"> <div class="mx-auto max-w-6xl"> <div class="flex items-end justify-between gap-4"> <h2 class="font-semibold text-stone-50 text-3xl md:text-4xl"> 一對一教學經歷 </h2> <a href="/services/one-on-one/" class="text-sm font-semibold text-[#1688e8]">一對一教學詳情 →</a> </div> <p class="mt-4 max-w-3xl leading-8 text-slate-700">
+實際帶過的一對一教學案例——從工程師到完全非技術背景的學員都有。
+</p> <div class="mt-10 grid gap-5 md:grid-cols-2"> <div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] p-7">  <div class="flex items-center gap-3"> <img src="/_astro/hermes-logo.BAarh-tH_1hMJGV.webp" alt="Hermes Agent 吉祥物" loading="lazy" decoding="async" fetchpriority="auto" width="96" height="97" class="h-10 w-10 shrink-0 rounded-xl object-contain"> <h3 class="text-lg font-semibold leading-snug text-slate-900">安裝 Hermes 以及串接 WP 自動發文到 Threads</h3> </div> <p class="mt-3 text-sm text-sky-700">學員背景：WordPress 工程師</p> <p class="mt-3 leading-7 text-slate-600">帶領完成 Codex 和 Hermes 安裝、Threads API 申請，以及 WordPress、LINE／Telegram 審核與 Threads 自動發文的完整工作流。</p>  </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] p-7">  <div class="flex items-center gap-3"> <img src="/_astro/codex-logo.C_i6eVJL_Z1OPb4r.webp" alt="Codex 標誌" loading="lazy" decoding="async" fetchpriority="auto" width="96" height="96" class="h-10 w-10 shrink-0 rounded-xl object-contain"> <h3 class="text-lg font-semibold leading-snug text-slate-900">安裝 Codex 以及用來搜索 Threads 品牌輿情</h3> </div> <p class="mt-3 text-sm text-sky-700">學員背景：香港行銷公司</p> <p class="mt-3 leading-7 text-slate-600">於 VS Code 安裝 Codex、申請 Threads API、安裝輿情蒐集插件、撰寫搜尋腳本，並使用 GitHub CLI 上傳至公司端儲存庫。</p>  </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] p-7">  <div class="flex items-center gap-3"> <img src="/_astro/claude-logo.CJtB_HZI_ZbA2iL.webp" alt="Claude 標誌" loading="lazy" decoding="async" fetchpriority="auto" width="96" height="96" class="h-10 w-10 shrink-0 rounded-xl object-contain"> <h3 class="text-lg font-semibold leading-snug text-slate-900">安裝 Claude Code 並用 AI 整理 Email、行事曆並透過 LINE 提醒</h3> </div> <p class="mt-3 text-sm text-sky-700">學員背景：補教業</p> <p class="mt-3 leading-7 text-slate-600">帶領完成 Claude Code 安裝、Email 串接、LINE Messaging API 整合與排程腳本撰寫。</p>  </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] p-7">  <div class="flex items-center gap-3"> <img src="/_astro/openclaw-lobster.CAUkLQ-1_1BMzMo.webp" alt="OpenClaw 龍蝦吉祥物" loading="lazy" decoding="async" fetchpriority="auto" width="96" height="96" class="h-10 w-10 shrink-0 rounded-xl object-contain"> <h3 class="text-lg font-semibold leading-snug text-slate-900">OpenClaw 救援並協助串接免費地端模型 Gemma 4</h3> </div> <p class="mt-3 text-sm text-sky-700">學員背景：精神科醫師</p> <p class="mt-3 leading-7 text-slate-600">於 OpenClaw GUI 介面找到設定檔、修復 JSON 格式，並將地端模型改為 Gemma 4 或串接 API。</p>  </div> </div> </div> </section>  <section id="speaking" class="px-6 py-16"> <div class="mx-auto max-w-6xl"> <div class="flex items-end justify-between gap-4"> <h2 class="font-semibold text-stone-50 text-3xl md:text-4xl"> 公眾演講經歷 </h2> <a href="/services/speaking/" class="text-sm font-semibold text-[#1688e8]">演講邀約詳情 →</a> </div> <div class="mt-10 grid gap-5 md:grid-cols-2"> <div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] overflow-hidden">  <img src="/_astro/mixerbox-talk.BG3BDCD__1qo4cy.webp" alt="MixerBox 講座授課現場" loading="lazy" decoding="async" fetchpriority="auto" width="2048" height="1536" class="h-48 w-full object-cover"> <div class="p-6"> <p class="text-xs uppercase tracking-[0.26em] text-sky-700">MixerBox</p> <h3 class="mt-3 text-lg font-semibold text-slate-900">如何讓 OpenClaw 斷線時自動恢復連線</h3> <p class="mt-3 leading-7 text-slate-600">使用 Tailscale 讓兩台 OpenClaw 互相連線，實現雙機互相救援，並在現場演示如何操作。</p>  </div>  </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] overflow-hidden">  <img src="/_astro/taia-talk.DCZoS-na_2pPQj7.webp" alt="TAIA 台灣人工智慧協會講座授課現場" loading="lazy" decoding="async" fetchpriority="auto" width="1477" height="1108" class="h-48 w-full object-cover"> <div class="p-6"> <p class="text-xs uppercase tracking-[0.26em] text-sky-700">TAIA 台灣人工智慧協會</p> <h3 class="mt-3 text-lg font-semibold text-slate-900">如何只靠對話就一條龍完成拍片</h3> <p class="mt-3 leading-7 text-slate-600">使用開源工具 HyperFrames，示範從腳本、剪輯、字幕、配音、音樂、封面圖到多平台自動上傳，只靠對話完成拍片的完整工作流。</p>  </div>  </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] overflow-hidden">  <img src="/_astro/taichung-talk.CWxiYtAl_Z1JATYl.webp" alt="台中場講座授課現場" loading="lazy" decoding="async" fetchpriority="auto" width="1440" height="1440" class="h-48 w-full object-cover"> <div class="p-6"> <p class="text-xs uppercase tracking-[0.26em] text-sky-700">台中場講座</p> <h3 class="mt-3 text-lg font-semibold text-slate-900">如何用 AI 製作不跑版、不失真的社群圖文</h3> <p class="mt-3 leading-7 text-slate-600">現場帶大家實作用 AI 做出社群圖文，解決跑版、失真、不會用設計工具的問題。因為發現現場大多數人都不會用 AI Agent，因此自行開發了開源的社群圖文模板工具 Tooka，讓不熟 Agent 的人也能直接套用。</p> <a href="https://github.com/js0980420/tooka" target="_blank" rel="noreferrer" class="mt-4 inline-block text-sm font-semibold text-[#1688e8]"> Tooka 開源專案 → </a> </div>  </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] overflow-hidden">  <img src="/_astro/yunlin-talk.Dyh5E7fm_11Yi0A.webp" alt="雲林場講座授課現場" loading="lazy" decoding="async" fetchpriority="auto" width="1440" height="1440" class="h-48 w-full object-cover"> <div class="p-6"> <p class="text-xs uppercase tracking-[0.26em] text-sky-700">雲林場講座</p> <h3 class="mt-3 text-lg font-semibold text-slate-900">如何用 AI 製作不跑版、不失真的社群圖文</h3> <p class="mt-3 leading-7 text-slate-600">示範 AI 圖文常見的人物失真問題怎麼判斷與修復：小問題補照片重做、大問題直接重新生成，最後用 Canva 收尾排版。同樣因應現場學員多數不會用 AI Agent，改以自製的社群圖文模板工具 Tooka 帶大家完成。</p> <a href="https://github.com/js0980420/tooka" target="_blank" rel="noreferrer" class="mt-4 inline-block text-sm font-semibold text-[#1688e8]"> Tooka 開源專案 → </a> </div>  </div> </div> </div> </section>  <section id="teaching-content" class="px-6 py-16"> <div class="mx-auto max-w-6xl"> <h2 class="font-semibold text-stone-50 text-3xl md:text-4xl"> 我主要的教學內容 </h2> <p class="mt-4 max-w-3xl leading-8 text-slate-700">
+想系統性學完整流程，可以看<a href="/blog/first-ai-lesson/" class="text-[#1688e8] underline underline-offset-4">新手學 AI 的第一堂課（完整課綱）</a>。
+</p> <div class="mt-10 grid gap-5 md:grid-cols-2"> <div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] p-7">  <h3 class="text-xl font-semibold text-slate-900">工具安裝</h3> <p class="mt-3 leading-7 text-slate-600">四大工具：Claude Code、Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）的安裝、工具權限與環境設定。</p> <div class="mt-4 flex items-center gap-3"> <img src="/_astro/claude-code-logo.D_ikSYls_s5Jn2.webp" alt="Claude Code 標誌" loading="lazy" decoding="async" fetchpriority="auto" width="225" height="224" class="h-8 w-8 rounded-lg object-contain"><img src="/_astro/codex-logo.C_i6eVJL_Zbncbv.webp" alt="Codex 標誌" loading="lazy" decoding="async" fetchpriority="auto" width="225" height="225" class="h-8 w-8 rounded-lg object-contain"><img src="/_astro/openclaw-lobster.CAUkLQ-1_hXkJK.webp" alt="OpenClaw 龍蝦吉祥物" loading="lazy" decoding="async" fetchpriority="auto" width="225" height="225" class="h-8 w-8 rounded-lg object-contain"><img src="/_astro/hermes-logo.BAarh-tH_Z1hVMQ7.webp" alt="Hermes Agent 吉祥物" loading="lazy" decoding="async" fetchpriority="auto" width="1772" height="1799" class="h-8 w-8 rounded-lg object-contain"> </div> </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] p-7">  <h3 class="text-xl font-semibold text-slate-900">API 串接：自動發文、留言、私訊、收訊</h3> <p class="mt-3 leading-7 text-slate-600">Meta 三大 API（Facebook / Instagram / Threads）申請與帳號綁定，以及 LINE Messaging API 整合，方便做 AI 客服、自動管理客戶訊息，也方便統一管理雜亂的訊息。</p> <div class="mt-4 flex items-center gap-3"> <img src="/_astro/facebook-logo.CmgJh3Hd_2apgcy.webp" alt="Facebook 標誌" loading="lazy" decoding="async" fetchpriority="auto" width="2084" height="2084" class="h-8 w-8 rounded-lg object-contain"><img src="/_astro/instagram-logo.BaS-qmxH_29d1wB.webp" alt="Instagram 標誌" loading="lazy" decoding="async" fetchpriority="auto" width="1024" height="1024" class="h-8 w-8 rounded-lg object-contain"><img src="/_astro/threads-logo.BogzD8aR_Z22Bxne.webp" alt="Threads 標誌" loading="lazy" decoding="async" fetchpriority="auto" width="300" height="300" class="h-8 w-8 rounded-lg object-contain"><img src="/_astro/line-logo.TGfgywqj_ZbXN9.webp" alt="LINE 標誌" loading="lazy" decoding="async" fetchpriority="auto" width="225" height="225" class="h-8 w-8 rounded-lg object-contain"> </div> </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] p-7">  <h3 class="text-xl font-semibold text-slate-900">生圖教學</h3> <p class="mt-3 leading-7 text-slate-600">用 AI 生成不跑版、不失真的社群圖文，並解決人物失真等常見問題。</p>  </div><div class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.06)] p-7">  <h3 class="text-xl font-semibold text-slate-900">拍片教學</h3> <p class="mt-3 leading-7 text-slate-600">用開源工具 HyperFrames，從腳本、剪輯、字幕、配音、封面圖到多平台發佈，只靠對話一條龍完成拍片。</p>  </div> </div> </div> </section>  <section id="featured" class="px-6 py-16"> <div class="mx-auto max-w-6xl"> <div class="flex items-end justify-between gap-4"> <h2 class="font-semibold text-stone-50 text-3xl md:text-4xl"> 精選文章 </h2> <a href="/blog/" class="text-sm font-semibold text-[#1688e8]">所有文章 →</a> </div> <p class="mt-4 max-w-3xl leading-8 text-slate-700">從零基礎入門路線、免費資源到我的轉職故事——先從這幾篇開始讀。</p> <div class="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4"> <a href="/blog/codex-windows-wsl-install/" class="flex flex-col justify-between rounded-2xl border border-sky-200/80 bg-white/80 p-5 shadow-[0_8px_24px_rgba(30,64,175,0.05)] transition hover:border-sky-400 hover:shadow-[0_10px_28px_rgba(30,64,175,0.1)]"> <span class="text-xs uppercase tracking-wide text-sky-700">Codex</span> <h3 class="mt-3 text-sm font-semibold leading-6 text-slate-900">Codex 安裝教學（上）：VS Code + Codex 插件版，不用碰終端機</h3> <span class="mt-4 text-xs font-semibold text-[#1688e8]">閱讀全文 →</span> </a><a href="/blog/free-resources/" class="flex flex-col justify-between rounded-2xl border border-sky-200/80 bg-white/80 p-5 shadow-[0_8px_24px_rgba(30,64,175,0.05)] transition hover:border-sky-400 hover:shadow-[0_10px_28px_rgba(30,64,175,0.1)]"> <span class="text-xs uppercase tracking-wide text-sky-700">免費資源</span> <h3 class="mt-3 text-sm font-semibold leading-6 text-slate-900">我的免費資源：AI 教學影片與開源工具 Tooka</h3> <span class="mt-4 text-xs font-semibold text-[#1688e8]">閱讀全文 →</span> </a><a href="/blog/from-part-time-to-freelance/" class="flex flex-col justify-between rounded-2xl border border-sky-200/80 bg-white/80 p-5 shadow-[0_8px_24px_rgba(30,64,175,0.05)] transition hover:border-sky-400 hover:shadow-[0_10px_28px_rgba(30,64,175,0.1)]"> <span class="text-xs uppercase tracking-wide text-sky-700">轉職心得</span> <h3 class="mt-3 text-sm font-semibold leading-6 text-slate-900">我如何從打工仔轉職成全職接案工程師：沒進過軟體業的自學路</h3> <span class="mt-4 text-xs font-semibold text-[#1688e8]">閱讀全文 →</span> </a><a href="/blog/why-i-built-tooka/" class="flex flex-col justify-between rounded-2xl border border-sky-200/80 bg-white/80 p-5 shadow-[0_8px_24px_rgba(30,64,175,0.05)] transition hover:border-sky-400 hover:shadow-[0_10px_28px_rgba(30,64,175,0.1)]"> <span class="text-xs uppercase tracking-wide text-sky-700">AI 圖文生成</span> <h3 class="mt-3 text-sm font-semibold leading-6 text-slate-900">AI 圖文生成工具怎麼選？我為什麼自己開發開源的 Tooka</h3> <span class="mt-4 text-xs font-semibold text-[#1688e8]">閱讀全文 →</span> </a><a href="/blog/threads-api-tutorial/" class="flex flex-col justify-between rounded-2xl border border-sky-200/80 bg-white/80 p-5 shadow-[0_8px_24px_rgba(30,64,175,0.05)] transition hover:border-sky-400 hover:shadow-[0_10px_28px_rgba(30,64,175,0.1)]"> <span class="text-xs uppercase tracking-wide text-sky-700">Threads API</span> <h3 class="mt-3 text-sm font-semibold leading-6 text-slate-900">Threads API 申請教學：從拿 Token、發出第一篇貼文到 Token 自動永久延期</h3> <span class="mt-4 text-xs font-semibold text-[#1688e8]">閱讀全文 →</span> </a><a href="/blog/instagram-api-tutorial/" class="flex flex-col justify-between rounded-2xl border border-sky-200/80 bg-white/80 p-5 shadow-[0_8px_24px_rgba(30,64,175,0.05)] transition hover:border-sky-400 hover:shadow-[0_10px_28px_rgba(30,64,175,0.1)]"> <span class="text-xs uppercase tracking-wide text-sky-700">Instagram API</span> <h3 class="mt-3 text-sm font-semibold leading-6 text-slate-900">Instagram API 申請教學：建立應用程式到自動發文，可透過企業管理後台取得永久 Token</h3> <span class="mt-4 text-xs font-semibold text-[#1688e8]">閱讀全文 →</span> </a> </div> </div> </section>  <section id="faq" class="px-6 py-16"> <div class="mx-auto max-w-4xl"> <h2 class="font-semibold text-stone-50 text-3xl md:text-4xl"> 一對一教學常見問題 </h2> <div class="mt-10"> <div class="space-y-4"> <details class="group rounded-[1.5rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)] open:border-sky-300"> <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-stone-100 [&amp;::-webkit-details-marker]:hidden"> 課前需要準備什麼？ <span class="text-stone-400 transition-transform group-open:rotate-180">▾</span> </summary> <div class="border-t border-sky-100 px-6 pb-6 pt-4 leading-7 text-stone-300/85"> 除了教學費用，還需要付費訂閱 AI。初學者只要先準備一個月 20 美元的額度就夠了。如果你要學的是自動發文或留言、私訊，才需要另外確認你有可用的 Facebook 帳號，能拿來登入 Meta 開發者後台並綁定其他要串接的帳號。 </div> </details><details class="group rounded-[1.5rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)] open:border-sky-300"> <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-stone-100 [&amp;::-webkit-details-marker]:hidden"> 沒有技術背景可以上嗎？ <span class="text-stone-400 transition-transform group-open:rotate-180">▾</span> </summary> <div class="border-t border-sky-100 px-6 pb-6 pt-4 leading-7 text-stone-300/85"> 可以。這門課用意在於把原本複雜的技術門檻，優化成只要對話就能完成的工作流，任何人只要會操作電腦就能上。 </div> </details><details class="group rounded-[1.5rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)] open:border-sky-300"> <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-stone-100 [&amp;::-webkit-details-marker]:hidden"> 為什麼不用網頁版或免費 AI？ <span class="text-stone-400 transition-transform group-open:rotate-180">▾</span> </summary> <div class="border-t border-sky-100 px-6 pb-6 pt-4 leading-7 text-stone-300/85"> 因為網頁版沒有 Agent 權限，也沒辦法做環境設定、填入申請完的 Meta API Key，更不能直接寫自動發文腳本，基本上只適合拿來問問題。免費 AI 的穩定度和能力也通常不如 Claude 或 Codex，很容易一直出錯，花掉的時間可能遠超過 20 美元。 </div> </details><details class="group rounded-[1.5rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)] open:border-sky-300"> <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-stone-100 [&amp;::-webkit-details-marker]:hidden"> 可以約線上教學嗎？ <span class="text-stone-400 transition-transform group-open:rotate-180">▾</span> </summary> <div class="border-t border-sky-100 px-6 pb-6 pt-4 leading-7 text-stone-300/85"> 可以，用 Google Meet 或 Discord，只要能分享螢幕畫面就可以上課；實體課則約雙北的咖啡廳。 </div> </details><details class="group rounded-[1.5rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)] open:border-sky-300"> <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-stone-100 [&amp;::-webkit-details-marker]:hidden"> 怎麼預約或詢問費用？ <span class="text-stone-400 transition-transform group-open:rotate-180">▾</span> </summary> <div class="border-t border-sky-100 px-6 pb-6 pt-4 leading-7 text-stone-300/85"> 直接加 LINE 免費諮詢，說明你的目標（例如想自動發文、想學 AI 拍片），我會建議適合的堂數與報價。 </div> </details><details class="group rounded-[1.5rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)] open:border-sky-300"> <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-stone-100 [&amp;::-webkit-details-marker]:hidden"> Claude、Codex 預算只夠選一個的話選哪個？ <span class="text-stone-400 transition-transform group-open:rotate-180">▾</span> </summary> <div class="border-t border-sky-100 px-6 pb-6 pt-4 leading-7 text-stone-300/85"> 我會推薦 Codex。因為 5.5 更新後，額度比 Claude 多很多，而且也可以拿來當龍蝦或 Hermes 的飼料，不用太擔心被封號。 </div> </details><details class="group rounded-[1.5rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)] open:border-sky-300"> <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-stone-100 [&amp;::-webkit-details-marker]:hidden"> FB、IG、Threads 的 API Token 有什麼不同？ <span class="text-stone-400 transition-transform group-open:rotate-180">▾</span> </summary> <div class="border-t border-sky-100 px-6 pb-6 pt-4 leading-7 text-stone-300/85"> FB 跟 IG 可以透過企業管理後台（Business Manager）新增資產管理，取得永久權限的 Token；Threads 沒有這條路，只能在開發者後台申請長期 Token，效期 60 天需要延期——我開源的 Tooka 已內建自動延期，第一次手動申請後就不用怕過期。 </div> </details> </div> </div> <aside class="mt-14 rounded-[1.75rem] border border-amber-300/20 bg-[linear-gradient(135deg,rgba(251,191,36,0.12),rgba(244,114,182,0.08),rgba(255,255,255,0.03))] p-8"> <h2 class="text-2xl font-semibold text-slate-900">想更快上手？可以直接找我一對一</h2> <p class="mt-3 max-w-2xl leading-7 text-slate-700">我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），也接受企業與社群的 AI 演講邀約。</p> <div class="mt-6 flex flex-wrap gap-3">  <a href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer" class="rounded-full text-sm font-semibold transition px-5 py-2.5 bg-[#06c755] text-white hover:bg-[#05b84d]"> LINE 免費諮詢 </a> <a href="/services/one-on-one/" class="rounded-full text-sm font-semibold transition px-5 py-2.5 border border-sky-200 bg-white/80 text-slate-800 hover:border-sky-400 hover:bg-sky-50"> 了解一對一教學 </a> <a href="/services/speaking/" class="rounded-full text-sm font-semibold transition px-5 py-2.5 border border-sky-200 bg-white/80 text-slate-800 hover:border-sky-400 hover:bg-sky-50"> 演講邀約 </a>  </div> </aside> </div> </section>  </main> <footer class="mt-24 border-t border-slate-200 px-6 py-12"> <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-3"> <div> <div class="text-lg font-semibold">AI新手教學</div> <p class="mt-3 max-w-xs text-sm leading-6 text-stone-400"> Alex 是台灣的 AI 應用講師與全職接案工程師。教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成。提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。 </p> </div> <div class="text-sm"> <div class="mb-3 font-semibold text-stone-200">網站導覽</div> <ul class="space-y-2 text-stone-400"> <li><a href="/" class="hover:text-white">首頁</a></li><li><a href="/blog/" class="hover:text-white">部落格</a></li><li><a href="/services/one-on-one/" class="hover:text-white">一對一教學</a></li><li><a href="/services/speaking/" class="hover:text-white">演講邀約</a></li><li><a href="/faq/" class="hover:text-white">常見問題</a></li><li><a href="/about/" class="hover:text-white">關於講師</a></li> </ul> </div> <div class="text-sm"> <div class="mb-3 font-semibold text-stone-200">聯絡方式</div> <ul class="space-y-2 text-stone-400"> <li><a href="https://line.me/ti/p/jejH4FkQn-" target="_blank" rel="noreferrer" class="hover:text-white">LINE 免費諮詢</a></li> <li><a href="https://www.facebook.com/groups/3238547836318385" target="_blank" rel="noreferrer" class="hover:text-white">Facebook 社團</a></li> <li><a href="https://www.threads.com/@alex_wang.ai" target="_blank" rel="noreferrer" class="hover:text-white">Threads</a></li> <li><a href="mailto:js0980420@gmail.com" class="hover:text-white">Email 聯絡</a></li> </ul> </div> </div> <div class="mx-auto mt-10 flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 border-t border-sky-100 pt-6 text-xs text-stone-500"> <span>© 2026 AI新手教學 — AI 一對一私人教學與公開演講</span> <a href="/editorial-policy/" class="hover:text-[#1688e8]">編輯政策</a> <a href="/privacy/" class="hover:text-[#1688e8]">隱私權政策</a> <a href="/disclaimer/" class="hover:text-[#1688e8]">免責聲明</a> </div> </footer> <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;7224d681349a427fa18149804f28598a&quot;,&quot;r&quot;:1}" crossorigin="anonymous"></script>
+</body></html>
