@@ -16,7 +16,7 @@ const pubText = formatDate(post.data.pubDate);
 const updatedText = post.data.updatedDate ? formatDate(post.data.updatedDate) : null;
 ---
 
-<article class="rounded-[1.75rem] border border-sky-200/80 bg-white/80 p-7 shadow-[0_8px_30px_rgba(30,64,175,0.05)] transition hover:border-sky-400 hover:bg-white">
+<article class="rounded-[1.75rem] border border-rule bg-surface/80 p-7 shadow-[0_8px_30px_rgba(22,22,26,0.05)] transition hover:border-accent-line-2 hover:bg-surface">
   <a href={`/blog/${post.id}/`} class="flex flex-col gap-6 md:flex-row">
     <img
       src={`/images/blog/${post.id}-thumb.webp`}
@@ -24,10 +24,10 @@ const updatedText = post.data.updatedDate ? formatDate(post.data.updatedDate) : 
       width="640"
       height="336"
       loading="lazy"
-      class="w-full shrink-0 rounded-2xl border border-sky-100 md:w-64 md:self-start"
+      class="w-full shrink-0 rounded-2xl border border-rule md:w-64 md:self-start"
     />
     <div class="min-w-0">
-      <div class="flex flex-wrap items-center gap-3 text-xs text-stone-400">
+      <div class="flex flex-wrap items-center gap-3 text-xs text-ink-2">
         <span>
           發佈於 <time datetime={post.data.pubDate.toISOString()}>{pubText}</time>
         </span>
@@ -37,12 +37,12 @@ const updatedText = post.data.updatedDate ? formatDate(post.data.updatedDate) : 
           </span>
         )}
         {post.data.tags.map((tag) => (
-          <span class="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 uppercase tracking-wide">{tag}</span>
+          <span class="rounded-full border border-rule-2 bg-paper-2 px-2.5 py-0.5 uppercase tracking-wide">{tag}</span>
         ))}
       </div>
-      <h2 class="mt-4 text-2xl font-semibold text-stone-50">{post.data.title}</h2>
-      <p class="mt-3 leading-7 text-stone-300/80">{post.data.description}</p>
-      <span class="mt-5 inline-block text-sm font-semibold text-amber-300">閱讀全文 →</span>
+      <h2 class="mt-4 text-2xl font-semibold text-ink">{post.data.title}</h2>
+      <p class="mt-3 leading-7 text-ink-2">{post.data.description}</p>
+      <span class="mt-5 inline-block text-sm font-semibold text-accent">閱讀全文 →</span>
     </div>
   </a>
 </article>

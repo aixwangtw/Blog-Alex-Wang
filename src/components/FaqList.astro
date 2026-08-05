@@ -9,12 +9,12 @@ const { faqs } = Astro.props;
 
 <div class="space-y-4">
   {faqs.map((item) => (
-    <details class="group rounded-[1.5rem] border border-sky-200/80 bg-white/80 shadow-[0_8px_30px_rgba(30,64,175,0.05)] open:border-sky-300">
-      <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-stone-100 [&::-webkit-details-marker]:hidden">
+    <details class="group rounded-[1.5rem] border border-rule bg-surface/80 shadow-[0_8px_30px_rgba(22,22,26,0.05)] open:border-accent-line-2">
+      <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-ink [&::-webkit-details-marker]:hidden">
         {item.question}
-        <span class="text-stone-400 transition-transform group-open:rotate-180">▾</span>
+        <span class="text-ink-2 transition-transform group-open:rotate-180">▾</span>
       </summary>
-      <div class="border-t border-sky-100 px-6 pb-6 pt-4 leading-7 text-stone-300/85">
+      <div class="border-t border-rule px-6 pb-6 pt-4 leading-7 text-ink-2">
         {item.answer}
       </div>
     </details>

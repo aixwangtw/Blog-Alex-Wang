@@ -97,46 +97,46 @@ const updatedText = updatedDate
   noindex={post.data.unlisted}
 >
   <article class="mx-auto max-w-3xl px-6 py-12">
-    <nav aria-label="麵包屑" class="flex flex-wrap items-center gap-2 text-sm text-stone-400">
-      <a href="/" class="hover:text-[#1688e8]">首頁</a>
+    <nav aria-label="麵包屑" class="flex flex-wrap items-center gap-2 text-sm text-ink-2">
+      <a href="/" class="hover:text-accent">首頁</a>
       <span aria-hidden="true">›</span>
-      <a href="/blog/" class="hover:text-[#1688e8]">部落格</a>
+      <a href="/blog/" class="hover:text-accent">部落格</a>
       <span aria-hidden="true">›</span>
-      <span class="min-w-0 truncate text-stone-500">{title}</span>
+      <span class="min-w-0 truncate text-ink-3">{title}</span>
     </nav>
 
     <header class="mt-8">
-      <h1 class="text-3xl font-semibold leading-snug text-stone-50 md:text-4xl md:leading-snug">{title}</h1>
-      <div class="mt-5 space-y-2.5 text-sm text-stone-400">
-        <p>作者：<a href="/about/" class="text-stone-300 hover:text-white">{AUTHOR.name}</a></p>
+      <h1 class="text-3xl font-semibold leading-snug text-ink md:text-4xl md:leading-snug">{title}</h1>
+      <div class="mt-5 space-y-2.5 text-sm text-ink-2">
+        <p>作者：<a href="/about/" class="text-ink-2 hover:text-accent">{AUTHOR.name}</a></p>
         <p>
-          <span class="inline-block rounded-full bg-sky-100 px-3 py-1">
+          <span class="inline-block rounded-full bg-paper-2 px-3 py-1">
             發佈於 <time datetime={pubDate.toISOString()}>{dateText}</time>
           </span>
         </p>
         {updatedText && (
           <p>
-            <span class="inline-block rounded-full bg-amber-100 px-3 py-1">
+            <span class="inline-block rounded-full bg-accent-tint px-3 py-1">
               更新於 <time datetime={updatedDate!.toISOString()}>{updatedText}</time>
             </span>
           </p>
         )}
         <p class="flex flex-wrap gap-2">
           {post.data.tags.map((tag) => (
-            <span class="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 text-xs">{tag}</span>
+            <span class="rounded-full border border-rule-2 bg-paper-2 px-2.5 py-0.5 text-xs">{tag}</span>
           ))}
         </p>
       </div>
 
       <nav
         aria-label="文章目錄"
-        class="mt-8 rounded-[1.75rem] border border-sky-200/80 bg-white/80 p-7 text-left shadow-[0_8px_30px_rgba(30,64,175,0.05)]"
+        class="mt-8 rounded-[1.75rem] border border-rule bg-surface/80 p-7 text-left shadow-[0_8px_30px_rgba(22,22,26,0.05)]"
       >
-        <div class="text-lg font-semibold text-slate-900">目錄</div>
-        <ol class="mt-4 space-y-2 text-[#1688e8]">
+        <div class="text-lg font-semibold text-ink">目錄</div>
+        <ol class="mt-4 space-y-2 text-accent">
           {toc.map((item, i) => (
             <li class="flex gap-2 leading-7">
-              <span class="text-stone-400">{i + 1}.</span>
+              <span class="text-ink-2">{i + 1}.</span>
               <a href={`#${item.id}`} class="underline-offset-4 hover:underline">{item.text}</a>
             </li>
           ))}
@@ -149,7 +149,7 @@ const updatedText = updatedDate
         width="1200"
         height="630"
         fetchpriority="high"
-        class="mt-8 w-full rounded-[1.75rem] border border-sky-100 shadow-[0_8px_30px_rgba(30,64,175,0.06)]"
+        class="mt-8 w-full rounded-[1.75rem] border border-rule shadow-[0_8px_30px_rgba(22,22,26,0.06)]"
       />
     </header>
 
@@ -159,16 +159,16 @@ const updatedText = updatedDate
 
     {faqs.length > 0 && (
       <section id="faq" class="mt-14 scroll-mt-24">
-        <h2 class="mb-6 text-2xl font-semibold text-stone-50">FAQ 常見問題</h2>
+        <h2 class="mb-6 text-2xl font-semibold text-ink">FAQ 常見問題</h2>
         <FaqList faqs={faqs} />
       </section>
     )}
 
-    <section class="mt-14 rounded-[1.75rem] border border-sky-200/80 bg-white/80 p-7 shadow-[0_8px_30px_rgba(30,64,175,0.05)]">
-      <h2 class="text-lg font-semibold text-stone-50">關於作者</h2>
-      <p class="mt-3 leading-7 text-stone-300/85">
+    <section class="mt-14 rounded-[1.75rem] border border-rule bg-surface/80 p-7 shadow-[0_8px_30px_rgba(22,22,26,0.05)]">
+      <h2 class="text-lg font-semibold text-ink">關於作者</h2>
+      <p class="mt-3 leading-7 text-ink-2">
         {AUTHOR.name}——{AUTHOR_INTROS[pickVariant(post.id, AUTHOR_INTROS.length)]}
-        <a href="/about/" class="text-amber-300 underline underline-offset-4">完整介紹</a>
+        <a href="/about/" class="text-accent underline underline-offset-4">完整介紹</a>
       </p>
     </section>
 
@@ -176,7 +176,9 @@ const updatedText = updatedDate
   </article>
 
   <script is:inline>
-    // 幫程式碼區塊與引用區塊（提示詞）加上「複製」按鈕：要複製貼上的內容一鍵複製
+    // 幫程式碼區塊與引用區塊（提示詞）加上「複製」按鈕與語言標籤。
+    // 按鈕的價值來自稀有：output 區塊（指令輸出、錯誤訊息等噪音）不進這個 querySelector，
+    // 就不會被加上按鈕——data-code-kind="output" 由 content.config.ts 的 marked renderer 標記。
     (function () {
       function copyText(text) {
         if (navigator.clipboard && window.isSecureContext) {
@@ -198,33 +200,53 @@ const updatedText = updatedDate
         }
       }
 
-      document.querySelectorAll('.prose-blog pre, .prose-blog blockquote:not([data-no-copy])').forEach(function (block) {
-        var isPre = block.tagName === 'PRE';
-        var wrapper = document.createElement('div');
-        wrapper.className = 'code-block-wrapper';
-        block.parentNode.insertBefore(wrapper, block);
-        wrapper.appendChild(block);
+      document
+        .querySelectorAll(
+          '.prose-blog pre:not([data-code-kind="output"]), .prose-blog blockquote:not([data-no-copy])'
+        )
+        .forEach(function (block) {
+          var isPre = block.tagName === 'PRE';
+          // 提示詞區塊（fence 或既有 blockquote 寫法）跟 blockquote 一樣用淺色按鈕；
+          // 終端機／AI 工具介面指令／其他語言的深色區塊用預設（深色）按鈕
+          var isLight = !isPre || block.dataset.codeKind === 'prompt';
 
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = isPre ? 'copy-code-btn' : 'copy-code-btn copy-code-btn--light';
-        btn.textContent = '複製';
-        btn.setAttribute('aria-label', isPre ? '複製程式碼' : '複製內容');
-        btn.addEventListener('click', function () {
-          var text = block.innerText.replace(/\n$/, '');
-          copyText(text).then(
-            function () {
-              btn.textContent = '已複製 ✓';
-              setTimeout(function () { btn.textContent = '複製'; }, 1500);
-            },
-            function () {
-              btn.textContent = '複製失敗';
-              setTimeout(function () { btn.textContent = '複製'; }, 1500);
-            }
-          );
+          var wrapper = document.createElement('div');
+          wrapper.className = 'code-block-wrapper';
+          block.parentNode.insertBefore(wrapper, block);
+          wrapper.appendChild(block);
+
+          var label = isPre ? block.dataset.codeLabel : null;
+          if (label) {
+            var tag = document.createElement('span');
+            var labelClass = 'code-block-label';
+            // AI 工具介面指令（```codex``` ```claude-code```）標籤用強調色，跟終端機的中性灰區分
+            if (isLight) labelClass += ' code-block-label--light';
+            else if (isPre && block.dataset.codeKind === 'toolcmd') labelClass += ' code-block-label--toolcmd';
+            tag.className = labelClass;
+            tag.textContent = label;
+            wrapper.appendChild(tag);
+          }
+
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = isLight ? 'copy-code-btn copy-code-btn--light' : 'copy-code-btn';
+          btn.textContent = '複製';
+          btn.setAttribute('aria-label', label ? '複製' + label : isPre ? '複製程式碼' : '複製內容');
+          btn.addEventListener('click', function () {
+            var text = block.innerText.replace(/\n$/, '');
+            copyText(text).then(
+              function () {
+                btn.textContent = '已複製 ✓';
+                setTimeout(function () { btn.textContent = '複製'; }, 1500);
+              },
+              function () {
+                btn.textContent = '複製失敗';
+                setTimeout(function () { btn.textContent = '複製'; }, 1500);
+              }
+            );
+          });
+          wrapper.appendChild(btn);
         });
-        wrapper.appendChild(btn);
-      });
     })();
   </script>
 </Base>

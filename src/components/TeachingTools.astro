@@ -6,11 +6,11 @@ import { TEACHING_TOOLS } from '../data/services';
 
 <ul class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
   {TEACHING_TOOLS.map((tool) => (
-    <li class="flex items-center gap-3 rounded-2xl border border-sky-200/80 bg-white/80 px-4 py-3 shadow-[0_6px_20px_rgba(30,64,175,0.04)]">
+    <li class="flex items-center gap-3 rounded-2xl border border-rule bg-surface/80 px-4 py-3 shadow-[0_6px_20px_rgba(22,22,26,0.04)]">
       <Image src={tool.image} alt={tool.imageAlt} width={96} class="h-9 w-9 shrink-0 rounded-lg object-cover" />
-      <span class="text-stone-200/90">
+      <span class="text-ink">
         {tool.name}
-        {tool.note && <span class="text-stone-400">（{tool.note}）</span>}
+        {tool.note && <span class="text-ink-2">（{tool.note}）</span>}
       </span>
     </li>
   ))}

@@ -1,5 +1,9 @@
 ---
-// 全站共用圓角按鈕連結：line = LINE 綠色主按鈕，ghost = 白色描邊次要按鈕
+// 全站共用圓角按鈕連結：line = 主要行動按鈕（酒紅），ghost = 描邊次要按鈕
+//
+// line 這個 variant 名稱沿用（7 個頁面在呼叫），但底色不再用 LINE 品牌綠 #06c755：
+// 那個綠在暖紙底＋酒紅的配色裡是異物，而且白字配它只有 2.26:1、過不了 WCAG AA。
+// 辨識改由按鈕文案與 LINE 圖示承擔，配色統一到站台自己的重點色。
 interface Props {
   href: string;
   variant?: 'line' | 'ghost';
@@ -16,8 +20,8 @@ const sizeClasses = {
 };
 
 const variantClasses = {
-  line: 'bg-[#06c755] text-white hover:bg-[#05b84d]',
-  ghost: 'border border-sky-200 bg-white/80 text-slate-800 hover:border-sky-400 hover:bg-sky-50',
+  line: 'bg-accent text-surface hover:bg-accent-2',
+  ghost: 'border border-rule-3 bg-surface/80 text-ink hover:border-accent-line-2 hover:bg-paper-2',
 };
 ---
 

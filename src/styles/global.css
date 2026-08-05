@@ -1,7 +1,35 @@
 @import "tailwindcss";
 
+/* 全站色票（2026-08 改版第一階段）：暖紙底＋暗酒紅，取自首頁原型 B-v3
+   （public/_preview/home-b3-dialogue.html 的 :root）。
+   顏色只定義在這裡，各頁面一律用語意化 utility（text-ink / bg-paper / border-rule …），
+   不要在 .astro 裡寫死色碼。 */
 @theme {
   --font-display: "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+
+  /* 底色系（暖白紙感）：paper 頁面底、paper-2 次要面／提問面板、surface 卡片面 */
+  --color-paper: #f7f5f1;
+  --color-paper-2: #efebe3;
+  --color-surface: #ffffff;
+
+  /* 墨色系：ink 標題、ink-2 內文、ink-3 次要／說明 */
+  --color-ink: #16161a;
+  --color-ink-2: #3f3f47;
+  --color-ink-3: #5f5d66;
+
+  /* 線條：rule / rule-2 純裝飾；rule-3 用在「可操作元件」的邊界，
+     對紙底 3.35:1，過 WCAG 1.4.11 非文字對比 3:1 */
+  --color-rule: #dfd9cf;
+  --color-rule-2: #c9c3b8;
+  --color-rule-3: #8c857a;
+
+  /* 重點色（酒紅／oxblood）：連結、CTA、重點。色相 350°，
+     刻意避開 Claude 17°／Meta・Gemini 217°／ChatGPT 165° */
+  --color-accent: #7a2e3b;
+  --color-accent-2: #5c1f2a;
+  --color-accent-line: #e0c8c6; /* 裝飾用細軌 */
+  --color-accent-line-2: #ac7e84; /* 可操作元件的底線：對紙底 3.18:1 */
+  --color-accent-tint: #f3e7e5;
 }
 
 html {
@@ -9,42 +37,62 @@ html {
 }
 
 body {
-  background-color: #f7fbff;
-  color: #0f172a;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
 }
 
-/* 白藍主題下，將舊深色主題的淺色文字 class 統一轉為高對比深藍 */
-.text-stone-50,
-.text-stone-100,
-.text-stone-200,
-.text-stone-200\/85 { color: #0f172a !important; }
-.text-stone-300,
-.text-stone-300\/80,
-.text-stone-300\/85 { color: #334155 !important; }
-.text-stone-400 { color: #475569 !important; }
-.text-stone-500 { color: #64748b !important; }
-.text-amber-200,
-.text-amber-200\/80,
-.text-amber-300 { color: #1688e8 !important; }
-.hover\\:text-white:hover { color: #1688e8 !important; }
+/* 文章程式碼區塊的四種樣式配色（2026-08 定案，集中放這裡：之後換主題只改這裡）。
+   差異來自可讀性，不是重要性：底色由「哪種文字在哪種底上好讀」決定，
+   標籤、複製鈕、外框在「終端機」「提示詞」「AI 工具介面指令」三者同樣清楚明顯。
+   色票與上面的 @theme 同一家族（暖紙底／暗酒紅），這裡寫死色碼是因為它們不是 utility，
+   而且含 alpha 疊色，數值要能直接被對比稽核腳本讀到。 */
+:root {
+  /* 終端機（bash/powershell/sh/shell）與其他語言的預設程式碼區塊：深色底、等寬字。
+     深色不用藍調 slate，改用跟暖紙底同溫的中性暖黑（比 --ink #16161A 再暖一階），
+     讓它在 #F7F5F1 的紙上看起來是「同一個世界的深色」而不是外掛的藍黑塊。 */
+  --code-terminal-bg: #1b1a17;
+  --code-terminal-fg: #f2efe9; /* 15.16:1 */
+  --code-terminal-label-bg: rgb(255 255 255 / 12%);
+  --code-terminal-label-fg: #cfc8bc; /* 對疊色後的標籤底 7.38:1 */
 
-/* 遺留的透明文字 utility 也要在白底上維持可讀對比 */
-[class*="text-stone-50"],
-[class*="text-stone-100"],
-[class*="text-stone-200"] { color: #0f172a !important; }
-[class*="text-stone-300"],
-[class*="text-stone-400"] { color: #334155 !important; }
+  /* 提示詞區塊（```prompt```）：淺色底＋明顯外框，一般字體（中文提示詞用等寬字難讀）。
+     底色用 --paper-2：原型裡「提問面板」就是這個色，提示詞正是讀者要說的話。
+     外框用 --rule-3（對此底 3.07:1），比改版前的淺藍細線（1.5:1）明顯一倍以上。 */
+  --code-prompt-bg: #efebe3;
+  --code-prompt-border: #8c857a;
+  --code-prompt-fg: #3f3f47; /* 8.77:1 */
+  --code-prompt-label-bg: rgb(122 46 59 / 10%);
+  --code-prompt-label-fg: #7a2e3b; /* 對疊色後的標籤底 6.58:1 */
+
+  /* 輸出區塊（```output```）：不給複製鈕（噪音多、不值得複製），底色極淡、無框。 */
+  --code-output-bg: #f2efe9;
+  --code-output-fg: #5f5d66; /* 5.64:1 */
+
+  /* AI 工具介面指令（```agent```，別名 ```codex``` ```claude-code```，見 content.config.ts 的
+     TOOLCMD_LANGS）：跟終端機一樣深色、等寬、複製鈕明顯，但底色帶酒紅（ΔE76 ≈ 13.6、
+     L* 12.7 vs 終端機 9.3），再加左側 4px 的 --accent-line-2 色條——色條對自身底 4.66:1、
+     對紙底 3.18:1，是不依賴色相的亮度線索，色弱讀者也分得出來。
+     語意上：中性暖黑＝作業系統的終端機，帶酒紅＝站內強調色所代表的「對話」介面。
+     讀者一眼認出「這是打進 AI 工具的對話框，不是系統終端機指令」——兩者長得像，
+     貼錯地方會出錯（例如把 /compact 貼進 bash 只會得到 command not found）。
+     標籤統一顯示「對 AI Agent 輸入」，不報工具名。 */
+  --code-toolcmd-bg: #321a20;
+  --code-toolcmd-fg: #f2efe9; /* 14.03:1 */
+  --code-toolcmd-accent: #ac7e84;
+  --code-toolcmd-label-bg: rgb(172 126 132 / 26%);
+  --code-toolcmd-label-fg: #f3e7e5;
+}
 
 /* 文章內文排版 */
 .prose-blog {
-  @apply text-slate-700 leading-8;
+  @apply text-ink-2 leading-8;
 }
 .prose-blog h2 {
   /* scroll-mt 讓目錄錨點跳轉時標題不被固定 header 蓋住 */
-  @apply mt-12 mb-4 scroll-mt-28 font-display text-2xl font-semibold text-slate-900 md:text-3xl lg:scroll-mt-24;
+  @apply mt-12 mb-4 scroll-mt-28 font-display text-2xl font-semibold text-ink md:text-3xl lg:scroll-mt-24;
 }
 .prose-blog h3 {
-  @apply mt-8 mb-3 scroll-mt-28 text-xl font-semibold text-slate-900 lg:scroll-mt-24;
+  @apply mt-8 mb-3 scroll-mt-28 text-xl font-semibold text-ink lg:scroll-mt-24;
 }
 .prose-blog p {
   @apply my-4;
@@ -60,27 +108,71 @@ body {
   @apply list-decimal;
 }
 .prose-blog strong {
-  @apply text-sky-800 font-semibold;
+  @apply text-accent font-semibold;
 }
 .prose-blog a {
-  @apply text-[#1688e8] underline underline-offset-4 hover:text-[#075985];
+  @apply text-accent underline underline-offset-4 hover:text-accent-2;
 }
 .prose-blog blockquote {
-  @apply my-6 rounded-r-xl border-l-4 border-sky-300 bg-sky-50 px-5 py-3 text-slate-700;
+  @apply my-6 rounded-r-xl border-l-4 border-accent bg-accent-tint px-5 py-3 text-ink-2;
 }
 .prose-blog code {
-  @apply rounded bg-sky-100 px-1.5 py-0.5 text-sm text-sky-900;
+  @apply rounded bg-paper-2 px-1.5 py-0.5 text-sm text-ink;
 }
 /* 程式碼區塊：長指令在框內橫向捲動，不撐寬頁面（撐寬會讓手機版 fixed header 跑版）；
-   pr 預留右上角複製按鈕的空間，第一行文字不會被按鈕蓋住 */
+   pr 預留右上角複製按鈕的空間，第一行文字不會被按鈕蓋住。
+   預設（終端機／其他語言）沿用深色底，顏色改用自訂屬性集中管理。 */
 .prose-blog pre {
-  @apply my-6 max-w-full overflow-x-auto rounded-xl bg-slate-900 p-4 pr-20 text-sm leading-6;
+  @apply my-6 max-w-full overflow-x-auto rounded-xl p-4 pr-20 text-sm leading-6;
+  background-color: var(--code-terminal-bg);
 }
 .prose-blog pre code {
-  @apply block bg-transparent p-0 text-slate-100;
+  @apply block bg-transparent p-0;
+  color: var(--code-terminal-fg);
 }
+/* 有語言標籤（終端機／提示詞／其他語言）時，pre 頂部多留空間放標籤，避免蓋到第一行 */
+.prose-blog pre[data-code-label] {
+  padding-top: 2.5rem;
+}
+
+/* 提示詞區塊（```prompt```）：淺色底＋明顯外框，一般字體（非等寬，中文提示詞好讀）。
+   內容是自然語言段落，用一般換行而非橫向捲動。 */
+.prose-blog pre[data-code-kind='prompt'] {
+  background-color: var(--code-prompt-bg);
+  border: 1px solid var(--code-prompt-border);
+  font-family: var(--font-display);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+.prose-blog pre[data-code-kind='prompt'] code {
+  color: var(--code-prompt-fg);
+}
+
+/* 輸出區塊（```output```）：不進複製按鈕的 querySelector，維持單純 <pre>；
+   底色極淡、無框、灰字，降低視覺重量，也不預留複製鈕空間 */
+.prose-blog pre[data-code-kind='output'] {
+  background-color: var(--code-output-bg);
+  padding-right: 1rem;
+}
+.prose-blog pre[data-code-kind='output'] code {
+  color: var(--code-output-fg);
+}
+
+/* AI 工具介面指令（```codex``` ```claude-code```）：跟終端機一樣是深色底、等寬字、有複製鈕，
+   但底色帶酒紅＋左側 4px 色條，跟終端機的中性暖黑做出區分（理由見上方 --code-toolcmd-* 註解）。
+   左側多留一點內距，文字才不會貼著色條。 */
+.prose-blog pre[data-code-kind='toolcmd'] {
+  background-color: var(--code-toolcmd-bg);
+  border-left: 4px solid var(--code-toolcmd-accent);
+  padding-left: 1.25rem;
+}
+.prose-blog pre[data-code-kind='toolcmd'] code {
+  color: var(--code-toolcmd-fg);
+}
+
 /* 複製按鈕（由文章頁 script 動態插入）：wrapper 限制在內容寬度內，
-   按鈕釘在框內右上角，不會跟著橫向捲動、也不會超出螢幕 */
+   按鈕釘在框內右上角，不會跟著橫向捲動、也不會超出螢幕。
+   按鈕配色直接沿用同一類區塊的標籤配色，四類區塊的按鈕跟標籤永遠同一組色。 */
 .code-block-wrapper {
   @apply relative max-w-full;
 }
@@ -88,11 +180,44 @@ body {
   @apply pr-20;
 }
 .copy-code-btn {
-  @apply absolute right-2 top-2 rounded-lg bg-white/10 px-2.5 py-1 text-xs text-slate-200 backdrop-blur transition hover:bg-white/25;
+  @apply absolute right-2 top-2 rounded-lg px-2.5 py-1 text-xs backdrop-blur transition;
+  background-color: var(--code-terminal-label-bg);
+  color: var(--code-terminal-label-fg);
+}
+.copy-code-btn:hover {
+  background-color: rgb(255 255 255 / 24%);
+}
+/* AI 工具介面指令的按鈕：跟著該區塊的酒紅標籤色（按鈕是 pre 的後兄弟節點） */
+pre[data-code-kind='toolcmd'] ~ .copy-code-btn {
+  background-color: var(--code-toolcmd-label-bg);
+  color: var(--code-toolcmd-label-fg);
+}
+pre[data-code-kind='toolcmd'] ~ .copy-code-btn:hover {
+  background-color: rgb(172 126 132 / 40%);
 }
 /* 淺色底（引用區塊／提示詞）用的按鈕配色 */
 .copy-code-btn--light {
-  @apply bg-sky-200/70 text-sky-900 hover:bg-sky-300/80;
+  background-color: var(--code-prompt-label-bg);
+  color: var(--code-prompt-label-fg);
+}
+.copy-code-btn--light:hover {
+  background-color: rgb(122 46 59 / 20%);
+}
+/* 語言標籤（終端機／提示詞／其他語言，由文章頁 script 動態插入）：
+   釘在框內左上角，跟複製按鈕分居兩側不重疊 */
+.code-block-label {
+  @apply pointer-events-none absolute left-3 top-2.5 select-none rounded-md px-2 py-0.5 text-[11px] font-medium tracking-wide;
+  background-color: var(--code-terminal-label-bg);
+  color: var(--code-terminal-label-fg);
+}
+.code-block-label--light {
+  background-color: var(--code-prompt-label-bg);
+  color: var(--code-prompt-label-fg);
+}
+/* AI 工具介面指令的標籤（例：「對 AI Agent 輸入」）：用酒紅色底，跟終端機標籤的中性灰區分 */
+.code-block-label--toolcmd {
+  background-color: var(--code-toolcmd-label-bg);
+  color: var(--code-toolcmd-label-fg);
 }
 /* 表格：窄表格貼內容寬、寬表格在手機可橫向捲動 */
 .prose-blog table {
@@ -100,33 +225,33 @@ body {
   width: max-content;
 }
 .prose-blog th {
-  @apply border border-sky-200 bg-sky-50 px-4 py-2.5 text-left font-semibold text-slate-900;
+  @apply border border-rule-2 bg-paper-2 px-4 py-2.5 text-left font-semibold text-ink;
 }
 .prose-blog td {
-  @apply border border-sky-100 px-4 py-2.5 align-top text-slate-700;
+  @apply border border-rule px-4 py-2.5 align-top text-ink-2;
 }
 .prose-blog tbody tr:nth-child(even) {
-  @apply bg-sky-50/60;
+  @apply bg-paper-2/60;
 }
 
 /* Threads／IG 靜態引用卡（fetch_post.js --embed 產生）：
    用 aside 不用 blockquote，避免被文章頁的複製按鈕 script 選中。
    文字留在 HTML 裡（SEO），數字是擷取當下的快照，卡片內標明日期。 */
 .prose-blog .social-quote {
-  @apply my-6 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm;
+  @apply my-6 rounded-2xl border border-rule bg-surface px-5 py-4 shadow-sm;
 }
 .prose-blog .social-quote-header {
   @apply mb-2 flex items-center justify-between gap-3 text-sm;
 }
 .prose-blog .social-quote-author {
-  @apply font-semibold text-slate-800;
+  @apply font-semibold text-ink;
 }
 .prose-blog .social-quote-badge {
-  @apply rounded-full bg-slate-100 px-2.5 py-0.5 text-xs text-slate-500;
+  @apply rounded-full bg-paper-2 px-2.5 py-0.5 text-xs text-ink-3;
 }
 .prose-blog .social-quote-body {
-  @apply whitespace-pre-line text-slate-700;
+  @apply whitespace-pre-line text-ink-2;
 }
 .prose-blog .social-quote-meta {
-  @apply mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500;
+  @apply mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-3;
 }

@@ -22,7 +22,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     featured: true,
   },
   { text: '21 萬人 OpenClaw 中文社群版主。' },
-  { text: 'Mixerbox 等單位講座授課經驗。' },
+  { text: 'MixerBox 等單位講座授課經驗。' },
 ];
 
 export const FEATURED_EXPERIENCE: ExperienceItem[] = EXPERIENCE.filter((item) => item.featured);

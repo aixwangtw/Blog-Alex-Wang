@@ -45,27 +45,27 @@ const schema = [
   <div class="mx-auto max-w-3xl px-6 py-12">
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '常見問題' }]} />
 
-    <h1 class="mt-8 text-3xl font-semibold text-slate-900 md:text-4xl">常見問題總整理</h1>
-    <p class="mt-6 text-lg leading-8 text-slate-700">
+    <h1 class="mt-8 text-3xl font-semibold text-ink md:text-4xl">常見問題總整理</h1>
+    <p class="mt-6 text-lg leading-8 text-ink-2">
       這裡的問題大多來自真實社群的提問——主要是 Threads 貼文底下的留言，也有 YouTube
-      留言和一對一教學學員問過的問題（見<a href="/editorial-policy/" class="text-[#1688e8] underline underline-offset-4">編輯政策</a>）。找不到你的問題的話，直接加 LINE 免費問。
+      留言和一對一教學學員問過的問題（見<a href="/editorial-policy/" class="text-accent underline underline-offset-4">編輯政策</a>）。找不到你的問題的話，直接加 LINE 免費問。
     </p>
 
     <SectionHeading size="md" class="mt-12">我提供什麼教學？</SectionHeading>
-    <div class="mt-6 rounded-[1.75rem] border border-sky-200/80 bg-white/80 p-7 shadow-[0_8px_30px_rgba(30,64,175,0.05)]">
-      <ul class="space-y-4 leading-8 text-slate-700">
+    <div class="mt-6 rounded-[1.75rem] border border-rule bg-surface/80 p-7 shadow-[0_8px_30px_rgba(22,22,26,0.05)]">
+      <ul class="space-y-4 leading-8 text-ink-2">
         <li>
-          <strong class="text-slate-900">四大 AI Agent 的安裝使用</strong>——Claude Code、Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）的安裝、權限與環境設定。
+          <strong class="text-ink">四大 AI Agent 的安裝使用</strong>——Claude Code、Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）的安裝、權限與環境設定。
         </li>
         <li>
-          <strong class="text-slate-900">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>——例如用 LINE 跟 AI 對話，整理其他平台的訊息；也包含 Meta 三大 API（FB／IG／Threads）的自動發文、留言、私訊。
+          <strong class="text-ink">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>——例如用 LINE 跟 AI 對話，整理其他平台的訊息；也包含 Meta 三大 API（FB／IG／Threads）的自動發文、留言、私訊。
         </li>
         <li>
-          <strong class="text-slate-900">打造你的生圖、拍片工作流</strong>——AI 生圖模板與對話式拍片，一句話產出社群圖文和影片。
+          <strong class="text-ink">打造你的生圖、拍片工作流</strong>——AI 生圖模板與對話式拍片，一句話產出社群圖文和影片。
         </li>
       </ul>
       <p class="mt-5 text-sm">
-        <a href="/services/one-on-one/" class="text-[#1688e8] underline underline-offset-4">看一對一教學的完整說明與上課形式 →</a>
+        <a href="/services/one-on-one/" class="text-accent underline underline-offset-4">看一對一教學的完整說明與上課形式 →</a>
       </p>
     </div>
 
@@ -78,14 +78,14 @@ const schema = [
     <div class="mt-6 space-y-10">
       {posts.map((post) => (
         <section>
-          <h3 class="text-lg font-semibold text-slate-900">
-            <a href={`/blog/${post.id}/`} class="hover:text-[#1688e8]">{post.data.title}</a>
+          <h3 class="text-lg font-semibold text-ink">
+            <a href={`/blog/${post.id}/`} class="hover:text-accent">{post.data.title}</a>
           </h3>
           <div class="mt-4">
             <FaqList faqs={post.data.faqs} />
           </div>
           <p class="mt-3 text-sm">
-            <a href={`/blog/${post.id}/`} class="text-amber-500 underline underline-offset-4 hover:text-amber-600">閱讀完整教學 →</a>
+            <a href={`/blog/${post.id}/`} class="text-accent underline underline-offset-4 hover:text-accent-2">閱讀完整教學 →</a>
           </p>
         </section>
       ))}

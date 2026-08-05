@@ -45,19 +45,19 @@ const rest = posts.filter((post) => !post.data.featured);
 >
   <div class="mx-auto max-w-6xl px-6 py-12">
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '部落格' }]} class="mb-8" />
-    <h1 class="text-3xl font-semibold text-slate-900 md:text-5xl">部落格</h1>
-    <p class="mt-6 text-lg leading-8 text-slate-700">
+    <h1 class="text-3xl font-semibold text-ink md:text-5xl">部落格</h1>
+    <p class="mt-6 text-lg leading-8 text-ink-2">
       每篇文章回答一個新手學 AI 時最常問的問題——從工具選擇、Meta API 申請到自動發文與
-      Skill 工作流。看完還有問題，歡迎<a href="/services/one-on-one/" class="text-amber-300 underline underline-offset-4">約一對一教學</a>。
+      Skill 工作流。看完還有問題，歡迎<a href="/services/one-on-one/" class="text-accent underline underline-offset-4">約一對一教學</a>。
     </p>
     {featured.length > 0 && (
       <>
-        <h2 class="mt-12 text-xl font-semibold text-[#101b4d]">精選文章</h2>
+        <h2 class="mt-12 text-xl font-semibold text-ink">精選文章</h2>
         <div class="mt-6 grid grid-flow-col auto-cols-[minmax(220px,1fr)] gap-4 overflow-x-auto pb-3 xl:auto-cols-fr">
           {featured.map((post) => (
             <a
               href={`/blog/${post.id}/`}
-              class="flex flex-col rounded-2xl border border-sky-200/80 bg-white/80 p-5 shadow-[0_8px_24px_rgba(30,64,175,0.05)] transition hover:border-sky-400 hover:shadow-[0_10px_28px_rgba(30,64,175,0.1)]"
+              class="flex flex-col rounded-2xl border border-rule bg-surface/80 p-5 shadow-[0_8px_24px_rgba(22,22,26,0.05)] transition hover:border-accent-line-2 hover:shadow-[0_10px_28px_rgba(22,22,26,0.1)]"
             >
               <img
                 src={`/images/blog/${post.id}-thumb.webp`}
@@ -65,17 +65,17 @@ const rest = posts.filter((post) => !post.data.featured);
                 width="640"
                 height="336"
                 loading="lazy"
-                class="mb-4 w-full rounded-xl border border-sky-100"
+                class="mb-4 w-full rounded-xl border border-rule"
               />
-              <span class="text-xs uppercase tracking-wide text-sky-700">{post.data.tags[0]}</span>
-              <h3 class="mt-3 text-sm font-semibold leading-6 text-slate-900">{post.data.title}</h3>
-              <span class="mt-4 text-xs font-semibold text-[#1688e8]">閱讀全文 →</span>
+              <span class="text-xs uppercase tracking-wide text-accent">{post.data.tags[0]}</span>
+              <h3 class="mt-3 text-sm font-semibold leading-6 text-ink">{post.data.title}</h3>
+              <span class="mt-4 text-xs font-semibold text-accent">閱讀全文 →</span>
             </a>
           ))}
         </div>
       </>
     )}
-    <h2 class="mt-12 text-xl font-semibold text-slate-900">全部文章</h2>
+    <h2 class="mt-12 text-xl font-semibold text-ink">全部文章</h2>
     <div class="mt-6 grid gap-5">
       {rest.map((post) => <PostCard post={post} />)}
     </div>

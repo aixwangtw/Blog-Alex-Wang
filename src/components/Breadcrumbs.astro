@@ -13,14 +13,14 @@ interface Props {
 const { items, class: className = '' } = Astro.props;
 ---
 
-<nav aria-label="麵包屑" class={`flex flex-wrap items-center gap-2 text-sm text-stone-400 ${className}`}>
+<nav aria-label="麵包屑" class={`flex flex-wrap items-center gap-2 text-sm text-ink-2 ${className}`}>
   {items.map((crumb, i) => (
     <>
       {i > 0 && <span aria-hidden="true">›</span>}
       {crumb.href ? (
-        <a href={crumb.href} class="hover:text-[#1688e8]">{crumb.name}</a>
+        <a href={crumb.href} class="hover:text-accent">{crumb.name}</a>
       ) : (
-        <span class="min-w-0 truncate text-stone-500">{crumb.name}</span>
+        <span class="min-w-0 truncate text-ink-3">{crumb.name}</span>
       )}
     </>
   ))}

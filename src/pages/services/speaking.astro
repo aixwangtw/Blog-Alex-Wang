@@ -66,11 +66,11 @@ const schema = [
 >
   <div class="mx-auto max-w-4xl px-6 py-12">
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: 'AI 演講與企業內訓' }]} class="mb-8" />
-    <h1 class="text-3xl font-semibold text-stone-50 md:text-5xl">AI 演講與企業內訓邀約</h1>
+    <h1 class="text-3xl font-semibold text-ink md:text-5xl">AI 演講與企業內訓邀約</h1>
 
-    <p class="mt-8 text-lg leading-9 text-stone-200/90">
-      我是 <a href="/about/" class="text-amber-300 underline underline-offset-4">{AUTHOR.name}</a>，接受企業、學校與社群的
-      <strong class="text-amber-200">AI 主題演講、內訓與實作工作坊</strong>邀約。內容以「聽完就能動手」為原則：不談概念空話，現場直接演示
+    <p class="mt-8 text-lg leading-9 text-ink">
+      我是 <a href="/about/" class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，接受企業、學校與社群的
+      <strong class="text-accent">AI 主題演講、內訓與實作工作坊</strong>邀約。內容以「聽完就能動手」為原則：不談概念空話，現場直接演示
       AI Agent 如何完成真實任務。曾受 MixerBox、TAIA 台灣人工智慧協會等單位邀請演講。
     </p>
 
@@ -78,12 +78,12 @@ const schema = [
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {SPEAKING_TOPICS.map((topic) => (
         <Card>
-          <h3 class="text-lg font-semibold text-stone-50">{topic.title}</h3>
-          <p class="mt-3 leading-7 text-stone-300/85">{topic.description}</p>
+          <h3 class="text-lg font-semibold text-ink">{topic.title}</h3>
+          <p class="mt-3 leading-7 text-ink-2">{topic.description}</p>
         </Card>
       ))}
     </div>
-    <p class="mt-6 leading-7 text-stone-300/85">
+    <p class="mt-6 leading-7 text-ink-2">
       以上主題皆可依聽眾背景（零基礎／行銷／工程）調整深度，也可以合併成半天或一天的實作工作坊。
     </p>
 
@@ -96,15 +96,15 @@ const schema = [
         <Card padded={false} class="overflow-hidden">
           <Image src={item.image} alt={item.imageAlt} class="h-48 w-full object-cover" />
           <div class="p-7">
-            <p class="text-xs uppercase tracking-[0.26em] text-amber-200/80">{item.host}</p>
-            <h3 class="mt-3 text-lg font-semibold text-stone-50">{item.topic}</h3>
-            <p class="mt-3 leading-7 text-stone-300/85">{item.description}</p>
+            <p class="text-xs uppercase tracking-[0.26em] text-accent">{item.host}</p>
+            <h3 class="mt-3 text-lg font-semibold text-ink">{item.topic}</h3>
+            <p class="mt-3 leading-7 text-ink-2">{item.description}</p>
             {item.link && (
               <a
                 href={item.link}
                 target="_blank"
                 rel="noreferrer"
-                class="mt-4 inline-block text-sm font-semibold text-amber-200/90 transition hover:text-amber-100"
+                class="mt-4 inline-block text-sm font-semibold text-accent transition hover:text-accent-2"
               >
                 {item.linkLabel}
               </a>

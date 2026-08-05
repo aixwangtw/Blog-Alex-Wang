@@ -74,19 +74,19 @@ const schema = [
 >
   <div class="mx-auto max-w-4xl px-6 py-12">
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: 'AI 一對一私人教學' }]} class="mb-8" />
-    <h1 class="text-3xl font-semibold text-stone-50 md:text-5xl">AI 一對一私人教學</h1>
+    <h1 class="text-3xl font-semibold text-ink md:text-5xl">AI 一對一私人教學</h1>
 
-    <p class="mt-8 text-lg leading-9 text-stone-200/90">
-      這是付費的一對一 AI 私人教學服務：由我（<a href="/about/" class="text-amber-300 underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="text-amber-200">你自己的電腦、你自己的帳號</strong>上，把
-      AI 自動化流程真正跑通一次——從四大 AI Agent（Claude Code、Codex、OpenClaw 龍蝦、Hermes 愛馬仕）的安裝使用、<strong class="text-amber-200">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>（例如用 LINE 跟 AI 對話，整理其他平台的訊息），到做出可排程的社群自動發文系統，以及打造你的生圖、拍片工作流。
+    <p class="mt-8 text-lg leading-9 text-ink">
+      這是付費的一對一 AI 私人教學服務：由我（<a href="/about/" class="text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="text-accent">你自己的電腦、你自己的帳號</strong>上，把
+      AI 自動化流程真正跑通一次——從四大 AI Agent（Claude Code、Codex、OpenClaw 龍蝦、Hermes 愛馬仕）的安裝使用、<strong class="text-accent">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>（例如用 LINE 跟 AI 對話，整理其他平台的訊息），到做出可排程的社群自動發文系統，以及打造你的生圖、拍片工作流。
     </p>
 
     <SectionHeading size="md" class="mt-14">上課形式</SectionHeading>
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {CLASS_FORMATS.map((format) => (
         <Card>
-          <h3 class="text-xl font-semibold text-stone-50">{format.title}</h3>
-          <p class="mt-3 leading-7 text-stone-300/85">{format.description}</p>
+          <h3 class="text-xl font-semibold text-ink">{format.title}</h3>
+          <p class="mt-3 leading-7 text-ink-2">{format.description}</p>
         </Card>
       ))}
     </div>
@@ -95,7 +95,7 @@ const schema = [
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {TEACHING_CONTENT.map((item) => (
         <Card>
-          <h3 class="text-xl font-semibold text-stone-50">{item.category}</h3>
+          <h3 class="text-xl font-semibold text-ink">{item.category}</h3>
           {item.logos && (
             <div class="mt-4 flex gap-2.5">
               {item.logos.map((logo) => (
@@ -103,7 +103,7 @@ const schema = [
               ))}
             </div>
           )}
-          <p class="mt-3 leading-7 text-stone-300/85">{item.detail}</p>
+          <p class="mt-3 leading-7 text-ink-2">{item.detail}</p>
         </Card>
       ))}
     </div>
@@ -112,7 +112,7 @@ const schema = [
     <TeachingTools />
 
     <SectionHeading size="md" class="mt-14">實際教學案例</SectionHeading>
-    <p class="mt-4 leading-7 text-stone-300/85">
+    <p class="mt-4 leading-7 text-ink-2">
       以下是四個實際的一對一教學案例，涵蓋不同背景的學員與客製化主題：
     </p>
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
@@ -120,10 +120,10 @@ const schema = [
         <Card>
           <div class="flex items-center gap-3">
             <Image src={item.image} alt={item.imageAlt} width={96} class="h-10 w-10 shrink-0 rounded-xl object-contain" />
-            <h3 class="text-lg font-semibold leading-snug text-stone-50">{item.topic}</h3>
+            <h3 class="text-lg font-semibold leading-snug text-ink">{item.topic}</h3>
           </div>
-          <p class="mt-3 text-sm text-amber-200/80">學員背景：{item.student}</p>
-          <p class="mt-3 leading-7 text-stone-300/85">{item.description}</p>
+          <p class="mt-3 text-sm text-accent">學員背景：{item.student}</p>
+          <p class="mt-3 leading-7 text-ink-2">{item.description}</p>
         </Card>
       ))}
     </div>
