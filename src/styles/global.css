@@ -1,11 +1,85 @@
 @import "tailwindcss";
 
+/* ============================================================
+   自架網頁字型（不用 Google Fonts CDN）
+   ------------------------------------------------------------
+   改版前全站沒有載入任何網頁字型：--font-display 宣告了 "Noto Sans TC"，
+   但沒有 @font-face、沒有字型連結、package.json 也沒有字型套件，
+   所以線上一直是系統字型（Windows 微軟正黑、Mac 蘋方）。
+   後果是原型那些排版數值（字身框 1.448em、行高下限、字距補償）
+   全部是對 Noto 量的，套到系統字型不成立；
+   而且首頁「襯線＝提問／無襯線＝回答」的雙聲音系統需要襯線中文字型才存在。
+
+   選自架而非 CDN 的理由：字型是這次改版的交付物之一，要可控、
+   不依賴第三方、不外送讀者 IP。
+
+   只 import 實際會用到的字重，不要 import 整包：
+   每個 CJK 字重約 3.3–4.4MB、切成 105–109 個帶 unicode-range 的子集，
+   瀏覽器只會下載當頁真正出現的那幾個子集（與 Google Fonts 同機制）。
+   多 import 一個 CJK 字重就多幾 MB 進建置產物。
+   （IBM Plex Mono 是拉丁字集，每個字重只有 60KB，不在此限。）
+
+   ---- 字重清單怎麼定出來的（2026-08-06 實測）----
+   先量「CSS 實際套用了哪些字重」，再決定要載哪些，而不是憑感覺列：
+
+     字重   首頁   文章頁   一對一
+     400     73     141      55     內文，最多
+     600     43      27      19     標題與強調，第二多
+     500     13      18       8     少
+     700      4       0       2     幾乎沒有直接使用
+
+   原本載的是 400/500/700——**用最多的 600 反而沒有對應檔案**，
+   瀏覽器只能依 CSS 字重匹配規則往上抓 700 代打，
+   設計上的「半粗」全部渲染成「粗」；而真正載進來的 700 幾乎沒人直接用。
+
+   所以改成 400 + 600。CSS 的匹配規則是「≤500 往下找、>500 往上找」，因此：
+     500 → 落到 400（差一階，可接受）
+     600 → 精準命中（原本是被 700 冒充）
+     700 → 落到 600（差一階，可接受）
+   三個 CJK 字重變兩個，體積少三分之一，最常用的那階反而變準。
+
+   Noto Serif TC 只留 600：襯線只用在首頁的提問（原型 home-b4-lean.html
+   的 .q 是 font-weight:600），沒有第二個字重的使用者。
+   ============================================================ */
+@import "@fontsource/noto-sans-tc/400.css";
+@import "@fontsource/noto-sans-tc/600.css";
+@import "@fontsource/noto-serif-tc/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+/* ============================================================
+   把 Tailwind 的 hover: variant 加上裝置條件（全站一次解決）
+   ------------------------------------------------------------
+   實測 Tailwind v4.3.3 產出的 CSS：
+     .hover\:bg-accent-2:hover{background-color:var(--color-accent-2)}
+   是「裸的」——沒有任何 @media 包住它。
+   在觸控裝置上 :hover 會黏住：點過的元件會停在 hover 狀態，
+   直到使用者點別的地方為止，讀者會以為那顆按鈕還被選著。
+
+   重新定義內建的 hover variant，讓全站每一個 hover: utility 都自動帶條件，
+   不必逐一改寫各頁面的 class（改版第三、四階段還沒動到的頁面也一併受惠）。
+   手寫的 CSS（Base.astro 的頁首頁尾、Cta、PillButton）已經自己寫了同一組條件。
+   :focus-visible 一律不設裝置條件，另外寫（見下方）。
+   ============================================================ */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
 /* 全站色票（2026-08 改版第一階段）：暖紙底＋暗酒紅，取自首頁原型 B-v3
    （public/_preview/home-b3-dialogue.html 的 :root）。
    顏色只定義在這裡，各頁面一律用語意化 utility（text-ink / bg-paper / border-rule …），
    不要在 .astro 裡寫死色碼。 */
 @theme {
+  /* 三套字型對應原型定義的三種聲音：
+     display（無襯線）＝內文與回答、serif＝提問與區塊標題、mono＝路徑／標籤／指令。
+     全部自架，見檔案開頭的 @import。 */
   --font-display: "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Noto Serif TC", "Songti TC", "SimSun", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* 底色系（暖白紙感）：paper 頁面底、paper-2 次要面／提問面板、surface 卡片面 */
   --color-paper: #f7f5f1;
@@ -18,9 +92,15 @@
   --color-ink-3: #5f5d66;
 
   /* 線條：rule / rule-2 純裝飾；rule-3 用在「可操作元件」的邊界，
-     對紙底 3.35:1，過 WCAG 1.4.11 非文字對比 3:1 */
-  --color-rule: #dfd9cf;
-  --color-rule-2: #c9c3b8;
+     對紙底 3.35:1，過 WCAG 1.4.11 非文字對比 3:1。
+
+     2026-08-06 調亮一階：原本 rule 是 #DFD9CF（對紙底 1.29:1），比 jisto 的
+     rgba(8,9,10,.14)（疊在它的紙底上 ≈ 1.36:1）還淡。而本站的入口列沒有縮圖
+     佔住左欄撐結構，同一條線要做的事比 jisto 多；改版前一張卡還有邊框＋底色＋
+     陰影三個線索，現在只剩這條線。所以 rule → 1.54:1、rule-2 → 2.07:1，
+     維持三階的階層。rule-3 不動（它有 3:1 的硬性門檻要守）。 */
+  --color-rule: #cfc7b9;
+  --color-rule-2: #b5ac9b;
   --color-rule-3: #8c857a;
 
   /* 重點色（酒紅／oxblood）：連結、CTA、重點。色相 350°，
@@ -39,6 +119,71 @@ html {
 body {
   background-color: var(--color-paper);
   color: var(--color-ink);
+}
+
+/* 鍵盤焦點：不設任何裝置條件（滑鼠使用者看不到，鍵盤使用者在任何裝置上都要看得到）。
+   hover 效果一律另外收在 @media (hover:hover) and (pointer:fine) 裡。 */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--color-accent-tint);
+  color: var(--color-accent-2);
+}
+
+/* ============================================================
+   內頁字級階梯（2026-08 改版第二階段）
+   ------------------------------------------------------------
+   首頁 H1 的 clamp(56px, 8vw, 96px) 是「展示級」，只給首頁用。
+   內頁是閱讀與查詢場景，標題要能一眼看完、不要逼出四行中文，
+   因此另訂一套較小的階梯：
+
+     .t-h1  clamp(30px, 4.4vw, 44px)  內頁標題（h1）
+     .t-h2  clamp(22px, 2.6vw, 28px)  區塊標題（SectionHeading md／文章 h2）
+     .t-h3  clamp(18px, 2vw, 20px)    子標題（文章 h3）
+
+   為什麼上限是 44px 而不是 96px：
+   - 實測站上最長的文章標題「Codex 安裝教學（下）：Windows 版 Codex CLI 與 WSL2 進階安裝」
+     約 14 個漢字 ＋ 25 個拉丁字元。在文章頁 max-w-3xl（內容欄 720px）下，
+     44px 會排成兩行；96px 會排成五行，整個首屏只剩標題。
+   - 44px ÷ 96px ≈ 0.46，落在「展示級」與「區塊提問 28px」之間，
+     讀起來是一份文件的標題，不是海報。
+   - 桌機上限 44px 與改版前的 md:text-5xl（48px）只差 4px，
+     既有頁面不會因為換階梯而整個跳動；改變的是小螢幕的起點與行高。
+
+   .t-h2 的上限 28px 直接沿用首頁原型 B-v4 的「區塊提問」層級
+   （.q--sec: clamp(20px, 3vw, 28px)），讓首頁與內頁共用同一個 h2 尺寸。
+   下限收在 22px（原型是 20px）：內頁 h2 沒有首頁那種大字對比撐場，
+   20px 在手機上跟 17px 內文差太少，層級會塌掉。
+
+   line-height 1.18／1.25／1.5：中文字身框比拉丁高（Noto Sans TC
+   ascent 1.160em + descent 0.288em），大標的 1.18 已接近下限，
+   再收會讓兩行的墨跡靠得太近。
+   ============================================================ */
+.t-h1 {
+  font-size: clamp(30px, 4.4vw, 44px);
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+.t-h2 {
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+/* SectionHeading size="lg"：目前只有首頁在用。比內頁小節重一階，
+   但仍遠低於展示級 H1，首頁的字級對比留給 H1 去做。 */
+.t-h2-lg {
+  font-size: clamp(26px, 3.4vw, 34px);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.t-h3 {
+  font-size: clamp(18px, 2vw, 20px);
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 /* 文章程式碼區塊的四種樣式配色（2026-08 定案，集中放這裡：之後換主題只改這裡）。
@@ -83,19 +228,53 @@ body {
   --code-toolcmd-label-fg: #f3e7e5;
 }
 
-/* 文章內文排版 */
+/* ============================================================
+   文章內文排版
+   ------------------------------------------------------------
+   2026-08 改版第二階段只動「字級與間距」，不動結構：
+   h2/h3 的層級邏輯、清單、表格、社群引用卡、四類程式碼區塊全部維持原樣。
+
+   為什麼不套首頁那套字級：文章頁是閱讀場景，不是展示場景。
+   作品集風格的 13–14px 內文放到三千字的中文教學文會傷可讀性，
+   而讀者是「卡住了來查答案」的人，第一要務是讓他讀完。
+
+   改動與理由：
+   - 內文 16px／line-height 2.0（leading-8）→ 17px／1.9
+     行框高度 32px → 32.3px 幾乎不變（版面不會重排），但字身放大 1px。
+     中文在 16px 下的辨識負擔明顯高於 17px，這 1px 是純賺的。
+   - h2 24／30px → clamp(22px, 2.6vw, 28px)，與 SectionHeading 同一階
+     （.t-h2）。上下留白 48/16px → 56/16px：h2 的工作是切開章節，
+     上方留白不夠時它讀起來只是「比較大的一段」。
+   - h3 20px 固定 → clamp(18px, 2vw, 20px)（.t-h3），上留白 32px → 40px。
+     h2 與 h3 的上留白比維持 1.4，層級靠間距也能分辨，不只靠字級。
+   - 段落間距 16px → 20px。段距仍小於行高（32px），
+     段落之間讀起來是「同一段話的換氣」而不是「各自獨立的區塊」。
+   ============================================================ */
 .prose-blog {
-  @apply text-ink-2 leading-8;
+  @apply text-ink-2;
+  font-size: 17px;
+  line-height: 1.9;
+  /* 內文放大到 17px 後，320px 螢幕上實測會被一個字撐破版面：
+     codex-cli-wsl2-windows 那篇 <summary> 裡的
+     「CommandNotFoundException」是一個不可斷的字串，16px 下量到 282px，
+     17px 下 299px，超過 320px 螢幕的 272px 內容寬 → 整份文件橫向溢出 3px。
+     overflow-wrap: break-word 只在「一個字自己就放不下一行」時才斷，
+     不影響中文的正常斷行，也不影響 pre（那是 white-space:pre + overflow-x:auto）。 */
+  overflow-wrap: break-word;
 }
 .prose-blog h2 {
-  /* scroll-mt 讓目錄錨點跳轉時標題不被固定 header 蓋住 */
-  @apply mt-12 mb-4 scroll-mt-28 font-display text-2xl font-semibold text-ink md:text-3xl lg:scroll-mt-24;
+  /* scroll-mt 讓目錄錨點跳轉時標題不被 sticky header 蓋住 */
+  @apply mt-14 mb-4 scroll-mt-28 font-display font-semibold text-ink lg:scroll-mt-24;
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.25;
 }
 .prose-blog h3 {
-  @apply mt-8 mb-3 scroll-mt-28 text-xl font-semibold text-ink lg:scroll-mt-24;
+  @apply mt-10 mb-3 scroll-mt-28 font-semibold text-ink lg:scroll-mt-24;
+  font-size: clamp(18px, 2vw, 20px);
+  line-height: 1.5;
 }
 .prose-blog p {
-  @apply my-4;
+  @apply my-5;
 }
 .prose-blog ul,
 .prose-blog ol {

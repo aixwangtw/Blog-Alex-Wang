@@ -16,33 +16,61 @@ const pubText = formatDate(post.data.pubDate);
 const updatedText = post.data.updatedDate ? formatDate(post.data.updatedDate) : null;
 ---
 
-<article class="rounded-[1.75rem] border border-rule bg-surface/80 p-7 shadow-[0_8px_30px_rgba(22,22,26,0.05)] transition hover:border-accent-line-2 hover:bg-surface">
-  <a href={`/blog/${post.id}/`} class="flex flex-col gap-6 md:flex-row">
+{/*
+  文章列：改版前是 rounded-[1.75rem] ＋ shadow 的卡片，現在是髮絲線橫列。
+  版式參照原型 home-b4-lean.html 的 .paths-list（≥768px 時左欄堆疊標題與描述、
+  右欄是箭頭），再補上一個縮圖欄。
+
+  縮圖放左欄而不是右欄，理由有三：
+  1. 這些縮圖是教學截圖，讀者靠它認出「是不是我在找的那個工具」，
+     它跟標題是同一個掃視動作，要共用同一個起點。
+  2. 右欄已經是箭頭（.paths-list 的固定語彙），縮圖擺右邊會跟它搶位置。
+  3. 中文標題長度落差大，縮圖放右邊時每一列的右緣會參差不齊，
+     髮絲線列最怕的就是右緣不齊——那條線會顯得沒有在對齊任何東西。
+
+  縮圖一律不套灰階：這些是教學截圖不是作品集圖，灰階會把畫面裡的資訊藏掉。
+  行動版縮圖改為置頂全寬——375px 下若維持 208px 的左欄，標題只剩 140px 可用。
+*/}
+<article class="border-t border-rule">
+  <a
+    href={`/blog/${post.id}/`}
+    class="group grid items-start gap-x-8 gap-y-4 py-7 md:grid-cols-[13rem_1fr_auto] md:gap-y-2 md:py-9"
+  >
     <img
       src={`/images/blog/${post.id}-thumb.webp`}
       alt={post.data.title}
       width="640"
       height="336"
       loading="lazy"
-      class="w-full shrink-0 rounded-2xl border border-rule md:w-64 md:self-start"
+      class="w-full border border-rule md:mt-1.5"
     />
     <div class="min-w-0">
-      <div class="flex flex-wrap items-center gap-3 text-xs text-ink-2">
+      <p class="text-xs leading-5 text-ink-3">
         <span>
           發佈於 <time datetime={post.data.pubDate.toISOString()}>{pubText}</time>
         </span>
         {post.data.updatedDate && updatedText && (
-          <span>
-            更新於 <time datetime={post.data.updatedDate.toISOString()}>{updatedText}</time>
-          </span>
+          <>
+            <span class="px-1.5 text-rule-3" aria-hidden="true">・</span>
+            <span>
+              更新於 <time datetime={post.data.updatedDate.toISOString()}>{updatedText}</time>
+            </span>
+          </>
         )}
         {post.data.tags.map((tag) => (
-          <span class="rounded-full border border-rule-2 bg-paper-2 px-2.5 py-0.5 uppercase tracking-wide">{tag}</span>
+          <>
+            <span class="px-1.5 text-rule-3" aria-hidden="true">・</span>
+            <span>{tag}</span>
+          </>
         ))}
-      </div>
-      <h2 class="mt-4 text-2xl font-semibold text-ink">{post.data.title}</h2>
-      <p class="mt-3 leading-7 text-ink-2">{post.data.description}</p>
-      <span class="mt-5 inline-block text-sm font-semibold text-accent">閱讀全文 →</span>
+      </p>
+      <h2 class="mt-2.5 text-[22px] font-semibold leading-snug text-ink transition-colors group-hover:text-accent md:text-[26px]">
+        {post.data.title}
+      </h2>
+      <p class="mt-2.5 max-w-[56ch] text-[15px] leading-7 text-ink-2">{post.data.description}</p>
     </div>
+    <span class="font-mono text-[13px] text-accent md:self-center" aria-hidden="true">
+      <span class="md:hidden">閱讀全文 </span>→
+    </span>
   </a>
 </article>

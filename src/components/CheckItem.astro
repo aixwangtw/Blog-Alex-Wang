@@ -1,5 +1,9 @@
 ---
-// 打勾清單項；首頁學習成果用 emerald 勾勾，其餘頁面用預設 amber
+// 打勾清單項：改版前是 rounded-2xl ＋ shadow 的小卡，現在是髮絲線列。
+//
+// 呼叫端是 <ul class="space-y-4">（about 與 speaking 兩頁），所以線畫在每一列頭上、
+// 最後一列另外補一條收尾線（last:border-b），整組才是閉合的。
+// ✓ 加 aria-hidden：它是裝飾，螢幕閱讀器不需要在每一項前面唸一次「勾」。
 interface Props {
   as?: 'li' | 'div';
   iconClass?: string;
@@ -8,7 +12,7 @@ interface Props {
 const { as: Tag = 'li', iconClass = 'text-accent' } = Astro.props;
 ---
 
-<Tag class="flex gap-3 rounded-2xl border border-rule bg-surface/80 p-5 leading-7 text-ink-2 shadow-[0_6px_20px_rgba(22,22,26,0.04)]">
-  <span class={iconClass}>✓</span>
+<Tag class="flex gap-3 border-t border-rule py-4 leading-8 text-ink-2 last:border-b">
+  <span class={iconClass} aria-hidden="true">✓</span>
   <slot />
 </Tag>

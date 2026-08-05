@@ -1,8 +1,11 @@
 ---
 import ogBanner from '../assets/banner-v2.png';
-import PillButton from '../components/PillButton.astro';
-import { NAV, LINKS, SITE, PERSON_SCHEMA } from '../consts';
+import { NAV, LINKS, SITE, AUTHOR, PERSON_SCHEMA } from '../consts';
 import '../styles/global.css';
+
+// 頁首導覽不放「首頁」：字標本身就是回首頁的連結，重複一次是浪費連結預算。
+// 頁尾的網站導覽仍然列出完整 NAV（含首頁）。
+const HEADER_NAV = NAV.filter((item) => item.href !== '/');
 
 interface Props {
   title: string;
@@ -131,176 +134,193 @@ const jsonLd = {
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
+  <!-- 底色維持純色紙感（原型 home-b4-lean.html 的 body 就是 background:var(--paper)）。
+       改版前這裡有兩道 radial-gradient 粉色暈染，跟髮絲線列的版面語言互相干擾：
+       髮絲線靠的是「線在乾淨紙上」的對比，底下有漸層時線的視覺重量會隨位置浮動。 -->
   <body
     data-pagefind-ignore={noindex ? 'all' : undefined}
     class="min-h-screen bg-paper font-display text-ink antialiased"
-    style="background-image: radial-gradient(circle at 8% 0%, rgba(224, 200, 198, 0.45), transparent 28rem), radial-gradient(circle at 92% 12%, rgba(122, 46, 59, 0.06), transparent 32rem);"
   >
-    <header class="fixed inset-x-0 top-0 z-50 border-b border-rule/80 bg-surface/75 backdrop-blur-2xl">
-      <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-        <a href="/" class="flex min-w-0 shrink items-center gap-2.5 sm:gap-3">
-          <img
-            src="/aixwang-icon.png"
-            alt="aixwang"
-            width="40"
-            height="40"
-            class="h-9 w-9 shrink-0 rounded-2xl object-cover sm:h-10 sm:w-10"
-          />
-          <div class="min-w-0">
-            <div class="truncate text-base font-semibold tracking-tight text-ink sm:text-lg">{SITE.title}</div>
-            <div class="hidden text-[0.65rem] uppercase tracking-[0.18em] text-ink-3 sm:block">{SITE.titleEn}</div>
-          </div>
+    <a class="skip-link" href="#main">跳到主要內容</a>
+
+    <header class="site-header" id="site-header" data-open="false">
+      <div class="hd-cap">
+        <a class="hd-mark" href="/" aria-label={`回首頁 — ${SITE.title}`}>
+          <img class="hd-logo" src="/aixwang-icon.png" width="24" height="24" alt="" aria-hidden="true" />
+          <span class="hd-mark-t">Aix</span>
         </a>
-        <nav class="hidden items-center gap-6 text-sm text-ink-2 lg:flex">
-          {NAV.map((item) => (
-            <a href={item.href} class="transition hover:text-accent">{item.label}</a>
-          ))}
+
+        <nav class="mainnav" id="mainnav" aria-label="主要導覽">
+          <ul>
+            {HEADER_NAV.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}<span class="np-go" aria-hidden="true">→</span></a>
+              </li>
+            ))}
+          </ul>
         </nav>
-        <div class="flex shrink-0 items-center gap-3 sm:gap-4">
-          <div id="search-container" class="relative">
+
+        <div class="hd-tools">
+          <div id="search-container" class="hd-search">
             <button
               id="search-toggle"
               type="button"
               aria-label="開啟搜尋"
               aria-expanded="false"
               aria-controls="search-popover"
-              class="flex h-9 w-9 items-center justify-center rounded-full text-ink-2 transition hover:bg-paper-2 hover:text-accent lg:hidden"
+              class="hicon hicon--solo"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-5 w-5" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" />
-                <line x1="16.2" y1="16.2" x2="21" y2="21" />
-              </svg>
+              <span class="hicon-ic" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" focusable="false">
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="16.2" y1="16.2" x2="21" y2="21" />
+                </svg>
+              </span>
             </button>
-            <div
-              id="search-popover"
-              class="absolute right-0 top-full z-50 mt-3 hidden w-72 rounded-2xl border border-rule bg-surface p-3 shadow-xl lg:static lg:mt-0 lg:block lg:w-auto lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"
-            >
+            <div id="search-popover" class="search-pop hidden">
               <input
                 id="site-search"
                 type="search"
                 aria-label="搜尋文章"
                 autocomplete="off"
-                class="w-full rounded-full border border-rule-3 bg-surface/90 px-3 py-1.5 text-sm text-ink-2 outline-none transition-all focus:border-accent lg:w-40 lg:focus:w-56"
+                placeholder="搜尋文章"
+                class="search-input"
               />
-              <div id="search-examples" class="mt-3 lg:hidden">
-                <div class="mb-1 px-2 text-xs text-ink-3">搜尋範例</div>
-                <button type="button" data-search-example="新手要怎麼學 AI" data-search-query="AI 入門" class="block w-full rounded-xl px-2 py-1.5 text-left text-sm text-ink-2 hover:bg-paper-2">新手要怎麼學 AI</button>
-                <button type="button" data-search-example="如何做自動發文" data-search-query="自動發文" class="block w-full rounded-xl px-2 py-1.5 text-left text-sm text-ink-2 hover:bg-paper-2">如何做自動發文</button>
-                <button type="button" data-search-example="如何自動拍片" data-search-query="教學影片" class="block w-full rounded-xl px-2 py-1.5 text-left text-sm text-ink-2 hover:bg-paper-2">如何自動拍片</button>
+              <div id="search-examples" class="search-ex">
+                <div class="search-ex-h">搜尋範例</div>
+                <button type="button" data-search-example="新手要怎麼學 AI" data-search-query="AI 入門">新手要怎麼學 AI</button>
+                <button type="button" data-search-example="如何做自動發文" data-search-query="自動發文">如何做自動發文</button>
+                <button type="button" data-search-example="如何自動拍片" data-search-query="教學影片">如何自動拍片</button>
               </div>
-              <div
-                id="search-results"
-                class="mt-3 hidden max-h-80 w-full overflow-y-auto rounded-2xl border border-rule bg-surface p-2 shadow-xl lg:absolute lg:right-0 lg:top-full lg:w-80"
-              ></div>
+              <div id="search-results" class="search-res hidden"></div>
             </div>
           </div>
+
           <a
-            href={LINKS.facebookGroup}
+            class="hicon hicon--line"
+            href={LINKS.line}
             target="_blank"
             rel="noreferrer"
-            aria-label="Facebook 社團"
-            class="hidden text-ink-3 transition hover:text-accent lg:block"
+            aria-label="加 LINE 免費諮詢（開新分頁）"
           >
-            <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
+            <span class="hicon-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
+                <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+              </svg>
+            </span>
+            <span class="hicon-tx">LINE 諮詢</span>
           </a>
-          <a
-            href={LINKS.threads}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Threads 個人檔案"
-            class="hidden text-ink-3 transition hover:text-accent lg:block"
+
+          <a class="hicon hicon--mail" href={LINKS.email} aria-label={`寄 Email 給 ${AUTHOR.name}`}>
+            <span class="hicon-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                <rect x="2.6" y="4.8" width="18.8" height="14.4" rx="2.4" />
+                <path d="M3.4 6.9 12 13.1l8.6-6.2" />
+              </svg>
+            </span>
+            <span class="hicon-tx">Email</span>
+          </a>
+
+          <button
+            class="hd-cue"
+            id="nav-cue"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mainnav"
+            aria-label="開啟選單"
           >
-            <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true">
-              <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.734 7.847c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221z" />
-            </svg>
-          </a>
-          <a
-            href={LINKS.youtube}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="YouTube 頻道"
-            class="hidden text-ink-3 transition hover:text-accent lg:block"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true">
-              <path d="M23.498 6.186a3.003 3.003 0 0 0-2.112-2.123C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.386.563A3.003 3.003 0 0 0 .502 6.186 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .502 5.814 3.003 3.003 0 0 0 2.112 2.123C4.495 20.5 12 20.5 12 20.5s7.505 0 9.386-.563a3.003 3.003 0 0 0 2.112-2.123A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z" />
-            </svg>
-          </a>
-          <span class="hidden sm:block">
-            <PillButton href={LINKS.line} variant="line" size="sm" external>免費諮詢</PillButton>
-          </span>
-          <button id="menu-toggle" type="button" aria-label="開啟選單" aria-expanded="false" class="text-ink-2 transition-transform duration-300 hover:text-accent lg:hidden">
-            <svg id="icon-burger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="h-6 w-6" aria-hidden="true">
-              <line x1="4" y1="6" x2="20" y2="6" />
-              <line x1="4" y1="12" x2="20" y2="12" />
-              <line x1="4" y1="18" x2="20" y2="18" />
-            </svg>
-            <svg id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="hidden h-6 w-6" aria-hidden="true">
-              <line x1="6" y1="6" x2="18" y2="18" />
-              <line x1="18" y1="6" x2="6" y2="18" />
-            </svg>
+            <span class="hd-cue-b" aria-hidden="true"><i></i><i></i></span>
           </button>
-        </div>
-      </div>
-      <div id="mobile-menu" class="max-h-0 overflow-hidden bg-surface/95 px-6 opacity-0 transition-[max-height,opacity,padding] duration-300 ease-in-out lg:hidden">
-        <nav class="flex flex-col gap-1 text-ink-2">
-          {NAV.map((item) => (
-            <a href={item.href} class="rounded-xl px-3 py-2 transition hover:bg-paper-2 hover:text-accent">{item.label}</a>
-          ))}
-        </nav>
-        <div class="mt-4 flex items-center gap-5 border-t border-rule px-3 pt-4">
-          <a href={LINKS.line} target="_blank" rel="noreferrer" aria-label="LINE 免費諮詢" class="text-ink-3 transition hover:text-accent">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true">
-              <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-            </svg>
-          </a>
-          <a href={LINKS.facebookGroup} target="_blank" rel="noreferrer" aria-label="Facebook 社團" class="text-ink-3 transition hover:text-accent">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
-          </a>
-          <a href={LINKS.threads} target="_blank" rel="noreferrer" aria-label="Threads 個人檔案" class="text-ink-3 transition hover:text-accent">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true">
-              <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.734 7.847c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221z" />
-            </svg>
-          </a>
-          <a href={LINKS.youtube} target="_blank" rel="noreferrer" aria-label="YouTube 頻道" class="text-ink-3 transition hover:text-accent">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true">
-              <path d="M23.498 6.186a3.003 3.003 0 0 0-2.112-2.123C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.386.563A3.003 3.003 0 0 0 .502 6.186 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .502 5.814 3.003 3.003 0 0 0 2.112 2.123C4.495 20.5 12 20.5 12 20.5s7.505 0 9.386-.563a3.003 3.003 0 0 0 2.112-2.123A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z" />
-            </svg>
-          </a>
         </div>
       </div>
     </header>
 
     <script is:inline>
+      /* 收合選單：獨立的 try 區塊，跟下面的搜尋互不影響。
+         關鍵順序——`nav-js` 這個 class 只在「開關確定接好」之後才加到 <html>。
+         反過來寫的話，只要下面任何一行拋例外，選單會被 CSS 收起來卻沒有東西能打開它，
+         導覽就永久消失了。沒有 JS（或 JS 爆炸）時 .nav-js 不存在，
+         導覽就是一排正常可見、可點的連結——連結一律寫在初始 HTML 裡，爬蟲讀得到。 */
       (function () {
-        // 漢堡選單（滑順展開收合）
-        var btn = document.getElementById('menu-toggle');
-        var menu = document.getElementById('mobile-menu');
-        var iconBurger = document.getElementById('icon-burger');
-        var iconClose = document.getElementById('icon-close');
-        if (btn && menu) {
-          btn.addEventListener('click', function () {
-            var open = btn.getAttribute('aria-expanded') === 'true';
-            if (open) {
-              menu.style.maxHeight = '0';
-              menu.classList.add('opacity-0');
-              menu.classList.remove('border-t', 'border-rule', 'py-4');
-            } else {
-              menu.classList.add('border-t', 'border-rule', 'py-4');
-              menu.classList.remove('opacity-0');
-              menu.style.maxHeight = menu.scrollHeight + 40 + 'px';
-            }
-            btn.setAttribute('aria-expanded', String(!open));
-            btn.setAttribute('aria-label', open ? '開啟選單' : '關閉選單');
-            iconBurger.classList.toggle('hidden', !open);
-            iconClose.classList.toggle('hidden', open);
-            btn.style.transform = open ? '' : 'rotate(90deg)';
-          });
-        }
+        try {
+          var header = document.getElementById('site-header');
+          var cue = document.getElementById('nav-cue');
+          var panel = document.getElementById('mainnav');
+          if (!header || !cue || !panel) return;
 
+          // 桌機是「橫向膠囊」（用 max-width 收合），手機是「下拉面板」（用 max-height）。
+          // max-height 必須用 scrollHeight 算，所以只能在 JS 裡設；
+          // 換到桌機時要把 inline 的 max-height 清掉，免得殘值把橫排導覽壓扁。
+          var mqDesktop = window.matchMedia('(min-width:1024px)');
+
+          function applyHeight(open) {
+            if (mqDesktop.matches) {
+              panel.style.maxHeight = '';
+              return;
+            }
+            // +28px 留給最後一顆連結的 :focus-visible 外框，不然 overflow:hidden 會切掉它
+            panel.style.maxHeight = open ? panel.scrollHeight + 28 + 'px' : '0px';
+          }
+
+          // 開啟時把焦點送進第一個連結。原因是 DOM 順序：導覽排在工具列之前
+          // （桌機膠囊的視覺順序要求如此），開關按鈕卻在工具列裡。焦點若留在按鈕上，
+          // 按 Tab 會直接跳過剛展開的五個連結跑進內文——鍵盤使用者等於打不開選單。
+          // 關閉時若焦點還在面板裡，收回按鈕上，不讓焦點掉到 body。
+          function setOpen(open, moveFocus) {
+            var focusInside = panel.contains(document.activeElement);
+            header.setAttribute('data-open', open ? 'true' : 'false');
+            cue.setAttribute('aria-expanded', open ? 'true' : 'false');
+            cue.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
+            applyHeight(open);
+            if (open && moveFocus) {
+              var first = panel.querySelector('a');
+              if (first) first.focus();
+            } else if (!open && focusInside) {
+              cue.focus();
+            }
+          }
+
+          // 斷點換邊時重算一次，避免手機展開後轉成桌機、殘留 max-height
+          var onMQ = function () {
+            applyHeight(cue.getAttribute('aria-expanded') === 'true');
+          };
+          if (mqDesktop.addEventListener) mqDesktop.addEventListener('change', onMQ);
+          else if (mqDesktop.addListener) mqDesktop.addListener(onMQ);
+          window.addEventListener('resize', onMQ);
+
+          cue.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setOpen(cue.getAttribute('aria-expanded') !== 'true', true);
+          });
+
+          // Esc 關閉並把焦點還給開關（鍵盤使用者不會迷路）
+          document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape' && e.keyCode !== 27) return;
+            if (cue.getAttribute('aria-expanded') !== 'true') return;
+            setOpen(false);
+            cue.focus();
+          });
+
+          // 點面板外面關閉
+          document.addEventListener('click', function (e) {
+            if (cue.getAttribute('aria-expanded') !== 'true') return;
+            if (panel.contains(e.target) || cue.contains(e.target)) return;
+            setOpen(false);
+          });
+
+          // 點面板裡的連結後關閉（同頁錨點時才看得出差別，但成本是零）
+          panel.addEventListener('click', function (e) {
+            if (e.target.closest && e.target.closest('a')) setOpen(false);
+          });
+
+          setOpen(false);
+          document.documentElement.classList.add('nav-js'); // 全部接好了才收合
+        } catch (err) {
+          /* 沒接上就維持展開：一排正常可見、可點的導覽連結 */
+        }
+      })();
+
+      (function () {
         // 全站搜尋
         var container = document.getElementById('search-container');
         var toggle = document.getElementById('search-toggle');
@@ -314,9 +334,8 @@ const jsonLd = {
         var debounceTimer = null;
         var searchSequence = 0;
         var activeResult = -1;
-        function isMobileSearch() {
-          return window.matchMedia('(max-width: 1023px)').matches;
-        }
+        // 改版後搜尋在所有斷點都是「42px 圓形按鈕 → 下拉面板」，
+        // 不再有桌機常駐輸入框那個版本，因此開關邏輯不分斷點。
         function openSearch() {
           if (!popover) return;
           popover.classList.remove('hidden');
@@ -327,7 +346,7 @@ const jsonLd = {
           window.setTimeout(function () { input && input.focus(); }, 0);
         }
         function closeSearch() {
-          if (isMobileSearch() && popover) popover.classList.add('hidden');
+          if (popover) popover.classList.add('hidden');
           if (toggle) {
             toggle.setAttribute('aria-expanded', 'false');
             toggle.setAttribute('aria-label', '開啟搜尋');
@@ -370,7 +389,7 @@ const jsonLd = {
             box.innerHTML = list
               .slice(0, 8)
               .map(function (item, index) {
-                return '<a href="' + escapeHtml(item.u) + '" data-search-result="' + index + '" class="search-result-item block rounded-xl px-3 py-2 leading-5 text-ink-2 hover:bg-paper-2 ' + (index === 0 ? 'bg-paper-2' : '') + '">' +
+                return '<a href="' + escapeHtml(item.u) + '" data-search-result="' + index + '" class="search-result-item block px-3 py-2 leading-5 text-ink-2 hover:bg-paper-2 ' + (index === 0 ? 'bg-paper-2' : '') + '">' +
                   '<span class="block text-sm font-medium">' + escapeHtml(item.t) + '</span>' +
                   (item.d ? '<span class="mt-1 block text-xs leading-5 text-ink-3">' + item.d + '</span>' : '') +
                   '</a>';
@@ -501,42 +520,662 @@ const jsonLd = {
       })();
     </script>
 
-    <main data-pagefind-body class="pt-28 lg:pt-20">
+    <!-- 頁首改成 sticky（原本是 fixed）之後，main 不再需要用 padding 補回頁首高度。
+         sticky 的另一個好處：沒有 JS 時導覽是一排展開的連結，它會把內容往下推而不是蓋住內容。 -->
+    <main id="main" data-pagefind-body>
       <slot />
     </main>
 
-    <footer class="mt-24 border-t border-rule px-6 py-12">
-      <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
-        <div>
-          <div class="text-lg font-semibold">{SITE.title}</div>
-          <p class="mt-3 max-w-xs text-sm leading-6 text-ink-2">
-            {SITE.description}
-          </p>
+    <footer class="site-footer">
+      <div class="ft-wrap">
+        <div class="ft-grid">
+          <div class="ft-brand">
+            <p class="ft-mark">{SITE.title}</p>
+            <p class="ft-desc">{SITE.description}</p>
+          </div>
+          <div>
+            <p class="ft-h">網站導覽</p>
+            <ul class="ft-list">
+              {NAV.map((item) => (
+                <li><a href={item.href}>{item.label}</a></li>
+              ))}
+            </ul>
+          </div>
+          <!-- 這一欄的後 5 條就是 PERSON_SCHEMA.sameAs 那一組，一律帶 rel="me"：
+               它們是身分驗證與 E-E-A-T 訊號，砍掉會少一層可信度來源。 -->
+          <div>
+            <p class="ft-h">找得到我</p>
+            <ul class="ft-list">
+              <li><a href={LINKS.line} target="_blank" rel="noreferrer">LINE 免費諮詢</a></li>
+              <li><a href={LINKS.email}>Email 聯絡</a></li>
+              <li><a href={LINKS.threads} target="_blank" rel="me noreferrer">Threads</a></li>
+              <li><a href={LINKS.instagram} target="_blank" rel="me noreferrer">Instagram</a></li>
+              <li><a href={LINKS.youtube} target="_blank" rel="me noreferrer">YouTube</a></li>
+              <li><a href={LINKS.facebookGroup} target="_blank" rel="me noreferrer">Facebook 社團</a></li>
+              <li><a href={LINKS.github} target="_blank" rel="me noreferrer">GitHub</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="text-sm">
-          <div class="mb-3 font-semibold text-ink">網站導覽</div>
-          <ul class="space-y-2 text-ink-2">
-            {NAV.map((item) => (
-              <li><a href={item.href} class="hover:text-accent">{item.label}</a></li>
-            ))}
-          </ul>
+        <div class="ft-bottom">
+          <span class="ft-copy">© {new Date().getFullYear()} {SITE.title} — AI 一對一私人教學與公開演講</span>
+          <span class="ft-legal">
+            <a href="/editorial-policy/">編輯政策</a>
+            <a href="/privacy/">隱私權政策</a>
+            <a href="/disclaimer/">免責聲明</a>
+          </span>
         </div>
-        <div class="text-sm">
-          <div class="mb-3 font-semibold text-ink">聯絡方式</div>
-          <ul class="space-y-2 text-ink-2">
-            <li><a href={LINKS.line} target="_blank" rel="noreferrer" class="hover:text-accent">LINE 免費諮詢</a></li>
-            <li><a href={LINKS.facebookGroup} target="_blank" rel="noreferrer" class="hover:text-accent">Facebook 社團</a></li>
-            <li><a href={LINKS.threads} target="_blank" rel="noreferrer" class="hover:text-accent">Threads</a></li>
-            <li><a href={LINKS.email} class="hover:text-accent">Email 聯絡</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="mx-auto mt-10 flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 border-t border-rule pt-6 text-xs text-ink-3">
-        <span>© {new Date().getFullYear()} {SITE.title} — AI 一對一私人教學與公開演講</span>
-        <a href="/editorial-policy/" class="hover:text-accent">編輯政策</a>
-        <a href="/privacy/" class="hover:text-accent">隱私權政策</a>
-        <a href="/disclaimer/" class="hover:text-accent">免責聲明</a>
       </div>
     </footer>
+
+    <style is:global>
+      /* ============================================================
+         頁首／頁尾：2026-08 改版第二階段
+         設計語言的唯一真實來源是 public/_preview/home-b4-lean.html，
+         下面的數值全部照該原型（原型的數值又來自 jisto.tw 的 CSS bundle 實測）。
+
+         這段刻意寫成 is:global 的原生 CSS 而不是 Tailwind utility：
+         收合膠囊靠的是 max-width／grid-template-columns 的過渡與 :has()，
+         用 utility 拼出來會散在十幾個 class 裡，看不出彼此的關係。
+
+         ⚠ 這段是「無層級（unlayered）」CSS，在串接順序上贏過 Tailwind 的
+         @layer utilities。因此絕對不要在這裡設 display——像 .search-pop
+         這種靠 Tailwind 的 .hidden 開關的元素會被鎖死在顯示狀態。
+         ============================================================ */
+      :root {
+        --bar: 68px; /* 頁首列高（jisto 實測值） */
+        --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @media (max-width: 767px) {
+        :root {
+          --bar: 62px;
+        }
+      }
+
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 99;
+        background: var(--color-ink);
+        color: #fff;
+        padding: 10px 16px;
+        font-size: 14px;
+        text-decoration: none;
+      }
+      .skip-link:focus {
+        left: 12px;
+        top: 12px;
+      }
+
+      /* ---------- 頁首外框 ---------- */
+      /* sticky 不是 fixed：沒有 JS 時導覽是一排展開的連結，
+         它必須把內容往下推，而不是永久蓋住第一屏。 */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: rgb(247 245 241 / 90%); /* = --color-paper 90% */
+        -webkit-backdrop-filter: saturate(140%) blur(10px);
+        backdrop-filter: saturate(140%) blur(10px);
+        border-bottom: 1px solid var(--color-rule);
+      }
+
+      /* 一組 DOM 兩種版型，靠 flex-wrap 切換：
+         手機（<1024px）wrap，導覽掉到第二列 → 下拉面板
+         桌機（≥1024px）nowrap，導覽留在同一列 → 橫向膠囊 */
+      .hd-cap {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        width: 100%;
+        max-width: 72rem; /* 對齊各頁的 max-w-6xl */
+        margin: 0 auto;
+        padding: 0 20px;
+        column-gap: 12px;
+        row-gap: 0;
+        min-height: var(--bar);
+      }
+      @media (min-width: 768px) {
+        .hd-cap {
+          padding: 0 40px;
+        }
+      }
+
+      /* ---------- 字標 ---------- */
+      .hd-mark {
+        order: 1;
+        margin-inline-end: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px; /* 觸控目標：字標收成方塊時仍有 44px 高 */
+        color: var(--color-ink);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .hd-logo {
+        width: 24px;
+        height: 24px;
+        flex: none;
+      }
+      .hd-mark-t {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .hd-tools {
+        order: 2;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        /* 42px 圓形裡有 12px 的視覺留白。用負 margin 吃掉它，
+           讓圖示的墨跡切齊 .hd-cap 的右緣，而不是按鈕外框切齊——
+           不補這 11px，頁首看起來會跟內文差一截、像沒對齊。 */
+        margin-inline-end: -11px;
+      }
+
+      /* ---------- 42px 圓形圖示按鈕 ---------- */
+      /* 文字欄用「確定長度 0px」而不是 0fr：0fr 展開成 minmax(auto, 0fr)，
+         那個 auto 最小值會被文字欄自己的 padding 撐開，量到的軌道是 9px、
+         整顆按鈕變 53px 的橢圓。確定長度不吃 automatic minimum size，
+         溢出的部分由 overflow:hidden 切掉。 */
+      .hicon {
+        display: grid;
+        grid-template-columns: 18px 0px;
+        align-items: center;
+        height: 42px;
+        /* 1+11 + 18 + 11+1 = 42px 正圓。width 是 auto，box-sizing 不生效，
+           所以邊框那 2px 要自己算進去；用 12px 會得到 44×42 的橢圓。 */
+        padding: 0 11px;
+        border: 1px solid var(--color-rule-3); /* 可操作元件邊界，對紙底 3.35:1 */
+        border-radius: 999px;
+        background: transparent;
+        color: var(--color-ink-2);
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        cursor: pointer;
+        transition:
+          grid-template-columns 0.34s var(--ease),
+          color 0.2s var(--ease),
+          border-color 0.2s var(--ease),
+          background-color 0.2s var(--ease);
+      }
+      .hicon--solo {
+        grid-template-columns: 18px;
+        justify-content: center;
+        width: 42px;
+      }
+      .hicon-ic,
+      .hicon-ic svg {
+        display: block;
+        width: 18px;
+        height: 18px;
+      }
+      .hicon-tx {
+        overflow: hidden;
+        min-width: 0;
+        padding-inline-start: 9px; /* 收合時連同 padding 一起被裁掉 */
+        font-size: 12.5px;
+        line-height: 1;
+        font-weight: 500;
+      }
+
+      /* ---------- 收合選單開關 ---------- */
+      .hd-cue {
+        display: none; /* 沒有 JS 就不出現，導覽維持展開 */
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        border: 1px solid var(--color-rule-3);
+        border-radius: 999px;
+        background: transparent;
+        cursor: pointer;
+        place-items: center;
+        transition:
+          border-color 0.2s var(--ease),
+          background-color 0.2s var(--ease);
+      }
+      .nav-js .hd-cue {
+        display: grid;
+      }
+      .hd-cue-b {
+        position: relative;
+        display: block;
+        width: 15px;
+        height: 9px;
+      }
+      .hd-cue-b i {
+        position: absolute;
+        left: 0;
+        display: block;
+        width: 15px;
+        height: 1.3px;
+        background: var(--color-ink);
+        transform-origin: 50% 50%;
+        transition:
+          width 0.28s var(--ease),
+          transform 0.28s var(--ease),
+          top 0.28s var(--ease);
+      }
+      .hd-cue-b i:nth-child(1) {
+        top: 0;
+      }
+      .hd-cue-b i:nth-child(2) {
+        top: 7.7px;
+      }
+      .hd-cue[aria-expanded='true'] .hd-cue-b i {
+        width: 15px;
+        top: 3.85px;
+      }
+      .hd-cue[aria-expanded='true'] .hd-cue-b i:nth-child(1) {
+        transform: rotate(45deg);
+      }
+      .hd-cue[aria-expanded='true'] .hd-cue-b i:nth-child(2) {
+        transform: rotate(-45deg);
+      }
+
+      /* ---------- 導覽本體：手機下拉、桌機橫排，同一組 DOM ---------- */
+      .mainnav {
+        order: 3;
+        flex-basis: 100%;
+      }
+      /* 內距放在 ul 上而且不隨開合改變：這樣 panel.scrollHeight 在任何時候
+         量到的都是同一個完整高度。若把內距放在會過渡的 .mainnav 上，
+         JS 讀 scrollHeight 的那一瞬間內距還停在起始值，算出來的 max-height
+         會短一截，最後一顆連結就被 overflow:hidden 切掉。 */
+      .mainnav ul {
+        padding: 8px 0 16px;
+      }
+      .mainnav li + li {
+        border-top: 1px solid var(--color-rule);
+      }
+      .mainnav a {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 15px 2px;
+        text-decoration: none;
+        font-size: 17px;
+        font-weight: 500;
+        color: var(--color-ink);
+        transition: color 0.18s var(--ease);
+      }
+      .np-go {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        color: var(--color-accent);
+      }
+      /* 收合時要一起加 visibility:hidden。只有 max-height:0 的話，
+         看不見的連結仍然可以被 Tab 選到，鍵盤焦點會跑進收起來的面板裡。 */
+      .nav-js .mainnav {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          max-height 0.3s var(--ease),
+          opacity 0.3s var(--ease),
+          visibility 0s linear 0.3s;
+      }
+      .nav-js .site-header[data-open='true'] .mainnav {
+        opacity: 1;
+        visibility: visible;
+        border-top: 1px solid var(--color-rule);
+        transition:
+          max-height 0.3s var(--ease),
+          opacity 0.3s var(--ease),
+          visibility 0s linear 0s;
+      }
+
+      /* ---------- 桌機（≥1024px）：整條頁首是一顆膠囊 ---------- */
+      /* jisto 實測 .j-header.is-open{ width:min(460px,100vw-28px); height:68px;
+         border-radius:999px }——點開時「橫向長出來」，高度不變。
+         本站導覽有五項（jisto 三項）＋ 頁首多一顆搜尋鈕，所以膠囊比 jisto 寬。
+         膠囊本身刻意不加 overflow:hidden：那會裁掉裡面按鈕的 :focus-visible
+         外框。收合改由 .mainnav 自己的 max-width + overflow 處理。 */
+      @media (min-width: 1024px) {
+        .nav-js .site-header {
+          /* --hov：膠囊是固定寬度，聯絡 icon 一 hover 就要多 68px／46px，
+             這些空間沒地方生，會把字標擠扁。所以膠囊本身也要跟著長。
+             用 :has() 讓膠囊知道裡面有 icon 被 hover／focus；
+             不支援 :has() 的瀏覽器只會退回「icon 展開時字標被擠窄」，不會破版。 */
+          /* 收合 300px、展開 636px，兩個都是量出來的，不是喬的：
+             收合＝22(左內距) + 58(字標) + 186(四顆 42px 圓形＋三個 6px 間距)
+                   + 10(右內距) + 2(邊框) = 278，留 22px 給字標在不同字型下的寬度差。
+             展開＝22 + 32(字標只剩 logo) + 368(五個導覽連結) + 186 + 10 + 2 = 620，
+                   留 16px 餘裕。368 這個數字在任何中文字型下都一樣——
+                   桌機的箭頭是 display:none，五個連結剩下純漢字，
+                   而漢字一律是全形（14px 字級 = 14px 字寬），寬度不隨字型變動。 */
+          --capw: calc(300px + var(--hov, 0px));
+          position: sticky;
+          top: 14px;
+          margin: 14px auto 0;
+          width: min(var(--capw), calc(100vw - 28px));
+          height: 68px;
+          border: 1px solid var(--color-rule-2);
+          border-bottom-color: var(--color-rule-2);
+          border-radius: 999px;
+          background: rgb(247 245 241 / 92%);
+          transition: width 0.42s var(--ease);
+        }
+        .nav-js .site-header[data-open='true'] {
+          --capw: calc(636px + var(--hov, 0px));
+        }
+        .nav-js .site-header:has(.hicon--line:hover),
+        .nav-js .site-header:has(.hicon--line:focus-visible) {
+          --hov: 68px; /* 42 → 110 */
+        }
+        .nav-js .site-header:has(.hicon--mail:hover),
+        .nav-js .site-header:has(.hicon--mail:focus-visible) {
+          --hov: 46px; /* 42 → 88 */
+        }
+        .nav-js .hd-cap {
+          flex-wrap: nowrap;
+          max-width: none;
+          height: 100%;
+          padding: 0 10px 0 22px;
+          min-height: 0;
+          column-gap: 0;
+        }
+        .nav-js .hd-mark {
+          margin-inline-end: 0;
+        }
+        /* 展開時字標只留 logo 方塊，文字寬度收到 0。
+           連結本身仍有 aria-label 與 44px 高的觸控目標。 */
+        .nav-js .hd-mark-t {
+          max-width: 120px;
+          overflow: hidden;
+          transition:
+            max-width 0.42s var(--ease),
+            opacity 0.26s var(--ease);
+        }
+        .nav-js .site-header[data-open='true'] .hd-mark-t {
+          max-width: 0;
+          opacity: 0;
+        }
+        .nav-js .mainnav {
+          order: 2;
+          flex-basis: auto;
+          margin-inline-end: auto;
+          max-height: none;
+          max-width: 0;
+          padding-block: 0;
+          border-top: 0;
+          transition:
+            max-width 0.42s var(--ease),
+            opacity 0.26s var(--ease),
+            visibility 0s linear 0.42s;
+        }
+        .nav-js .site-header[data-open='true'] .mainnav {
+          max-width: 460px;
+          padding-block: 0;
+          border-top: 0;
+        }
+        .nav-js .mainnav ul {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          /* 上下 6px 不只是留白：.mainnav 要 overflow:hidden 才能做 max-width 收合，
+             導覽列高度剛好等於連結高度時，:focus-visible 的外框（offset 3px）
+             上下會被裁掉，實測只剩兩條直線。左右 12px 同理，給第一顆連結留位置。 */
+          padding: 6px 12px;
+        }
+        .nav-js .mainnav li + li {
+          border-top: 0;
+        }
+        .nav-js .mainnav a {
+          padding: 9px 0;
+          font-size: 14px;
+          white-space: nowrap;
+          font-weight: 400;
+        }
+        .nav-js .mainnav .np-go {
+          display: none;
+        }
+        .nav-js .hd-tools {
+          order: 3;
+          margin-inline-end: 0;
+        }
+      }
+
+      /* ---------- 搜尋下拉面板 ---------- */
+      /* 這裡不能設 display（會壓過 Tailwind 的 .hidden，見檔頭警告）。 */
+      .search-pop {
+        position: absolute;
+        top: 100%;
+        left: 20px;
+        right: 20px;
+        z-index: 50;
+        margin-top: 10px;
+        border: 1px solid var(--color-rule);
+        background: var(--color-surface);
+        padding: 12px;
+        box-shadow: 0 18px 40px rgb(22 22 26 / 12%);
+      }
+      @media (min-width: 768px) {
+        .search-pop {
+          left: auto;
+          right: 40px;
+          width: 320px;
+        }
+      }
+      @media (min-width: 1024px) {
+        /* 桌機才把定位基準交給搜尋按鈕本身。手機維持 static，
+           面板改以 sticky 的 .site-header 為基準拉成整條寬——
+           不然 288px 的面板掛在最左邊那顆 42px 按鈕上，右對齊會直接溢出畫面左緣。 */
+        .hd-search {
+          position: relative;
+        }
+        .search-pop {
+          right: 0;
+          margin-top: 14px;
+        }
+      }
+      .search-input {
+        width: 100%;
+        border: 1px solid var(--color-rule-3);
+        background: var(--color-surface);
+        padding: 9px 12px;
+        font-size: 14px;
+        line-height: 1.4;
+        color: var(--color-ink-2);
+      }
+      .search-input:focus {
+        border-color: var(--color-accent);
+      }
+      .search-ex {
+        margin-top: 10px;
+      }
+      .search-ex-h {
+        padding: 0 8px 4px;
+        font-size: 12px;
+        color: var(--color-ink-3);
+      }
+      .search-ex button {
+        display: block;
+        width: 100%;
+        padding: 7px 8px;
+        text-align: left;
+        font-size: 14px;
+        color: var(--color-ink-2);
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+      }
+      .search-res {
+        margin-top: 10px;
+        max-height: 20rem;
+        overflow-y: auto;
+        border-top: 1px solid var(--color-rule);
+        padding-top: 6px;
+      }
+
+      /* ---------- 頁尾 ---------- */
+      .site-footer {
+        margin-top: 96px;
+        border-top: 1px solid var(--color-rule);
+        background: var(--color-paper-2);
+        padding: 48px 0 36px;
+      }
+      .ft-wrap {
+        width: 100%;
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      @media (min-width: 768px) {
+        .ft-wrap {
+          padding: 0 40px;
+        }
+      }
+      .ft-grid {
+        display: grid;
+        gap: 30px;
+      }
+      @media (min-width: 760px) {
+        .ft-grid {
+          grid-template-columns: 1.6fr 1fr 1fr;
+          gap: 48px;
+        }
+      }
+      .ft-mark {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--color-ink);
+      }
+      .ft-desc {
+        margin-top: 12px;
+        max-width: 42ch;
+        font-size: 13px;
+        line-height: 1.85;
+        color: var(--color-ink-3);
+      }
+      .ft-h {
+        margin-bottom: 12px;
+        font-size: 11.5px;
+        letter-spacing: 0.12em;
+        color: var(--color-ink-3);
+      }
+      .ft-list li + li {
+        margin-top: 8px;
+      }
+      .ft-list a {
+        font-size: 13.5px;
+        color: var(--color-ink-2);
+        text-decoration: none;
+      }
+      .ft-bottom {
+        margin-top: 34px;
+        padding-top: 18px;
+        border-top: 1px solid var(--color-rule-2);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--color-ink-3);
+      }
+      .ft-copy {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11.5px;
+      }
+      .ft-legal {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+      }
+      .ft-legal a {
+        color: var(--color-ink-3);
+        text-decoration: none;
+      }
+
+      /* ============================================================
+         hover 一律加裝置條件：觸控裝置上 :hover 會「黏住」，
+         點過的元件會停在 hover 狀態直到點別的地方。
+         :focus-visible 另外寫一份、不設任何條件（見 global.css）。
+         ============================================================ */
+      @media (hover: hover) and (pointer: fine) {
+        .hicon:hover {
+          color: var(--color-accent);
+          border-color: var(--color-accent);
+          background: var(--color-accent-tint);
+        }
+        .hd-cue:hover {
+          border-color: var(--color-ink);
+        }
+        /* jisto 的開關 hover：兩條線縮到 10px、旋轉 ±45°，往中線收成小 ✕ */
+        .hd-cue:hover .hd-cue-b i {
+          width: 10px;
+          top: 3.85px;
+        }
+        .hd-cue:hover .hd-cue-b i:nth-child(1) {
+          transform: rotate(45deg);
+        }
+        .hd-cue:hover .hd-cue-b i:nth-child(2) {
+          transform: rotate(-45deg);
+        }
+        /* 已展開時 hover 維持完整 ✕，不要縮回 10px */
+        .hd-cue[aria-expanded='true']:hover .hd-cue-b i {
+          width: 15px;
+        }
+        .mainnav a:hover,
+        .hd-mark:hover,
+        .ft-list a:hover,
+        .ft-legal a:hover {
+          color: var(--color-accent);
+        }
+        .search-ex button:hover {
+          background: var(--color-paper-2);
+        }
+      }
+
+      /* 圖示的文字滑出只在 ≥768px 生效。
+         實測 320px 下頁首只剩 280px 淨寬，字標 62 ＋ 四顆圖示 175 已經用掉 237px；
+         再展開 68px 的「LINE 諮詢」會直接把字標擠出容器（橫向溢出）。
+         小螢幕上圖示維持 42px 圓形，可讀名稱由 aria-label 提供。 */
+      @media (min-width: 768px) {
+        @media (hover: hover) and (pointer: fine) {
+          .hicon--line:hover {
+            grid-template-columns: 18px 68px;
+          }
+          .hicon--mail:hover {
+            grid-template-columns: 18px 46px;
+          }
+        }
+        .hicon--line:focus-visible {
+          grid-template-columns: 18px 68px;
+        }
+        .hicon--mail:focus-visible {
+          grid-template-columns: 18px 46px;
+        }
+      }
+
+      /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
+      .hicon:focus-visible {
+        color: var(--color-accent);
+        border-color: var(--color-accent);
+        background: var(--color-accent-tint);
+      }
+      .mainnav a:focus-visible {
+        color: var(--color-accent);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .site-header,
+        .hicon,
+        .hd-cue,
+        .hd-cue-b i,
+        .mainnav,
+        .hd-mark-t {
+          transition: none !important;
+        }
+      }
+    </style>
   </body>
 </html>

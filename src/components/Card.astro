@@ -1,5 +1,18 @@
 ---
-// 全站共用卡片外框；hover 效果或間距調整由呼叫端用 class 傳入
+// 全站共用「髮絲線列」。
+//
+// 改版前這是一個 rounded-[1.75rem] ＋ border ＋ bg-surface ＋ shadow 的卡片盒。
+// 2026-08 起全站的卡片一律改成 1px 髮絲線分隔的橫列：圓角歸零（只有膠囊 999px
+// 與圓形是例外）、不加底色、不加陰影，內容直接落在紙上，只靠一條線劃分。
+//
+// 為什麼是 border-t 而不是 border-b：呼叫端幾乎都是 grid（sm:grid-cols-2），
+// 線畫在每一列的「頭上」時，最後一列不會多出一條懸空的收尾線；
+// 而多欄時各欄的頭線落在同一條水平線上，整組讀起來仍然是一張表。
+//
+// px-0.5（2px）沿用原型 home-b4-lean.html 的 .paths-list a{ padding:22px 2px }：
+// 髮絲線列的內容要貼齊線的起點，左右只留一點點內距。
+// 明確寫出 px 還有一個作用——勝過呼叫端可能傳進來的 p-*（Tailwind 的串接順序是
+// p → px → py，px-0.5 一定贏過 p-5 的水平值），避免內容被縮排得跟線對不齊。
 interface Props {
   as?: 'div' | 'a' | 'article';
   href?: string;
@@ -11,13 +24,6 @@ interface Props {
 const { as: Tag = 'div', href, class: className, padded = true } = Astro.props;
 ---
 
-<Tag
-  href={href}
-  class:list={[
-    'rounded-[1.75rem] border border-rule bg-surface/80 shadow-[0_8px_30px_rgba(22,22,26,0.06)]',
-    padded && 'p-7',
-    className,
-  ]}
->
+<Tag href={href} class:list={['border-t border-rule', padded && 'px-0.5 py-7', className]}>
   <slot />
 </Tag>

@@ -38,3 +38,7 @@ local-preview/home-variants/
 design-history/**/desktop-1440.png
 design-history/**/desktop-1440.jpg
 design-history/**/mobile-375.png
+
+# 舊 logo 備份留本機
+local-preview/logo-backup/
+local-preview/unused-assets/

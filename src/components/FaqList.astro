@@ -1,5 +1,11 @@
 ---
-// 用原生 <details> 呈現 FAQ：不需要 JS，且全文都在 HTML 裡，AI 爬蟲可直接讀取
+// 用原生 <details> 呈現 FAQ：不需要 JS，且全文都在 HTML 裡，AI 爬蟲可直接讀取。
+//
+// 改版前每一題是一張 rounded-[1.5rem] ＋ shadow 的卡片。現在是髮絲線列：
+// 整組上下各一條線，題與題之間一條線，沒有底色、沒有圓角。
+//
+// 指示符從 ▾ 換成 +／×（展開時旋轉 45°）：▾ 是「下拉選單」的語彙，
+// 這裡的動作是「展開一段內容」。+ 用等寬字，跟站上其他的 → 記號同一套。
 interface Props {
   faqs: { question: string; answer: string }[];
 }
@@ -7,14 +13,18 @@ interface Props {
 const { faqs } = Astro.props;
 ---
 
-<div class="space-y-4">
+<div class="border-t border-rule">
   {faqs.map((item) => (
-    <details class="group rounded-[1.5rem] border border-rule bg-surface/80 shadow-[0_8px_30px_rgba(22,22,26,0.05)] open:border-accent-line-2">
-      <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-lg font-medium text-ink [&::-webkit-details-marker]:hidden">
-        {item.question}
-        <span class="text-ink-2 transition-transform group-open:rotate-180">▾</span>
+    <details class="group border-b border-rule">
+      <summary
+        class="flex cursor-pointer list-none items-baseline justify-between gap-5 py-5 text-[17px] font-medium leading-8 text-ink [&::-webkit-details-marker]:hidden"
+      >
+        <span>{item.question}</span>
+        <span
+          class="shrink-0 font-mono text-lg leading-8 text-accent transition-transform duration-200 group-open:rotate-45"
+          aria-hidden="true">+</span>
       </summary>
-      <div class="border-t border-rule px-6 pb-6 pt-4 leading-7 text-ink-2">
+      <div class="pb-6 text-[15.5px] leading-8 text-ink-2 md:pr-10">
         {item.answer}
       </div>
     </details>

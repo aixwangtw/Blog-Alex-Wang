@@ -1,16 +1,24 @@
 ---
-// 可教學工具清單：一對一教學與演講頁共用；logo 一律滿版顯示
+// 可教學工具清單：一對一教學與演講頁共用。
+//
+// 改版前每個工具是一張 rounded-2xl ＋ shadow 的小卡，現在是髮絲線列的網格：
+// 每一格頭上一條線，沒有底色、沒有圓角。logo 也拿掉 rounded-lg——
+// 圓角規則只對膠囊與圓形開例外，產品 logo 本來就是方的。
+//
+// gap 只留水平（gap-x-8）：垂直方向的間隔由每一列自己的 py 提供，
+// 若再加 row-gap，線與線之間會多出一段跟內容無關的空白，
+// 那條線看起來就不像在分隔兩列，而像漂在中間。
 import { Image } from 'astro:assets';
 import { TEACHING_TOOLS } from '../data/services';
 ---
 
-<ul class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+<ul class="mt-6 grid grid-cols-2 gap-x-8 sm:grid-cols-3">
   {TEACHING_TOOLS.map((tool) => (
-    <li class="flex items-center gap-3 rounded-2xl border border-rule bg-surface/80 px-4 py-3 shadow-[0_6px_20px_rgba(22,22,26,0.04)]">
-      <Image src={tool.image} alt={tool.imageAlt} width={96} class="h-9 w-9 shrink-0 rounded-lg object-cover" />
-      <span class="text-ink">
+    <li class="flex items-center gap-3 border-t border-rule py-3.5">
+      <Image src={tool.image} alt={tool.imageAlt} width={96} class="h-9 w-9 shrink-0 object-cover" />
+      <span class="min-w-0 text-[15px] leading-6 text-ink">
         {tool.name}
-        {tool.note && <span class="text-ink-2">（{tool.note}）</span>}
+        {tool.note && <span class="text-ink-3">（{tool.note}）</span>}
       </span>
     </li>
   ))}

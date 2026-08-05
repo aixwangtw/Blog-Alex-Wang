@@ -58,3 +58,23 @@ export const HOME_FAQS: Faq[] = [
 ];
 
 export const ONE_ON_ONE_FAQS: Faq[] = [onlineClass, prep, noTechBackground, booking];
+
+// 免費資源專區（/resources/）的三題。內容原本掛在 CMS 文章 free-resources 的 faqs 欄位，
+// 該篇改寫成常設頁面後搬到這裡——頁面內容寫進程式碼，FAQ 資料就跟著回到 src/data/。
+// 這三題只在 /resources/ 出現，沒有輸出 FAQPage schema（同一組 Q&A 已經有兩份，理由見該頁註解）。
+export const RESOURCES_FAQS: Faq[] = [
+  {
+    question: '只靠免費資源能學會 AI 自動化嗎？',
+    answer:
+      '可以，影片和開源工具都是完整的，跟著做就能跑通。差別在時間：自學卡關要自己試錯，一對一教學則是有人帶著走一次。建議先用免費資源開始，真的卡住再考慮付費課程。',
+  },
+  {
+    question: 'Tooka 是免費的嗎？',
+    answer:
+      '是，Tooka 完全開源免費，放在 GitHub 上。你只需要自備一個 AI Agent（Claude Code 或 Codex，訂閱每月 20 美元起）來驅動它。',
+  },
+  {
+    question: '看影片有問題可以問你嗎？',
+    answer: '可以，歡迎加 LINE 免費諮詢，或到我的 Facebook 社團發問。',
+  },
+];

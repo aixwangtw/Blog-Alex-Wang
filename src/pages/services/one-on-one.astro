@@ -3,7 +3,6 @@ import { Image } from 'astro:assets';
 import Card from '../../components/Card.astro';
 import Cta from '../../components/Cta.astro';
 import FaqList from '../../components/FaqList.astro';
-import PillButton from '../../components/PillButton.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import TeachingTools from '../../components/TeachingTools.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
@@ -74,7 +73,7 @@ const schema = [
 >
   <div class="mx-auto max-w-4xl px-6 py-12">
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: 'AI 一對一私人教學' }]} class="mb-8" />
-    <h1 class="text-3xl font-semibold text-ink md:text-5xl">AI 一對一私人教學</h1>
+    <h1 class="t-h1 font-semibold text-ink">AI 一對一私人教學</h1>
 
     <p class="mt-8 text-lg leading-9 text-ink">
       這是付費的一對一 AI 私人教學服務：由我（<a href="/about/" class="text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="text-accent">你自己的電腦、你自己的帳號</strong>上，把
@@ -134,14 +133,9 @@ const schema = [
     </div>
 
     <Cta
-      centered
       title="想預約或先問問題？"
       text="加 LINE 告訴我你的目標和目前程度，我會建議適合的上課方式與堂數。"
-    >
-      <Fragment slot="actions">
-        <PillButton href={LINKS.line} variant="line" external>LINE 免費諮詢</PillButton>
-        <PillButton href={LINKS.email}>Email 聯絡</PillButton>
-      </Fragment>
-    </Cta>
+      links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
+    />
   </div>
 </Base>

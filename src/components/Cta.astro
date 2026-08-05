@@ -1,33 +1,201 @@
 ---
+// 文末行動區（5 個頁面在用）。
+//
+// 改版前是 rounded-[1.75rem] ＋ 三色 linear-gradient 底 ＋ 外框的漸層卡片。
+// 漸層卡片是最典型的「AI 直出」特徵，整組移除。
+//
+// 改用 jisto 聯絡區的做法（實測值）：無外框、無底色、無漸層，只用上方一條髮絲線
+// 跟前面的內容分開；行動點是一顆實心圓（本站用酒紅），hover 反白並旋轉 −8°；
+// 手機把圓改成整寬膠囊。圓形與膠囊是「圓角歸零」規則的兩個合法例外。
+//
+// API 從「actions slot 放一排 PillButton」改成「一顆主要行動 ＋ 一排次要文字連結」：
+// 一個區塊裡放三顆同等分量的按鈕，等於沒有主要行動。次要選項改成純文字連結，
+// 讀者仍然找得到，但視線會先落在那顆圓上。
 import { LINKS } from '../consts';
-import PillButton from './PillButton.astro';
+
+interface SecondaryLink {
+  href: string;
+  label: string;
+  external?: boolean;
+}
 
 interface Props {
   title?: string;
   text?: string;
-  centered?: boolean;
+  /** 主要行動（實心圓）。預設是 LINE 免費諮詢——5 個使用頁的共同轉換路徑 */
+  href?: string;
+  /** 圓內文字，用 \n 手動斷行；圓的直徑固定 168px，不要塞超過兩行 */
+  label?: string;
+  external?: boolean;
+  /** 次要行動：純文字連結，不做成第二顆按鈕 */
+  links?: SecondaryLink[];
 }
 
 const {
   title = '想更快上手？可以直接找我一對一',
   text = '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），也接受企業與社群的 AI 演講邀約。',
-  centered = false,
+  href = LINKS.line,
+  label = '加 LINE\n免費諮詢',
+  external = true,
+  links = [
+    { href: '/services/one-on-one/', label: '了解一對一教學' },
+    { href: '/services/speaking/', label: '演講邀約' },
+  ],
 } = Astro.props;
+
+const labelLines = label.split('\n');
 ---
 
-<aside
-  class:list={[
-    'mt-14 rounded-[1.75rem] border border-accent-line bg-[linear-gradient(135deg,rgba(122,46,59,0.10),rgba(172,126,132,0.10),rgba(255,255,255,0.03))] p-8',
-    centered && 'text-center',
-  ]}
->
-  <h2 class="text-2xl font-semibold text-ink">{title}</h2>
-  <p class:list={['mt-3 max-w-2xl leading-7 text-ink-2', centered && 'mx-auto']}>{text}</p>
-  <div class:list={['mt-6 flex flex-wrap gap-3', centered && 'justify-center']}>
-    <slot name="actions">
-      <PillButton href={LINKS.line} variant="line" size="md" external>LINE 免費諮詢</PillButton>
-      <PillButton href="/services/one-on-one/" size="md">了解一對一教學</PillButton>
-      <PillButton href="/services/speaking/" size="md">演講邀約</PillButton>
-    </slot>
+<aside class="cta">
+  <div class="cta-in">
+    <div>
+      <h2 class="cta-h">{title}</h2>
+      <p class="cta-p">{text}</p>
+      {links.length > 0 && (
+        <ul class="cta-links">
+          {links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noreferrer' : undefined}
+              >
+                {link.label}<span aria-hidden="true"> →</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    <a
+      class="cta-go"
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noreferrer' : undefined}
+    >
+      {labelLines.map((line) => <span>{line}</span>)}
+    </a>
   </div>
 </aside>
+
+<style>
+  .cta {
+    margin-top: clamp(56px, 8vw, 96px);
+    border-top: 1px solid var(--color-rule);
+    padding-top: clamp(48px, 7vw, 96px);
+    padding-bottom: clamp(8px, 2vw, 24px);
+  }
+  /* jisto 的聯絡區是 clamp(72px,11vw,190px)。這裡收到 clamp(48px,7vw,96px)：
+     jisto 那個區塊是滿版寬、頁面最後一個單元；本站的 Cta 夾在 720–896px 的
+     內文欄裡，而且後面還有頁尾。1440px 下 11vw 會給出 158px 的上下留白，
+     在一個 720px 寬的欄位裡看起來像頁面壞掉了。 */
+
+  .cta-in {
+    display: grid;
+    gap: 32px;
+  }
+  @media (min-width: 768px) {
+    .cta-in {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 48px;
+    }
+  }
+
+  .cta-h {
+    font-size: clamp(26px, 4.6vw, 38px);
+    line-height: 1.15;
+    font-weight: 600;
+    color: var(--color-ink);
+    letter-spacing: 0;
+  }
+  /* jisto 的 h2 是 clamp(36px,10vw,46px)，但那顆標題是「Let's talk」——9 個拉丁字元。
+     本站的標題是「想更快上手？可以直接找我一對一」這種 15 字中文，同樣的字級下
+     寬度是它的三倍：375px 螢幕上 10vw≈37.5px 會排成五行。
+     收到 clamp(26px,4.6vw,38px)：375px 下 26px（每行約 12 字、兩行收完），
+     1440px 下 38px（720px 欄寬每行約 19 字、一行收完）。 */
+
+  .cta-p {
+    margin-top: 16px;
+    max-width: 52ch;
+    font-size: 15.5px;
+    line-height: 1.9;
+    color: var(--color-ink-2);
+  }
+
+  .cta-links {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    list-style: none;
+    padding: 0;
+  }
+  .cta-links a {
+    font-size: 14px;
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  /* 手機：整寬 56px 膠囊。≥768px：168px 實心圓。 */
+  .cta-go {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 5px;
+    width: 100%;
+    min-height: 56px;
+    padding: 8px 20px;
+    border: 1px solid var(--color-accent);
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-surface);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    transition:
+      background-color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+      color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (min-width: 768px) {
+    .cta-go {
+      flex-direction: column;
+      gap: 2px;
+      width: 168px;
+      min-width: 168px;
+      min-height: 168px;
+      border-radius: 50%;
+      padding: 8px;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cta-go:hover {
+      background: transparent;
+      color: var(--color-ink);
+    }
+    /* 旋轉只在圓形狀態做。手機那顆是整寬膠囊，轉 −8° 會斜著頂到左右兩邊。
+       hover 反白後外框留著（jisto 是連框一起消失）：框消失時這顆圓
+       就只剩浮在紙上的兩行字，既失去「這是一個按鈕」的形狀線索，
+       也失去 WCAG 1.4.11 要求的非文字對比。 */
+    @media (min-width: 768px) {
+      .cta-go:hover {
+        transform: rotate(-8deg) scale(1.03);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta-go {
+      transition: none;
+    }
+    .cta-go:hover {
+      transform: none;
+    }
+  }
+</style>

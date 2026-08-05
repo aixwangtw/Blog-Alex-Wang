@@ -3,7 +3,6 @@ import { Image } from 'astro:assets';
 import Card from '../../components/Card.astro';
 import CheckItem from '../../components/CheckItem.astro';
 import Cta from '../../components/Cta.astro';
-import PillButton from '../../components/PillButton.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import TeachingTools from '../../components/TeachingTools.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
@@ -66,7 +65,7 @@ const schema = [
 >
   <div class="mx-auto max-w-4xl px-6 py-12">
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: 'AI 演講與企業內訓' }]} class="mb-8" />
-    <h1 class="text-3xl font-semibold text-ink md:text-5xl">AI 演講與企業內訓邀約</h1>
+    <h1 class="t-h1 font-semibold text-ink">AI 演講與企業內訓邀約</h1>
 
     <p class="mt-8 text-lg leading-9 text-ink">
       我是 <a href="/about/" class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，接受企業、學校與社群的
@@ -120,14 +119,10 @@ const schema = [
     </ul>
 
     <Cta
-      centered
       title="邀約洽談"
       text="請提供活動日期、聽眾輪廓與希望的主題方向，我會盡快回覆可行性與報價。"
-    >
-      <Fragment slot="actions">
-        <PillButton href={LINKS.line} variant="line" external>LINE 洽談</PillButton>
-        <PillButton href={LINKS.email}>Email 聯絡</PillButton>
-      </Fragment>
-    </Cta>
+      label={'加 LINE\n洽談邀約'}
+      links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
+    />
   </div>
 </Base>

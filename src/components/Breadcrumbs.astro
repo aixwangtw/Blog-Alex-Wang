@@ -1,5 +1,14 @@
 ---
-// 可見麵包屑導覽；結構化資料請搭配 consts.ts 的 breadcrumbSchema() 傳入 Base 的 schema
+// 可見麵包屑導覽（8 個頁面在用）；結構化資料請搭配 consts.ts 的 breadcrumbSchema()
+// 傳入 Base 的 schema。
+//
+// 分隔符從「›」換成等寬字的「/」：站台的形式語言把文章當成一份檔案來呈現，
+// 路徑式分隔跟這件事同構，也跟頁面其他的等寬記號（→、©）是同一套。
+// 分隔符用 --rule-3（對紙底 3.35:1）而不是 --rule-2（1.61:1）——後者等於看不見。
+// 它是 aria-hidden 的裝飾字元，但仍要過非文字對比的 3:1。
+//
+// 最後一項補 aria-current="page"：輔助技術才知道這是目前所在的頁面，
+// 而不是一個少了連結的項目。
 interface Crumb {
   name: string;
   href?: string;
@@ -13,14 +22,17 @@ interface Props {
 const { items, class: className = '' } = Astro.props;
 ---
 
-<nav aria-label="麵包屑" class={`flex flex-wrap items-center gap-2 text-sm text-ink-2 ${className}`}>
+<nav
+  aria-label="麵包屑"
+  class={`flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-2 ${className}`}
+>
   {items.map((crumb, i) => (
     <>
-      {i > 0 && <span aria-hidden="true">›</span>}
+      {i > 0 && <span aria-hidden="true" class="font-mono text-rule-3">/</span>}
       {crumb.href ? (
-        <a href={crumb.href} class="hover:text-accent">{crumb.name}</a>
+        <a href={crumb.href} class="transition-colors hover:text-accent">{crumb.name}</a>
       ) : (
-        <span class="min-w-0 truncate text-ink-3">{crumb.name}</span>
+        <span class="min-w-0 truncate text-ink-3" aria-current="page">{crumb.name}</span>
       )}
     </>
   ))}

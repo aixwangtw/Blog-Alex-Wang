@@ -1,9 +1,19 @@
 ---
-// 全站共用圓角按鈕連結：line = 主要行動按鈕（酒紅），ghost = 描邊次要按鈕
+// 全站共用膠囊按鈕連結：line = 主要行動按鈕（酒紅），ghost = 描邊次要按鈕
 //
-// line 這個 variant 名稱沿用（7 個頁面在呼叫），但底色不再用 LINE 品牌綠 #06c755：
+// 膠囊（border-radius 999px）是「圓角一律 0」這條規則的兩個合法例外之一
+// （另一個是圓形），所以這裡刻意保留 rounded-full。
+//
+// line 這個 variant 名稱沿用（7 個頁面在呼叫），但底色不是 LINE 品牌綠 #06c755：
 // 那個綠在暖紙底＋酒紅的配色裡是異物，而且白字配它只有 2.26:1、過不了 WCAG AA。
 // 辨識改由按鈕文案與 LINE 圖示承擔，配色統一到站台自己的重點色。
+//
+// 2026-08 改版第二階段的兩個修正：
+// 1. 改成 inline-flex。原本是預設的 inline <a>，行內元素的垂直 padding 雖然會畫出來，
+//    卻不會撐開行框——按鈕的可點區域比看起來的小，而且會壓到上下行。
+// 2. 加 min-h：sm 38px、md／lg 44px，讓主要按鈕達到 44×44 的觸控目標。
+// 字重從 font-semibold 降到 font-medium：14px 的中文用 600 太厚，
+// 在暖紙底上會糊成一團。
 interface Props {
   href: string;
   variant?: 'line' | 'ghost';
@@ -14,14 +24,9 @@ interface Props {
 const { href, variant = 'ghost', size = 'lg', external = false } = Astro.props;
 
 const sizeClasses = {
-  sm: 'px-4 py-2',
-  md: 'px-5 py-2.5',
-  lg: 'px-6 py-3',
-};
-
-const variantClasses = {
-  line: 'bg-accent text-surface hover:bg-accent-2',
-  ghost: 'border border-rule-3 bg-surface/80 text-ink hover:border-accent-line-2 hover:bg-paper-2',
+  sm: 'min-h-[38px] px-4 py-2',
+  md: 'min-h-11 px-5 py-2.5',
+  lg: 'min-h-11 px-6 py-3',
 };
 ---
 
@@ -29,7 +34,47 @@ const variantClasses = {
   href={href}
   target={external ? '_blank' : undefined}
   rel={external ? 'noreferrer' : undefined}
-  class:list={['rounded-full text-sm font-semibold transition', sizeClasses[size], variantClasses[variant]]}
+  class:list={[
+    'pill inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium transition',
+    `pill--${variant}`,
+    sizeClasses[size],
+  ]}
 >
   <slot />
 </a>
+
+<style>
+  /* 配色不用 Tailwind utility，改用元件範圍樣式，理由是實測到的一個真實 bug：
+     /privacy/、/disclaimer/、/editorial-policy/ 三頁把按鈕放在 .prose-blog 裡，
+     而 global.css 的 `.prose-blog a { color: accent; text-decoration: underline }`
+     是「無層級」CSS、選擇器權重 (0,1,1)，會贏過 Tailwind @layer utilities 裡
+     權重只有 (0,1,0) 的 .text-surface。
+     結果是 line 版按鈕變成「酒紅字配酒紅底」——實測對比 1:1，字完全看不見。
+     這個 bug 在改版前就存在（舊版同樣寫 text-surface）。
+     Astro 的元件範圍樣式會編成 .pill--line[data-astro-cid-…]，權重 (0,2,0)，
+     穩定贏過 .prose-blog a，不必動用 !important。 */
+  .pill {
+    text-decoration: none;
+  }
+  .pill--line {
+    border: 1px solid var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-surface);
+  }
+  .pill--ghost {
+    border: 1px solid var(--color-rule-3);
+    background: transparent;
+    color: var(--color-ink);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pill--line:hover {
+      border-color: var(--color-accent-2);
+      background: var(--color-accent-2);
+    }
+    .pill--ghost:hover {
+      border-color: var(--color-accent);
+      background: var(--color-accent-tint);
+      color: var(--color-accent);
+    }
+  }
+</style>
