@@ -1,8 +1,9 @@
 ---
 // 全站共用膠囊按鈕連結：line = 主要行動按鈕（酒紅），ghost = 描邊次要按鈕
 //
-// 膠囊（border-radius 999px）是「圓角一律 0」這條規則的兩個合法例外之一
-// （另一個是圓形），所以這裡刻意保留 rounded-full。
+// 2026-08-06 改成 3px：膠囊原本被當成圓角規則的合法例外保留，但全站改完之後，
+// 實心酒紅膠囊變成髮絲線版面裡視覺最吵的東西，而首頁自己的主要按鈕（.btn）是 3px。
+// 現在膠囊只留給頁首那顆展開的導覽列；圓形只留給 Cta 的 168px 主行動與頁首圖示鈕。
 //
 // line 這個 variant 名稱沿用（7 個頁面在呼叫），但底色不是 LINE 品牌綠 #06c755：
 // 那個綠在暖紙底＋酒紅的配色裡是異物，而且白字配它只有 2.26:1、過不了 WCAG AA。
@@ -35,7 +36,7 @@ const sizeClasses = {
   target={external ? '_blank' : undefined}
   rel={external ? 'noreferrer' : undefined}
   class:list={[
-    'pill inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium transition',
+    'pill inline-flex items-center justify-center gap-2 rounded-[3px] text-sm font-medium transition',
     `pill--${variant}`,
     sizeClasses[size],
   ]}

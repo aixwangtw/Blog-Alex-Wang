@@ -35,7 +35,9 @@ const schema = [
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '關於講師' }]} class="mb-8" />
     <h1 class="t-h1 font-semibold text-ink">關於講師 {AUTHOR.name}</h1>
 
-    <figure class="mx-auto mt-8 max-w-md overflow-hidden rounded-[1.75rem] border border-rule bg-surface/80 shadow-[0_8px_30px_rgba(22,22,26,0.05)]">
+    <!-- 人像：拿掉 rounded-[1.75rem]、bg-surface 與陰影，只留 1px 邊框（同 PostCard 的縮圖）。
+         不套灰階——這是講師本人的形象照，是內容不是裝飾。 -->
+    <figure class="mx-auto mt-8 max-w-md border border-rule">
       <Image
         src={instructorPortrait}
         alt={`AI 講師 ${AUTHOR.name} 形象照`}
@@ -48,7 +50,7 @@ const schema = [
     </p>
     <a
       href="/blog/from-part-time-to-freelance/"
-      class="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
+      class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
     >
       閱讀我的轉職故事 →
     </a>
@@ -56,16 +58,20 @@ const schema = [
     <SectionHeading size="md" class="mt-14">一對一教學經歷</SectionHeading>
     <a
       href="/services/one-on-one/"
-      class="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
+      class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
     >
       查看完整教學案例與收費方式 →
     </a>
     <p class="mt-4 leading-8 text-ink-2">帶過的學員從工程師到完全非技術背景都有，雙北實體與線上教學皆可預約。</p>
-    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+    <!-- gap 只留水平：垂直間隔由 Card 自己的 py-7 提供。再加 row-gap 的話，
+         線與線之間會多出一段跟內容無關的空白，那條線看起來就不像在分隔兩列。
+         （理由與 TeachingTools.astro 相同。）
+         原本傳的 p-5 是舊卡片盒的內距，Card 現在一律用 px-0.5 py-7，傳了也不生效，直接移除。 -->
+    <div class="mt-6 grid gap-x-8 sm:grid-cols-2">
       {TEACHING_CASES.map((item) => (
-        <Card class="p-5">
+        <Card>
           <div class="flex items-center gap-3">
-            <Image src={item.image} alt={item.imageAlt} width={96} class="h-10 w-10 shrink-0 rounded-xl object-contain" />
+            <Image src={item.image} alt={item.imageAlt} width={96} class="h-10 w-10 shrink-0 object-contain" />
             <h3 class="font-semibold leading-snug text-ink">{item.topic}</h3>
           </div>
           <p class="mt-3 text-sm text-accent">學員背景：{item.student}</p>
@@ -76,22 +82,30 @@ const schema = [
     <SectionHeading size="md" class="mt-14">公眾演講經歷</SectionHeading>
     <a
       href="/services/speaking/"
-      class="mt-4 inline-block rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
+      class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
     >
       查看演講紀錄與邀約方式 →
     </a>
     <p class="mt-4 leading-8 text-ink-2">全部現場實機演示、帶聽眾動手做；企業、學校與社群的演講或工作坊都可規劃。</p>
-    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+    <div class="mt-6 grid gap-x-8 sm:grid-cols-2">
       {SPEAKING_ENGAGEMENTS.map((item) => (
-        <Card class="p-5">
-          <p class="text-xs uppercase tracking-[0.26em] text-accent">{item.host}</p>
+        <Card>
+          {/* 主辦單位標籤改用全站的等寬小標（同 resources.astro 的 video.tag、
+              Base 頁尾的 .ft-h）：原本的 tracking-[0.26em] 是舊卡片上的裝飾字距，
+              在標題旁邊會把「MixerBox」拉得比標題還寬。 */}
+          <p class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">{item.host}</p>
           <h3 class="mt-2 font-semibold leading-snug text-ink">{item.topic}</h3>
         </Card>
       ))}
     </div>
 
     <SectionHeading size="md" class="mt-14">代表作品：Tooka</SectionHeading>
-    <Card padded={false} class="mt-6 overflow-hidden">
+    {/* overflow-hidden 是舊圓角卡片用來裁切影片四角的，圓角歸零後沒有作用，移除。
+        內層原本的 p-6 也移除：Card 的內容要貼齊髮絲線的起點（px-0.5），
+        多一層 24px 內距會讓這一段比頁面上其他所有列都縮排，那條線就對不到任何東西。
+        三個賣點小卡（rounded-2xl ＋ bg-paper-2）改成髮絲線格，
+        gap 同樣只留水平。 */}
+    <Card padded={false} class="mt-6">
       <video
         src="/videos/tooka-workflow-demo.mp4"
         controls
@@ -99,27 +113,27 @@ const schema = [
         playsinline
         class="w-full"
       ></video>
-      <div class="p-6">
-        <div class="grid gap-3 sm:grid-cols-3">
-          <div class="rounded-2xl border border-rule bg-paper-2/60 px-4 py-3">
+      <div class="px-0.5 pt-6">
+        <div class="grid gap-x-8 sm:grid-cols-3">
+          <div class="border-t border-rule py-4">
             <p class="font-semibold text-ink">中文描述需求</p>
             <p class="mt-1 text-sm leading-6 text-ink-2">AI Agent 生成整組 1080×1350 IG 輪播圖文</p>
           </div>
-          <div class="rounded-2xl border border-rule bg-paper-2/60 px-4 py-3">
+          <div class="border-t border-rule py-4">
             <p class="font-semibold text-ink">不跑版、不失真</p>
             <p class="mt-1 text-sm leading-6 text-ink-2">文字用程式渲染、版型用模板鎖定</p>
           </div>
-          <div class="rounded-2xl border border-rule bg-paper-2/60 px-4 py-3">
+          <div class="border-t border-rule py-4">
             <p class="font-semibold text-ink">一鍵發佈</p>
             <p class="mt-1 text-sm leading-6 text-ink-2">Facebook、Instagram、Threads 同步上稿</p>
           </div>
         </div>
-        <div class="mt-5 flex flex-wrap gap-4">
+        <div class="mt-6 flex flex-wrap gap-4">
           <a
             href="https://tooka.js0980420.workers.dev/"
             target="_blank"
             rel="noreferrer"
-            class="rounded-full bg-accent px-5 py-2.5 font-semibold text-white transition hover:bg-accent-2"
+            class="rounded-[3px] bg-accent px-5 py-2.5 font-semibold text-white transition hover:bg-accent-2"
           >
             線上直接使用 Tooka →
           </a>
@@ -127,7 +141,7 @@ const schema = [
             href="https://github.com/js0980420/tooka"
             target="_blank"
             rel="noreferrer"
-            class="rounded-full border border-rule-3 bg-surface px-5 py-2.5 font-semibold text-accent transition hover:border-accent-line-2 hover:bg-paper-2"
+            class="rounded-[3px] border border-rule-3 bg-surface px-5 py-2.5 font-semibold text-accent transition hover:border-accent-line-2 hover:bg-paper-2"
           >
             查看 GitHub 原始碼 →
           </a>
@@ -141,9 +155,11 @@ const schema = [
     </ul>
 
     <SectionHeading size="md" class="mt-14">教學主題</SectionHeading>
-    <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+    {/* 教學主題：改版前每一項是 rounded-2xl ＋ bg-surface ＋ shadow 的小卡。
+        現在是髮絲線格；項目短、密度高，py 收到 3.5（14px）而不是 Card 的 py-7。 */}
+    <ul class="mt-6 grid gap-x-8 sm:grid-cols-2">
       {AUTHOR.knowsAbout.map((topic) => (
-        <li class="rounded-2xl border border-rule bg-surface/80 px-5 py-3 text-ink-2 shadow-[0_6px_20px_rgba(22,22,26,0.04)]">{topic}</li>
+        <li class="border-t border-rule px-0.5 py-3.5 leading-7 text-ink-2">{topic}</li>
       ))}
     </ul>
 

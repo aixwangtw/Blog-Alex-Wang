@@ -27,9 +27,11 @@ const FONT_PATH = path.resolve('tools/fonts/NotoSansTC-Bold.otf');
 const FONT_URL =
   'https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/TC/NotoSansTC-Bold.otf';
 
-const BLUE = '#1657c8';
-const TITLE_BLUE = '#12409f';
-const DARK = '#0b1b4d';
+const PAPER = '#f7f5f1';
+const ACCENT = '#7a2e3b';
+const TITLE_ACCENT = '#5c1f2a';
+const ACCENT_LINE = '#e0c8c6';
+const DARK = '#16161a';
 
 const args = process.argv.slice(2);
 const getFlag = (name) => {
@@ -133,11 +135,11 @@ function buildLayer(copy, fontData, logos) {
                         style: {
                           display: 'flex',
                           backgroundColor: '#ffffff',
-                          border: `3px solid ${BLUE}`,
-                          borderRadius: 999,
+                          border: `3px solid ${ACCENT}`,
+                          borderRadius: 3,
                           padding: '10px 28px',
                           fontSize: 28,
-                          color: BLUE,
+                          color: ACCENT,
                         },
                         children: `新手學 AI｜${copy.badge}`,
                       },
@@ -149,11 +151,11 @@ function buildLayer(copy, fontData, logos) {
                             style: {
                               display: 'flex',
                               backgroundColor: '#ffffff',
-                              border: '2px solid #c9dcf5',
-                              borderRadius: 16,
+                              border: `2px solid ${ACCENT_LINE}`,
+                              borderRadius: 3,
                               padding: '8px 18px',
                               fontSize: 30,
-                              color: TITLE_BLUE,
+                              color: TITLE_ACCENT,
                             },
                             children: copy.platform,
                           },
@@ -181,8 +183,8 @@ function buildLayer(copy, fontData, logos) {
                             alignItems: 'center',
                             justifyContent: 'center',
                             backgroundColor: '#ffffff',
-                            border: '2px solid #dbeafe',
-                            borderRadius: 14,
+                            border: `2px solid ${ACCENT_LINE}`,
+                            borderRadius: 3,
                           },
                           children:
                             logo === 'windows'
@@ -238,7 +240,7 @@ function buildLayer(copy, fontData, logos) {
                     width: 510,
                     fontSize: titleFontSize(copy.title, 510),
                     lineHeight: 1.22,
-                    color: TITLE_BLUE,
+                    color: TITLE_ACCENT,
                   },
                   children: copy.title.split('\n').map((line) => ({
                     type: 'div',
@@ -252,8 +254,8 @@ function buildLayer(copy, fontData, logos) {
                     props: {
                       style: {
                         display: 'flex',
-                        backgroundColor: BLUE,
-                        borderRadius: 14,
+                        backgroundColor: ACCENT,
+                        borderRadius: 3,
                         padding: '10px 24px',
                         fontSize: 26,
                         color: '#ffffff',
@@ -275,11 +277,11 @@ function buildLayer(copy, fontData, logos) {
               top: 296,
               display: 'flex',
               backgroundColor: '#ffffff',
-              border: '2px solid #dbeafe',
-              borderRadius: 16,
+              border: `2px solid ${ACCENT_LINE}`,
+              borderRadius: 3,
               padding: '12px 26px',
               fontSize: 22,
-              color: TITLE_BLUE,
+              color: TITLE_ACCENT,
             },
             children: '講師：Alex',
           },
@@ -334,15 +336,16 @@ const logoData = {
   codex: `data:image/png;base64,${codexLogo.toString('base64')}`,
 };
 
-for (const asset of ['background.png', 'instructor-transparent.png']) {
+for (const asset of ['instructor-transparent.png']) {
   if (!(await exists(path.join(ASSET_DIR, asset)))) {
     throw new Error(`缺少素材 src/assets/blog-banner/${asset}（只留本機，見 .gitignore）`);
   }
 }
 
-const background = await sharp(path.join(ASSET_DIR, 'background.png'))
-  .resize(WIDTH, HEIGHT)
-  .toBuffer();
+// 2026-08 拿掉裝飾底圖（暖色漸層弧形＋電路板點線紋），改純 --color-paper 底
+const background = await sharp({
+  create: { width: WIDTH, height: HEIGHT, channels: 3, background: PAPER },
+}).png().toBuffer();
 // 人物只能等比縮放後直接貼上（防失真），不得重繪
 const instructor = await sharp(path.join(ASSET_DIR, 'instructor-transparent.png'))
   .resize({ height: 700 })

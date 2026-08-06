@@ -73,6 +73,7 @@ export const LINKS = {
 
 export const NAV = [
   { href: '/', label: '首頁' },
+  { href: '/resources/', label: '免費資源' },
   { href: '/blog/', label: '部落格' },
   { href: '/services/one-on-one/', label: '一對一教學' },
   { href: '/services/speaking/', label: '演講邀約' },

@@ -31,6 +31,10 @@ export const GET: APIRoute = async () => {
 - [AI 演講與企業內訓](${SITE.url}/services/speaking/)：AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計等主題，曾受 MixerBox、TAIA 台灣人工智慧協會邀請演講。
 - [關於講師 Alex](${SITE.url}/about/)：21 萬人 OpenClaw 中文社群版主、HyperFrames 開源專案協作者。
 
+## 免費資源
+
+- [免費資源](${SITE.url}/resources/)：教學影片（Threads API 申請、Instagram API 申請）與開源工具 Tooka（社群圖卡模板＋一鍵發布 Meta 三大平台），全部不用付費就能用。2026-08 從文章改成常設頁面，舊網址 /blog/free-resources/ 已 301 轉址至此。
+
 ## 部落格文章
 
 ${articleList}

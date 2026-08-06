@@ -98,7 +98,7 @@ const schema = [
           {item.logos && (
             <div class="mt-4 flex gap-2.5">
               {item.logos.map((logo) => (
-                <Image src={logo.image} alt={logo.alt} width={96} class="h-9 w-9 rounded-lg object-cover" />
+                <Image src={logo.image} alt={logo.alt} width={96} class="h-9 w-9 object-cover" />
               ))}
             </div>
           )}
@@ -118,7 +118,7 @@ const schema = [
       {TEACHING_CASES.map((item) => (
         <Card>
           <div class="flex items-center gap-3">
-            <Image src={item.image} alt={item.imageAlt} width={96} class="h-10 w-10 shrink-0 rounded-xl object-contain" />
+            <Image src={item.image} alt={item.imageAlt} width={96} class="h-10 w-10 shrink-0 object-contain" />
             <h3 class="text-lg font-semibold leading-snug text-ink">{item.topic}</h3>
           </div>
           <p class="mt-3 text-sm text-accent">學員背景：{item.student}</p>

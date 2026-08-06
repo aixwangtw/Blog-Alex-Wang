@@ -52,22 +52,25 @@ const schema = [
     </p>
 
     <SectionHeading size="md" class="mt-12">我提供什麼教學？</SectionHeading>
-    <div class="mt-6 rounded-[1.75rem] border border-rule bg-surface/80 p-7 shadow-[0_8px_30px_rgba(22,22,26,0.05)]">
-      <ul class="space-y-4 leading-8 text-ink-2">
-        <li>
-          <strong class="text-ink">四大 AI Agent 的安裝使用</strong>——Claude Code、Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）的安裝、權限與環境設定。
-        </li>
-        <li>
-          <strong class="text-ink">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>——例如用 LINE 跟 AI 對話，整理其他平台的訊息；也包含 Meta 三大 API（FB／IG／Threads）的自動發文、留言、私訊。
-        </li>
-        <li>
-          <strong class="text-ink">打造你的生圖、拍片工作流</strong>——AI 生圖模板與對話式拍片，一句話產出社群圖文和影片。
-        </li>
-      </ul>
-      <p class="mt-5 text-sm">
-        <a href="/services/one-on-one/" class="text-accent underline underline-offset-4">看一對一教學的完整說明與上課形式 →</a>
-      </p>
-    </div>
+    <!-- 改版前這是一個 rounded-[1.75rem] ＋ bg-surface ＋ shadow 的卡片盒。
+         它包著的本來就是一份三項清單，所以不是把盒子換成別的盒子，而是把盒子拆掉、
+         讓清單自己用髮絲線分項（同 resources.astro 的 <ol> 與 CheckItem 的做法）。
+         最後一項補 last:border-b 收尾：後面緊接著一個「→」連結，
+         沒有收尾線時那個連結會讀起來像清單的第四項。 -->
+    <ul class="mt-6">
+      <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2 last:border-b">
+        <strong class="text-ink">四大 AI Agent 的安裝使用</strong>——Claude Code、Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）的安裝、權限與環境設定。
+      </li>
+      <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2 last:border-b">
+        <strong class="text-ink">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>——例如用 LINE 跟 AI 對話，整理其他平台的訊息；也包含 Meta 三大 API（FB／IG／Threads）的自動發文、留言、私訊。
+      </li>
+      <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2 last:border-b">
+        <strong class="text-ink">打造你的生圖、拍片工作流</strong>——AI 生圖模板與對話式拍片，一句話產出社群圖文和影片。
+      </li>
+    </ul>
+    <p class="mt-5 px-0.5 text-sm">
+      <a href="/services/one-on-one/" class="text-accent underline underline-offset-4">看一對一教學的完整說明與上課形式 →</a>
+    </p>
 
     <SectionHeading size="md" class="mt-14">課程與服務</SectionHeading>
     <div class="mt-6">

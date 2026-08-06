@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Cta from '../../components/Cta.astro';
 import FaqList from '../../components/FaqList.astro';
 import { AUTHOR, AUTHOR_INTROS, CTA_VARIANTS, SITE, pickVariant } from '../../consts';
@@ -97,59 +98,75 @@ const updatedText = updatedDate
   noindex={post.data.unlisted}
 >
   <article class="mx-auto max-w-3xl px-6 py-12">
-    <nav aria-label="麵包屑" class="flex flex-wrap items-center gap-2 text-sm text-ink-2">
-      <a href="/" class="hover:text-accent">首頁</a>
-      <span aria-hidden="true">›</span>
-      <a href="/blog/" class="hover:text-accent">部落格</a>
-      <span aria-hidden="true">›</span>
-      <span class="min-w-0 truncate text-ink-3">{title}</span>
-    </nav>
+    {/* 這裡原本是手寫的麵包屑（「›」分隔、text-sm），跟其他 8 個頁面用的
+        Breadcrumbs 元件不一致——分隔符、字級、aria-current 都不同。
+        改用元件後全站同一套：等寬「/」分隔、13px、最後一項帶 aria-current="page"。 */}
+    <Breadcrumbs
+      items={[{ name: '首頁', href: '/' }, { name: '部落格', href: '/blog/' }, { name: title }]}
+    />
 
     <header class="mt-8">
       <h1 class="t-h1 font-semibold text-ink">{title}</h1>
-      <div class="mt-5 space-y-2.5 text-sm text-ink-2">
-        <p>作者：<a href="/about/" class="text-ink-2 hover:text-accent">{AUTHOR.name}</a></p>
-        <p>
-          <span class="inline-block rounded-full bg-paper-2 px-3 py-1">
-            發佈於 <time datetime={pubDate.toISOString()}>{dateText}</time>
-          </span>
-        </p>
+      {/* 中繼資料：改版前是四行藥丸標籤（發佈日 bg-paper-2、更新日 bg-accent-tint、
+          每個 tag 一顆 rounded-full 外框）。改成 PostCard 已經在用的「一行、以・分隔」。
+          兩個理由：
+          1. /blog/ 列表跟文章頁呈現的是同一組欄位（發佈日／更新日／tags）。
+             列表已經是一行純文字，文章頁還是四行藥丸，讀者從列表點進來會看到
+             同一份資料的兩種樣子。
+          2. 藥丸標籤是舊語言的殘留（見 resources.astro 的註解：改版後卡片與
+             藥丸標籤全站移除，分類靠字級與字距分出來）。
+          <time datetime> 完全保留，時效訊號與結構化資料不受影響。 */}
+      <p class="mt-5 text-[13px] leading-7 text-ink-3">
+        <span>作者：<a href="/about/" class="text-ink-2 transition-colors hover:text-accent">{AUTHOR.name}</a></span>
+        <span class="px-1.5 text-rule-3" aria-hidden="true">・</span>
+        <span>發佈於 <time datetime={pubDate.toISOString()}>{dateText}</time></span>
         {updatedText && (
-          <p>
-            <span class="inline-block rounded-full bg-accent-tint px-3 py-1">
-              更新於 <time datetime={updatedDate!.toISOString()}>{updatedText}</time>
-            </span>
-          </p>
+          <>
+            <span class="px-1.5 text-rule-3" aria-hidden="true">・</span>
+            <span>更新於 <time datetime={updatedDate!.toISOString()}>{updatedText}</time></span>
+          </>
         )}
-        <p class="flex flex-wrap gap-2">
-          {post.data.tags.map((tag) => (
-            <span class="rounded-full border border-rule-2 bg-paper-2 px-2.5 py-0.5 text-xs">{tag}</span>
-          ))}
-        </p>
-      </div>
+        {post.data.tags.map((tag) => (
+          <>
+            <span class="px-1.5 text-rule-3" aria-hidden="true">・</span>
+            <span>{tag}</span>
+          </>
+        ))}
+      </p>
 
-      <nav
-        aria-label="文章目錄"
-        class="mt-8 rounded-[1.75rem] border border-rule bg-surface/80 p-7 text-left shadow-[0_8px_30px_rgba(22,22,26,0.05)]"
-      >
-        <div class="text-lg font-semibold text-ink">目錄</div>
-        <ol class="mt-4 space-y-2 text-accent">
+      {/* 目錄：改版前是 rounded-[1.75rem] ＋ bg-surface ＋ shadow 的卡片盒。
+          改成上下各一條髮絲線夾住的區塊（border-y），不加底色也不加陰影。
+          這裡用 border-y 而不是 Card 慣用的 border-t：Card 的 border-t 是給
+          連續列表用的（線畫在每一列頭上，最後一列不多出懸空的收尾線）；
+          目錄是一個「單獨的、要跟前後內容分開」的單元，只有一條頭線時
+          它會跟上面的中繼資料黏成一塊，讀不出是一個獨立的區塊。
+          「目錄」二字改用全站的等寬小標，序號用等寬數字左對齊——
+          目錄本來就是一份索引，等寬數字讓序號欄自己對齊，不必給固定寬度。
+          連結維持 accent：這一頁是搜尋落地頁，目錄是讀者第一個要點的東西，
+          不能靠 hover 才看得出可點。 */}
+      <nav aria-label="文章目錄" class="mt-8 border-y border-rule px-0.5 py-6">
+        <p class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">目錄</p>
+        <ol class="mt-4 space-y-2.5">
           {toc.map((item, i) => (
-            <li class="flex gap-2 leading-7">
-              <span class="text-ink-2">{i + 1}.</span>
-              <a href={`#${item.id}`} class="underline-offset-4 hover:underline">{item.text}</a>
+            <li class="flex gap-3 leading-7">
+              <span class="shrink-0 font-mono text-[13px] tabular-nums text-ink-3" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <a href={`#${item.id}`} class="text-accent underline-offset-4 hover:underline">{item.text}</a>
             </li>
           ))}
         </ol>
       </nav>
 
+      {/* 橫幅圖：拿掉圓角與陰影，只留 1px 邊框（同 PostCard 的縮圖與 about 的人像）。
+          不套灰階——橫幅是文章的內容識別，不是裝飾。 */}
       <img
         src={`/images/blog/${post.id}.webp`}
         alt={title}
         width="1200"
         height="630"
         fetchpriority="high"
-        class="mt-8 w-full rounded-[1.75rem] border border-rule shadow-[0_8px_30px_rgba(22,22,26,0.06)]"
+        class="mt-8 w-full border border-rule"
       />
     </header>
 
@@ -164,9 +181,14 @@ const updatedText = updatedDate
       </section>
     )}
 
-    <section class="mt-14 rounded-[1.75rem] border border-rule bg-surface/80 p-7 shadow-[0_8px_30px_rgba(22,22,26,0.05)]">
-      <h2 class="text-lg font-semibold text-ink">關於作者</h2>
-      <p class="mt-3 leading-7 text-ink-2">
+    {/* 關於作者：改版前是 rounded-[1.75rem] ＋ bg-surface ＋ shadow 的卡片盒。
+        改成一條頭線的區塊（border-t），不加收尾線——後面緊接著 Cta，
+        而 Cta 自己的第一件事就是畫一條 border-top，補了會變成兩條並排的線。
+        標題從 18px 粗體降成等寬小標：這一段是文末的作者署名，
+        不是一個要跟上面 FAQ 同級的內容章節，字級要說出這件事。 */}
+    <section class="mt-14 border-t border-rule px-0.5 pt-7">
+      <h2 class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">關於作者</h2>
+      <p class="mt-3 leading-8 text-ink-2">
         {AUTHOR.name}——{AUTHOR_INTROS[pickVariant(post.id, AUTHOR_INTROS.length)]}
         <a href="/about/" class="text-accent underline underline-offset-4">完整介紹</a>
       </p>

@@ -15,7 +15,6 @@
 // 資料仍然集中在 src/data/：
 //   影片 → src/data/home.ts 的 VIDEOS（不在這裡複製一份標題與 embedId）
 //   FAQ  → src/data/faqs.ts 的 RESOURCES_FAQS
-//   HyperFrames → src/data/instructor.ts 的 EXPERIENCE
 //
 // ⚠ 已知的中間狀態：/resources/ 與 /blog/free-resources/ 會同時存在、內容重複。
 //    下架那篇文章與加轉址不在本階段範圍，由 coordinator 收尾。
@@ -24,10 +23,9 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import { LINKS, SITE, breadcrumbSchema } from '../consts';
+import { LINKS, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { RESOURCES_FAQS } from '../data/faqs';
 import { VIDEOS } from '../data/home';
-import { EXPERIENCE } from '../data/instructor';
 import Base from '../layouts/Base.astro';
 
 // VIDEOS 的兩種來源分屬兩個區塊，用「有沒有 embedId」切，而不是用陣列索引切：
@@ -37,21 +35,35 @@ import Base from '../layouts/Base.astro';
 const tutorialVideos = VIDEOS.filter((video) => video.embedId);
 const tookaDemo = VIDEOS.find((video) => video.src);
 
-// HyperFrames 沒有獨立的資料結構，經歷條目就是唯一來源。用字串比對而不是索引，
-// 條目順序調整不會抓錯；哪天那條被刪掉，這裡會是 undefined 而不是抓到別條。
-const hyperFrames = EXPERIENCE.find((item) => item.text.includes('HyperFrames'));
-const [hyperFramesRole, hyperFramesDetail] = hyperFrames
-  ? hyperFrames.text.split(/：(.+)/s)
-  : [null, null];
+// 這裡原本有一段 HyperFrames（站主是該開源專案的協作者）。2026-08-06 移除，
+// 理由：這是「免費資源」頁，每一項都應該點得進去用。而站上沒有 HyperFrames 的
+// 教學文章或示範影片、repo 裡也沒有它的網址，那一段只能寫「我是協作者」——
+// 一個點不了的免費資源，對讀者沒有用。
+// 之後若有了對應的文章、影片或可公開的連結，再加回來。
 
 const schema = [
   breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '免費資源' }]),
+  // 這一頁要輸出 FAQPage：這三題原本掛在 CMS 文章 free-resources 上，由 /faq/ 匯總宣告。
+  // 那篇文章已從 CMS 下架，/faq/ 是從文章集合動態組出來的，所以這三題已經不在任何
+  // FAQPage 裡了（實測：/faq/ 的 FAQPage 從 64 題掉到 61 題）。
+  // 這裡補回來就不是重複宣告，而是唯一的宣告——本頁是這三題現在唯一的落腳處。
+  {
+    '@type': 'FAQPage',
+    '@id': `${SITE.url}/resources/#faq`,
+    mainEntity: RESOURCES_FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  },
 ];
 ---
 
 <Base
   title="免費資源｜AI 教學影片與開源工具 Tooka"
   description="免費的 AI 學習資源：Threads / Instagram API 申請教學影片，以及開源的社群圖文模板框架 Tooka（線上版免安裝）。先照影片自學把流程跑一次，卡關再來找我。"
+  ogImage={pageBannerUrl('resources')}
+  ogImageAlt="免費資源：AI 教學影片與開源工具 Tooka"
   schema={schema}
 >
   <div class="mx-auto max-w-3xl px-6 py-12">
@@ -173,23 +185,11 @@ const schema = [
       </li>
     </ul>
 
-    <!-- ---------- HyperFrames ---------- -->
-    {hyperFramesRole && (
-      <>
-        <SectionHeading size="md" class="mt-16">一鍵拍片開源專案 HyperFrames</SectionHeading>
-        <p class="mt-6 leading-8 text-ink-2">{hyperFramesDetail ?? hyperFramesRole}</p>
-        <!-- 這一段只寫查得到的事：協作者身分來自 src/data/instructor.ts，
-             站上目前沒有 HyperFrames 的教學文章或示範影片，repo 裡也沒有它的網址，
-             所以這裡不放連結、也不寫任何「可以怎麼用」的宣稱。
-             站主要補連結時，加在 src/data/instructor.ts 或這一段即可。 -->
-        <p class="mt-4 text-sm leading-7 text-ink-3">我是這個專案的協作者。</p>
-      </>
-    )}
 
     <!-- ---------- FAQ ---------- -->
-    <!-- 這一頁只輸出 BreadcrumbList，沒有 FAQPage schema：同一組 Q&A 在 /faq/ 已經宣告過，
-         再宣告一次是純重複——這正是本次把首頁那份 FAQPage 拿掉的同一個理由。
-         FAQ 的內容仍然留在頁面上給讀者看，只是不重複宣告結構化資料。 -->
+    <!-- 這三題的 FAQPage schema 在上面的 frontmatter 輸出，理由見那裡的註解：
+         原本的宣告來源（CMS 文章 free-resources）已下架，這裡是現在唯一的宣告。
+         注意這跟「首頁移除 FAQPage」不衝突：首頁那份是重複宣告，這份是唯一宣告。 -->
     <SectionHeading size="md" class="mt-16">常見問題</SectionHeading>
     <div class="mt-6">
       <FaqList faqs={RESOURCES_FAQS} />

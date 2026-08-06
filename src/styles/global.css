@@ -98,7 +98,15 @@
      rgba(8,9,10,.14)（疊在它的紙底上 ≈ 1.36:1）還淡。而本站的入口列沒有縮圖
      佔住左欄撐結構，同一條線要做的事比 jisto 多；改版前一張卡還有邊框＋底色＋
      陰影三個線索，現在只剩這條線。所以 rule → 1.54:1、rule-2 → 2.07:1，
-     維持三階的階層。rule-3 不動（它有 3:1 的硬性門檻要守）。 */
+     維持三階的階層。rule-3 不動（它有 3:1 的硬性門檻要守）。
+
+     已知取捨（2026-08-06 站主拍板）：首頁入口列的整列是可點連結，
+     嚴格解讀 WCAG 1.4.11 的話，那條分隔線構成「元件邊界」、應該過 3:1，
+     而 rule 只有 1.54:1。站主選擇維持克制感（jisto 的髮絲線約 1.36:1，
+     這條已經比它明顯），不改用 rule-3——那會讓髮絲線變成明顯的灰線，
+     整套視覺語言就不是原本要的東西了。
+     這是知情後的設計取捨，不是疏漏。要改的話把入口列的 border 換成
+     border-rule-3 即可，其餘裝飾線不受影響。 */
   --color-rule: #cfc7b9;
   --color-rule-2: #b5ac9b;
   --color-rule-3: #8c857a;
@@ -293,7 +301,7 @@ body {
   @apply text-accent underline underline-offset-4 hover:text-accent-2;
 }
 .prose-blog blockquote {
-  @apply my-6 rounded-r-xl border-l-4 border-accent bg-accent-tint px-5 py-3 text-ink-2;
+  @apply my-6 border-l-[3px] border-accent-line bg-accent-tint px-5 py-3 text-ink-2;
 }
 .prose-blog code {
   @apply rounded bg-paper-2 px-1.5 py-0.5 text-sm text-ink;
@@ -301,8 +309,11 @@ body {
 /* 程式碼區塊：長指令在框內橫向捲動，不撐寬頁面（撐寬會讓手機版 fixed header 跑版）；
    pr 預留右上角複製按鈕的空間，第一行文字不會被按鈕蓋住。
    預設（終端機／其他語言）沿用深色底，顏色改用自訂屬性集中管理。 */
+/* 圓角 12px → 3px：與全站按鈕（.btn）同一個值。改版後圓角一律 0，
+   只有膠囊與圓形是例外；程式碼區塊不屬於例外，留 3px 是為了讓深色塊的角
+   不要銳到像被裁刀切過。 */
 .prose-blog pre {
-  @apply my-6 max-w-full overflow-x-auto rounded-xl p-4 pr-20 text-sm leading-6;
+  @apply my-6 max-w-full overflow-x-auto rounded-[3px] p-4 pr-20 text-sm leading-6;
   background-color: var(--code-terminal-bg);
 }
 .prose-blog pre code {
@@ -359,7 +370,7 @@ body {
   @apply pr-20;
 }
 .copy-code-btn {
-  @apply absolute right-2 top-2 rounded-lg px-2.5 py-1 text-xs backdrop-blur transition;
+  @apply absolute right-2 top-2 rounded-[3px] px-2.5 py-1 text-xs backdrop-blur transition;
   background-color: var(--code-terminal-label-bg);
   color: var(--code-terminal-label-fg);
 }
@@ -385,7 +396,7 @@ pre[data-code-kind='toolcmd'] ~ .copy-code-btn:hover {
 /* 語言標籤（終端機／提示詞／其他語言，由文章頁 script 動態插入）：
    釘在框內左上角，跟複製按鈕分居兩側不重疊 */
 .code-block-label {
-  @apply pointer-events-none absolute left-3 top-2.5 select-none rounded-md px-2 py-0.5 text-[11px] font-medium tracking-wide;
+  @apply pointer-events-none absolute left-3 top-2.5 select-none rounded-[3px] px-2 py-0.5 text-[11px] font-medium tracking-wide;
   background-color: var(--code-terminal-label-bg);
   color: var(--code-terminal-label-fg);
 }
@@ -416,8 +427,12 @@ pre[data-code-kind='toolcmd'] ~ .copy-code-btn:hover {
 /* Threads／IG 靜態引用卡（fetch_post.js --embed 產生）：
    用 aside 不用 blockquote，避免被文章頁的複製按鈕 script 選中。
    文字留在 HTML 裡（SEO），數字是擷取當下的快照，卡片內標明日期。 */
+/* 改版前這是一張 rounded-2xl ＋ bg-surface ＋ shadow 的卡片，
+   跟全站已經改成髮絲線的其他區塊不同調。改成：無圓角、無陰影、無底色，
+   只用左側一條 3px 的酒紅細軌把「這是別處引用來的內容」標出來——
+   跟文章回答區（.reply）用同一個手法，讀者一眼看得出是引用不是內文。 */
 .prose-blog .social-quote {
-  @apply my-6 rounded-2xl border border-rule bg-surface px-5 py-4 shadow-sm;
+  @apply my-6 border-l-[3px] border-accent-line py-1 pl-5;
 }
 .prose-blog .social-quote-header {
   @apply mb-2 flex items-center justify-between gap-3 text-sm;

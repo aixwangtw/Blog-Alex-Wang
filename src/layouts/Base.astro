@@ -280,8 +280,30 @@ const jsonLd = {
             }
           }
 
+          // 桌機膠囊展開後要多寬，由實際導覽內容量出來寫進 --capw-open，不寫死。
+          // 寫死的版本（原本 636px，依五個連結算的）在 NAV 加入第六項時被
+          // overflow:hidden 直接切掉 44px，而且沒有任何警告。
+          // 量的是收合狀態下 nav 的 scrollWidth（此時 CSS 把可視寬壓成 0/384，
+          // 但 scrollWidth 仍反映內容的自然寬），加上膠囊其餘元件的固定佔用。
+          // 字型載入會改變寬度，所以等 document.fonts.ready 之後再量一次。
+          function sizeCapsule() {
+            if (!window.matchMedia('(min-width: 1024px)').matches) return;
+            var list = panel.querySelector('ul');
+            if (!list) return;
+            // 22 左內距 + 32 字標(展開只剩 logo) + 186 四顆圓形 + 10 右內距 + 2 邊框
+            var CHROME = 252;
+            var need = Math.ceil(list.scrollWidth) + CHROME;
+            header.style.setProperty('--capw-open', need + 'px');
+          }
+          sizeCapsule();
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(sizeCapsule).catch(function () {});
+          }
+          window.addEventListener('resize', sizeCapsule);
+
           // 斷點換邊時重算一次，避免手機展開後轉成桌機、殘留 max-height
           var onMQ = function () {
+            sizeCapsule();
             applyHeight(cue.getAttribute('aria-expanded') === 'true');
           };
           if (mqDesktop.addEventListener) mqDesktop.addEventListener('change', onMQ);
@@ -842,13 +864,21 @@ const jsonLd = {
              這些空間沒地方生，會把字標擠扁。所以膠囊本身也要跟著長。
              用 :has() 讓膠囊知道裡面有 icon 被 hover／focus；
              不支援 :has() 的瀏覽器只會退回「icon 展開時字標被擠窄」，不會破版。 */
-          /* 收合 300px、展開 636px，兩個都是量出來的，不是喬的：
-             收合＝22(左內距) + 58(字標) + 186(四顆 42px 圓形＋三個 6px 間距)
-                   + 10(右內距) + 2(邊框) = 278，留 22px 給字標在不同字型下的寬度差。
-             展開＝22 + 32(字標只剩 logo) + 368(五個導覽連結) + 186 + 10 + 2 = 620，
-                   留 16px 餘裕。368 這個數字在任何中文字型下都一樣——
-                   桌機的箭頭是 display:none，五個連結剩下純漢字，
-                   而漢字一律是全形（14px 字級 = 14px 字寬），寬度不隨字型變動。 */
+          /* 收合寬 300px 是量出來的：
+             22(左內距) + 58(字標) + 186(四顆 42px 圓形＋三個 6px 間距)
+             + 10(右內距) + 2(邊框) = 278，留 22px 給字標在不同字型下的寬度差。
+
+             展開寬**不寫死**，由下方的 script 依實際導覽內容量出來後寫進
+             --capw-open。原本寫死 636px（依當時五個連結算的），2026-08-06
+             NAV 加入「免費資源」變成六個連結之後立刻被 overflow:hidden 切掉
+             44px，而且沒有任何警告——那正是寫死值的問題：
+             它把「導覽項目數」這個會變的東西，鎖進一個不會跟著變的常數。
+
+             CSS 無法 transition 到 max-content，所以不能直接用內容寬；
+             改由 script 量完寫成具體數值，寬度動畫照樣有。
+             下面的 --capw-open 是備援值（script 沒跑到時用），
+             故意抓寬一點：寧可膠囊多幾十 px，也不要把連結切掉。 */
+          --capw-open: 700px;
           --capw: calc(300px + var(--hov, 0px));
           position: sticky;
           top: 14px;
@@ -862,7 +892,7 @@ const jsonLd = {
           transition: width 0.42s var(--ease);
         }
         .nav-js .site-header[data-open='true'] {
-          --capw: calc(636px + var(--hov, 0px));
+          --capw: calc(var(--capw-open) + var(--hov, 0px));
         }
         .nav-js .site-header:has(.hicon--line:hover),
         .nav-js .site-header:has(.hicon--line:focus-visible) {
