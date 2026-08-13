@@ -25,13 +25,22 @@
 //           首頁那份從一開始就是重複的。
 // ============================================================
 import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import freeResourcesHome from '../assets/free-resources-home-v2.png';
 import instructorShirt from '../assets/instructor-shirt.jpg';
 import taichungTalk from '../assets/taichung-talk.jpg';
-import tookaCover from '../assets/tooka-cover.jpg';
 import { AUTHOR, LINKS, SITE, pageBannerUrl } from '../consts';
 import { SYLLABUS } from '../data/home';
 import { TEACHING_CASES } from '../data/services';
 import Base from '../layouts/Base.astro';
+
+const featuredPosts = (await getCollection('blog', ({ data }) => !data.unlisted && data.featured))
+  .sort(
+    (a, b) =>
+      b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
+      (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
+  )
+  .slice(0, 3);
 
 const schema = [
   {
@@ -57,7 +66,7 @@ const schema = [
 >
   <div class="home" id="home-root">
     <div class="home-shell">
-      <!-- 1／Hero：核心主張、終端機演示與 LINE 行動入口 -->
+      <!-- 1／Hero：手機首屏放核心主張、LINE 行動入口與三項可完成成果 -->
       <section class="hero" aria-labelledby="hero-h">
         <div class="hero-top">
           <h1 class="q q--display hero-reveal" id="hero-h" style="--d:0ms">手把手教學<br />帶你從 <span class="lat">0</span> 到 <span class="lat">1</span><br />完成第一個作品</h1>
@@ -90,52 +99,43 @@ const schema = [
         <section class="outcomes-block hero-reveal" aria-labelledby="outcomes-h" style="--d:190ms">
           <h2 class="outcomes-h" id="outcomes-h">你可以完成</h2>
           <ul class="outcomes-list">
-              <li>
+            <li>
+              <span class="outcome-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" focusable="false"><path d="m11 8-6 8 6 8M21 8l6 8-6 8M18.5 6l-5 20" /></svg>
+              </span>
+              <span class="outcome-copy">
                 <strong><span class="lat">Vibe Coding</span></strong>
                 <span>帶你用提示詞解耦，不再改 <span class="lat">A</span> 壞 <span class="lat">B</span></span>
-              </li>
-              <li>
+              </span>
+            </li>
+            <li>
+              <span class="outcome-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" focusable="false"><rect x="4" y="7" width="24" height="18" rx="2" /><path d="m14 12 7 4-7 4z" /></svg>
+              </span>
+              <span class="outcome-copy">
                 <strong><span class="lat">AI</span> 拍片</strong>
                 <span>從腳本、配音到剪輯與發佈</span>
-              </li>
-              <li>
+              </span>
+            </li>
+            <li>
+              <span class="outcome-icon" aria-hidden="true">
+                <svg viewBox="0 0 32 32" focusable="false"><circle cx="7" cy="16" r="3" /><circle cx="25" cy="8" r="3" /><circle cx="25" cy="24" r="3" /><path d="M10 16h6m0 0 6-6m-6 6 6 6" /></svg>
+              </span>
+              <span class="outcome-copy">
                 <strong>社群自動化</strong>
                 <span>串接帳號，完成自動發文與排程</span>
-              </li>
-            </ul>
-        </section>
-
-        <nav class="paths hero-reveal" aria-label="服務導覽" style="--d:210ms">
-          <ul class="paths-list">
-            <li>
-              <a href="/resources/">
-                <h3 class="p-t">免費資源</h3>
-                <span class="p-go" aria-hidden="true">→</span>
-                <p class="p-d">教學影片與開源工具，先自己動手做</p>
-              </a>
-            </li>
-            <li>
-              <a href="/services/one-on-one/">
-                <h3 class="p-t">私人家教</h3>
-                <span class="p-go" aria-hidden="true">→</span>
-                <p class="p-d">雙北實體或線上，手把手完成第一個作品</p>
-              </a>
-            </li>
-            <li>
-              <a href="/services/speaking/">
-                <h3 class="p-t">演講邀約</h3>
-                <span class="p-go" aria-hidden="true">→</span>
-                <p class="p-d">企業、學校與社群的演講、內訓與工作坊</p>
-              </a>
+              </span>
             </li>
           </ul>
-        </nav>
+        </section>
+      </section>
 
-        <!-- 2／信任證明：一行，不做成卡片 -->
+      <!-- 2／信任證明：服務入口已由下方四個詳細區塊負責，不重複放卡片 -->
+      <section class="hero-followup" aria-label="講師資歷">
         <p class="trust hero-reveal" style="--d:280ms"><b>接案工程師、資策會講師</b></p>
       </section>
 
-      <!-- 3／服務詳細介紹：首屏卡片的下一層資訊 -->
+      <!-- 3／服務詳細介紹：服務入口的下一層資訊 -->
       <section class="service-details" aria-label="服務詳細介紹">
         <article class="service-row reveal">
           <div class="service-copy">
@@ -150,7 +150,7 @@ const schema = [
             <a class="service-link" href="/resources/">查看免費資源 <span aria-hidden="true">→</span></a>
           </div>
           <figure class="service-media">
-            <Image src={tookaCover} alt="Tooka 開源社群圖文工具畫面" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" />
+            <Image src={freeResourcesHome} alt="教學影片、開源工具與實作指南組成的免費 AI 學習資源" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" />
           </figure>
         </article>
 
@@ -196,22 +196,57 @@ const schema = [
           </figure>
         </article>
 
-        <article class="service-row service-row--reverse reveal">
-          <div class="service-copy">
-            <p class="service-kicker">從非科班到 AI 應用講師</p>
-            <h2>關於講師</h2>
-            <p>Alex 是接案工程師與資策會講師。自己也是從沒有技術背景開始，透過 AI 一步一步學會寫程式、做自動化與完成客戶專案，因此特別知道新手容易卡在哪裡。</p>
-            <ul>
-              <li>專長 AI Agent、Vibe Coding 與工作流自動化</li>
-              <li>接案實戰與實際教學經驗</li>
-              <li>用非工程師也能聽懂的方式帶你實作</li>
-            </ul>
-            <a class="service-link" href="/about/">了解講師經歷 <span aria-hidden="true">→</span></a>
-          </div>
-          <figure class="service-media service-media--portrait">
-            <Image src={instructorShirt} alt="AI 應用講師 Alex" widths={[420, 700]} sizes="(min-width: 768px) 38vw, 100vw" />
+        <section class="instructor-profile reveal" aria-labelledby="instructor-h">
+          <figure class="instructor-photo">
+            <Image src={instructorShirt} alt="AI 應用講師 Alex" widths={[420, 700]} sizes="(min-width: 768px) 34vw, 100vw" />
           </figure>
-        </article>
+          <div class="instructor-main">
+            <p class="service-kicker">從非科班到 AI 應用講師</p>
+            <h2 id="instructor-h">關於講師</h2>
+            <p class="instructor-name"><span class="lat">Alex Wang</span>／王士麟</p>
+            <p class="instructor-intro">接案工程師與資策會講師，也是從沒有技術背景開始，透過 AI 一步一步學會寫程式、做自動化與完成客戶專案，因此特別知道新手容易卡在哪裡。</p>
+            <div class="instructor-actions">
+              <a class="service-link" href="/about/">了解講師經歷 <span aria-hidden="true">→</span></a>
+              <nav class="instructor-socials" aria-label="講師社群連結">
+                <a href={LINKS.threads} target="_blank" rel="noreferrer" aria-label="Alex 的 Threads（開新分頁）">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.734 7.847c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221Z" /></svg>
+                </a>
+                <a href={LINKS.youtube} target="_blank" rel="noreferrer" aria-label="Alex 的 YouTube（開新分頁）">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.003 3.003 0 0 0-2.112-2.123C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.386.563A3.003 3.003 0 0 0 .502 6.186 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .502 5.814 3.003 3.003 0 0 0 2.112 2.123C4.495 20.5 12 20.5 12 20.5s7.505 0 9.386-.563a3.003 3.003 0 0 0 2.112-2.123A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z" /></svg>
+                </a>
+              </nav>
+            </div>
+          </div>
+          <dl class="instructor-facts">
+            <div><dt>角色</dt><dd>AI 應用講師<br />全職接案工程師</dd></div>
+            <div><dt>專長</dt><dd>AI Agent<br />Vibe Coding<br />工作流自動化</dd></div>
+            <div><dt>教學</dt><dd>雙北實體<br />線上私人家教<br />企業與社群演講</dd></div>
+          </dl>
+        </section>
+
+        {featuredPosts.length > 0 && (
+          <section class="featured-posts reveal" aria-labelledby="featured-h">
+            <div class="featured-head">
+              <div>
+                <p class="service-kicker">LATEST ARTICLES</p>
+                <h2 id="featured-h">精選文章</h2>
+              </div>
+              <a href="/blog/">查看全部文章 <span aria-hidden="true">→</span></a>
+            </div>
+            <ul class="featured-list">
+              {featuredPosts.map((post) => (
+                <li>
+                  <a href={`/blog/${post.id}/`}>
+                    <img src={`/images/blog/${post.id}-thumb.webp`} alt="" width="640" height="336" loading="lazy" />
+                    <p class="featured-meta"><span>{post.data.tags[0] ?? 'AI 教學'}</span><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('zh-TW')}</time></p>
+                    <h3>{post.data.title}</h3>
+                    <span class="featured-go" aria-hidden="true">閱讀全文 →</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </section>
 
       <!-- 4／結尾 CTA -->
@@ -420,6 +455,16 @@ const schema = [
     .hero {
       padding-top: 28px;
     }
+    /* Hero 到三項「你可以完成」成果為真正的首屏；服務入口放在下一個 section。
+       手機使用 svh，避免 Threads／Instagram 等內建瀏覽器把網址列高度
+       算進 100vh，造成看似剛好、實機卻被工具列裁掉。min-height 只留白，
+       不限制內容高度，所以矮螢幕或放大字級時仍會自然往下增高。 */
+    @media (max-width: 767px) {
+      .hero {
+        min-height: calc(100vh - var(--bar));
+        min-height: calc(100svh - var(--bar));
+      }
+    }
     @media (min-width: 768px) {
       .hero {
         padding-top: 56px;
@@ -530,6 +575,9 @@ const schema = [
     /* ---------- 終端機動畫與作品成果卡 ---------- */
     .outcomes-block {
       margin-top: 32px;
+    }
+    .hero-followup {
+      display: flow-root;
     }
     .outcomes-h {
       margin-bottom: 12px;
@@ -696,19 +744,59 @@ const schema = [
       }
     }
     .outcomes-list li {
+      position: relative;
       display: grid;
-      gap: 5px;
-      padding: 12px 14px;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 13px;
+      align-items: center;
+      min-width: 0;
+      padding: 15px 16px;
       border: 1px solid var(--color-rule-2);
-      background: rgb(255 255 255 / 34%);
+      border-radius: 4px;
+      background:
+        linear-gradient(135deg, rgb(255 255 255 / 78%), rgb(255 255 255 / 34%));
+      box-shadow: 0 8px 26px rgb(61 42 37 / 5%);
+      overflow: hidden;
     }
-    .outcomes-list strong {
+    .outcomes-list li::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto;
+      height: 3px;
+      background: var(--color-accent);
+      opacity: 0.78;
+    }
+    .outcome-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--color-accent-line);
+      border-radius: 50%;
+      background: rgb(255 255 255 / 64%);
+      color: var(--color-accent);
+    }
+    .outcome-icon svg {
+      width: 23px;
+      height: 23px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .outcome-copy {
+      display: grid;
+      min-width: 0;
+      gap: 3px;
+    }
+    .outcome-copy strong {
       font-size: 16px;
       line-height: 1.4;
       font-weight: 600;
       color: var(--color-ink);
     }
-    .outcomes-list li > span {
+    .outcome-copy > span {
       font-size: 13px;
       line-height: 1.65;
       color: var(--color-ink-3);
@@ -756,27 +844,61 @@ const schema = [
         margin-top: 10px;
       }
       .outcomes-block {
-        margin-top: 10px;
+        margin-top: 6px;
       }
       .outcomes-h {
-        margin-bottom: 8px;
+        margin-bottom: 6px;
+        line-height: 1.4;
       }
       .outcomes-list {
-        gap: 4px;
+        gap: 5px;
       }
       .outcomes-list li {
-        grid-template-columns: minmax(112px, auto) 1fr;
-        align-items: center;
-        gap: 10px;
-        min-height: 36px;
-        padding: 5px 10px;
+        grid-template-columns: 30px minmax(0, 1fr);
+        gap: 9px;
+        min-height: 40px;
+        padding: 6px 10px;
       }
-      .outcomes-list strong {
+      .outcomes-list li::before {
+        inset: 0 auto 0 0;
+        width: 3px;
+        height: auto;
+      }
+      .outcome-icon {
+        width: 28px;
+        height: 28px;
+      }
+      .outcome-icon svg {
+        width: 17px;
+        height: 17px;
+      }
+      .outcome-copy {
+        grid-template-columns: minmax(94px, auto) 1fr;
+        align-items: center;
+        gap: 8px;
+      }
+      .outcome-copy strong {
         font-size: 13px;
       }
-      .outcomes-list li > span {
+      .outcome-copy > span {
         font-size: 11px;
         line-height: 1.45;
+      }
+    }
+    /* 320×480 這類極矮舊機：終端機只是流程示意，優先讓核心文案、CTA
+       與三項成果完整留在首屏。直接不渲染示意區，不用裁切或負位移硬塞。 */
+    @media (max-width: 359px) and (max-height: 540px) {
+      .q--display {
+        font-size: 31px;
+      }
+      .terminal-demo {
+        display: none;
+      }
+      .reply .actions {
+        margin-top: 6px;
+      }
+      .outcomes-block {
+        margin-top: 4px;
       }
     }
     /* ---------- 按鈕 ---------- */
@@ -831,84 +953,6 @@ const schema = [
       --ls: 0em;
     }
 
-    /* ---------- 服務導覽：三張入口卡，壓成首屏第二排 ---------- */
-    .paths {
-      margin-top: 18px;
-    }
-    .paths-list {
-      display: grid;
-      gap: 8px;
-      padding: 0;
-      list-style: none;
-    }
-    .paths-list li {
-      min-width: 0;
-      border: 1px solid var(--color-rule-2);
-      background: rgb(255 255 255 / 34%);
-    }
-    .paths-list a {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 10px;
-      align-items: center;
-      min-height: 44px;
-      padding: 8px 12px;
-      text-decoration: none;
-      transition: background-color 0.2s var(--ease);
-    }
-    .p-t {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    .p-t {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--color-ink);
-      line-height: 1.16;
-      --ls: var(--ls-title);
-      transition: color 0.18s var(--ease);
-    }
-    .p-d {
-      grid-column: 2;
-      grid-row: 1;
-      min-width: 0;
-      font-size: 11.5px;
-      line-height: 1.45;
-      color: var(--color-ink-3);
-    }
-    .p-go {
-      grid-column: 3;
-      grid-row: 1;
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--color-accent);
-      --ls: 0em;
-    }
-    @media (min-width: 768px) {
-      .paths-list {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      .paths-list a {
-        grid-template-columns: 1fr auto;
-        grid-template-rows: auto 1fr;
-        gap: 8px 14px;
-        min-height: 92px;
-        padding: 16px 18px;
-      }
-      .p-t {
-        font-size: clamp(20px, 2vw, 26px);
-      }
-      .p-d {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        align-self: end;
-        font-size: 12.5px;
-      }
-      .p-go {
-        grid-column: 2;
-        grid-row: 1;
-      }
-    }
     /* ---------- 信任證明：一行，不做成卡片 ---------- */
     /* 規格是「一行」，所以桌機不設 max-width——這是一行資歷，不是要讀的內文，
        量到 74ch（約 496px）會讓它斷成兩行。窄螢幕本來就放不下，讓它自然換行。 */
@@ -919,24 +963,6 @@ const schema = [
       color: var(--color-ink-3);
     }
     @media (max-width: 767px) {
-      .paths {
-        margin-top: 10px;
-      }
-      .paths-list {
-        gap: 4px;
-      }
-      .paths-list a {
-        padding: 6px 10px;
-      }
-      .p-t {
-        font-size: 13px;
-      }
-      .p-d {
-        font-size: 10.5px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
       .trust {
         margin-top: 10px;
         font-size: 12px;
@@ -1085,6 +1111,181 @@ const schema = [
       line-height: 1.5;
       color: var(--color-accent);
     }
+
+    /* ---------- 關於講師：人物檔案式資訊層級 ---------- */
+    .instructor-profile {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr) minmax(180px, 0.62fr);
+      gap: clamp(28px, 4vw, 56px);
+      align-items: start;
+      padding: clamp(56px, 8vw, 96px) 0;
+      border-top: 1px solid var(--color-rule);
+    }
+    .instructor-photo {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--color-rule-2);
+      aspect-ratio: 4 / 5;
+      background: var(--color-surface);
+    }
+    .instructor-photo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 28%;
+    }
+    .instructor-main h2,
+    .featured-head h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.1;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+    .instructor-name {
+      margin-top: 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+    .instructor-intro {
+      max-width: 50ch;
+      margin-top: 16px;
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--color-ink-2);
+    }
+    .instructor-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 22px;
+      margin-top: 20px;
+    }
+    .instructor-actions .service-link {
+      margin-top: 0;
+    }
+    .instructor-socials {
+      display: flex;
+      gap: 8px;
+    }
+    .instructor-socials a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      min-height: 44px;
+      padding: 0;
+      border: 1px solid var(--color-rule-3);
+      border-radius: 999px;
+      color: var(--color-ink-2);
+      text-decoration: none;
+      transition:
+        color 0.18s var(--ease),
+        border-color 0.18s var(--ease),
+        background-color 0.18s var(--ease);
+    }
+    .instructor-socials svg {
+      width: 17px;
+      height: 17px;
+    }
+    .instructor-facts {
+      margin: 0;
+      border-top: 1px solid var(--color-rule-2);
+    }
+    .instructor-facts div {
+      padding: 14px 0 16px;
+      border-bottom: 1px solid var(--color-rule);
+    }
+    .instructor-facts dt {
+      margin-bottom: 6px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--color-accent);
+    }
+    .instructor-facts dd {
+      margin: 0;
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: var(--color-ink-2);
+    }
+
+    /* ---------- 關於講師下方：三篇精選文章 ---------- */
+    .featured-posts {
+      padding: clamp(56px, 8vw, 96px) 0 0;
+      border-top: 1px solid var(--color-rule);
+    }
+    .featured-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .featured-head > a {
+      min-height: 44px;
+      color: var(--color-accent);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+    .featured-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(18px, 3vw, 34px);
+      margin: 28px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .featured-list li {
+      min-width: 0;
+      border-top: 1px solid var(--color-rule-2);
+    }
+    .featured-list a {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      padding: 18px 0 0;
+      color: inherit;
+      text-decoration: none;
+    }
+    .featured-list img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1200 / 630;
+      object-fit: cover;
+      border: 1px solid var(--color-rule);
+    }
+    .featured-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      line-height: 1.5;
+      color: var(--color-ink-3);
+    }
+    .featured-meta span {
+      color: var(--color-accent);
+    }
+    .featured-list h3 {
+      margin-top: 8px;
+      font-size: 15px;
+      line-height: 1.65;
+      font-weight: 600;
+      color: var(--color-ink);
+      transition: color 0.18s var(--ease);
+    }
+    .featured-go {
+      margin-top: auto;
+      padding-top: 14px;
+      font-size: 12px;
+      color: var(--color-accent);
+    }
     @media (max-width: 767px) {
       .service-details {
         padding-top: 64px;
@@ -1092,15 +1293,37 @@ const schema = [
       .service-row {
         padding: 48px 0;
       }
-      .service-media {
-        order: -1;
-        aspect-ratio: 16 / 10;
+      /* 手機版把文案容器攤平成 service-row 的 grid 子項，才能在不複製圖片的
+         前提下，讓媒體落在「介紹與重點」之後、「查看連結」之前。桌機仍保留
+         service-copy／media 左右雙欄，不受這組順序影響。 */
+      .service-copy {
+        display: contents;
+      }
+      .service-kicker {
+        order: 1;
+        margin-bottom: -18px;
+      }
+      .service-copy h2 {
+        order: 2;
       }
       .service-copy > p:not(.service-kicker) {
-        font-size: 15px;
+        order: 3;
+        margin-top: -10px;
+      }
+      .service-copy ul {
+        order: 4;
+        margin-top: -10px;
+      }
+      .service-media {
+        order: 5;
+        aspect-ratio: 16 / 10;
+      }
+      .service-link {
+        order: 6;
+        margin-top: -10px;
       }
       .case-mini-grid {
-        order: -1;
+        order: 5;
       }
       .case-mini-grid li {
         grid-template-columns: 32px minmax(0, 1fr);
@@ -1113,6 +1336,43 @@ const schema = [
       }
       .case-mini-grid strong {
         font-size: 12px;
+      }
+      .instructor-profile {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+        padding: 56px 0;
+      }
+      .instructor-photo {
+        width: min(74vw, 280px);
+        aspect-ratio: 4 / 5;
+      }
+      .instructor-intro {
+        font-size: 14px;
+      }
+      .instructor-facts {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .instructor-facts div {
+        padding: 12px 10px 14px 0;
+      }
+      .instructor-facts div + div {
+        padding-left: 10px;
+        border-left: 1px solid var(--color-rule);
+      }
+      .instructor-facts dd {
+        font-size: 11px;
+      }
+      .featured-posts {
+        padding-top: 56px;
+      }
+      .featured-head {
+        align-items: end;
+      }
+      .featured-list {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 30px;
+        margin-top: 22px;
       }
     }
 
@@ -1144,20 +1404,21 @@ const schema = [
         border-color: #05b34c;
         transform: translateY(-1px);
       }
-      .paths-list a:hover {
+      .instructor-socials a:hover {
+        color: var(--color-accent);
+        border-color: var(--color-accent);
         background: rgb(255 255 255 / 60%);
       }
-      .paths-list a:hover .p-t {
+      .featured-list a:hover h3 {
         color: var(--color-accent);
       }
     }
 
     /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
-    .paths-list a:focus-visible {
-      background: rgb(255 255 255 / 60%);
-    }
-    .paths-list a:focus-visible .p-t {
-      color: var(--color-accent);
+    .instructor-socials a:focus-visible,
+    .featured-list a:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
     }
 
     /* ============================================================
@@ -1205,8 +1466,6 @@ const schema = [
          條件的 hover 規則。而且它也沒有必要：那顆按鈕的 translateY(-1px) 本來就
          只在有滑鼠的裝置上生效，過渡一關就是瞬間位移，不構成前庭風險的動態。 */
       .btn,
-      .paths-list a,
-      .p-t,
       .terminal-typed,
       .terminal-command > i,
       .terminal-thinking,
