@@ -31,7 +31,7 @@ import instructorShirt from '../assets/instructor-shirt.jpg';
 import taichungTalk from '../assets/taichung-talk.jpg';
 import { AUTHOR, LINKS, SITE, pageBannerUrl } from '../consts';
 import { SYLLABUS } from '../data/home';
-import { TEACHING_CASES } from '../data/services';
+import { TEACHING_CASES, TEACHING_TOOLS } from '../data/services';
 import Base from '../layouts/Base.astro';
 
 const HOME_FEATURED_ORDER = ['how-to-start-learning-ai'];
@@ -78,12 +78,11 @@ const schema = [
 >
   <div class="home" id="home-root">
     <div class="home-shell">
-      <!-- 1／Hero：首屏放核心主張、上課方式、LINE 行動入口與三項可完成成果 -->
+      <!-- 1／Hero：首屏放核心主張、上課方式、可教學工具與聯絡入口 -->
       <section class="hero" aria-labelledby="hero-h">
         <div class="hero-top">
           <h1 class="q q--display hero-reveal" id="hero-h" style="--d:0ms">
             <span class="hero-title-line">手把手教學</span>
-            <span class="hero-title-line hero-title-tools">用 <span class="lat">Claude Code/Codex</span></span>
             <span class="hero-title-line">從 <span class="lat">0</span> 到 <span class="lat">1</span></span>
             <span class="hero-title-line">完成第一個作品</span>
           </h1>
@@ -114,36 +113,15 @@ const schema = [
           <div><dt>上課方式</dt><dd>雙北實體・線上教學</dd></div>
         </dl>
 
-        <section class="outcomes-block hero-reveal" aria-labelledby="outcomes-h" style="--d:190ms">
-          <h2 class="outcomes-h" id="outcomes-h">你可以完成</h2>
-          <ul class="outcomes-list">
-            <li>
-              <span class="outcome-icon" aria-hidden="true">
-                <svg viewBox="0 0 32 32" focusable="false"><path d="m11 8-6 8 6 8M21 8l6 8-6 8M18.5 6l-5 20" /></svg>
-              </span>
-              <span class="outcome-copy">
-                <strong><span class="lat">Vibe Coding</span></strong>
-                <span>帶你用提示詞解耦，不再改 <span class="lat">A</span> 壞 <span class="lat">B</span></span>
-              </span>
-            </li>
-            <li>
-              <span class="outcome-icon" aria-hidden="true">
-                <svg viewBox="0 0 32 32" focusable="false"><rect x="4" y="7" width="24" height="18" rx="2" /><path d="m14 12 7 4-7 4z" /></svg>
-              </span>
-              <span class="outcome-copy">
-                <strong><span class="lat">AI</span> 拍片</strong>
-                <span>從腳本、配音到剪輯與發佈</span>
-              </span>
-            </li>
-            <li>
-              <span class="outcome-icon" aria-hidden="true">
-                <svg viewBox="0 0 32 32" focusable="false"><circle cx="7" cy="16" r="3" /><circle cx="25" cy="8" r="3" /><circle cx="25" cy="24" r="3" /><path d="M10 16h6m0 0 6-6m-6 6 6 6" /></svg>
-              </span>
-              <span class="outcome-copy">
-                <strong>社群自動化</strong>
-                <span>串接帳號，完成自動發文與排程</span>
-              </span>
-            </li>
+        <section class="hero-tools-block hero-reveal" aria-labelledby="hero-tools-h" style="--d:190ms">
+          <h2 class="hero-tools-h" id="hero-tools-h">可教學工具</h2>
+          <ul class="hero-tools-list">
+            {TEACHING_TOOLS.map((tool) => (
+              <li>
+                <Image src={tool.image} alt={tool.imageAlt} width={72} loading="eager" class="hero-tool-logo" />
+                <span>{tool.name}</span>
+              </li>
+            ))}
           </ul>
         </section>
 
@@ -157,19 +135,22 @@ const schema = [
             <span><span class="lat">Email</span> 講課／開發</span>
           </a>
         </nav>
+        <a class="hero-scroll-cue hero-reveal" href="#free-resources" style="--d:250ms">
+          先看免費教學和開源工具，不急著付費 <span aria-hidden="true">↓</span>
+        </a>
       </section>
 
       <!-- 2／服務詳細介紹：服務入口的下一層資訊 -->
       <section class="service-details" aria-label="服務詳細介紹">
-        <article class="service-row reveal">
+        <article class="service-row reveal" id="free-resources">
           <div class="service-copy">
             <p class="service-kicker">先自己試試看</p>
             <h2>免費資源</h2>
-            <p>先用免費教學影片和開源工具動手做。從 Agent 安裝、Meta API 申請到自動發文，都有可以直接跟著操作的內容。</p>
+            <p>先把 Codex 裝好，再把現成的 Skills 交給 AI 安裝。想做社群自動化或社群圖文時，再依需求使用 API 教學與開源工具。</p>
             <ul>
-              <li>免費實作影片</li>
-              <li>開源社群圖文工具 Tooka</li>
-              <li>卡關再來問，不必急著付費</li>
+              <li>Codex 新手安裝教學</li>
+              <li>可直接交給 AI 安裝的 Skills</li>
+              <li>API 串接教學與開源工具</li>
             </ul>
             <a class="service-link" href="/resources/">查看免費資源 <span aria-hidden="true">→</span></a>
           </div>
@@ -535,11 +516,6 @@ const schema = [
     .hero-title-line {
       display: block;
     }
-    .hero-title-tools {
-      font-size: 0.72em;
-      line-height: 1.12;
-      white-space: nowrap;
-    }
     /* 大螢幕的 H1 進入 display 字距級。 */
     @media (min-width: 900px) {
       .q--display {
@@ -651,22 +627,19 @@ const schema = [
       font-weight: 600;
     }
 
-    /* ---------- 終端機動畫與作品成果卡 ---------- */
-    .outcomes-block {
+    /* ---------- 終端機動畫與可教學工具卡 ---------- */
+    .hero-tools-block {
       margin-top: 32px;
     }
     @media (min-width: 900px) {
-      .outcomes-block {
+      .hero-tools-block {
         margin-top: clamp(24px, 3vh, 34px);
-      }
-      .outcomes-list li {
-        min-height: 92px;
       }
     }
     .hero-followup {
       display: flow-root;
     }
-    .outcomes-h {
+    .hero-tools-h {
       margin-bottom: 12px;
       font-size: 12px;
       font-weight: 600;
@@ -819,75 +792,47 @@ const schema = [
         transform: rotate(360deg);
       }
     }
-    .outcomes-list {
+    .hero-tools-list {
       display: grid;
-      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
       margin: 0;
       padding: 0;
       list-style: none;
     }
     @media (min-width: 768px) {
-      .outcomes-list {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+      .hero-tools-list {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px;
       }
     }
-    .outcomes-list li {
-      position: relative;
-      display: grid;
-      grid-template-columns: 42px minmax(0, 1fr);
-      gap: 13px;
+    .hero-tools-list li {
+      display: flex;
+      min-width: 0;
+      min-height: 74px;
+      flex-direction: column;
       align-items: center;
-      min-width: 0;
-      padding: 15px 16px;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 5px;
       border: 1px solid var(--color-rule-2);
-      border-radius: 4px;
-      background:
-        linear-gradient(135deg, rgb(255 255 255 / 78%), rgb(255 255 255 / 34%));
-      box-shadow: 0 8px 26px rgb(61 42 37 / 5%);
-      overflow: hidden;
+      border-radius: 3px;
+      background: rgb(255 255 255 / 48%);
+      text-align: center;
     }
-    .outcomes-list li::before {
-      content: '';
-      position: absolute;
-      inset: 0 0 auto;
-      height: 3px;
-      background: var(--color-accent);
-      opacity: 0.78;
+    .hero-tool-logo {
+      width: 34px;
+      height: 34px;
+      flex: none;
+      object-fit: contain;
     }
-    .outcome-icon {
-      display: grid;
-      place-items: center;
-      width: 42px;
-      height: 42px;
-      border: 1px solid var(--color-accent-line);
-      border-radius: 50%;
-      background: rgb(255 255 255 / 64%);
-      color: var(--color-accent);
-    }
-    .outcome-icon svg {
-      width: 23px;
-      height: 23px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .outcome-copy {
-      display: grid;
+    .hero-tools-list span {
       min-width: 0;
-      gap: 3px;
-    }
-    .outcome-copy strong {
-      font-size: 16px;
-      line-height: 1.4;
+      font-size: 11.5px;
+      line-height: 1.3;
       font-weight: 600;
       color: var(--color-ink);
-    }
-    .outcome-copy > span {
-      font-size: 13px;
-      line-height: 1.65;
-      color: var(--color-ink-3);
+      overflow-wrap: anywhere;
     }
     @media (max-width: 767px) {
       .hero {
@@ -933,50 +878,31 @@ const schema = [
         font-size: 10.5px;
         line-height: 16px;
       }
-      .outcomes-block {
+      .hero-tools-block {
         margin-top: 6px;
       }
-      .outcomes-h {
+      .hero-tools-h {
         margin-bottom: 6px;
         line-height: 1.4;
       }
-      .outcomes-list {
+      .hero-tools-list {
         gap: 5px;
       }
-      .outcomes-list li {
-        grid-template-columns: 30px minmax(0, 1fr);
-        gap: 9px;
-        min-height: 40px;
-        padding: 6px 10px;
+      .hero-tools-list li {
+        min-height: 54px;
+        gap: 4px;
+        padding: 5px 3px;
       }
-      .outcomes-list li::before {
-        inset: 0 auto 0 0;
-        width: 3px;
-        height: auto;
-      }
-      .outcome-icon {
+      .hero-tool-logo {
         width: 28px;
         height: 28px;
       }
-      .outcome-icon svg {
-        width: 17px;
-        height: 17px;
-      }
-      .outcome-copy {
-        grid-template-columns: minmax(94px, auto) 1fr;
-        align-items: center;
-        gap: 8px;
-      }
-      .outcome-copy strong {
-        font-size: 13px;
-      }
-      .outcome-copy > span {
-        font-size: 11px;
-        line-height: 1.45;
+      .hero-tools-list span {
+        font-size: 10.5px;
       }
     }
     /* 320px 窄矮螢幕：終端機只是流程示意，優先讓核心文案、CTA
-       與三項成果完整留在首屏。直接不渲染示意區，不用裁切或負位移硬塞。 */
+       與工具卡完整留在首屏。直接不渲染示意區，不用裁切或負位移硬塞。 */
     @media (max-width: 359px) and (max-height: 620px) {
       .terminal-demo {
         display: none;
@@ -995,13 +921,13 @@ const schema = [
       .hero .hero-contact-actions {
         margin-top: 0;
       }
-      .outcomes-block {
+      .hero-tools-block {
         margin-top: 4px;
       }
-      .outcomes-h {
+      .hero-tools-h {
         margin-bottom: 4px;
       }
-      .outcomes-list {
+      .hero-tools-list {
         gap: 3px;
       }
     }
@@ -1018,6 +944,23 @@ const schema = [
       justify-content: center;
       gap: 8px;
       margin-top: 24px;
+    }
+    .hero-scroll-cue {
+      display: flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      color: var(--color-accent);
+      font-size: 12.5px;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .hero-scroll-cue span {
+      font-family: var(--font-mono);
+      text-decoration: none;
     }
     .btn {
       display: inline-flex;
@@ -1101,6 +1044,9 @@ const schema = [
     /* ---------- 首屏下方的服務詳細介紹 ---------- */
     .service-details {
       padding-top: clamp(24px, 4vw, 48px);
+    }
+    #free-resources {
+      scroll-margin-top: calc(var(--bar) + 16px);
     }
     .service-row {
       display: grid;

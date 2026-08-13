@@ -5,7 +5,7 @@ import claudeCodeLogo from '../assets/claude-code-logo.png';
 import claudeLogo from '../assets/claude-logo.webp';
 import codexLogo from '../assets/codex-logo.jpg';
 import facebookLogo from '../assets/facebook-logo.png';
-import geminiLogo from '../assets/gemini-logo.png';
+import githubLogo from '../assets/github-logo.svg';
 import hermesLogo from '../assets/hermes-logo.png';
 import instagramLogo from '../assets/instagram-logo.png';
 import lineLogo from '../assets/line-logo.png';
@@ -39,8 +39,8 @@ export const TEACHING_TOOLS: {
   { name: 'Codex', image: codexLogo, imageAlt: 'Codex 標誌' },
   { name: 'ChatGPT', image: chatgptLogo, imageAlt: 'ChatGPT 標誌' },
   { name: 'OpenClaw', note: '龍蝦', image: openclawLobster, imageAlt: 'OpenClaw 龍蝦吉祥物' },
-  { name: 'Hermes', note: '愛馬仕', image: hermesLogo, imageAlt: 'Hermes Agent 吉祥物' },
-  { name: 'Gemini', image: geminiLogo, imageAlt: 'Gemini 標誌' },
+  { name: 'Hermes Agent', note: '愛馬仕', image: hermesLogo, imageAlt: 'Hermes Agent 吉祥物' },
+  { name: 'GitHub', image: githubLogo, imageAlt: 'GitHub 標誌' },
 ];
 
 // 教學內容分類
