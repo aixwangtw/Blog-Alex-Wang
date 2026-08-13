@@ -30,6 +30,6 @@ faqs:
 
 因為 Agent 除了[比網頁版多了直接操作你電腦的能力](/blog/why-desktop-claude-code-codex/)，還能把你的需求**結構化**。Prompt 的最大缺點是：單純靠人類語言，AI 無法精準理解你要什麼——在做圖片或影片時，這個缺點特別明顯。
 
-Agent 能幫你把自然語言轉換成 AI 聽得懂的結構，最常見的呈現方式就是**程式**。而程式不是只能拿來做軟體開發——也能拿來[生圖](/blog/why-i-built-tooka/)跟做影片，我的[教學內容](/services/one-on-one/)就會教你怎麼做。
+Agent 能幫你把自然語言轉換成 AI 聽得懂的結構，最常見的呈現方式就是**程式**。而程式不是只能拿來做軟體開發——也能拿來[生圖](/blog/why-i-built-tooka/)跟做影片，我的[教學內容](/services/ai-tutor/)就會教你怎麼做。
 
-想從零開始，可以照我的[四步學習路線](/blog/how-to-start-learning-ai/)走；想有人手把手帶，歡迎約[一對一教學](/services/one-on-one/)。
+想從零開始，可以照我的[四步學習路線](/blog/how-to-start-learning-ai/)走；想有人手把手帶，歡迎約[一對一教學](/services/ai-tutor/)。

@@ -45,4 +45,4 @@ faqs:
 - 日常任務改用便宜的模型跑，例如 Claude 的 Haiku 或 GPT 5.5，把高階模型的額度留給開發和除錯
 - 一次把需求講清楚，比來回追問省很多額度
 
-想知道你的使用情境該怎麼配訂閱，歡迎加 [LINE 免費諮詢](https://line.me/ti/p/jejH4FkQn-)，或直接約[一對一教學](/services/one-on-one/)。
+想知道你的使用情境該怎麼配訂閱，歡迎加 [LINE 免費諮詢](https://line.me/ti/p/jejH4FkQn-)，或直接約[一對一教學](/services/ai-tutor/)。

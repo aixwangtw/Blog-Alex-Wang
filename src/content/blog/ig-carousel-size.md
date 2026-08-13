@@ -49,4 +49,4 @@ faqs:
 
 ## 想學這套流程？
 
-Tooka 是[開源專案](https://github.com/js0980420/tooka)，會用 AI Agent 的人可以直接上手；如果你[還不熟 AI Agent](/blog/what-is-ai-agent/)，我的[一對一教學](/services/one-on-one/)可以從安裝 Claude Code / Codex 開始，帶你做出自己的圖文自動化流程，也歡迎[邀請我到你的社群演講](/services/speaking/)這個主題。
+Tooka 是[開源專案](https://github.com/js0980420/tooka)，會用 AI Agent 的人可以直接上手；如果你[還不熟 AI Agent](/blog/what-is-ai-agent/)，我的[一對一教學](/services/ai-tutor/)可以從安裝 Claude Code / Codex 開始，帶你做出自己的圖文自動化流程，也歡迎[邀請我到你的社群演講](/services/speaking/)這個主題。

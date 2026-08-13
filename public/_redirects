@@ -13,3 +13,7 @@
 # 靠這兩條接住，那兩篇的內文不動。
 /blog/free-resources/   /resources/   301
 /blog/free-resources    /resources/   301
+
+# AI 私教：網址改成中文使用者也容易理解的 ai-tutor（2026-08-13）
+/services/one-on-one/   /services/ai-tutor/   301
+/services/one-on-one    /services/ai-tutor/   301

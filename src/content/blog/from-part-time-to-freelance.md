@@ -28,7 +28,7 @@ faqs:
 
 這段經歷最初發布在 Threads，也引發不少人詢問如何找案源、判斷案子與準備作品集。你可以先看[原始 Threads 貼文與完整留言討論](https://www.threads.com/@alex_wang.ai/post/DZUGRTQEmVG)，本文則將完整過程與留言中的常見問題整理成較容易閱讀的版本。
 
-一年期間，我接過 CRM、約會配對網站、Line LIFF 網頁、教師監控平台、Line 預約客服；教過 4 位[一對一手把手教學](/services/one-on-one/)，參與過兩次[公眾演講](/services/speaking/)，也加入 20 萬人的 OpenClaw FB 社團成為其中一位版主。
+一年期間，我接過 CRM、約會配對網站、Line LIFF 網頁、教師監控平台、Line 預約客服；教過 4 位[一對一手把手教學](/services/ai-tutor/)，參與過兩次[公眾演講](/services/speaking/)，也加入 20 萬人的 OpenClaw FB 社團成為其中一位版主。
 
 以下分享我如何在沒有進過軟體業的情況下自學，開始接到第一個案子。
 
@@ -62,4 +62,4 @@ faqs:
 
 以上的經歷想跟大家分享。如果你對[用 AI 自學](/blog/how-to-start-learning-ai/)有卡關，或是也想自己接案，可以加 [LINE 跟我聊聊](https://line.me/ti/p/jejH4FkQn-)；想發案子給我也歡迎。
 
-因為我自己就是無工程背景、一步一步透過問 AI 還有問工程師自學過來的，所以很能理解[自學的痛點](/blog/no-tech-background/)是什麼——這也是我做[一對一教學](/services/one-on-one/)的底氣。
+因為我自己就是無工程背景、一步一步透過問 AI 還有問工程師自學過來的，所以很能理解[自學的痛點](/blog/no-tech-background/)是什麼——這也是我做[一對一教學](/services/ai-tutor/)的底氣。

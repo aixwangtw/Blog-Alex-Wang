@@ -46,4 +46,4 @@ faqs:
 ## 怎麼開始？
 
 - **會用 AI Agent 的人**：直接 clone repo 照 README 走
-- **還不會 AI Agent**：先看[ AI Agent 是什麼](/blog/what-is-ai-agent/)和[零基礎入門路線](/blog/how-to-start-learning-ai/)，或約我的[一對一教學](/services/one-on-one/)，從安裝到做出自己的圖文流程一次帶完
+- **還不會 AI Agent**：先看[ AI Agent 是什麼](/blog/what-is-ai-agent/)和[零基礎入門路線](/blog/how-to-start-learning-ai/)，或約我的[一對一教學](/services/ai-tutor/)，從安裝到做出自己的圖文流程一次帶完

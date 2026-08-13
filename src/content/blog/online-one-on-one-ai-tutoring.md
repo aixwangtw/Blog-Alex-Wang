@@ -36,4 +36,4 @@ faqs:
 
 課前準備很簡單：訂閱一個月 20 美元的 AI 方案即可；要學自動發文或留言、私訊的人，再確認 Facebook 帳號可用。細節見[課前準備清單](/blog/what-to-prepare-before-learning-ai/)。完全[沒有技術背景也可以](/blog/no-tech-background/)。
 
-想約課或先問問題，直接加 [LINE 免費諮詢](https://line.me/ti/p/jejH4FkQn-)，或看[一對一私教的完整說明](/services/one-on-one/)。
+想約課或先問問題，直接加 [LINE 免費諮詢](https://line.me/ti/p/jejH4FkQn-)，或看[一對一私教的完整說明](/services/ai-tutor/)。

@@ -40,4 +40,4 @@ faqs:
 3. 模板工具：[Tooka（開源免費）](https://github.com/js0980420/tooka)
 4. 想發佈到社群，再加 [Meta API 申請](/blog/threads-api-tutorial/)
 
-想一堂課直接把流程做出來，可以約[一對一教學](/services/one-on-one/)，或[邀請我到貴單位演講實作](/services/speaking/)。
+想一堂課直接把流程做出來，可以約[一對一教學](/services/ai-tutor/)，或[邀請我到貴單位演講實作](/services/speaking/)。

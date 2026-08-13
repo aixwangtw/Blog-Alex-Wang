@@ -18,7 +18,7 @@ const schema = [
   ]),
   {
     '@type': 'Service',
-    '@id': `${SITE.url}/services/one-on-one/#service`,
+    '@id': `${SITE.url}/services/ai-tutor/#service`,
     name: 'AI 一對一私人教學',
     serviceType: 'AI 教學 / 一對一家教',
     description:
@@ -32,7 +32,7 @@ const schema = [
   },
   {
     '@type': 'ItemList',
-    '@id': `${SITE.url}/services/one-on-one/#cases`,
+    '@id': `${SITE.url}/services/ai-tutor/#cases`,
     name: '一對一教學實際案例',
     itemListElement: TEACHING_CASES.map((c, index) => ({
       '@type': 'ListItem',
@@ -44,7 +44,7 @@ const schema = [
   },
   {
     '@type': 'ItemList',
-    '@id': `${SITE.url}/services/one-on-one/#tools`,
+    '@id': `${SITE.url}/services/ai-tutor/#tools`,
     name: '可教學工具',
     itemListElement: TEACHING_TOOLS.map((t, index) => ({
       '@type': 'ListItem',

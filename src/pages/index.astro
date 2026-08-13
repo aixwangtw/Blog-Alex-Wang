@@ -11,9 +11,9 @@
 // 所以砍到五個單元 —— 頁首／Hero（含三張服務卡）／信任證明／結尾 CTA／頁尾。
 //
 // 被移除的區塊都另有去處，沒有內容因此消失：
-//   TEACHING_CASES      → /services/one-on-one/、/about/
+//   TEACHING_CASES      → /services/ai-tutor/、/about/
 //   SPEAKING_ENGAGEMENTS→ /services/speaking/、/about/
-//   TEACHING_CONTENT    → /services/one-on-one/
+//   TEACHING_CONTENT    → /services/ai-tutor/
 //   HOME_FAQS           → /faq/
 //   精選文章             → /blog/
 //   VIDEOS              → /resources/（本階段一併新建；VIDEOS 原本只有首頁在用）
@@ -47,9 +47,9 @@ const schema = [
   {
     '@type': 'Course',
     '@id': `${SITE.url}/#course`,
-    name: 'AI 新手實戰課：桌面版 Agent 與社群自動發文',
+    name: 'Claude Code/Codex 手把手教學：從 0 到 1 完成第一個作品',
     description:
-      '手把手帶零基礎學員從 0 到 1 完成第一個作品，包含桌面版 AI Agent 安裝、實作、測試與除錯。提供雙北實體與線上私人家教。',
+      '手把手使用 Claude Code 或 Codex，從 0 到 1 完成第一個作品，包含 AI Agent 安裝、實作、測試與除錯。提供雙北實體與線上私人家教。',
     provider: { '@id': AUTHOR.id },
     inLanguage: 'zh-TW',
     courseMode: ['onsite', 'online'],
@@ -59,7 +59,7 @@ const schema = [
 ---
 
 <Base
-  title="AI新手教學｜零基礎學 Claude Code / Codex 與社群自動發文"
+  title="Claude Code/Codex 手把手教學｜從 0 到 1 完成第一個作品"
   description={SITE.description}
   ogImage={pageBannerUrl('home')}
   ogImageAlt="AI 新手教學｜從工具到自動化"
@@ -70,7 +70,12 @@ const schema = [
       <!-- 1／Hero：首屏放核心主張、上課方式、LINE 行動入口與三項可完成成果 -->
       <section class="hero" aria-labelledby="hero-h">
         <div class="hero-top">
-          <h1 class="q q--display hero-reveal" id="hero-h" style="--d:0ms">手把手教學<br />帶你從 <span class="lat">0</span> 到 <span class="lat">1</span><br />完成第一個作品</h1>
+          <h1 class="q q--display hero-reveal" id="hero-h" style="--d:0ms">
+            <span class="hero-title-line">手把手教學</span>
+            <span class="hero-title-line hero-title-tools">用 <span class="lat">Claude Code/Codex</span></span>
+            <span class="hero-title-line">從 <span class="lat">0</span> 到 <span class="lat">1</span></span>
+            <span class="hero-title-line">完成第一個作品</span>
+          </h1>
           <div class="reply">
             <div class="hero-reveal" style="--d:70ms">
               <p class="by"><span class="by-name micro"><span class="lat">ALEX</span> 私人家教</span></p>
@@ -172,7 +177,7 @@ const schema = [
               <li>Codex 搜尋 Threads 品牌輿情</li>
               <li>Claude Code 整理 Email、行事曆與 LINE 提醒</li>
             </ul>
-            <a class="service-link" href="/services/one-on-one/">查看完整案例與上課方式 <span aria-hidden="true">→</span></a>
+            <a class="service-link" href="/services/ai-tutor/">查看完整案例與上課方式 <span aria-hidden="true">→</span></a>
           </div>
           <ul class="case-mini-grid" aria-label="四個私人家教實際案例">
             {TEACHING_CASES.map((item) => (
@@ -515,6 +520,14 @@ const schema = [
       font-size: clamp(40px, 5.5vw, 68px);
       line-height: 1;
       padding-bottom: 0.04em; /* 墨跡略低於行框底 .0265em，留一點 */
+    }
+    .hero-title-line {
+      display: block;
+    }
+    .hero-title-tools {
+      font-size: 0.72em;
+      line-height: 1.12;
+      white-space: nowrap;
     }
     /* 大螢幕的 H1 進入 display 字距級。 */
     @media (min-width: 900px) {
@@ -959,8 +972,11 @@ const schema = [
       }
     }
     @media (max-width: 359px) and (max-height: 540px) {
+      .hero {
+        padding-top: 10px;
+      }
       .q--display {
-        font-size: 31px;
+        font-size: 26px;
       }
       .hero-meta {
         display: none;

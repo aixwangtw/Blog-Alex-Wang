@@ -35,4 +35,4 @@ Threads API 的申請流程相對單純，而且自動發文、留言回覆的�
 - [設定正確的發文權限，避免被 Meta 判定異常](/blog/auto-posting-permissions/)
 - 用 [Skill 把發文流程固定下來](/blog/what-is-ai-skill/)，之後改文案、改排程都是一句話的事
 
-如果你在申請流程卡住，歡迎約[一對一教學](/services/one-on-one/)，我會帶你把你自己的帳號實際申請到能發文為止。
+如果你在申請流程卡住，歡迎約[一對一教學](/services/ai-tutor/)，我會帶你把你自己的帳號實際申請到能發文為止。
