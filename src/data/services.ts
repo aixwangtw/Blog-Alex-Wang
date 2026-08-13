@@ -61,6 +61,11 @@ export const TEACHING_CONTENT: {
     ],
   },
   {
+    category: 'Vibe Coding 從 0 到 1',
+    detail:
+      '從需求拆解、請 AI 寫程式到測試與除錯，建立可以自己重複使用的完整開發流程。教你縮小改動範圍、讓 AI 檢查關聯功能並在每次修改後驗證，解決「代碼改 A 卻壞 B」的問題。',
+  },
+  {
     category: 'API 串接：自動發文、留言、私訊、收訊',
     detail:
       'Meta 三大 API（Facebook / Instagram / Threads）申請與帳號綁定，以及 LINE Messaging API 整合，方便做 AI 客服、自動管理客戶訊息，也方便統一管理雜亂的訊息。',

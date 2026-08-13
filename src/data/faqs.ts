@@ -23,6 +23,12 @@ const onlineClass: Faq = {
     '可以，用 Google Meet 或 Discord，只要能分享螢幕畫面就可以上課；實體課則約雙北的咖啡廳。',
 };
 
+const groupClass: Faq = {
+  question: '可以多人一起上課嗎？',
+  answer:
+    '可以。一對多教學的第一位學員依原價計費，第二位起每位的教學費用都享八折。',
+};
+
 const whyNotFreeAi: Faq = {
   question: '為什麼不用網頁版或免費 AI？',
   answer:
@@ -57,7 +63,7 @@ export const HOME_FAQS: Faq[] = [
   metaTokenDiff,
 ];
 
-export const ONE_ON_ONE_FAQS: Faq[] = [onlineClass, prep, noTechBackground, booking];
+export const ONE_ON_ONE_FAQS: Faq[] = [onlineClass, groupClass, prep, noTechBackground, booking];
 
 // 免費資源專區（/resources/）的三題。內容原本掛在 CMS 文章 free-resources 的 faqs 欄位，
 // 該篇改寫成常設頁面後搬到這裡——頁面內容寫進程式碼，FAQ 資料就跟著回到 src/data/。

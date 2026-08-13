@@ -248,7 +248,7 @@ const jsonLd = {
           var panel = document.getElementById('mainnav');
           if (!header || !cue || !panel) return;
 
-          // 桌機是「橫向膠囊」（用 max-width 收合），手機是「下拉面板」（用 max-height）。
+          // 桌機導覽固定展開，手機則是「下拉面板」（用 max-height）。
           // max-height 必須用 scrollHeight 算，所以只能在 JS 裡設；
           // 換到桌機時要把 inline 的 max-height 清掉，免得殘值把橫排導覽壓扁。
           var mqDesktop = window.matchMedia('(min-width:1024px)');
@@ -264,9 +264,11 @@ const jsonLd = {
 
           // 開啟時把焦點送進第一個連結。原因是 DOM 順序：導覽排在工具列之前
           // （桌機膠囊的視覺順序要求如此），開關按鈕卻在工具列裡。焦點若留在按鈕上，
-          // 按 Tab 會直接跳過剛展開的五個連結跑進內文——鍵盤使用者等於打不開選單。
+          // 按 Tab 會直接跳過剛展開的六個連結跑進內文——鍵盤使用者等於打不開選單。
           // 關閉時若焦點還在面板裡，收回按鈕上，不讓焦點掉到 body。
           function setOpen(open, moveFocus) {
+            // 桌機版不提供收合；僅手機版的選單開關會改變狀態。
+            if (mqDesktop.matches) open = true;
             var focusInside = panel.contains(document.activeElement);
             header.setAttribute('data-open', open ? 'true' : 'false');
             cue.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -290,8 +292,8 @@ const jsonLd = {
             if (!window.matchMedia('(min-width: 1024px)').matches) return;
             var list = panel.querySelector('ul');
             if (!list) return;
-            // 22 左內距 + 32 字標(展開只剩 logo) + 186 四顆圓形 + 10 右內距 + 2 邊框
-            var CHROME = 252;
+            // 22 左內距 + 32 字標(展開只剩 logo) + 138 三顆圓形 + 10 右內距 + 2 邊框
+            var CHROME = 204;
             var need = Math.ceil(list.scrollWidth) + CHROME;
             header.style.setProperty('--capw-open', need + 'px');
           }
@@ -304,7 +306,7 @@ const jsonLd = {
           // 斷點換邊時重算一次，避免手機展開後轉成桌機、殘留 max-height
           var onMQ = function () {
             sizeCapsule();
-            applyHeight(cue.getAttribute('aria-expanded') === 'true');
+            setOpen(mqDesktop.matches, false);
           };
           if (mqDesktop.addEventListener) mqDesktop.addEventListener('change', onMQ);
           else if (mqDesktop.addListener) mqDesktop.addListener(onMQ);
@@ -317,6 +319,7 @@ const jsonLd = {
 
           // Esc 關閉並把焦點還給開關（鍵盤使用者不會迷路）
           document.addEventListener('keydown', function (e) {
+            if (mqDesktop.matches) return;
             if (e.key !== 'Escape' && e.keyCode !== 27) return;
             if (cue.getAttribute('aria-expanded') !== 'true') return;
             setOpen(false);
@@ -325,6 +328,7 @@ const jsonLd = {
 
           // 點面板外面關閉
           document.addEventListener('click', function (e) {
+            if (mqDesktop.matches) return;
             if (cue.getAttribute('aria-expanded') !== 'true') return;
             if (panel.contains(e.target) || cue.contains(e.target)) return;
             setOpen(false);
@@ -332,10 +336,11 @@ const jsonLd = {
 
           // 點面板裡的連結後關閉（同頁錨點時才看得出差別，但成本是零）
           panel.addEventListener('click', function (e) {
+            if (mqDesktop.matches) return;
             if (e.target.closest && e.target.closest('a')) setOpen(false);
           });
 
-          setOpen(false);
+          setOpen(mqDesktop.matches, false);
           document.documentElement.classList.add('nav-js'); // 全部接好了才收合
         } catch (err) {
           /* 沒接上就維持展開：一排正常可見、可點的導覽連結 */
@@ -859,6 +864,9 @@ const jsonLd = {
          膠囊本身刻意不加 overflow:hidden：那會裁掉裡面按鈕的 :focus-visible
          外框。收合改由 .mainnav 自己的 max-width + overflow 處理。 */
       @media (min-width: 1024px) {
+        .nav-js .hd-cue {
+          display: none;
+        }
         .nav-js .site-header {
           /* --hov：膠囊是固定寬度，聯絡 icon 一 hover 就要多 68px／46px，
              這些空間沒地方生，會把字標擠扁。所以膠囊本身也要跟著長。

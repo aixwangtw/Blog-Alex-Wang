@@ -73,12 +73,12 @@ export const LINKS = {
 
 export const NAV = [
   { href: '/', label: '首頁' },
-  { href: '/resources/', label: '免費資源' },
-  { href: '/blog/', label: '部落格' },
-  { href: '/services/one-on-one/', label: '一對一教學' },
-  { href: '/services/speaking/', label: '演講邀約' },
-  { href: '/faq/', label: '常見問題' },
-  { href: '/about/', label: '關於講師' },
+  { href: '/resources/', label: '免費' },
+  { href: '/blog/', label: '文章' },
+  { href: '/services/one-on-one/', label: '私教' },
+  { href: '/services/speaking/', label: '演講' },
+  { href: '/faq/', label: '問題' },
+  { href: '/about/', label: '關於' },
 ];
 
 import BANNER_VERSION from './data/banner-version.json';
