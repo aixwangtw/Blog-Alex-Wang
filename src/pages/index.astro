@@ -34,11 +34,22 @@ import { SYLLABUS } from '../data/home';
 import { TEACHING_CASES } from '../data/services';
 import Base from '../layouts/Base.astro';
 
+const HOME_FEATURED_ORDER = ['how-to-start-learning-ai'];
 const featuredPosts = (await getCollection('blog', ({ data }) => !data.unlisted && data.featured))
   .sort(
-    (a, b) =>
-      b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
-      (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
+    (a, b) => {
+      const aPriority = HOME_FEATURED_ORDER.indexOf(a.id);
+      const bPriority = HOME_FEATURED_ORDER.indexOf(b.id);
+      if (aPriority !== -1 || bPriority !== -1) {
+        if (aPriority === -1) return 1;
+        if (bPriority === -1) return -1;
+        return aPriority - bPriority;
+      }
+      return (
+        b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
+        (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0)
+      );
+    },
   )
   .slice(0, 3);
 const inquiryEmailUrl = `mailto:${AUTHOR.email}?subject=${encodeURIComponent('講課或開發邀約')}`;
