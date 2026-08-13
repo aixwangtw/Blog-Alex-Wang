@@ -41,10 +41,8 @@ const tutorialVideos = VIDEOS.filter((video) => video.embedId);
 
 const schema = [
   breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '免費資源' }]),
-  // 這一頁要輸出 FAQPage：這三題原本掛在 CMS 文章 free-resources 上，由 /faq/ 匯總宣告。
-  // 那篇文章已從 CMS 下架，/faq/ 是從文章集合動態組出來的，所以這三題已經不在任何
-  // FAQPage 裡了（實測：/faq/ 的 FAQPage 從 64 題掉到 61 題）。
-  // 這裡補回來就不是重複宣告，而是唯一的宣告——本頁是這三題現在唯一的落腳處。
+  // 免費資源頁輸出與畫面一致的 FAQPage；/faq/ 也會從同一份 RESOURCES_FAQS
+  // 彙整顯示，因此之後增修免費資源問題時不需要再手動複製到總整理頁。
   {
     '@type': 'FAQPage',
     '@id': `${SITE.url}/resources/#faq`,

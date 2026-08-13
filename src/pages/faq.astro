@@ -5,7 +5,7 @@ import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import { SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
-import { HOME_FAQS } from '../data/faqs';
+import { HOME_FAQS, RESOURCES_FAQS } from '../data/faqs';
 import Base from '../layouts/Base.astro';
 
 // 文章 FAQ：依文章分組，只列有 FAQ 的文章（來源同各文章頁的 FAQPage）
@@ -17,7 +17,9 @@ const posts = (await getCollection('blog', ({ data }) => !data.unlisted))
       (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
   );
 
-const allFaqs = [...HOME_FAQS, ...posts.flatMap((post) => post.data.faqs)];
+// 首頁服務 FAQ、免費資源 FAQ 與文章 FAQ 都從各自頁面的同一份資料來源組合，
+// 避免其中一頁改版後，總整理仍停留在舊內容。
+const allFaqs = [...HOME_FAQS, ...RESOURCES_FAQS, ...posts.flatMap((post) => post.data.faqs)];
 
 const schema = [
   breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '常見問題' }]),
@@ -37,7 +39,7 @@ const schema = [
 
 <Base
   title={`常見問題總整理｜${SITE.title}`}
-  description="新手學 AI 最常問的問題總整理：課程與費用、工具選擇（Claude/Codex）、Meta API 申請、自動發文設定。問題大多整理自 Threads 與 YouTube 的真實社群留言。"
+  description="新手學 AI 最常問的問題總整理：私人家教、Vibe Coding、AI 拍片、免費 Codex 與 Skills 資源、Meta API 及社群自動化。"
   ogImage={pageBannerUrl('faq')}
   ogImageAlt="AI 新手常見問題總整理"
   schema={schema}
@@ -48,7 +50,7 @@ const schema = [
     <h1 class="t-h1 mt-8 font-semibold text-ink">常見問題總整理</h1>
     <p class="mt-6 text-lg leading-8 text-ink-2">
       這裡的問題大多來自真實社群的提問——主要是 Threads 貼文底下的留言，也有 YouTube
-      留言和一對一教學學員問過的問題（見<a href="/editorial-policy/" class="text-accent underline underline-offset-4">編輯政策</a>）。找不到你的問題的話，直接加 LINE 免費問。
+      留言和一對一教學學員問過的問題（見<a href="/editorial-policy/" class="text-accent underline underline-offset-4">編輯政策</a>）。找不到答案可以加 LINE 免費問；講課或開發邀約也可以直接寄 Email。
     </p>
 
     <SectionHeading size="md" class="mt-12">我提供什麼教學？</SectionHeading>
@@ -59,13 +61,13 @@ const schema = [
          沒有收尾線時那個連結會讀起來像清單的第四項。 -->
     <ul class="mt-6">
       <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2 last:border-b">
-        <strong class="text-ink">四大 AI Agent 的安裝使用</strong>——Claude Code、Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）的安裝、權限與環境設定。
+        <strong class="text-ink">Vibe Coding</strong>——從 AI Agent 安裝、操作到排錯，用提示詞拆解需求，避免改 A 壞 B，完成第一個能實際使用的作品。
       </li>
       <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2 last:border-b">
-        <strong class="text-ink">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>——例如用 LINE 跟 AI 對話，整理其他平台的訊息；也包含 Meta 三大 API（FB／IG／Threads）的自動發文、留言、私訊。
+        <strong class="text-ink">AI 拍片</strong>——依照自己的題材建立從腳本、配音、剪輯到發布的工作流，不需要每支影片都從頭手動製作。
       </li>
       <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2 last:border-b">
-        <strong class="text-ink">打造你的生圖、拍片工作流</strong>——AI 生圖模板與對話式拍片，一句話產出社群圖文和影片。
+        <strong class="text-ink">社群自動化</strong>——串接 Facebook、Instagram、Threads、LINE 等帳號，完成自動發文、留言、私訊、排程與通知流程。
       </li>
     </ul>
     <p class="mt-5 px-0.5 text-sm">
@@ -75,6 +77,14 @@ const schema = [
     <SectionHeading size="md" class="mt-14">課程與服務</SectionHeading>
     <div class="mt-6">
       <FaqList faqs={HOME_FAQS} />
+    </div>
+
+    <SectionHeading size="md" class="mt-14">免費資源</SectionHeading>
+    <p class="mt-5 leading-8 text-ink-2">
+      從 Codex 安裝、Skills 到 API 串接與開源工具，以下內容會與<a href="/resources/" class="text-accent underline underline-offset-4">免費資源頁</a>同步更新。
+    </p>
+    <div class="mt-6">
+      <FaqList faqs={RESOURCES_FAQS} />
     </div>
 
     <SectionHeading size="md" class="mt-14">依主題整理的文章 FAQ</SectionHeading>
