@@ -65,19 +65,34 @@ export const HOME_FAQS: Faq[] = [
 
 export const ONE_ON_ONE_FAQS: Faq[] = [onlineClass, groupClass, prep, noTechBackground, booking];
 
-// 免費資源專區（/resources/）的三題。內容原本掛在 CMS 文章 free-resources 的 faqs 欄位，
-// 該篇改寫成常設頁面後搬到這裡——頁面內容寫進程式碼，FAQ 資料就跟著回到 src/data/。
-// 這三題只在 /resources/ 出現，沒有輸出 FAQPage schema（同一組 Q&A 已經有兩份，理由見該頁註解）。
+// 免費資源專區（/resources/）的 FAQ。前三題原本掛在 CMS 文章 free-resources，
+// 該篇改寫成常設頁面後搬到這裡；2026-08 再依頁面新順序補上 Codex、grill-me
+// 與 Tooka 導流說明。畫面與 FAQPage schema 都使用這一份資料，避免兩邊答案不同步。
 export const RESOURCES_FAQS: Faq[] = [
+  {
+    question: 'Windows 新手應該先安裝哪一種 Codex？',
+    answer:
+      '先安裝 VS Code 與官方 Codex 插件，完成登入並開啟一個專案資料夾，就能用自然語言請 AI 協助。免費資源頁不要求先裝 CLI 或 WSL2；等真的需要終端機或 Linux 專案時再補即可。',
+  },
+  {
+    question: 'grill-me Skill 怎麼安裝？',
+    answer:
+      '複製第二步提供的提示與 mattpocock/skills 連結，直接貼進 Codex 請它安裝。完成後開一個新對話，輸入 /grill-me 即可開始。',
+  },
+  {
+    question: '使用 grill-me 需要會寫程式嗎？',
+    answer:
+      '不需要。grill-me 的用途是在動工前反問需求、挑戰假設並確認雙方理解，寫網站、規劃工作流程或整理想法都能使用。你只要回答它提出的問題與選擇即可。',
+  },
   {
     question: '只靠免費資源能學會 AI 自動化嗎？',
     answer:
-      '可以，影片和開源工具都是完整的，跟著做就能跑通。差別在時間：自學卡關要自己試錯，一對一教學則是有人帶著走一次。建議先用免費資源開始，真的卡住再考慮付費課程。',
+      '可以先完成 Codex 安裝並試用 Skills；想做社群自動化時再看 API 影片，想做社群圖文時再看 Tooka。差別在時間：自學卡關要自己試錯，私人家教則是有人直接陪你排錯。建議先用免費資源開始，真的卡住再考慮付費。',
   },
   {
-    question: 'Tooka 是免費的嗎？',
+    question: 'Tooka 是免費的嗎？為什麼這頁沒有完整教學？',
     answer:
-      '是，Tooka 完全開源免費，放在 GitHub 上。你只需要自備一個 AI Agent（Claude Code 或 Codex，訂閱每月 20 美元起）來驅動它。',
+      'Tooka 是開源免費工具。免費資源頁只負責安排學習順序，完整功能、使用入口與開發原因統一整理在 Tooka 文章，避免同一份內容在兩個頁面重複維護。',
   },
   {
     question: '看影片有問題可以問你嗎？',
