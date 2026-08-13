@@ -8,7 +8,7 @@
 //
 // 改版前是 239 行、七個區塊（免費資源、教學案例、演講經歷、教學內容、
 // 精選文章、FAQ、CTA）。原型的結論是：首頁字放到 96px 也救不了資訊過載，
-// 所以砍到六個單元 —— 頁首／Hero／四個入口／信任證明／結尾 CTA／頁尾。
+// 所以砍到五個單元 —— 頁首／Hero（含三張服務卡）／信任證明／結尾 CTA／頁尾。
 //
 // 被移除的區塊都另有去處，沒有內容因此消失：
 //   TEACHING_CASES      → /services/one-on-one/、/about/
@@ -24,8 +24,13 @@
 //   FAQPage 移除。/faq/ 已經有 2 份 FAQPage（HOME_FAQS ＋ 各文章 FAQ），
 //           首頁那份從一開始就是重複的。
 // ============================================================
+import { Image } from 'astro:assets';
+import instructorShirt from '../assets/instructor-shirt.jpg';
+import taichungTalk from '../assets/taichung-talk.jpg';
+import tookaCover from '../assets/tooka-cover.jpg';
 import { AUTHOR, LINKS, SITE, pageBannerUrl } from '../consts';
 import { SYLLABUS } from '../data/home';
+import { TEACHING_CASES } from '../data/services';
 import Base from '../layouts/Base.astro';
 
 const schema = [
@@ -34,7 +39,7 @@ const schema = [
     '@id': `${SITE.url}/#course`,
     name: 'AI 新手實戰課：桌面版 Agent 與社群自動發文',
     description:
-      '從桌面版 Claude Code / Codex 安裝、Meta 三大 API 串接、自動發文權限設定，到 Skill 工作流建立的零基礎 AI 實戰課程。提供一對一實體（雙北）與線上教學。',
+      '手把手帶零基礎學員從 0 到 1 完成第一個作品，包含桌面版 AI Agent 安裝、實作、測試與除錯。提供雙北實體與線上私人家教。',
     provider: { '@id': AUTHOR.id },
     inLanguage: 'zh-TW',
     courseMode: ['onsite', 'online'],
@@ -52,56 +57,161 @@ const schema = [
 >
   <div class="home" id="home-root">
     <div class="home-shell">
-      <!-- 1／Hero -->
+      <!-- 1／Hero：核心主張、終端機演示與 LINE 行動入口 -->
       <section class="hero" aria-labelledby="hero-h">
-        <h1 class="q q--display hero-reveal" id="hero-h" style="--d:0ms"><span class="lat">AI</span> 工具<br class="brk-s" />這麼多<br />我該從<br class="brk-s" />哪一個<br /><span class="nb">開始<span class="qt">？</span></span></h1>
-        <div class="reply">
-          <div class="hero-reveal" style="--d:70ms">
-            <p class="by"><span class="by-name micro"><span class="lat">ALEX</span></span></p>
-            <p class="lede">先裝一套<strong>桌面版的 <span class="lat">AI Agent</span></strong>，把工具權限拿到手，再動手做出第一個真實作品。網頁版聊天只能回答；<span class="lat">Agent</span> 拿到權限後會自己讀寫檔案、跑腳本，你只負責用中文下指令跟驗收。</p>
-          </div>
-          <div class="actions hero-reveal" style="--d:140ms">
-            <a class="btn btn-primary" href="/resources/"><span class="btn-l">先看免費資源</span><span class="arw" aria-hidden="true">→</span></a>
+        <div class="hero-top">
+          <h1 class="q q--display hero-reveal" id="hero-h" style="--d:0ms">手把手教學<br />帶你從 <span class="lat">0</span> 到 <span class="lat">1</span><br />完成第一個作品</h1>
+          <div class="reply">
+            <div class="hero-reveal" style="--d:70ms">
+              <p class="by"><span class="by-name micro"><span class="lat">ALEX</span> 私人家教</span></p>
+              <p class="lede">不需要技術背景，第一次帶你把工作流跑通，後續只靠對話就能使用。</p>
+            </div>
+            <div class="terminal-demo hero-reveal" aria-label="從安裝、操作、排錯到上線，一條龍帶你完成" style="--d:110ms">
+              <div class="terminal-bar" aria-hidden="true">
+                <span></span><span></span><span></span><b><span class="lat">AI Agent</span></b>
+              </div>
+              <div class="terminal-screen">
+                <p class="terminal-command"><span class="terminal-prompt">❯</span><span class="terminal-typed">從安裝 &gt; 操作 &gt; 排錯 &gt; 上線</span><i aria-hidden="true"></i></p>
+                <div class="terminal-state" aria-hidden="true">
+                  <span class="terminal-thinking"><i></i>全部打包成自動化流程…</span>
+                  <strong class="terminal-done"><span aria-hidden="true">✓</span> 一條龍帶你完成</strong>
+                </div>
+              </div>
+            </div>
+            <div class="actions hero-reveal" style="--d:140ms">
+              <a class="btn btn-line" href={LINKS.line} target="_blank" rel="noreferrer">
+                <span class="line-ic" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg></span>
+                <span class="btn-l">加 <span class="lat">LINE</span> 免費諮詢</span>
+              </a>
+            </div>
           </div>
         </div>
+
+        <section class="outcomes-block hero-reveal" aria-labelledby="outcomes-h" style="--d:190ms">
+          <h2 class="outcomes-h" id="outcomes-h">你可以完成</h2>
+          <ul class="outcomes-list">
+              <li>
+                <strong><span class="lat">Vibe Coding</span></strong>
+                <span>帶你用提示詞解耦，不再改 <span class="lat">A</span> 壞 <span class="lat">B</span></span>
+              </li>
+              <li>
+                <strong><span class="lat">AI</span> 拍片</strong>
+                <span>從腳本、配音到剪輯與發佈</span>
+              </li>
+              <li>
+                <strong>社群自動化</strong>
+                <span>串接帳號，完成自動發文與排程</span>
+              </li>
+            </ul>
+        </section>
+
+        <nav class="paths hero-reveal" aria-label="服務導覽" style="--d:210ms">
+          <ul class="paths-list">
+            <li>
+              <a href="/resources/">
+                <h3 class="p-t">免費資源</h3>
+                <span class="p-go" aria-hidden="true">→</span>
+                <p class="p-d">教學影片與開源工具，先自己動手做</p>
+              </a>
+            </li>
+            <li>
+              <a href="/services/one-on-one/">
+                <h3 class="p-t">私人家教</h3>
+                <span class="p-go" aria-hidden="true">→</span>
+                <p class="p-d">雙北實體或線上，手把手完成第一個作品</p>
+              </a>
+            </li>
+            <li>
+              <a href="/services/speaking/">
+                <h3 class="p-t">演講邀約</h3>
+                <span class="p-go" aria-hidden="true">→</span>
+                <p class="p-d">企業、學校與社群的演講、內訓與工作坊</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- 2／信任證明：一行，不做成卡片 -->
+        <p class="trust hero-reveal" style="--d:280ms"><b>接案工程師、資策會講師</b></p>
       </section>
 
-      <!-- 2／四個入口 -->
-      <section class="paths" aria-labelledby="paths-h">
-        <h2 class="q q--sec reveal" id="paths-h">我的服務</h2>
-        <ul class="paths-list reveal" style="--d:70ms">
-          <li>
-            <a href="/resources/">
-              <h3 class="p-t">免費資源</h3>
-              <span class="p-go" aria-hidden="true">→</span>
-              <p class="p-d">教學影片與開源工具 <span class="lat">Tooka</span>，照著做就能跑通</p>
-            </a>
-          </li>
-          <li>
-            <a href="/blog/">
-              <h3 class="p-t">部落格</h3>
-              <span class="p-go" aria-hidden="true">→</span>
-              <p class="p-d">從工具安裝、<span class="lat">API</span> 申請到自動發文的實作教學</p>
-            </a>
-          </li>
-          <li>
-            <a href="/services/one-on-one/">
-              <h3 class="p-t">一對一教學</h3>
-              <span class="p-go" aria-hidden="true">→</span>
-              <p class="p-d">雙北實體或線上，從安裝帶到做出第一個成品</p>
-            </a>
-          </li>
-          <li>
-            <a href="/services/speaking/">
-              <h3 class="p-t">演講邀約</h3>
-              <span class="p-go" aria-hidden="true">→</span>
-              <p class="p-d">企業、學校、社群都接，<span class="lat">1</span> 小時演講到整天工作坊</p>
-            </a>
-          </li>
-        </ul>
+      <!-- 3／服務詳細介紹：首屏卡片的下一層資訊 -->
+      <section class="service-details" aria-label="服務詳細介紹">
+        <article class="service-row reveal">
+          <div class="service-copy">
+            <p class="service-kicker">先自己試試看</p>
+            <h2>免費資源</h2>
+            <p>先用免費教學影片和開源工具動手做。從 Agent 安裝、Meta API 申請到自動發文，都有可以直接跟著操作的內容。</p>
+            <ul>
+              <li>免費實作影片</li>
+              <li>開源社群圖文工具 Tooka</li>
+              <li>卡關再來問，不必急著付費</li>
+            </ul>
+            <a class="service-link" href="/resources/">查看免費資源 <span aria-hidden="true">→</span></a>
+          </div>
+          <figure class="service-media">
+            <Image src={tookaCover} alt="Tooka 開源社群圖文工具畫面" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" />
+          </figure>
+        </article>
 
-        <!-- 3／信任證明：一行，不做成卡片 -->
-        <p class="trust reveal" style="--d:140ms"><b><span class="lat">21</span> 萬人 <span class="lat">OpenClaw</span> 中文社群版主</b><span class="sep" aria-hidden="true">・</span>開源工具 <span class="lat">Tooka</span> 作者<span class="sep" aria-hidden="true">・</span><span class="lat">HyperFrames</span> 協作者<span class="sep" aria-hidden="true">・</span>曾受 <span class="lat">MixerBox</span>、<span class="lat">TAIA</span> 台灣人工智慧協會邀請演講</p>
+        <article class="service-row service-row--reverse reveal">
+          <div class="service-copy">
+            <p class="service-kicker">實際學員與專案</p>
+            <h2>私人家教案例</h2>
+            <p>每堂課都用學員自己的電腦、帳號和需求實作。過去已帶學員完成 Agent 安裝、社群自動發文、Email 與行事曆整理，以及 OpenClaw 排錯救援。</p>
+            <ul>
+              <li>WordPress 串接 Threads 自動發文</li>
+              <li>Codex 搜尋 Threads 品牌輿情</li>
+              <li>Claude Code 整理 Email、行事曆與 LINE 提醒</li>
+            </ul>
+            <a class="service-link" href="/services/one-on-one/">查看完整案例與上課方式 <span aria-hidden="true">→</span></a>
+          </div>
+          <ul class="case-mini-grid" aria-label="四個私人家教實際案例">
+            {TEACHING_CASES.map((item) => (
+              <li>
+                <Image src={item.image} alt={item.imageAlt} width={64} class="case-mini-icon" />
+                <div>
+                  <strong>{item.topic}</strong>
+                  <span>{item.student}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </article>
+
+        <article class="service-row reveal">
+          <div class="service-copy">
+            <p class="service-kicker">現場演示與實作</p>
+            <h2>演講紀錄</h2>
+            <p>曾於企業、AI 協會與地方社群分享 AI Agent、社群圖文與對話式拍片。內容不只講概念，會把真實工作流搬到現場演示。</p>
+            <ul>
+              <li>MixerBox：OpenClaw 雙機斷線救援</li>
+              <li>TAIA：只靠對話一條龍完成拍片</li>
+              <li>台中、雲林：AI 社群圖文實作</li>
+            </ul>
+            <a class="service-link" href="/services/speaking/">查看全部演講紀錄與邀約方式 <span aria-hidden="true">→</span></a>
+          </div>
+          <figure class="service-media">
+            <Image src={taichungTalk} alt="Alex 在台中場進行 AI 社群圖文演講" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" />
+          </figure>
+        </article>
+
+        <article class="service-row service-row--reverse reveal">
+          <div class="service-copy">
+            <p class="service-kicker">從非科班到 AI 應用講師</p>
+            <h2>關於講師</h2>
+            <p>Alex 是接案工程師與資策會講師。自己也是從沒有技術背景開始，透過 AI 一步一步學會寫程式、做自動化與完成客戶專案，因此特別知道新手容易卡在哪裡。</p>
+            <ul>
+              <li>專長 AI Agent、Vibe Coding 與工作流自動化</li>
+              <li>接案實戰與實際教學經驗</li>
+              <li>用非工程師也能聽懂的方式帶你實作</li>
+            </ul>
+            <a class="service-link" href="/about/">了解講師經歷 <span aria-hidden="true">→</span></a>
+          </div>
+          <figure class="service-media service-media--portrait">
+            <Image src={instructorShirt} alt="AI 應用講師 Alex" widths={[420, 700]} sizes="(min-width: 768px) 38vw, 100vw" />
+          </figure>
+        </article>
       </section>
 
       <!-- 4／結尾 CTA -->
@@ -110,7 +220,10 @@ const schema = [
         <div class="reveal" style="--d:70ms">
           <p class="closer-p">加 <span class="lat">LINE</span> 直接說你想自動化什麼。我會告訴你該走哪一條，也可能直接告訴你哪篇免費文章就能解決。</p>
           <div class="actions">
-            <a class="btn btn-primary" href={LINKS.line} target="_blank" rel="noreferrer"><span class="btn-l">加 <span class="lat">LINE</span> 免費諮詢</span><span class="arw" aria-hidden="true">↗</span></a>
+            <a class="btn btn-line" href={LINKS.line} target="_blank" rel="noreferrer">
+              <span class="line-ic" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg></span>
+              <span class="btn-l">加 <span class="lat">LINE</span> 免費諮詢</span>
+            </a>
           </div>
         </div>
       </section>
@@ -305,16 +418,24 @@ const schema = [
 
     /* ---------- Hero ---------- */
     .hero {
-      padding-top: 52px;
+      padding-top: 28px;
     }
     @media (min-width: 768px) {
       .hero {
-        padding-top: 88px;
+        padding-top: 56px;
+      }
+    }
+    @media (min-width: 900px) {
+      .hero-top {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+        gap: clamp(40px, 5vw, 72px);
+        align-items: start;
       }
     }
     @media (min-width: 1200px) {
       .hero {
-        padding-top: 104px;
+        padding-top: 68px;
       }
     }
 
@@ -337,11 +458,11 @@ const schema = [
        line-height 1 時上下行墨跡淨空 = .047em（96px 下 4.51px）。
        絕不可用 .84：那是英文數值，96px 下兩行墨跡會重疊 10.8px。 */
     .q--display {
-      font-size: clamp(56px, 8vw, 96px);
+      font-size: clamp(40px, 5.5vw, 68px);
       line-height: 1;
       padding-bottom: 0.04em; /* 墨跡略低於行框底 .0265em，留一點 */
     }
-    /* 8vw 在 900px 時 = 72px：到這裡 H1 才進入 display 字距級。 */
+    /* 大螢幕的 H1 進入 display 字距級。 */
     @media (min-width: 900px) {
       .q--display {
         --ls: var(--ls-display);
@@ -355,23 +476,6 @@ const schema = [
     .q--sec {
       font-size: clamp(20px, 3vw, 28px);
       line-height: 1.15;
-    }
-
-    /* 大字斷行：96px 的中文一行只放得下約 10 個字，讓瀏覽器自己斷會斷在
-       「我該從哪一個開／始？」這種位置。改成意群硬斷。
-       大字標題一律不放中文標點（全形「，。」自帶半個字身空白，大字下會炸出一個洞），
-       用 <br> 取代。
-       ≥480px：AI 工具這麼多／我該從哪一個／開始？（固定三行）
-       ≤479px：再加兩刀 → AI 工具／這麼多／我該從／哪一個／開始？
-               每行 ≤3.6em，在 320px 的 280px 淨寬內仍有餘裕，
-               最短一行也是完整意群（3 字），不會出現孤字。 */
-    .brk-s {
-      display: none;
-    }
-    @media (max-width: 479px) {
-      .brk-s {
-        display: inline;
-      }
     }
 
     /* 回答：縮排 ＋ 酒紅細軌 ＋ 無襯線 */
@@ -392,14 +496,8 @@ const schema = [
     }
     @media (min-width: 900px) {
       .reply {
-        margin-left: 88px;
-        padding-left: 30px;
-        margin-top: 34px;
-      }
-    }
-    @media (min-width: 1200px) {
-      .reply {
-        margin-left: 132px;
+        margin: 8px 0 0;
+        padding-left: 24px;
       }
     }
 
@@ -429,6 +527,258 @@ const schema = [
       font-weight: 600;
     }
 
+    /* ---------- 終端機動畫與作品成果卡 ---------- */
+    .outcomes-block {
+      margin-top: 32px;
+    }
+    .outcomes-h {
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--color-accent);
+    }
+    .terminal-demo {
+      width: 100%;
+      max-width: 60ch;
+      margin-top: 16px;
+      border: 1px solid #2d2b2b;
+      border-radius: 5px;
+      background: #191818;
+      color: #f7f5f1;
+      overflow: hidden;
+    }
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 25px;
+      padding: 0 10px;
+      border-bottom: 1px solid #343232;
+      background: #242222;
+    }
+    .terminal-bar > span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #77716e;
+    }
+    .terminal-bar b {
+      margin-inline-start: 4px;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      line-height: 1;
+      font-weight: 400;
+      color: #aaa4a0;
+    }
+    .terminal-screen {
+      padding: 12px 14px 13px;
+      font-family: var(--font-mono);
+    }
+    .terminal-command {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: nowrap;
+    }
+    .terminal-prompt {
+      flex: none;
+      margin-inline-end: 8px;
+      color: #e98797;
+    }
+    .terminal-typed {
+      display: inline-block;
+      max-width: 0;
+      overflow: hidden;
+      animation: terminal-type 6.4s steps(13, end) infinite;
+    }
+    .terminal-command > i {
+      display: inline-block;
+      width: 1px;
+      height: 1.05em;
+      margin-inline-start: 2px;
+      background: #f7f5f1;
+      animation: terminal-cursor 0.65s step-end infinite;
+    }
+    .terminal-state {
+      position: relative;
+      height: 22px;
+      margin-top: 7px;
+      font-size: 11.5px;
+      line-height: 22px;
+    }
+    .terminal-thinking,
+    .terminal-done {
+      position: absolute;
+      inset: 0 auto auto 0;
+    }
+    .terminal-thinking {
+      color: #bdb7b3;
+      animation: terminal-thinking 6.4s var(--ease) infinite;
+    }
+    .terminal-thinking i {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-inline-end: 7px;
+      border-radius: 50%;
+      border: 1px solid #aaa4a0;
+      border-top-color: #e98797;
+      animation: terminal-spin 0.8s linear infinite;
+    }
+    .reply .terminal-done {
+      font-weight: 600;
+      color: #8fd5a6;
+      animation: terminal-done 6.4s var(--ease) infinite;
+    }
+    @keyframes terminal-type {
+      0% {
+        max-width: 0;
+      }
+      26%,
+      92% {
+        max-width: 18em;
+      }
+    }
+    @keyframes terminal-thinking {
+      0%,
+      28% {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      35%,
+      58% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      64%,
+      100% {
+        opacity: 0;
+        transform: translateY(-3px);
+      }
+    }
+    @keyframes terminal-done {
+      0%,
+      60% {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      68%,
+      92% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+    @keyframes terminal-cursor {
+      50% {
+        opacity: 0;
+      }
+    }
+    @keyframes terminal-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    .outcomes-list {
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      list-style: none;
+    }
+    @media (min-width: 768px) {
+      .outcomes-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    .outcomes-list li {
+      display: grid;
+      gap: 5px;
+      padding: 12px 14px;
+      border: 1px solid var(--color-rule-2);
+      background: rgb(255 255 255 / 34%);
+    }
+    .outcomes-list strong {
+      font-size: 16px;
+      line-height: 1.4;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+    .outcomes-list li > span {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--color-ink-3);
+    }
+    @media (max-width: 767px) {
+      .hero {
+        padding-top: 14px;
+      }
+      .q--display {
+        font-size: 34px;
+      }
+      .reply {
+        margin-top: 10px;
+        padding-left: 14px;
+      }
+      .reply::before {
+        height: 26px;
+      }
+      .by {
+        margin-bottom: 4px;
+      }
+      .lede {
+        font-size: 13.5px;
+        line-height: 1.55;
+      }
+      .terminal-demo {
+        margin-top: 10px;
+      }
+      .terminal-bar {
+        height: 20px;
+      }
+      .terminal-screen {
+        padding: 7px 10px 8px;
+      }
+      .terminal-command {
+        font-size: 11.5px;
+      }
+      .terminal-state {
+        height: 16px;
+        margin-top: 2px;
+        font-size: 10.5px;
+        line-height: 16px;
+      }
+      .reply .actions {
+        margin-top: 10px;
+      }
+      .outcomes-block {
+        margin-top: 10px;
+      }
+      .outcomes-h {
+        margin-bottom: 8px;
+      }
+      .outcomes-list {
+        gap: 4px;
+      }
+      .outcomes-list li {
+        grid-template-columns: minmax(112px, auto) 1fr;
+        align-items: center;
+        gap: 10px;
+        min-height: 36px;
+        padding: 5px 10px;
+      }
+      .outcomes-list strong {
+        font-size: 13px;
+      }
+      .outcomes-list li > span {
+        font-size: 11px;
+        line-height: 1.45;
+      }
+    }
     /* ---------- 按鈕 ---------- */
     .actions {
       display: flex;
@@ -454,10 +804,19 @@ const schema = [
         color 0.18s var(--ease),
         transform 0.18s var(--ease);
     }
-    .btn-primary {
-      background: var(--color-accent);
-      color: var(--color-surface);
-      border: 1px solid var(--color-accent);
+    .btn-line {
+      background: #06c755;
+      color: #fff;
+      border: 1px solid #06c755;
+    }
+    .line-ic,
+    .line-ic svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+    }
+    .line-ic svg {
+      fill: currentColor;
     }
     /* 按鈕文字必須是「一個」flex 子項。若讓文字節點直接當子項，
        包裹拉丁字段用的 .lat 會被 blockify 成 flex item，gap:8px 就會
@@ -472,44 +831,37 @@ const schema = [
       --ls: 0em;
     }
 
-    /* ---------- 四個入口：髮絲線橫列 ---------- */
+    /* ---------- 服務導覽：三張入口卡，壓成首屏第二排 ---------- */
     .paths {
-      padding-top: 76px;
-    }
-    @media (min-width: 768px) {
-      .paths {
-        padding-top: 120px;
-      }
+      margin-top: 18px;
     }
     .paths-list {
-      margin-top: 26px;
+      display: grid;
+      gap: 8px;
       padding: 0;
       list-style: none;
-      border-top: 1px solid var(--color-rule);
-    }
-    @media (min-width: 768px) {
-      .paths-list {
-        margin-top: 34px;
-      }
     }
     .paths-list li {
-      border-bottom: 1px solid var(--color-rule);
+      min-width: 0;
+      border: 1px solid var(--color-rule-2);
+      background: rgb(255 255 255 / 34%);
     }
     .paths-list a {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 5px 20px;
-      align-items: baseline;
-      /* 從五列改成四列後，每列加高補回區塊份量 */
-      padding: 22px 2px;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 44px;
+      padding: 8px 12px;
       text-decoration: none;
       transition: background-color 0.2s var(--ease);
     }
-    /* 入口列的字級對照 jisto 的 .j-work-row h2（實測 clamp(28px,3.5vw,58px)、列高 216px）。
-       本站上限收在 44px 而非 58px：jisto 那一列有縮圖佔掉左欄 .34fr，標題只填中欄；
-       這裡沒有縮圖、標題橫跨整列，58px 的中文會逼出換行。 */
     .p-t {
-      font-size: clamp(26px, 3.2vw, 44px);
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .p-t {
+      font-size: 14px;
       font-weight: 600;
       color: var(--color-ink);
       line-height: 1.16;
@@ -517,54 +869,78 @@ const schema = [
       transition: color 0.18s var(--ease);
     }
     .p-d {
-      grid-column: 1 / -1;
-      font-size: 15px;
-      line-height: 1.75;
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+      font-size: 11.5px;
+      line-height: 1.45;
       color: var(--color-ink-3);
-      max-width: 52ch;
     }
     .p-go {
+      grid-column: 3;
+      grid-row: 1;
       font-family: var(--font-mono);
       font-size: 13px;
       color: var(--color-accent);
       --ls: 0em;
     }
     @media (min-width: 768px) {
+      .paths-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
       .paths-list a {
-        /* 標題放大到 44px 後改成兩欄：左欄堆疊標題與描述、右欄是箭頭。
-           原本三欄（標題｜描述｜箭頭）是給 24px 小標題並排用的，
-           44px 標題並排 15px 描述會頭重腳輕。
-           列高比照 jisto 的 .j-work-row（min-height 216px）加厚。 */
         grid-template-columns: 1fr auto;
-        gap: 0 36px;
-        align-items: center;
-        padding: 40px 2px;
-        min-height: 148px;
+        grid-template-rows: auto 1fr;
+        gap: 8px 14px;
+        min-height: 92px;
+        padding: 16px 18px;
       }
       .p-t {
-        grid-column: 1;
-        grid-row: 1;
+        font-size: clamp(20px, 2vw, 26px);
       }
       .p-d {
-        grid-column: 1;
+        grid-column: 1 / -1;
         grid-row: 2;
-        margin-top: 10px;
+        align-self: end;
+        font-size: 12.5px;
       }
       .p-go {
         grid-column: 2;
-        grid-row: 1 / span 2;
-        align-self: center;
+        grid-row: 1;
       }
     }
-
     /* ---------- 信任證明：一行，不做成卡片 ---------- */
     /* 規格是「一行」，所以桌機不設 max-width——這是一行資歷，不是要讀的內文，
        量到 74ch（約 496px）會讓它斷成兩行。窄螢幕本來就放不下，讓它自然換行。 */
     .trust {
-      margin-top: 26px;
+      margin-top: 14px;
       font-size: 13.5px;
       line-height: 1.95;
       color: var(--color-ink-3);
+    }
+    @media (max-width: 767px) {
+      .paths {
+        margin-top: 10px;
+      }
+      .paths-list {
+        gap: 4px;
+      }
+      .paths-list a {
+        padding: 6px 10px;
+      }
+      .p-t {
+        font-size: 13px;
+      }
+      .p-d {
+        font-size: 10.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .trust {
+        margin-top: 10px;
+        font-size: 12px;
+      }
     }
     .trust b {
       color: var(--color-ink-2);
@@ -574,6 +950,170 @@ const schema = [
     .trust .sep {
       color: var(--color-rule-3);
       padding: 0 2px;
+    }
+
+    /* ---------- 首屏下方的服務詳細介紹 ---------- */
+    .service-details {
+      padding-top: clamp(72px, 10vw, 128px);
+    }
+    .service-row {
+      display: grid;
+      gap: 30px;
+      padding: clamp(48px, 7vw, 88px) 0;
+      border-top: 1px solid var(--color-rule);
+    }
+    @media (min-width: 768px) {
+      .service-row {
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.88fr);
+        gap: clamp(48px, 7vw, 96px);
+        align-items: center;
+      }
+      .service-row--reverse .service-copy {
+        order: 2;
+      }
+      .service-row--reverse .service-media {
+        order: 1;
+      }
+    }
+    .service-copy {
+      max-width: 58ch;
+    }
+    .service-kicker {
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+    }
+    .service-copy h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.1;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+    .service-copy > p:not(.service-kicker) {
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--color-ink-2);
+    }
+    .service-copy ul {
+      display: grid;
+      gap: 8px;
+      margin-top: 20px;
+      padding: 0;
+      list-style: none;
+      color: var(--color-ink-3);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .service-copy li {
+      position: relative;
+      padding-left: 16px;
+    }
+    .service-copy li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--color-accent);
+    }
+    .service-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      margin-top: 24px;
+      color: var(--color-accent);
+      font-size: 14.5px;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+    .service-media {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--color-rule-2);
+      background: var(--color-surface);
+      aspect-ratio: 4 / 3;
+    }
+    .service-media img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .service-media--portrait img {
+      object-position: center 28%;
+    }
+    .case-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .case-mini-grid li {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 11px;
+      align-items: start;
+      min-height: 126px;
+      padding: 14px;
+      border: 1px solid var(--color-rule-2);
+      background: rgb(255 255 255 / 42%);
+    }
+    .case-mini-icon {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+    }
+    .case-mini-grid strong,
+    .case-mini-grid span {
+      display: block;
+    }
+    .case-mini-grid strong {
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+    .case-mini-grid span {
+      margin-top: 7px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: var(--color-accent);
+    }
+    @media (max-width: 767px) {
+      .service-details {
+        padding-top: 64px;
+      }
+      .service-row {
+        padding: 48px 0;
+      }
+      .service-media {
+        order: -1;
+        aspect-ratio: 16 / 10;
+      }
+      .service-copy > p:not(.service-kicker) {
+        font-size: 15px;
+      }
+      .case-mini-grid {
+        order: -1;
+      }
+      .case-mini-grid li {
+        grid-template-columns: 32px minmax(0, 1fr);
+        min-height: 112px;
+        padding: 12px;
+      }
+      .case-mini-icon {
+        width: 32px;
+        height: 32px;
+      }
+      .case-mini-grid strong {
+        font-size: 12px;
+      }
     }
 
     /* ---------- 結尾 CTA ---------- */
@@ -599,9 +1139,9 @@ const schema = [
        :focus-visible 另外寫一份、不設任何條件。
        ============================================================ */
     @media (hover: hover) and (pointer: fine) {
-      .btn-primary:hover {
-        background: var(--color-accent-2);
-        border-color: var(--color-accent-2);
+      .btn-line:hover {
+        background: #05b34c;
+        border-color: #05b34c;
         transform: translateY(-1px);
       }
       .paths-list a:hover {
@@ -661,13 +1201,30 @@ const schema = [
       }
       /* 只關過渡，不寫任何 :hover 選擇器。
          「所有 hover 收在 @media (hover:hover) and (pointer:fine) 裡」是硬規則，
-         在這裡補一條 .btn-primary:hover{transform:none} 會是全站唯一一條沒有裝置
+         在這裡補一條 .btn-line:hover{transform:none} 會是全站唯一一條沒有裝置
          條件的 hover 規則。而且它也沒有必要：那顆按鈕的 translateY(-1px) 本來就
          只在有滑鼠的裝置上生效，過渡一關就是瞬間位移，不構成前庭風險的動態。 */
       .btn,
       .paths-list a,
-      .p-t {
+      .p-t,
+      .terminal-typed,
+      .terminal-command > i,
+      .terminal-thinking,
+      .terminal-done,
+      .terminal-thinking i {
         transition: none !important;
+        animation: none !important;
+      }
+      .terminal-typed {
+        max-width: 18em;
+      }
+      .terminal-command > i,
+      .terminal-thinking {
+        display: none;
+      }
+      .terminal-done {
+        opacity: 1;
+        transform: none;
       }
     }
   </style>
