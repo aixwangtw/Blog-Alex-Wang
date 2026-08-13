@@ -41,6 +41,7 @@ const featuredPosts = (await getCollection('blog', ({ data }) => !data.unlisted 
       (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
   )
   .slice(0, 3);
+const inquiryEmailUrl = `mailto:${AUTHOR.email}?subject=${encodeURIComponent('講課或開發邀約')}`;
 
 const schema = [
   {
@@ -66,7 +67,7 @@ const schema = [
 >
   <div class="home" id="home-root">
     <div class="home-shell">
-      <!-- 1／Hero：手機首屏放核心主張、LINE 行動入口與三項可完成成果 -->
+      <!-- 1／Hero：首屏放核心主張、上課方式、LINE 行動入口與三項可完成成果 -->
       <section class="hero" aria-labelledby="hero-h">
         <div class="hero-top">
           <h1 class="q q--display hero-reveal" id="hero-h" style="--d:0ms">手把手教學<br />帶你從 <span class="lat">0</span> 到 <span class="lat">1</span><br />完成第一個作品</h1>
@@ -74,6 +75,7 @@ const schema = [
             <div class="hero-reveal" style="--d:70ms">
               <p class="by"><span class="by-name micro"><span class="lat">ALEX</span> 私人家教</span></p>
               <p class="lede">不需要技術背景，第一次帶你把工作流跑通，後續只靠對話就能使用。</p>
+              <p class="hero-meta">雙北實體・線上教學</p>
             </div>
             <div class="terminal-demo hero-reveal" aria-label="從安裝、操作、排錯到上線，一條龍帶你完成" style="--d:110ms">
               <div class="terminal-bar" aria-hidden="true">
@@ -87,14 +89,14 @@ const schema = [
                 </div>
               </div>
             </div>
-            <div class="actions hero-reveal" style="--d:140ms">
-              <a class="btn btn-line" href={LINKS.line} target="_blank" rel="noreferrer">
-                <span class="line-ic" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg></span>
-                <span class="btn-l">加 <span class="lat">LINE</span> 免費諮詢</span>
-              </a>
-            </div>
           </div>
         </div>
+
+        <dl class="hero-proof hero-reveal" aria-label="講師服務資訊" style="--d:160ms">
+          <div><dt>專業身份</dt><dd>接案工程師</dd></div>
+          <div><dt>教學經歷</dt><dd>資策會講師</dd></div>
+          <div><dt>上課方式</dt><dd>雙北實體・線上教學</dd></div>
+        </dl>
 
         <section class="outcomes-block hero-reveal" aria-labelledby="outcomes-h" style="--d:190ms">
           <h2 class="outcomes-h" id="outcomes-h">你可以完成</h2>
@@ -128,14 +130,20 @@ const schema = [
             </li>
           </ul>
         </section>
+
+        <nav class="hero-contact-actions hero-reveal" aria-label="聯絡與邀約" style="--d:220ms">
+          <a class="btn btn-line" href={LINKS.line} target="_blank" rel="noreferrer" aria-label="加 LINE 免費諮詢（開新分頁）">
+            <span class="line-ic" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg></span>
+            <span><span class="lat">LINE</span> 免費諮詢</span>
+          </a>
+          <a class="btn btn-contact" href={inquiryEmailUrl} aria-label="寄送講課或開發邀約 Email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></svg>
+            <span><span class="lat">Email</span> 講課／開發</span>
+          </a>
+        </nav>
       </section>
 
-      <!-- 2／信任證明：服務入口已由下方四個詳細區塊負責，不重複放卡片 -->
-      <section class="hero-followup" aria-label="講師資歷">
-        <p class="trust hero-reveal" style="--d:280ms"><b>接案工程師、資策會講師</b></p>
-      </section>
-
-      <!-- 3／服務詳細介紹：服務入口的下一層資訊 -->
+      <!-- 2／服務詳細介紹：服務入口的下一層資訊 -->
       <section class="service-details" aria-label="服務詳細介紹">
         <article class="service-row reveal">
           <div class="service-copy">
@@ -455,22 +463,23 @@ const schema = [
     .hero {
       padding-top: 28px;
     }
-    /* Hero 到三項「你可以完成」成果為真正的首屏；服務入口放在下一個 section。
-       手機使用 svh，避免 Threads／Instagram 等內建瀏覽器把網址列高度
-       算進 100vh，造成看似剛好、實機卻被工具列裁掉。min-height 只留白，
-       不限制內容高度，所以矮螢幕或放大字級時仍會自然往下增高。 */
-    @media (max-width: 767px) {
+    /* 手機由內容自然決定高度，避免 App 內建瀏覽器的動態網址列造成大空白；
+       桌機則扣除頁首後撐滿一個 viewport，下一個服務區不會露進首屏。 */
+    @media (min-width: 768px) {
       .hero {
         min-height: calc(100vh - var(--bar));
         min-height: calc(100svh - var(--bar));
-      }
-    }
-    @media (min-width: 768px) {
-      .hero {
         padding-top: 56px;
       }
     }
     @media (min-width: 900px) {
+      .hero {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: clamp(44px, 6vh, 68px);
+        padding-bottom: clamp(44px, 6vh, 68px);
+      }
       .hero-top {
         display: grid;
         grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
@@ -562,6 +571,52 @@ const schema = [
       line-height: 1.95;
       color: var(--color-ink-2);
     }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 16px;
+      margin-top: 10px;
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--color-ink-3);
+    }
+    .hero-proof {
+      display: none;
+    }
+    @media (min-width: 900px) {
+      .hero-meta {
+        display: none;
+      }
+      .hero-proof {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin: clamp(30px, 4vh, 48px) 0 0;
+        border-top: 1px solid var(--color-rule-2);
+        border-bottom: 1px solid var(--color-rule-2);
+      }
+      .hero-proof div {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: baseline;
+        gap: 16px;
+        padding: 14px 18px;
+      }
+      .hero-proof div + div {
+        border-left: 1px solid var(--color-rule);
+      }
+      .hero-proof dt {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: var(--color-accent);
+      }
+      .hero-proof dd {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--color-ink-2);
+      }
+    }
     @media (min-width: 768px) {
       .lede {
         font-size: 17.5px;
@@ -575,6 +630,14 @@ const schema = [
     /* ---------- 終端機動畫與作品成果卡 ---------- */
     .outcomes-block {
       margin-top: 32px;
+    }
+    @media (min-width: 900px) {
+      .outcomes-block {
+        margin-top: clamp(24px, 3vh, 34px);
+      }
+      .outcomes-list li {
+        min-height: 92px;
+      }
     }
     .hero-followup {
       display: flow-root;
@@ -735,6 +798,7 @@ const schema = [
     .outcomes-list {
       display: grid;
       gap: 8px;
+      margin: 0;
       padding: 0;
       list-style: none;
     }
@@ -822,6 +886,11 @@ const schema = [
         font-size: 13.5px;
         line-height: 1.55;
       }
+      .hero-meta {
+        gap: 2px 13px;
+        margin-top: 6px;
+        font-size: 11px;
+      }
       .terminal-demo {
         margin-top: 10px;
       }
@@ -839,9 +908,6 @@ const schema = [
         margin-top: 2px;
         font-size: 10.5px;
         line-height: 16px;
-      }
-      .reply .actions {
-        margin-top: 10px;
       }
       .outcomes-block {
         margin-top: 6px;
@@ -885,20 +951,31 @@ const schema = [
         line-height: 1.45;
       }
     }
-    /* 320×480 這類極矮舊機：終端機只是流程示意，優先讓核心文案、CTA
+    /* 320px 窄矮螢幕：終端機只是流程示意，優先讓核心文案、CTA
        與三項成果完整留在首屏。直接不渲染示意區，不用裁切或負位移硬塞。 */
+    @media (max-width: 359px) and (max-height: 620px) {
+      .terminal-demo {
+        display: none;
+      }
+    }
     @media (max-width: 359px) and (max-height: 540px) {
       .q--display {
         font-size: 31px;
       }
-      .terminal-demo {
+      .hero-meta {
         display: none;
       }
-      .reply .actions {
-        margin-top: 6px;
+      .hero .hero-contact-actions {
+        margin-top: 0;
       }
       .outcomes-block {
         margin-top: 4px;
+      }
+      .outcomes-h {
+        margin-bottom: 4px;
+      }
+      .outcomes-list {
+        gap: 3px;
       }
     }
     /* ---------- 按鈕 ---------- */
@@ -907,6 +984,13 @@ const schema = [
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 26px;
+    }
+    .hero-contact-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
     }
     .btn {
       display: inline-flex;
@@ -931,6 +1015,40 @@ const schema = [
       color: #fff;
       border: 1px solid #06c755;
     }
+    .btn-contact {
+      border: 1px solid var(--color-rule-3);
+      background: rgb(255 255 255 / 34%);
+      color: var(--color-ink-2);
+    }
+    .btn-contact > svg {
+      width: 18px;
+      height: 18px;
+      flex: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    @media (max-width: 767px) {
+      .hero-contact-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 5px;
+        margin-top: 10px;
+      }
+      .hero-contact-actions .btn {
+        justify-content: center;
+        gap: 5px;
+        min-width: 0;
+        padding: 8px 5px;
+        font-size: 11px;
+      }
+      .hero-contact-actions .line-ic,
+      .hero-contact-actions .line-ic svg,
+      .hero-contact-actions .btn-contact > svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
     .line-ic,
     .line-ic svg {
       display: block;
@@ -953,40 +1071,20 @@ const schema = [
       --ls: 0em;
     }
 
-    /* ---------- 信任證明：一行，不做成卡片 ---------- */
-    /* 規格是「一行」，所以桌機不設 max-width——這是一行資歷，不是要讀的內文，
-       量到 74ch（約 496px）會讓它斷成兩行。窄螢幕本來就放不下，讓它自然換行。 */
-    .trust {
-      margin-top: 14px;
-      font-size: 13.5px;
-      line-height: 1.95;
-      color: var(--color-ink-3);
-    }
-    @media (max-width: 767px) {
-      .trust {
-        margin-top: 10px;
-        font-size: 12px;
-      }
-    }
-    .trust b {
-      color: var(--color-ink-2);
-      font-weight: 500;
-    }
-    /* 分隔點用 rule-3 而不是 rule-2：它是裝飾字元，但仍要看得見。 */
-    .trust .sep {
-      color: var(--color-rule-3);
-      padding: 0 2px;
-    }
-
     /* ---------- 首屏下方的服務詳細介紹 ---------- */
     .service-details {
-      padding-top: clamp(72px, 10vw, 128px);
+      padding-top: clamp(24px, 4vw, 48px);
     }
     .service-row {
       display: grid;
       gap: 30px;
       padding: clamp(48px, 7vw, 88px) 0;
       border-top: 1px solid var(--color-rule);
+    }
+    @media (max-width: 767px) {
+      .service-row:first-child {
+        padding-top: 36px;
+      }
     }
     @media (min-width: 768px) {
       .service-row {
@@ -1404,6 +1502,12 @@ const schema = [
         border-color: #05b34c;
         transform: translateY(-1px);
       }
+      .btn-contact:hover {
+        color: var(--color-accent);
+        border-color: var(--color-accent);
+        background: rgb(255 255 255 / 64%);
+        transform: translateY(-1px);
+      }
       .instructor-socials a:hover {
         color: var(--color-accent);
         border-color: var(--color-accent);
@@ -1417,6 +1521,10 @@ const schema = [
     /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
     .instructor-socials a:focus-visible,
     .featured-list a:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+    }
+    .hero-contact-actions a:focus-visible {
       outline: 2px solid var(--color-accent);
       outline-offset: 3px;
     }
