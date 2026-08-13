@@ -1296,29 +1296,29 @@ const schema = [
       /* 手機版把文案容器攤平成 service-row 的 grid 子項，才能在不複製圖片的
          前提下，讓媒體落在「介紹與重點」之後、「查看連結」之前。桌機仍保留
          service-copy／media 左右雙欄，不受這組順序影響。 */
-      .service-copy {
+      .service-row .service-copy {
         display: contents;
       }
-      .service-kicker {
+      .service-row .service-kicker {
         order: 1;
         margin-bottom: -18px;
       }
-      .service-copy h2 {
+      .service-row .service-copy h2 {
         order: 2;
       }
-      .service-copy > p:not(.service-kicker) {
+      .service-row .service-copy > p:not(.service-kicker) {
         order: 3;
         margin-top: -10px;
       }
-      .service-copy ul {
+      .service-row .service-copy ul {
         order: 4;
         margin-top: -10px;
       }
-      .service-media {
+      .service-row .service-media {
         order: 5;
         aspect-ratio: 16 / 10;
       }
-      .service-link {
+      .service-row .service-link {
         order: 6;
         margin-top: -10px;
       }
