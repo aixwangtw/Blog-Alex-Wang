@@ -87,6 +87,41 @@ export const TEACHING_CONTENT: {
   },
 ];
 
+export const VIBE_CODING_SYLLABUS = [
+  {
+    step: '第一步',
+    title: '建立專案規則',
+    duration: '20 分鐘',
+    detail: '定義 AI 可以與不可以做的事、修改範圍，以及完成後要如何檢查與驗收。',
+  },
+  {
+    step: '第二步',
+    title: '規劃開發架構與順序',
+    duration: '40 分鐘',
+    detail: '把需求拆成頁面、資料與功能，規劃模組分工和開發順序，再逐步交給 AI 完成。',
+  },
+  {
+    step: '第三步',
+    title: '解 Bug、解耦與共用元件',
+    duration: '90 分鐘',
+    detail:
+      '學會描述預期與實際結果、貼上完整錯誤訊息，讓 AI 先分析影響範圍；再拆開互相牽連的邏輯、整理共用元件，用最小修改避免「改 A 壞 B」。',
+  },
+  {
+    step: '綜合實作',
+    title: '從分析到驗收走完一次',
+    duration: '30 分鐘',
+    detail: '實際練習建立規則、拆分功能、提供錯誤資訊、要求最小修改，最後驗收相關功能。',
+  },
+];
+
+export const VIBE_CODING_PROMPTS = [
+  '請先分析問題原因與影響範圍，暫時不要修改。',
+  '請告訴我還需要提供哪些程式碼、設定或畫面。',
+  '請提出最小修改方案，不要更動無關功能。',
+  '修改完成後，請列出受到影響的功能與驗收項目。',
+];
+
 // 實際一對一教學案例（取自講師履歷）
 export const TEACHING_CASES = [
   {

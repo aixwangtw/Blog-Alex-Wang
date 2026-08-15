@@ -13,11 +13,12 @@
 interface Props {
   size?: 'lg' | 'md';
   class?: string;
+  id?: string;
 }
 
-const { size = 'lg', class: className } = Astro.props;
+const { size = 'lg', class: className, id } = Astro.props;
 ---
 
-<h2 class:list={['font-semibold text-ink', size === 'lg' ? 't-h2-lg' : 't-h2', className]}>
+<h2 id={id} class:list={['font-semibold text-ink', size === 'lg' ? 't-h2-lg' : 't-h2', className]}>
   <slot />
 </h2>

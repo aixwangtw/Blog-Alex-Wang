@@ -8,7 +8,14 @@ import TeachingTools from '../../components/TeachingTools.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { AUTHOR, LINKS, SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
 import { ONE_ON_ONE_FAQS } from '../../data/faqs';
-import { CLASS_FORMATS, TEACHING_CASES, TEACHING_CONTENT, TEACHING_TOOLS } from '../../data/services';
+import {
+  CLASS_FORMATS,
+  TEACHING_CASES,
+  TEACHING_CONTENT,
+  TEACHING_TOOLS,
+  VIBE_CODING_PROMPTS,
+  VIBE_CODING_SYLLABUS,
+} from '../../data/services';
 import Base from '../../layouts/Base.astro';
 
 const schema = [
@@ -62,6 +69,15 @@ const schema = [
     })),
   },
 ];
+
+const pageToc = [
+  { id: 'class-formats', label: '上課形式' },
+  { id: 'teaching-content', label: '教學內容' },
+  { id: 'vibe-coding-syllabus', label: 'Vibe Coding 新手實戰課綱' },
+  { id: 'teaching-tools', label: '可教學工具' },
+  { id: 'teaching-cases', label: '實際教學案例' },
+  { id: 'faq', label: '常見問題' },
+];
 ---
 
 <Base
@@ -80,7 +96,21 @@ const schema = [
       AI 自動化流程真正跑通一次——從四大 AI Agent（Claude Code、Codex、OpenClaw 龍蝦、Hermes 愛馬仕）的安裝使用、<strong class="text-accent">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>（例如用 LINE 跟 AI 對話，整理其他平台的訊息），到做出可排程的社群自動發文系統，以及打造你的生圖、拍片工作流。
     </p>
 
-    <SectionHeading size="md" class="mt-14">上課形式</SectionHeading>
+    <nav aria-label="頁面目錄" class="mt-8 border-y border-rule px-0.5 py-6">
+      <p class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">目錄</p>
+      <ol class="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
+        {pageToc.map((item, index) => (
+          <li class="flex gap-3 leading-7">
+            <span class="shrink-0 font-mono text-[13px] tabular-nums text-ink-3" aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <a href={`#${item.id}`} class="text-accent underline-offset-4 hover:underline">{item.label}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <SectionHeading id="class-formats" size="md" class="mt-14 scroll-mt-24">上課形式</SectionHeading>
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {CLASS_FORMATS.map((format) => (
         <Card>
@@ -93,7 +123,7 @@ const schema = [
       也可安排一對多教學：第一位學員依原價計費，<strong class="font-semibold text-ink">第二位起每位教學費用享八折</strong>。
     </p>
 
-    <SectionHeading size="md" class="mt-14">教學內容</SectionHeading>
+    <SectionHeading id="teaching-content" size="md" class="mt-14 scroll-mt-24">教學內容</SectionHeading>
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {TEACHING_CONTENT.map((item) => (
         <Card>
@@ -110,10 +140,38 @@ const schema = [
       ))}
     </div>
 
-    <SectionHeading size="md" class="mt-14">可教學工具</SectionHeading>
+    <SectionHeading id="vibe-coding-syllabus" size="md" class="mt-14 scroll-mt-24">Vibe Coding 新手實戰課綱</SectionHeading>
+    <p class="mt-4 leading-7 text-ink-2">
+      適合沒有程式背景，或已經用 AI 寫出作品，卻經常遇到功能互相影響、改 A 壞 B 的新手。課程時間約 3 小時。
+    </p>
+    <div class="mt-6 grid gap-5">
+      {VIBE_CODING_SYLLABUS.map((item) => (
+        <Card>
+          <div class="flex items-center justify-between gap-4">
+            <span class="text-sm font-semibold text-accent">{item.step}</span>
+            <span class="text-sm text-ink-3">{item.duration}</span>
+          </div>
+          <h3 class="mt-2 text-xl font-semibold text-ink">{item.title}</h3>
+          <p class="mt-3 leading-7 text-ink-2">{item.detail}</p>
+        </Card>
+      ))}
+    </div>
+    <Card class="mt-5">
+      <h3 class="text-xl font-semibold text-ink">課堂會練習的提示詞</h3>
+      <ul class="mt-4 space-y-2 text-ink-2">
+        {VIBE_CODING_PROMPTS.map((prompt) => (
+          <li class="flex gap-3 leading-7">
+            <span aria-hidden="true" class="text-accent">→</span>
+            <span>{prompt}</span>
+          </li>
+        ))}
+      </ul>
+    </Card>
+
+    <SectionHeading id="teaching-tools" size="md" class="mt-14 scroll-mt-24">可教學工具</SectionHeading>
     <TeachingTools />
 
-    <SectionHeading size="md" class="mt-14">實際教學案例</SectionHeading>
+    <SectionHeading id="teaching-cases" size="md" class="mt-14 scroll-mt-24">實際教學案例</SectionHeading>
     <p class="mt-4 leading-7 text-ink-2">
       以下是四個實際的一對一教學案例，涵蓋不同背景的學員與客製化主題：
     </p>
@@ -130,7 +188,7 @@ const schema = [
       ))}
     </div>
 
-    <SectionHeading size="md" class="mt-14">常見問題</SectionHeading>
+    <SectionHeading id="faq" size="md" class="mt-14 scroll-mt-24">常見問題</SectionHeading>
     <div class="mt-6">
       <FaqList faqs={ONE_ON_ONE_FAQS} />
     </div>
