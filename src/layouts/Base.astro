@@ -1,11 +1,86 @@
 ---
 import ogBanner from '../assets/banner-v2.png';
-import { NAV, LINKS, SITE, AUTHOR, PERSON_SCHEMA } from '../consts';
+import { NAV, LINKS, SITE, SERVICE_SITE, AUTHOR, PERSON_SCHEMA, pageBannerUrl, speakingBannerUrl } from '../consts';
 import '../styles/global.css';
 
 // 頁首導覽不放「首頁」：字標本身就是回首頁的連結，重複一次是浪費連結預算。
 // 頁尾的網站導覽仍然列出完整 NAV（含首頁）。
-const HEADER_NAV = NAV.filter((item) => item.href !== '/');
+const HEADER_NAV = [
+  { href: '/about/', label: '關於' },
+];
+const DROPDOWN_NAV = [
+  {
+    key: 'articles',
+    label: '文章',
+    subtitle: '從新手入門、工具安裝到社群自動化',
+    previews: [
+      {
+        href: '/blog/',
+        eyebrow: '全部文章',
+        title: 'AI 新手部落格',
+        description: '每篇文章解決一個真實問題，依發佈時間完整瀏覽。',
+        image: new URL(pageBannerUrl('blog')).pathname,
+      },
+      {
+        href: '/blog/codex-windows-wsl-install/',
+        eyebrow: '工具安裝',
+        title: 'Codex 新手安裝',
+        description: '從 VS Code 插件開始，不用先學終端機操作。',
+        image: '/images/blog/codex-windows-wsl-install.png',
+      },
+      {
+        href: '/blog/threads-api-tutorial/',
+        eyebrow: '社群自動化',
+        title: 'Meta API 實戰',
+        description: 'Threads、Instagram 申請與自動發文工作流。',
+        image: '/images/blog/threads-api-tutorial.png',
+      },
+    ],
+  },
+  {
+    key: 'resources',
+    label: '領取',
+    subtitle: '免費教學影片、開源工具與學習路線',
+    previews: [
+      {
+        href: '/resources/',
+        eyebrow: '免費專區',
+        title: '全部免費資源',
+        description: '把免費工具、影片與建議的學習順序整理在同一頁。',
+        image: new URL(pageBannerUrl('resources')).pathname,
+      },
+      {
+        href: '/blog/why-i-built-tooka/',
+        eyebrow: '開源工具',
+        title: 'Tooka 社群圖文',
+        description: '用對話生成不跑版的 IG、Facebook 與 Threads 圖文。',
+        image: '/images/blog/why-i-built-tooka.png',
+      },
+    ],
+  },
+  {
+    key: 'services',
+    label: '服務',
+    subtitle: '先看內容，再選適合你的合作方式',
+    accent: true,
+    previews: [
+      {
+        href: `${SERVICE_SITE.url}/course/`,
+        eyebrow: '3 小時課程',
+        title: 'AI 新手實戰課',
+        description: '從工具安裝、專案規則到除錯解耦，帶你從 0 到 1 完成第一個專案。',
+        image: new URL(pageBannerUrl('one-on-one')).pathname,
+      },
+      {
+        href: `${SERVICE_SITE.url}/services/speaking/`,
+        eyebrow: '演講與實作',
+        title: 'AI 主題演講',
+        description: 'AI Agent、社群自動化與對話式拍片，可依企業、協會或社群需求規劃。',
+        image: new URL(speakingBannerUrl()).pathname,
+      },
+    ],
+  },
+];
 
 interface Props {
   title: string;
@@ -93,7 +168,7 @@ const jsonLd = {
           var href = a.href || '';
           if (href.indexOf('line.me') !== -1) {
             window.gtag('event', 'line_click', { link_url: href, page_path: location.pathname });
-          } else if (href.indexOf('/services/ai-tutor') !== -1) {
+          } else if (href.indexOf('/course') !== -1) {
             window.gtag('event', 'one_on_one_click', { link_url: href, page_path: location.pathname });
           } else if (href.indexOf('/services/speaking') !== -1) {
             window.gtag('event', 'speaking_click', { link_url: href, page_path: location.pathname });
@@ -157,6 +232,43 @@ const jsonLd = {
                 <a href={item.href}>{item.label}<span class="np-go" aria-hidden="true">→</span></a>
               </li>
             ))}
+            {DROPDOWN_NAV.map((menu) => (
+              <li class:list={['service-nav-item', { 'service-nav-item--accent': menu.accent }]}>
+                <details class="service-nav nav-dropdown" id={`nav-dropdown-${menu.key}`}>
+                  <summary>
+                    <span>{menu.label}</span>
+                    <span class="service-nav-mark" aria-hidden="true">▾</span>
+                  </summary>
+                  <div class:list={['service-menu', { 'service-menu--plain': !menu.accent, 'service-menu--featured': menu.accent }]}>
+                    <div class="service-menu-head">
+                      <span>{menu.label}</span>
+                      <small>{menu.subtitle}</small>
+                    </div>
+                    {menu.accent ? (
+                      <div class="service-menu-grid">
+                        {menu.previews.map((item) => (
+                          <a class="service-preview" href={item.href}>
+                            <img src={item.image} alt="" width="1200" height="630" loading="lazy" />
+                            <span class="service-preview-copy">
+                              <small>{item.eyebrow}</small>
+                              <strong>{item.title}</strong>
+                              <span>{item.description}</span>
+                            </span>
+                            <span class="service-preview-go" aria-hidden="true">→</span>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <ul class="service-menu-links">
+                        {menu.previews.map((item) => (
+                          <li><a href={item.href}>{item.title}<span aria-hidden="true">→</span></a></li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </details>
+              </li>
+            ))}
           </ul>
         </nav>
 
@@ -196,31 +308,6 @@ const jsonLd = {
             </div>
           </div>
 
-          <a
-            class="hicon hicon--line"
-            href={LINKS.line}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="加 LINE 免費諮詢（開新分頁）"
-          >
-            <span class="hicon-ic" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
-                <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-              </svg>
-            </span>
-            <span class="hicon-tx">LINE 諮詢</span>
-          </a>
-
-          <a class="hicon hicon--mail" href={LINKS.email} aria-label={`寄 Email 給 ${AUTHOR.name}`}>
-            <span class="hicon-ic" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                <rect x="2.6" y="4.8" width="18.8" height="14.4" rx="2.4" />
-                <path d="M3.4 6.9 12 13.1l8.6-6.2" />
-              </svg>
-            </span>
-            <span class="hicon-tx">Email</span>
-          </a>
-
           <button
             class="hd-cue"
             id="nav-cue"
@@ -235,6 +322,19 @@ const jsonLd = {
       </div>
     </header>
 
+    <a
+      class="floating-line"
+      href={LINKS.line}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="加 LINE 免費諮詢（開新分頁）"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+      </svg>
+      <span>LINE</span>
+    </a>
+
     <script is:inline>
       /* 收合選單：獨立的 try 區塊，跟下面的搜尋互不影響。
          關鍵順序——`nav-js` 這個 class 只在「開關確定接好」之後才加到 <html>。
@@ -246,6 +346,7 @@ const jsonLd = {
           var header = document.getElementById('site-header');
           var cue = document.getElementById('nav-cue');
           var panel = document.getElementById('mainnav');
+          var dropdowns = panel ? panel.querySelectorAll('.nav-dropdown') : [];
           if (!header || !cue || !panel) return;
 
           // 桌機導覽固定展開，手機則是「下拉面板」（用 max-height）。
@@ -282,7 +383,7 @@ const jsonLd = {
             }
           }
 
-          // 桌機膠囊展開後要多寬，由實際導覽內容量出來寫進 --capw-open，不寫死。
+          // 保留尺寸重算給舊版膠囊的漸進增強；目前 Dean 式桌機導覽使用完整容器寬。
           // 寫死的版本（原本 636px，依五個連結算的）在 NAV 加入第六項時被
           // overflow:hidden 直接切掉 44px，而且沒有任何警告。
           // 量的是收合狀態下 nav 的 scrollWidth（此時 CSS 把可視寬壓成 0/384，
@@ -292,8 +393,8 @@ const jsonLd = {
             if (!window.matchMedia('(min-width: 1024px)').matches) return;
             var list = panel.querySelector('ul');
             if (!list) return;
-            // 22 左內距 + 32 字標(展開只剩 logo) + 138 三顆圓形 + 10 右內距 + 2 邊框
-            var CHROME = 204;
+            // 22 左內距 + 32 字標（展開只剩 logo）+ 42 搜尋 + 10 右內距 + 2 邊框
+            var CHROME = 108;
             var need = Math.ceil(list.scrollWidth) + CHROME;
             header.style.setProperty('--capw-open', need + 'px');
           }
@@ -340,11 +441,84 @@ const jsonLd = {
             if (e.target.closest && e.target.closest('a')) setOpen(false);
           });
 
+          // 手機版展開任一子選單後內容高度會增加，必須同步重算外層選單高度，
+          // 否則預覽卡片會被原本的 max-height 裁掉。
+          Array.prototype.forEach.call(dropdowns, function (dropdown) {
+            dropdown.addEventListener('toggle', function () {
+              if (mqDesktop.matches || header.getAttribute('data-open') !== 'true') return;
+              window.requestAnimationFrame(function () { applyHeight(true); });
+            });
+          });
+
           setOpen(mqDesktop.matches, false);
           document.documentElement.classList.add('nav-js'); // 全部接好了才收合
         } catch (err) {
           /* 沒接上就維持展開：一排正常可見、可點的導覽連結 */
         }
+      })();
+
+      (function () {
+        // 參考 DR.DEAN：桌機游標移入即開啟，移出後稍延遲關閉；
+        // 觸控裝置維持 details 原生點擊，鍵盤則以 focus 開啟。
+        var dropdowns = Array.prototype.slice.call(document.querySelectorAll('.nav-dropdown'));
+        if (!dropdowns.length) return;
+        var hoverMenu = window.matchMedia('(min-width:1024px) and (hover:hover) and (pointer:fine)');
+        var closeTimers = new WeakMap();
+
+        function closeOthers(current) {
+          dropdowns.forEach(function (dropdown) {
+            if (dropdown !== current) dropdown.removeAttribute('open');
+          });
+        }
+
+        dropdowns.forEach(function (dropdown) {
+          var summary = dropdown.querySelector('summary');
+          dropdown.addEventListener('mouseenter', function () {
+            if (!hoverMenu.matches) return;
+            window.clearTimeout(closeTimers.get(dropdown));
+            closeOthers(dropdown);
+            dropdown.setAttribute('open', '');
+          });
+          dropdown.addEventListener('mouseleave', function () {
+            if (!hoverMenu.matches) return;
+            closeTimers.set(dropdown, window.setTimeout(function () {
+              dropdown.removeAttribute('open');
+            }, 120));
+          });
+          summary.addEventListener('click', function (event) {
+            if (!hoverMenu.matches) return;
+            event.preventDefault();
+            closeOthers(dropdown);
+            dropdown.setAttribute('open', '');
+          });
+          dropdown.addEventListener('focusin', function () {
+            if (!window.matchMedia('(min-width:1024px)').matches) return;
+            closeOthers(dropdown);
+            dropdown.setAttribute('open', '');
+          });
+          dropdown.addEventListener('focusout', function () {
+            window.setTimeout(function () {
+              if (!dropdown.contains(document.activeElement)) dropdown.removeAttribute('open');
+            }, 0);
+          });
+          dropdown.addEventListener('toggle', function () {
+            if (dropdown.open) closeOthers(dropdown);
+          });
+        });
+
+        document.addEventListener('click', function (e) {
+          dropdowns.forEach(function (dropdown) {
+            if (dropdown.open && !dropdown.contains(e.target)) dropdown.removeAttribute('open');
+          });
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key !== 'Escape' && e.keyCode !== 27) return;
+          var openDropdown = dropdowns.find(function (dropdown) { return dropdown.open; });
+          if (!openDropdown) return;
+          openDropdown.removeAttribute('open');
+          var summary = openDropdown.querySelector('summary');
+          if (summary) summary.focus();
+        });
       })();
 
       (function () {
@@ -647,6 +821,52 @@ const jsonLd = {
         border-bottom: 1px solid var(--color-rule);
       }
 
+      /* LINE 從導覽工具列獨立出來，固定在視窗右側中間。 */
+      .floating-line {
+        position: fixed;
+        top: 50%;
+        right: max(10px, env(safe-area-inset-right));
+        z-index: 35;
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border: 1px solid var(--color-accent-2);
+        border-radius: 50%;
+        background: var(--color-accent);
+        color: #fff;
+        text-decoration: none;
+        box-shadow: 0 8px 24px rgb(22 22 26 / 18%);
+        transform: translateY(-50%);
+        transition:
+          background-color 0.18s var(--ease),
+          transform 0.18s var(--ease);
+      }
+      .floating-line svg {
+        width: 23px;
+        height: 23px;
+      }
+      .floating-line span {
+        position: absolute;
+        top: calc(100% + 5px);
+        color: var(--color-accent-2);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+      @media (max-width: 767px) {
+        .floating-line {
+          right: max(8px, env(safe-area-inset-right));
+          width: 46px;
+          height: 46px;
+        }
+        .floating-line svg {
+          width: 21px;
+          height: 21px;
+        }
+      }
+
       /* 一組 DOM 兩種版型，靠 flex-wrap 切換：
          手機（<1024px）wrap，導覽掉到第二列 → 下拉面板
          桌機（≥1024px）nowrap，導覽留在同一列 → 橫向膠囊 */
@@ -830,6 +1050,114 @@ const jsonLd = {
         color: var(--color-ink);
         transition: color 0.18s var(--ease);
       }
+      .service-nav summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 15px 2px;
+        color: var(--color-ink);
+        font-size: 17px;
+        font-weight: 500;
+        cursor: pointer;
+        list-style: none;
+        background: transparent;
+        transition:
+          color 0.18s var(--ease),
+          background-color 0.18s var(--ease);
+      }
+      .service-nav summary::-webkit-details-marker {
+        display: none;
+      }
+      .service-nav-mark {
+        color: currentColor;
+        font-size: 16px;
+        line-height: 1;
+        transition: transform 0.2s var(--ease);
+      }
+      .service-nav[open] .service-nav-mark {
+        transform: rotate(180deg);
+      }
+      .service-nav-item--accent .service-nav summary {
+        padding-inline: 14px;
+        background: var(--color-accent);
+        color: #fff;
+        font-weight: 700;
+      }
+      .service-menu {
+        padding: 4px 0 16px;
+      }
+      .service-menu-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 0 2px 10px;
+      }
+      .service-menu-head > span {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--color-ink);
+      }
+      .service-menu-head small {
+        color: var(--color-ink-3);
+        font-size: 11px;
+      }
+      .service-menu-grid {
+        display: grid;
+        gap: 10px;
+      }
+      .service-menu-links {
+        display: grid;
+        padding: 0;
+      }
+      .service-menu-links li + li {
+        border-top: 1px solid var(--color-rule);
+      }
+      .mainnav .service-menu-links a {
+        padding: 12px 2px;
+        font-size: 14px;
+      }
+      .mainnav .service-preview {
+        position: relative;
+        display: grid;
+        grid-template-columns: 104px minmax(0, 1fr) 14px;
+        align-items: center;
+        gap: 12px;
+        padding: 10px;
+        border: 1px solid var(--color-rule-2);
+        background: var(--color-paper-2);
+        color: var(--color-ink);
+      }
+      .service-preview img {
+        display: block;
+        width: 104px;
+        height: auto;
+        border: 1px solid var(--color-rule);
+      }
+      .service-preview-copy {
+        display: grid;
+        min-width: 0;
+        gap: 3px;
+      }
+      .service-preview-copy small {
+        color: var(--color-accent);
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .service-preview-copy strong {
+        font-size: 14px;
+        line-height: 1.35;
+      }
+      .service-preview-copy > span {
+        color: var(--color-ink-2);
+        font-size: 12px;
+        line-height: 1.55;
+      }
+      .service-preview-go {
+        color: var(--color-accent);
+        font-size: 13px;
+      }
       .np-go {
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 12px;
@@ -857,118 +1185,161 @@ const jsonLd = {
           visibility 0s linear 0s;
       }
 
-      /* ---------- 桌機（≥1024px）：整條頁首是一顆膠囊 ---------- */
-      /* jisto 實測 .j-header.is-open{ width:min(460px,100vw-28px); height:68px;
-         border-radius:999px }——點開時「橫向長出來」，高度不變。
-         本站導覽有五項（jisto 三項）＋ 頁首多一顆搜尋鈕，所以膠囊比 jisto 寬。
-         膠囊本身刻意不加 overflow:hidden：那會裁掉裡面按鈕的 :focus-visible
-         外框。收合改由 .mainnav 自己的 max-width + overflow 處理。 */
+      /* ---------- 桌機（≥1024px）：Dean 式完整尺寸橫向導覽 ---------- */
       @media (min-width: 1024px) {
         .nav-js .hd-cue {
           display: none;
         }
         .nav-js .site-header {
-          /* --hov：膠囊是固定寬度，聯絡 icon 一 hover 就要多 68px／46px，
-             這些空間沒地方生，會把字標擠扁。所以膠囊本身也要跟著長。
-             用 :has() 讓膠囊知道裡面有 icon 被 hover／focus；
-             不支援 :has() 的瀏覽器只會退回「icon 展開時字標被擠窄」，不會破版。 */
-          /* 收合寬 300px 是量出來的：
-             22(左內距) + 58(字標) + 186(四顆 42px 圓形＋三個 6px 間距)
-             + 10(右內距) + 2(邊框) = 278，留 22px 給字標在不同字型下的寬度差。
-
-             展開寬**不寫死**，由下方的 script 依實際導覽內容量出來後寫進
-             --capw-open。原本寫死 636px（依當時五個連結算的），2026-08-06
-             NAV 加入「免費資源」變成六個連結之後立刻被 overflow:hidden 切掉
-             44px，而且沒有任何警告——那正是寫死值的問題：
-             它把「導覽項目數」這個會變的東西，鎖進一個不會跟著變的常數。
-
-             CSS 無法 transition 到 max-content，所以不能直接用內容寬；
-             改由 script 量完寫成具體數值，寬度動畫照樣有。
-             下面的 --capw-open 是備援值（script 沒跑到時用），
-             故意抓寬一點：寧可膠囊多幾十 px，也不要把連結切掉。 */
-          --capw-open: 700px;
-          --capw: calc(300px + var(--hov, 0px));
           position: sticky;
-          top: 14px;
-          margin: 14px auto 0;
-          width: min(var(--capw), calc(100vw - 28px));
-          height: 68px;
-          border: 1px solid var(--color-rule-2);
-          border-bottom-color: var(--color-rule-2);
-          border-radius: 999px;
-          background: rgb(247 245 241 / 92%);
-          transition: width 0.42s var(--ease);
-        }
-        .nav-js .site-header[data-open='true'] {
-          --capw: calc(var(--capw-open) + var(--hov, 0px));
-        }
-        .nav-js .site-header:has(.hicon--line:hover),
-        .nav-js .site-header:has(.hicon--line:focus-visible) {
-          --hov: 68px; /* 42 → 110 */
-        }
-        .nav-js .site-header:has(.hicon--mail:hover),
-        .nav-js .site-header:has(.hicon--mail:focus-visible) {
-          --hov: 46px; /* 42 → 88 */
+          top: 0;
+          margin: 0;
+          width: 100%;
+          height: 84px;
+          border-width: 0 0 1px;
+          border-radius: 0;
+          background: rgb(247 245 241 / 96%);
+          transition: none;
         }
         .nav-js .hd-cap {
           flex-wrap: nowrap;
-          max-width: none;
+          max-width: 72rem;
           height: 100%;
-          padding: 0 10px 0 22px;
+          padding: 0 40px;
           min-height: 0;
           column-gap: 0;
         }
         .nav-js .hd-mark {
-          margin-inline-end: 0;
+          margin-inline-end: auto;
         }
-        /* 展開時字標只留 logo 方塊，文字寬度收到 0。
-           連結本身仍有 aria-label 與 44px 高的觸控目標。 */
         .nav-js .hd-mark-t {
-          max-width: 120px;
-          overflow: hidden;
-          transition:
-            max-width 0.42s var(--ease),
-            opacity 0.26s var(--ease);
-        }
-        .nav-js .site-header[data-open='true'] .hd-mark-t {
-          max-width: 0;
-          opacity: 0;
+          max-width: none;
+          overflow: visible;
+          font-size: 18px;
         }
         .nav-js .mainnav {
           order: 2;
           flex-basis: auto;
-          margin-inline-end: auto;
+          margin-inline: auto 28px;
           max-height: none;
-          max-width: 0;
+          max-width: none;
           padding-block: 0;
           border-top: 0;
-          transition:
-            max-width 0.42s var(--ease),
-            opacity 0.26s var(--ease),
-            visibility 0s linear 0.42s;
+          overflow: visible;
+          opacity: 1;
+          visibility: visible;
+          transition: none;
         }
         .nav-js .site-header[data-open='true'] .mainnav {
-          max-width: 460px;
+          max-width: none;
           padding-block: 0;
           border-top: 0;
+          overflow: visible;
         }
         .nav-js .mainnav ul {
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 30px;
           /* 上下 6px 不只是留白：.mainnav 要 overflow:hidden 才能做 max-width 收合，
              導覽列高度剛好等於連結高度時，:focus-visible 的外框（offset 3px）
              上下會被裁掉，實測只剩兩條直線。左右 12px 同理，給第一顆連結留位置。 */
-          padding: 6px 12px;
+          padding: 6px 0;
         }
         .nav-js .mainnav li + li {
           border-top: 0;
         }
         .nav-js .mainnav a {
-          padding: 9px 0;
-          font-size: 14px;
+          padding: 12px 0;
+          font-size: 16px;
           white-space: nowrap;
           font-weight: 400;
+        }
+        .service-nav summary {
+          align-items: baseline;
+          gap: 4px;
+          padding: 12px 0;
+          font-size: 16px;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+        .service-nav {
+          position: relative;
+        }
+        .service-nav-item--accent .service-nav summary {
+          padding-inline: 18px;
+          border-radius: 4px;
+          font-weight: 700;
+        }
+        .service-nav-mark {
+          font-size: 12px;
+        }
+        .service-menu {
+          position: fixed;
+          top: 84px;
+          left: 50%;
+          z-index: 60;
+          width: min(760px, calc(100vw - 32px));
+          padding: 20px;
+          border: 1px solid var(--color-rule-2);
+          background: rgb(247 245 241 / 98%);
+          box-shadow: 0 20px 50px rgb(37 32 27 / 14%);
+          transform: translateX(-50%);
+          -webkit-backdrop-filter: saturate(140%) blur(14px);
+          backdrop-filter: saturate(140%) blur(14px);
+        }
+        .service-menu--plain {
+          position: absolute;
+          top: calc(100% + 10px);
+          left: 50%;
+          width: 260px;
+          padding: 14px 18px;
+          transform: translateX(-50%);
+        }
+        .service-menu--plain .service-menu-head {
+          display: none;
+        }
+        .nav-js .mainnav .service-menu--plain .service-menu-links {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0;
+          padding: 0;
+        }
+        .nav-js .mainnav .service-menu--plain .service-menu-links li + li {
+          border-top: 1px solid var(--color-rule);
+        }
+        .nav-js .mainnav .service-menu--plain a {
+          justify-content: space-between;
+          padding: 13px 4px;
+          font-size: 14px;
+          white-space: normal;
+        }
+        .service-menu-head {
+          padding: 0 0 14px;
+        }
+        .service-menu-head > span {
+          font-size: 15px;
+        }
+        .service-menu-head small {
+          font-size: 12px;
+        }
+        .service-menu-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 14px;
+        }
+        .nav-js .mainnav .service-preview {
+          grid-template-columns: 132px minmax(0, 1fr) 14px;
+          gap: 14px;
+          padding: 12px;
+          white-space: normal;
+        }
+        .service-preview img {
+          width: 132px;
+        }
+        .service-preview-copy strong {
+          font-size: 15px;
+        }
+        .service-preview-copy > span {
+          font-size: 12px;
         }
         .nav-js .mainnav .np-go {
           display: none;
@@ -1192,6 +1563,10 @@ const jsonLd = {
          :focus-visible 另外寫一份、不設任何條件（見 global.css）。
          ============================================================ */
       @media (hover: hover) and (pointer: fine) {
+        .floating-line:hover {
+          background: var(--color-accent-2);
+          transform: translateY(-50%) scale(1.06);
+        }
         .hicon:hover {
           color: var(--color-accent);
           border-color: var(--color-accent);
@@ -1231,27 +1606,6 @@ const jsonLd = {
         }
       }
 
-      /* 圖示的文字滑出只在 ≥768px 生效。
-         實測 320px 下頁首只剩 280px 淨寬，字標 62 ＋ 四顆圖示 175 已經用掉 237px；
-         再展開 68px 的「LINE 諮詢」會直接把字標擠出容器（橫向溢出）。
-         小螢幕上圖示維持 42px 圓形，可讀名稱由 aria-label 提供。 */
-      @media (min-width: 768px) {
-        @media (hover: hover) and (pointer: fine) {
-          .hicon--line:hover {
-            grid-template-columns: 18px 68px;
-          }
-          .hicon--mail:hover {
-            grid-template-columns: 18px 46px;
-          }
-        }
-        .hicon--line:focus-visible {
-          grid-template-columns: 18px 68px;
-        }
-        .hicon--mail:focus-visible {
-          grid-template-columns: 18px 46px;
-        }
-      }
-
       /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
       .hicon:focus-visible {
         color: var(--color-accent);
@@ -1260,6 +1614,20 @@ const jsonLd = {
       }
       .mainnav a:focus-visible {
         color: var(--color-accent);
+      }
+      .service-nav summary:focus-visible {
+        color: var(--color-accent);
+        background: var(--color-accent-tint);
+        outline: 2px solid var(--color-accent);
+        outline-offset: 3px;
+      }
+      .service-nav-item--accent .service-nav summary:focus-visible {
+        color: #fff;
+        background: var(--color-accent-2);
+      }
+      .floating-line:focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 4px;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -1272,6 +1640,12 @@ const jsonLd = {
         .hd-cue-b i,
         .mainnav,
         .hd-mark-t {
+          transition: none !important;
+        }
+        .service-nav-mark {
+          transition: none !important;
+        }
+        .floating-line {
           transition: none !important;
         }
       }
