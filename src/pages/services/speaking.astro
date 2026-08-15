@@ -6,23 +6,23 @@ import Cta from '../../components/Cta.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import TeachingTools from '../../components/TeachingTools.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { AUTHOR, LINKS, SITE, breadcrumbSchema, speakingBannerUrl } from '../../consts';
+import { AUTHOR, LINKS, SERVICE_SITE, SITE, breadcrumbSchema, speakingBannerUrl } from '../../consts';
 import {
   SPEAKING_ENGAGEMENTS,
   SPEAKING_FORMATS,
   SPEAKING_TOPICS,
   TEACHING_TOOLS,
 } from '../../data/services';
-import Base from '../../layouts/Base.astro';
+import ServiceBase from '../../layouts/ServiceBase.astro';
 
 const schema = [
   breadcrumbSchema([
-    { name: '首頁', item: `${SITE.url}/` },
+    { name: '服務首頁', item: `${SERVICE_SITE.url}/` },
     { name: 'AI 演講與企業內訓' },
   ]),
   {
     '@type': 'Service',
-    '@id': `${SITE.url}/services/speaking/#service`,
+    '@id': `${SERVICE_SITE.url}/services/speaking/#service`,
     name: 'AI 主題演講與企業內訓',
     serviceType: '公開演講 / 企業內訓 / 工作坊',
     description:
@@ -32,7 +32,7 @@ const schema = [
   },
   {
     '@type': 'ItemList',
-    '@id': `${SITE.url}/services/speaking/#engagements`,
+    '@id': `${SERVICE_SITE.url}/services/speaking/#engagements`,
     name: '過往演講紀錄',
     itemListElement: SPEAKING_ENGAGEMENTS.map((e, index) => ({
       '@type': 'ListItem',
@@ -44,7 +44,7 @@ const schema = [
   },
   {
     '@type': 'ItemList',
-    '@id': `${SITE.url}/services/speaking/#tools`,
+    '@id': `${SERVICE_SITE.url}/services/speaking/#tools`,
     name: '可教學工具',
     itemListElement: TEACHING_TOOLS.map((t, index) => ({
       '@type': 'ListItem',
@@ -56,7 +56,7 @@ const schema = [
 ];
 ---
 
-<Base
+<ServiceBase
   title="AI 演講邀約｜企業內訓、社群講座與實作工作坊"
   description="Alex 接受 AI 主題的演講與企業內訓邀約：AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計。曾受 MixerBox、TAIA 台灣人工智慧協會邀請演講。實體以雙北為主，外縣市有提供交通補助也可配合。"
   ogImage={speakingBannerUrl()}
@@ -64,11 +64,11 @@ const schema = [
   schema={schema}
 >
   <div class="mx-auto max-w-4xl px-6 py-12">
-    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: 'AI 演講與企業內訓' }]} class="mb-8" />
+    <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: 'AI 演講與企業內訓' }]} class="mb-8" />
     <h1 class="t-h1 font-semibold text-ink">AI 演講與企業內訓邀約</h1>
 
     <p class="mt-8 text-lg leading-9 text-ink">
-      我是 <a href="/about/" class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，接受企業、學校與社群的
+      我是 <a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，接受企業、學校與社群的
       <strong class="text-accent">AI 主題演講、內訓與實作工作坊</strong>邀約。內容以「聽完就能動手」為原則：不談概念空話，現場直接演示
       AI Agent 如何完成真實任務。曾受 MixerBox、TAIA 台灣人工智慧協會等單位邀請演講。
     </p>
@@ -125,4 +125,4 @@ const schema = [
       links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
     />
   </div>
-</Base>
+</ServiceBase>

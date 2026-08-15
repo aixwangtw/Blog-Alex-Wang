@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { AUTHOR, LINKS, SITE } from '../consts';
+import { AUTHOR, LINKS, SERVICE_SITE, SITE } from '../consts';
 
 // llms.txt：給 AI 搜尋（ChatGPT、Perplexity、Claude 等）讀的網站摘要。
 // 文章清單從 Directus collection 自動生成，發布新文章後重新建置即更新，
@@ -27,8 +27,8 @@ export const GET: APIRoute = async () => {
 
 ## 服務
 
-- [AI 一對一私人教學](${SITE.url}/services/ai-tutor/)：手把手帶零基礎學員完成桌面版 AI Agent 安裝、Meta API 串接與自動發文系統，雙北實體或線上皆可。
-- [AI 演講與企業內訓](${SITE.url}/services/speaking/)：AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計等主題，曾受 MixerBox、TAIA 台灣人工智慧協會邀請演講。
+- [AI 一對一私人教學](${SERVICE_SITE.url}/course/)：手把手帶零基礎學員完成桌面版 AI Agent 安裝、Meta API 串接與自動發文系統，雙北實體或線上皆可。
+- [AI 演講與企業內訓](${SERVICE_SITE.url}/services/speaking/)：AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計等主題，曾受 MixerBox、TAIA 台灣人工智慧協會邀請演講。
 - [關於講師 Alex](${SITE.url}/about/)：21 萬人 OpenClaw 中文社群版主、HyperFrames 開源專案協作者。
 
 ## 免費資源

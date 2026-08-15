@@ -1,13 +1,13 @@
 ---
 import { Image } from 'astro:assets';
-import instructorPortrait from '../../assets/instructor-shirt.jpg';
-import Card from '../../components/Card.astro';
-import Cta from '../../components/Cta.astro';
-import FaqList from '../../components/FaqList.astro';
-import SectionHeading from '../../components/SectionHeading.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { AUTHOR, LINKS, SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
-import { ONE_ON_ONE_FAQS } from '../../data/faqs';
+import instructorPortrait from '../assets/instructor-shirt.jpg';
+import Card from '../components/Card.astro';
+import Cta from '../components/Cta.astro';
+import FaqList from '../components/FaqList.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { AUTHOR, LINKS, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { ONE_ON_ONE_FAQS } from '../data/faqs';
 import {
   CLASS_FORMATS,
   TEACHING_CASES,
@@ -16,17 +16,17 @@ import {
   VIBE_CODING_OUTCOMES,
   VIBE_CODING_PROMPTS,
   VIBE_CODING_SYLLABUS,
-} from '../../data/services';
-import Base from '../../layouts/Base.astro';
+} from '../data/services';
+import ServiceBase from '../layouts/ServiceBase.astro';
 
 const schema = [
   breadcrumbSchema([
-    { name: '首頁', item: `${SITE.url}/` },
+    { name: '服務首頁', item: `${SERVICE_SITE.url}/` },
     { name: 'AI 新手實戰課' },
   ]),
   {
     '@type': 'Service',
-    '@id': `${SITE.url}/services/ai-tutor/#service`,
+    '@id': `${SERVICE_SITE.url}/course/#service`,
     name: 'AI 新手實戰課',
     serviceType: 'AI 新手課程 / AI 私人教學',
     description:
@@ -40,7 +40,7 @@ const schema = [
   },
   {
     '@type': 'ItemList',
-    '@id': `${SITE.url}/services/ai-tutor/#cases`,
+    '@id': `${SERVICE_SITE.url}/course/#cases`,
     name: '一對一教學實際案例',
     itemListElement: TEACHING_CASES.map((c, index) => ({
       '@type': 'ListItem',
@@ -52,7 +52,7 @@ const schema = [
   },
   {
     '@type': 'ItemList',
-    '@id': `${SITE.url}/services/ai-tutor/#tools`,
+    '@id': `${SERVICE_SITE.url}/course/#tools`,
     name: '可教學工具',
     itemListElement: TEACHING_TOOLS.map((t, index) => ({
       '@type': 'ListItem',
@@ -86,7 +86,7 @@ const courseBanner = pageBannerUrl('one-on-one');
 const courseBannerPath = new URL(courseBanner).pathname;
 ---
 
-<Base
+<ServiceBase
   title="AI 新手實戰課｜3 小時從 0 到 1 完成第一個專案"
   description="3 小時 AI 新手實戰課，以 Claude Code 或 Codex 為主要工具，手把手帶零基礎學員從 0 到 1 完成第一個實際專案，並可延伸學習 API、自動化、生圖與拍片。"
   ogImage={courseBanner}
@@ -94,7 +94,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
   schema={schema}
 >
   <div class="mx-auto max-w-4xl px-6 py-12">
-    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: 'AI 新手實戰課' }]} class="mb-8" />
+    <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: 'AI 新手實戰課' }]} class="mb-8" />
     <h1 class="t-h1 font-semibold text-ink">AI 新手實戰課</h1>
 
     <img
@@ -134,7 +134,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
       </div>
     </dl>
     <p class="mt-4 text-lg leading-9 text-ink">
-      這是一堂 AI 新手實戰課，適合想從零開始、完成第一個實際專案的新手。由我（<a href="/about/" class="text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="text-accent">你自己的電腦、你自己的帳號</strong>上，以 Claude Code 或 Codex 作為主要開發工具，再依專案需求搭配 ChatGPT、OpenClaw（龍蝦）、Hermes Agent（愛馬仕）與 GitHub，從想法、規劃一路做到可以使用的成品。過程中會盡可能把複雜操作交給 AI，你主要用中文下提示詞或點按鈕就能完成，不需要先學複雜的程式語法與操作；完成第一個專案後，再依需求延伸到 API 串接、自動發文、生圖或拍片工作流。
+      這是一堂 AI 新手實戰課，適合想從零開始、完成第一個實際專案的新手。由我（<a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="text-accent">你自己的電腦、你自己的帳號</strong>上，以 Claude Code 或 Codex 作為主要開發工具，再依專案需求搭配 ChatGPT、OpenClaw（龍蝦）、Hermes Agent（愛馬仕）與 GitHub，從想法、規劃一路做到可以使用的成品。過程中會盡可能把複雜操作交給 AI，你主要用中文下提示詞或點按鈕就能完成，不需要先學複雜的程式語法與操作；完成第一個專案後，再依需求延伸到 API 串接、自動發文、生圖或拍片工作流。
     </p>
     <p class="mt-4 leading-8 text-ink-2">
       課程共 3 小時，重點不是背程式語法，而是學會建立規則、規劃功能，以及用正確提示詞請 AI 分析與修改程式。
@@ -252,7 +252,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
         <p class="mt-3 leading-8 text-ink-2">
           AI 應用講師、全職接案工程師，也是 21 萬人 OpenClaw 中文社群版主。沒有軟體業背景，靠 AI 一步一步自學到全職接案，教學重點是讓沒有程式背景的人也能用對話完成實際作品。
         </p>
-        <a href="/about/" class="mt-4 inline-block text-accent underline underline-offset-4">查看完整講師介紹 →</a>
+        <a href={`${SITE.url}/about/`} class="mt-4 inline-block text-accent underline underline-offset-4">查看完整講師介紹 →</a>
       </div>
     </div>
 
@@ -267,4 +267,4 @@ const courseBannerPath = new URL(courseBanner).pathname;
       links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
     />
   </div>
-</Base>
+</ServiceBase>

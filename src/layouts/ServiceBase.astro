@@ -1,0 +1,323 @@
+---
+import { AUTHOR, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  schema?: object[];
+  ogImage?: string;
+  ogImageAlt?: string;
+  canonicalPath?: string;
+}
+
+const {
+  title,
+  description,
+  schema = [],
+  ogImage = pageBannerUrl('service-home'),
+  ogImageAlt = title,
+  canonicalPath = Astro.url.pathname,
+} = Astro.props;
+
+const canonical = new URL(canonicalPath, SERVICE_SITE.url);
+const serviceHomeHref = import.meta.env.DEV ? '/services/' : '/';
+const serviceLinks = [
+  {
+    href: '/course/',
+    eyebrow: '3 小時實戰課',
+    title: 'AI 新手課程',
+    description: '從工具安裝到完成第一個專案，適合零基礎學員。',
+  },
+  {
+    href: '/services/speaking/',
+    eyebrow: '企業／社群／學校',
+    title: 'AI 演講與內訓',
+    description: 'AI Agent、社群自動化與對話式拍片主題。',
+  },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SERVICE_SITE.url}/#website`,
+      name: SERVICE_SITE.title,
+      url: SERVICE_SITE.url,
+      description: SERVICE_SITE.description,
+      inLanguage: 'zh-TW',
+      publisher: { '@id': PERSON_SCHEMA['@id'] },
+    },
+    PERSON_SCHEMA,
+    ...schema,
+  ],
+};
+---
+
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="max-image-preview:large" />
+    <link rel="icon" type="image/png" href="/favicon.png?v=2" />
+    <link rel="apple-touch-icon" href="/aixwang-icon.png" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:site_name" content={SERVICE_SITE.title} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>
+      if (window.location.hostname === 'service.aixwang.dev') {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-91Z2F673C0');
+        window.addEventListener('load', function () {
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-91Z2F673C0';
+          document.head.appendChild(script);
+        });
+      }
+    </script>
+  </head>
+  <body class="min-h-screen bg-paper font-display text-ink antialiased">
+    <a class="service-skip" href="#main">跳到主要內容</a>
+
+    <header class="service-header" id="service-header" data-open="false">
+      <div class="service-header-inner">
+        <a class="service-brand" href={serviceHomeHref} aria-label={`${SERVICE_SITE.title} 首頁`}>
+          <img src="/aixwang-icon.png" width="30" height="30" alt="" aria-hidden="true" />
+          <span><strong>AIX</strong><small>AI SERVICE</small></span>
+        </a>
+
+        <button
+          class="service-menu-toggle"
+          id="service-menu-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="service-mainnav"
+          aria-label="開啟選單"
+        >
+          <i></i><i></i>
+        </button>
+
+        <nav class="service-mainnav" id="service-mainnav" aria-label="服務站主要導覽">
+          <a href={serviceHomeHref}>服務首頁</a>
+          <a href={`${SITE.url}/about/`}>關於講師</a>
+          <details class="service-mega" id="service-mega">
+            <summary>
+              <span>服務項目</span>
+              <span class="service-mega-cue" aria-hidden="true">▾</span>
+            </summary>
+            <div class="service-mega-panel">
+              <div class="service-mega-intro">
+                <small>HOW CAN I HELP?</small>
+                <strong>選擇你需要的服務</strong>
+                <p>學會自己做，或邀請 Alex 把實戰經驗帶進你的團隊。</p>
+              </div>
+              <div class="service-mega-grid">
+                {serviceLinks.map((item, index) => (
+                  <a href={item.href}>
+                    <span class="service-mega-number">0{index + 1}</span>
+                    <span>
+                      <small>{item.eyebrow}</small>
+                      <strong>{item.title}</strong>
+                      <span>{item.description}</span>
+                    </span>
+                    <b aria-hidden="true">→</b>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </details>
+          <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer">立即預約</a>
+        </nav>
+      </div>
+    </header>
+
+    <script is:inline>
+      (function () {
+        try {
+          var header = document.getElementById('service-header');
+          var toggle = document.getElementById('service-menu-toggle');
+          var nav = document.getElementById('service-mainnav');
+          var mega = document.getElementById('service-mega');
+          if (!header || !toggle || !nav || !mega) return;
+          var desktop = window.matchMedia('(min-width: 900px)');
+
+          function setOpen(open) {
+            if (desktop.matches) open = true;
+            header.dataset.open = open ? 'true' : 'false';
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            toggle.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
+          }
+
+          toggle.addEventListener('click', function () {
+            setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+          });
+          nav.addEventListener('click', function (event) {
+            if (!desktop.matches && event.target.closest('a')) setOpen(false);
+          });
+          var hoverMenu = window.matchMedia('(min-width: 900px) and (hover:hover) and (pointer:fine)');
+          var closeTimer;
+          var summary = mega.querySelector('summary');
+          mega.addEventListener('mouseenter', function () {
+            if (!hoverMenu.matches) return;
+            window.clearTimeout(closeTimer);
+            mega.setAttribute('open', '');
+          });
+          mega.addEventListener('mouseleave', function () {
+            if (!hoverMenu.matches) return;
+            closeTimer = window.setTimeout(function () { mega.removeAttribute('open'); }, 120);
+          });
+          summary.addEventListener('click', function (event) {
+            if (!hoverMenu.matches) return;
+            event.preventDefault();
+            mega.setAttribute('open', '');
+          });
+          mega.addEventListener('focusin', function () {
+            if (desktop.matches) mega.setAttribute('open', '');
+          });
+          mega.addEventListener('focusout', function () {
+            window.setTimeout(function () {
+              if (!mega.contains(document.activeElement)) mega.removeAttribute('open');
+            }, 0);
+          });
+          document.addEventListener('click', function (event) {
+            if (mega.open && !mega.contains(event.target)) mega.removeAttribute('open');
+            if (!desktop.matches && header.dataset.open === 'true' && !header.contains(event.target)) setOpen(false);
+          });
+          document.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape') return;
+            if (mega.open) {
+              mega.removeAttribute('open');
+              mega.querySelector('summary').focus();
+            } else if (!desktop.matches && header.dataset.open === 'true') {
+              setOpen(false);
+              toggle.focus();
+            }
+          });
+          var sync = function () { setOpen(desktop.matches); };
+          if (desktop.addEventListener) desktop.addEventListener('change', sync);
+          else desktop.addListener(sync);
+          setOpen(desktop.matches);
+          document.documentElement.classList.add('service-nav-js');
+        } catch (error) {
+          /* JavaScript 失敗時保持初始 HTML 導覽可見可用。 */
+        }
+      })();
+    </script>
+
+    <main id="main"><slot /></main>
+
+    <footer class="service-footer">
+      <div>
+        <section>
+          <a class="service-brand" href={serviceHomeHref}>
+            <img src="/aixwang-icon.png" width="30" height="30" alt="" />
+            <span><strong>AIX</strong><small>AI SERVICE</small></span>
+          </a>
+          <p>{SERVICE_SITE.description}</p>
+        </section>
+        <section>
+          <h2>服務項目</h2>
+          <a href="/course/">AI 新手實戰課</a>
+          <a href="/services/speaking/">AI 演講與內訓</a>
+        </section>
+        <section>
+          <h2>內容品牌</h2>
+          <a href={SITE.url}>AI 新手教學部落格</a>
+          <a href={`${SITE.url}/about/`}>關於講師 Alex</a>
+        </section>
+      </div>
+      <p>© {new Date().getFullYear()} {SERVICE_SITE.title}</p>
+    </footer>
+
+    <style is:global>
+      :root { --service-header-height: 76px; }
+      .service-skip { position:absolute; left:-9999px; top:0; z-index:100; padding:10px 16px; background:var(--color-ink); color:#fff; }
+      .service-skip:focus { left:12px; top:12px; }
+      .service-header { position:sticky; top:0; z-index:50; border-bottom:1px solid var(--color-rule); background:rgb(247 245 241 / 94%); backdrop-filter:blur(14px); }
+      .service-header-inner { display:flex; min-height:var(--service-header-height); width:min(1200px, 100%); margin:auto; padding:0 24px; align-items:center; justify-content:space-between; gap:24px; }
+      .service-brand { display:inline-flex; align-items:center; gap:10px; color:var(--color-ink); text-decoration:none; }
+      .service-brand img { width:30px; height:30px; }
+      .service-brand > span { display:grid; line-height:1; }
+      .service-brand strong { font-size:18px; letter-spacing:.16em; }
+      .service-brand small { margin-top:5px; color:var(--color-accent); font:700 8px/1 ui-monospace, monospace; letter-spacing:.18em; }
+      .service-mainnav { display:flex; align-items:center; gap:30px; }
+      .service-mainnav > a, .service-mega summary { color:var(--color-ink); font-size:15px; font-weight:650; text-decoration:none; white-space:nowrap; }
+      .service-mega summary { display:flex; align-items:center; gap:6px; cursor:pointer; list-style:none; }
+      .service-mega summary::-webkit-details-marker { display:none; }
+      .service-mega-cue { color:var(--color-accent); font-size:15px; transition:transform .2s ease; }
+      .service-mega[open] .service-mega-cue { transform:rotate(180deg); }
+      .service-book { padding:15px 22px; background:var(--color-accent); color:#fff !important; }
+      .service-menu-toggle { display:none; width:44px; height:44px; border:1px solid var(--color-rule-3); border-radius:50%; background:transparent; place-items:center; position:relative; }
+      .service-menu-toggle i { position:absolute; width:16px; height:1.5px; background:var(--color-ink); transition:transform .2s ease, top .2s ease; }
+      .service-menu-toggle i:first-child { top:17px; }
+      .service-menu-toggle i:last-child { top:25px; }
+      .service-menu-toggle[aria-expanded='true'] i:first-child { top:21px; transform:rotate(45deg); }
+      .service-menu-toggle[aria-expanded='true'] i:last-child { top:21px; transform:rotate(-45deg); }
+      .service-mega-panel { position:fixed; top:var(--service-header-height); left:50%; display:grid; grid-template-columns:250px 1fr; gap:28px; width:min(920px, calc(100vw - 40px)); padding:28px; border:1px solid var(--color-rule-2); background:rgb(247 245 241 / 99%); box-shadow:0 28px 60px rgb(22 22 26 / 16%); transform:translateX(-50%); }
+      .service-mega-intro { padding:6px 20px 6px 2px; border-right:1px solid var(--color-rule); }
+      .service-mega-intro small { color:var(--color-accent); font:700 10px/1.2 ui-monospace, monospace; letter-spacing:.14em; }
+      .service-mega-intro strong { display:block; margin-top:12px; font:600 23px/1.35 var(--font-serif, serif); }
+      .service-mega-intro p { margin-top:12px; color:var(--color-ink-3); font-size:13px; line-height:1.8; }
+      .service-mega-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
+      .service-mega-grid > a { display:grid; grid-template-columns:32px minmax(0, 1fr) 18px; gap:10px; align-items:start; padding:18px; border:1px solid var(--color-rule-2); color:var(--color-ink); text-decoration:none; transition:background .18s ease, border-color .18s ease; }
+      .service-mega-number { color:var(--color-accent); font:700 11px/1.3 ui-monospace, monospace; }
+      .service-mega-grid a > span:nth-child(2) { display:grid; gap:5px; }
+      .service-mega-grid small { color:var(--color-accent); font-size:10px; line-height:1.4; }
+      .service-mega-grid strong { font-size:17px; line-height:1.4; }
+      .service-mega-grid a span span { color:var(--color-ink-3); font-size:12px; line-height:1.65; }
+      .service-mega-grid b { color:var(--color-accent); font-weight:400; }
+      .service-footer { margin-top:96px; padding:54px 24px 28px; background:var(--color-ink); color:#fff; }
+      .service-footer > div { display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:48px; width:min(1120px, 100%); margin:auto; }
+      .service-footer .service-brand { color:#fff; }
+      .service-footer section > p { max-width:45ch; margin-top:16px; color:#bdb9b3; font-size:13px; line-height:1.8; }
+      .service-footer h2 { margin-bottom:14px; color:#bdb9b3; font-size:11px; letter-spacing:.14em; }
+      .service-footer section > a:not(.service-brand) { display:block; margin-top:9px; color:#fff; font-size:14px; text-decoration:none; }
+      .service-footer > p { width:min(1120px, 100%); margin:38px auto 0; padding-top:18px; border-top:1px solid #3b3939; color:#8f8b86; font:11px/1.4 ui-monospace, monospace; }
+      @media (hover:hover) and (pointer:fine) {
+        .service-mainnav > a:not(.service-book):hover, .service-mega summary:hover { color:var(--color-accent); }
+        .service-book:hover { background:var(--color-accent-2); }
+        .service-mega-grid > a:hover { border-color:var(--color-accent-line-2); background:var(--color-accent-tint); }
+      }
+      @media (max-width:899px) {
+        :root { --service-header-height: 66px; }
+        .service-header-inner { flex-wrap:wrap; padding:0 20px; gap:0; }
+        .service-menu-toggle { display:grid; }
+        .service-mainnav { flex-basis:100%; order:3; display:grid; gap:0; padding:6px 0 18px; }
+        .service-nav-js .service-mainnav { display:none; }
+        .service-nav-js .service-header[data-open='true'] .service-mainnav { display:grid; }
+        .service-mainnav > a, .service-mega summary { display:flex; min-height:52px; align-items:center; justify-content:space-between; border-top:1px solid var(--color-rule); font-size:16px; }
+        .service-book { justify-content:center !important; margin-top:10px; border-top:0 !important; }
+        .service-mega-panel { position:static; display:block; width:100%; padding:0 0 10px; border:0; box-shadow:none; transform:none; }
+        .service-mega-intro { display:none; }
+        .service-mega-grid { grid-template-columns:1fr; }
+        .service-mega-grid > a { padding:15px; }
+        .service-footer > div { grid-template-columns:1fr; gap:34px; }
+      }
+      @media (max-width:360px) {
+        .service-header-inner { padding-inline:16px; }
+        .service-brand strong { font-size:16px; }
+        .service-mega-grid > a { grid-template-columns:28px minmax(0, 1fr) 14px; gap:8px; padding:13px 10px; }
+      }
+      @media (prefers-reduced-motion:reduce) {
+        .service-menu-toggle i, .service-mega-cue { transition:none; }
+      }
+    </style>
+  </body>
+</html>

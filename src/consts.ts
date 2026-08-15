@@ -8,6 +8,14 @@ export const SITE = {
   locale: 'zh-TW',
 };
 
+// 服務內容獨立成子網域；主站專注文章與免費資源，
+// 課程、演講與預約轉換統一放在服務站。
+export const SERVICE_SITE = {
+  title: 'Alex AI 服務',
+  url: 'https://service.aixwang.dev',
+  description: 'Alex 的 AI 新手實戰課、企業內訓、社群講座與實作工作坊。',
+};
+
 export const AUTHOR = {
   id: `${SITE.url}/about#person`,
   name: 'Alex',
@@ -75,8 +83,8 @@ export const NAV = [
   { href: '/', label: '首頁' },
   { href: '/blog/', label: '文章' },
   { href: '/resources/', label: '免費' },
-  { href: '/services/ai-tutor/', label: '私教' },
-  { href: '/services/speaking/', label: '演講' },
+  { href: `${SERVICE_SITE.url}/course/`, label: '課程' },
+  { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講' },
   { href: '/faq/', label: '問題' },
   { href: '/about/', label: '關於' },
 ];

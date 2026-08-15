@@ -4,7 +4,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import { SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { HOME_FAQS, RESOURCES_FAQS } from '../data/faqs';
 import Base from '../layouts/Base.astro';
 
@@ -71,7 +71,7 @@ const schema = [
       </li>
     </ul>
     <p class="mt-5 px-0.5 text-sm">
-      <a href="/services/ai-tutor/" class="text-accent underline underline-offset-4">看一對一教學的完整說明與上課形式 →</a>
+      <a href={`${SERVICE_SITE.url}/course/`} class="text-accent underline underline-offset-4">看一對一教學的完整說明與上課形式 →</a>
     </p>
 
     <SectionHeading size="md" class="mt-14">課程與服務</SectionHeading>

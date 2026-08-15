@@ -3,11 +3,22 @@
   "name": "blog-alex-wang",
   "compatibility_date": "2026-07-01",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "./dist/_worker.js/index.js",
+  "main": "./worker/domain-router.mjs",
   "workers_dev": false,
   "assets": {
     "binding": "ASSETS",
-    "directory": "./dist"
+    "directory": "./dist",
+    "run_worker_first": [
+      "/",
+      "/course",
+      "/course/*",
+      "/services",
+      "/services/",
+      "/services/speaking",
+      "/services/speaking/*",
+      "/robots.txt",
+      "/sitemap.xml"
+    ]
   },
   "observability": {
     "enabled": true

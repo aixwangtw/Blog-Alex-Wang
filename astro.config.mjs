@@ -25,6 +25,12 @@ export default defineConfig({
   adapter: cloudflare(),
   integrations: [
     sitemap({
+      // 課程與演講改由 service.aixwang.dev 的獨立 sitemap 索引，
+      // 主站 sitemap 不再列重複路徑。
+      filter(page) {
+        const pathname = new URL(page).pathname;
+        return !['/course/', '/services/', '/services/speaking/'].includes(pathname);
+      },
       serialize(item) {
         const pathname = new URL(item.url).pathname;
         const lastmod = blogLastModified.get(pathname);

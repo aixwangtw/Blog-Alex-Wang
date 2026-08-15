@@ -77,6 +77,12 @@ const pages = [
     title: '免費資源',
     subtitle: '免費的 AI 學習資源',
   },
+  {
+    file: 'service-home',
+    badge: '課程與演講',
+    title: 'Alex AI 服務',
+    subtitle: '從新手實戰到團隊導入',
+  },
 ];
 
 // 文字寬度估算：CJK／全形 1、空白 0.3、拉丁字 0.55

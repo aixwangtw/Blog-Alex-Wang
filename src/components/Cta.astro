@@ -11,7 +11,7 @@
 // API 從「actions slot 放一排 PillButton」改成「一顆主要行動 ＋ 一排次要文字連結」：
 // 一個區塊裡放三顆同等分量的按鈕，等於沒有主要行動。次要選項改成純文字連結，
 // 讀者仍然找得到，但視線會先落在那顆圓上。
-import { LINKS } from '../consts';
+import { LINKS, SERVICE_SITE } from '../consts';
 
 interface SecondaryLink {
   href: string;
@@ -38,8 +38,8 @@ const {
   label = '加 LINE\n免費諮詢',
   external = true,
   links = [
-    { href: '/services/ai-tutor/', label: '了解一對一教學' },
-    { href: '/services/speaking/', label: '演講邀約' },
+    { href: `${SERVICE_SITE.url}/course/`, label: '了解一對一教學', external: true },
+    { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講邀約', external: true },
   ],
 } = Astro.props;
 

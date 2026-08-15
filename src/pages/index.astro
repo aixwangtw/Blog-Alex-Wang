@@ -11,9 +11,9 @@
 // 所以砍到五個單元 —— 頁首／Hero（含三張服務卡）／信任證明／結尾 CTA／頁尾。
 //
 // 被移除的區塊都另有去處，沒有內容因此消失：
-//   TEACHING_CASES      → /services/ai-tutor/、/about/
+//   TEACHING_CASES      → /course/、/about/
 //   SPEAKING_ENGAGEMENTS→ /services/speaking/、/about/
-//   TEACHING_CONTENT    → /services/ai-tutor/
+//   TEACHING_CONTENT    → /course/
 //   HOME_FAQS           → /faq/
 //   精選文章             → /blog/
 //   VIDEOS              → /resources/（本階段一併新建；VIDEOS 原本只有首頁在用）
@@ -29,7 +29,7 @@ import { getCollection } from 'astro:content';
 import freeResourcesHome from '../assets/free-resources-home-v2.png';
 import instructorShirt from '../assets/instructor-shirt.jpg';
 import taichungTalk from '../assets/taichung-talk.jpg';
-import { AUTHOR, LINKS, SITE, pageBannerUrl } from '../consts';
+import { AUTHOR, LINKS, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
 import { SYLLABUS } from '../data/home';
 import { TEACHING_CASES, TEACHING_TOOLS } from '../data/services';
 import Base from '../layouts/Base.astro';
@@ -169,7 +169,7 @@ const schema = [
               <li>Codex 搜尋 Threads 品牌輿情</li>
               <li>Claude Code 整理 Email、行事曆與 LINE 提醒</li>
             </ul>
-            <a class="service-link" href="/services/ai-tutor/">查看完整案例與上課方式 <span aria-hidden="true">→</span></a>
+            <a class="service-link" href={`${SERVICE_SITE.url}/course/`}>查看完整案例與上課方式 <span aria-hidden="true">→</span></a>
           </div>
           <ul class="case-mini-grid" aria-label="四個私人家教實際案例">
             {TEACHING_CASES.map((item) => (
@@ -194,7 +194,7 @@ const schema = [
               <li>TAIA：只靠對話一條龍完成拍片</li>
               <li>台中、雲林：AI 社群圖文實作</li>
             </ul>
-            <a class="service-link" href="/services/speaking/">查看全部演講紀錄與邀約方式 <span aria-hidden="true">→</span></a>
+            <a class="service-link" href={`${SERVICE_SITE.url}/services/speaking/`}>查看全部演講紀錄與邀約方式 <span aria-hidden="true">→</span></a>
           </div>
           <figure class="service-media">
             <Image src={taichungTalk} alt="Alex 在台中場進行 AI 社群圖文演講" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" />

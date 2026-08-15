@@ -14,6 +14,8 @@
 /blog/free-resources/   /resources/   301
 /blog/free-resources    /resources/   301
 
-# AI 私教：網址改成中文使用者也容易理解的 ai-tutor（2026-08-13）
-/services/one-on-one/   /services/ai-tutor/   301
-/services/one-on-one    /services/ai-tutor/   301
+# AI 課程：統一使用簡短的 /course/ 網址（2026-08-15）
+/services/one-on-one/   /course/   301
+/services/one-on-one    /course/   301
+/services/ai-tutor/     /course/   301
+/services/ai-tutor      /course/   301

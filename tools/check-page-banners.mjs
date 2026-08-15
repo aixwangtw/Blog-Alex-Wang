@@ -4,7 +4,7 @@ import { access, readFile } from 'node:fs/promises';
 const { pages: VERSION } = JSON.parse(
   await readFile(new URL('../src/data/banner-version.json', import.meta.url), 'utf8'),
 );
-const names = ['home', 'about', 'blog', 'one-on-one', 'faq', 'resources'];
+const names = ['home', 'about', 'blog', 'one-on-one', 'faq', 'resources', 'service-home'];
 const missing = [];
 
 for (const name of names) {

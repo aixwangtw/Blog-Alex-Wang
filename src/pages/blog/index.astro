@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Cta from '../../components/Cta.astro';
 import PostCard from '../../components/PostCard.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
+import { SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
 import Base from '../../layouts/Base.astro';
 
 const schema = [
@@ -49,7 +49,7 @@ const rest = posts.filter((post) => !post.data.featured);
     <h1 class="t-h1 font-semibold text-ink">部落格</h1>
     <p class="mt-6 text-lg leading-8 text-ink-2">
       每篇文章回答一個新手學 AI 時最常問的問題——從工具選擇、Meta API 申請到自動發文與
-      Skill 工作流。看完還有問題，歡迎<a href="/services/ai-tutor/" class="text-accent underline underline-offset-4">約一對一教學</a>。
+      Skill 工作流。看完還有問題，歡迎<a href={`${SERVICE_SITE.url}/course/`} class="text-accent underline underline-offset-4">約一對一教學</a>。
     </p>
     {featured.length > 0 && (
       <>

@@ -6,7 +6,7 @@ import CheckItem from '../components/CheckItem.astro';
 import Cta from '../components/Cta.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { AUTHOR, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { AUTHOR, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { EXPERIENCE } from '../data/instructor';
 import { SPEAKING_ENGAGEMENTS, TEACHING_CASES } from '../data/services';
 import Base from '../layouts/Base.astro';
@@ -57,7 +57,7 @@ const schema = [
 
     <SectionHeading size="md" class="mt-14">一對一教學經歷</SectionHeading>
     <a
-      href="/services/ai-tutor/"
+      href={`${SERVICE_SITE.url}/course/`}
       class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
     >
       查看完整教學案例與收費方式 →
@@ -81,7 +81,7 @@ const schema = [
 
     <SectionHeading size="md" class="mt-14">公眾演講經歷</SectionHeading>
     <a
-      href="/services/speaking/"
+      href={`${SERVICE_SITE.url}/services/speaking/`}
       class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
     >
       查看演講紀錄與邀約方式 →
