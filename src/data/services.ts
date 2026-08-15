@@ -122,6 +122,13 @@ export const VIBE_CODING_PROMPTS = [
   '修改完成後，請列出受到影響的功能與驗收項目。',
 ];
 
+export const VIBE_CODING_OUTCOMES = [
+  '建立一份 AI 看得懂的專案規則，清楚限制修改範圍與驗收方式。',
+  '把需求拆成開發架構、功能模組與實作順序，逐步交給 AI 完成。',
+  '正確描述 Bug、貼上完整錯誤訊息，讓 AI 理解問題並分析影響範圍。',
+  '理解解耦與共用元件，透過最小修改降低「改 A 壞 B」的風險。',
+];
+
 // 實際一對一教學案例（取自講師履歷）
 export const TEACHING_CASES = [
   {

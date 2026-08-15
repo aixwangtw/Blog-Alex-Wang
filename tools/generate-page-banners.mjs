@@ -60,9 +60,10 @@ const pages = [
   },
   {
     file: 'one-on-one',
-    badge: '教學服務',
-    title: 'AI 一對一私人教學',
-    subtitle: '在你的電腦上，手把手做成功',
+    badge: '實戰課程',
+    title: 'AI 新手實戰課',
+    subtitle: '手把手帶你從 0 到 1 完成第一個專案',
+    subtitleSize: 23,
   },
   {
     file: 'faq',
@@ -178,7 +179,7 @@ function buildLayer(page) {
                     backgroundColor: ACCENT,
                     borderRadius: 3,
                     padding: '16px 28px',
-                    fontSize: 30,
+                    fontSize: page.subtitleSize ?? 30,
                     color: '#ffffff',
                   },
                   children: page.subtitle,

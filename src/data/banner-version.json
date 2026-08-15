@@ -1,5 +1,5 @@
 {
   "_說明": "分享圖版本號（單一來源）：頁面 og 引用與生成器都讀這裡。改版時把數字 +1，跑 node tools/generate-page-banners.mjs（或 generate-speaking-banner.mjs）生成新檔，舊檔保留給已分享的連結。",
-  "pages": 6,
+  "pages": 8,
   "speaking": 5
 }

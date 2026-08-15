@@ -1,10 +1,10 @@
 ---
 import { Image } from 'astro:assets';
+import instructorPortrait from '../../assets/instructor-shirt.jpg';
 import Card from '../../components/Card.astro';
 import Cta from '../../components/Cta.astro';
 import FaqList from '../../components/FaqList.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import TeachingTools from '../../components/TeachingTools.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { AUTHOR, LINKS, SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
 import { ONE_ON_ONE_FAQS } from '../../data/faqs';
@@ -13,6 +13,7 @@ import {
   TEACHING_CASES,
   TEACHING_CONTENT,
   TEACHING_TOOLS,
+  VIBE_CODING_OUTCOMES,
   VIBE_CODING_PROMPTS,
   VIBE_CODING_SYLLABUS,
 } from '../../data/services';
@@ -21,15 +22,15 @@ import Base from '../../layouts/Base.astro';
 const schema = [
   breadcrumbSchema([
     { name: '首頁', item: `${SITE.url}/` },
-    { name: 'AI 一對一私人教學' },
+    { name: 'AI 新手實戰課' },
   ]),
   {
     '@type': 'Service',
     '@id': `${SITE.url}/services/ai-tutor/#service`,
-    name: 'AI 一對一私人教學',
-    serviceType: 'AI 教學 / 一對一家教',
+    name: 'AI 新手實戰課',
+    serviceType: 'AI 新手課程 / AI 私人教學',
     description:
-      '付費一對一 AI 私人教學：手把手帶零基礎學員完成桌面版 Claude Code / Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）安裝、Meta API 串接與社群自動發文系統。雙北咖啡廳實體課或 Google Meet / Discord 線上課。',
+      '3 小時 AI 新手實戰課：以 Claude Code 或 Codex 為主要工具，手把手帶零基礎學員從 0 到 1 完成第一個實際專案，並可延伸學習 API、自動化、生圖與拍片。',
     provider: { '@id': AUTHOR.id },
     areaServed: ['台北市', '新北市', '線上（台灣與海外皆可）'],
     availableChannel: [
@@ -71,46 +72,90 @@ const schema = [
 ];
 
 const pageToc = [
-  { id: 'class-formats', label: '上課形式' },
-  { id: 'teaching-content', label: '教學內容' },
-  { id: 'vibe-coding-syllabus', label: 'Vibe Coding 新手實戰課綱' },
-  { id: 'teaching-tools', label: '可教學工具' },
-  { id: 'teaching-cases', label: '實際教學案例' },
+  { id: 'course-introduction', label: '課程介紹' },
+  { id: 'course-outcomes', label: '學到什麼' },
+  { id: 'course-syllabus', label: '課程大綱' },
+  { id: 'course-cases', label: '課程案例' },
+  { id: 'instructor', label: '講師介紹' },
   { id: 'faq', label: '常見問題' },
 ];
+
+const primaryTools = TEACHING_TOOLS.filter((tool) => ['Claude Code', 'Codex'].includes(tool.name));
+const supportingTools = TEACHING_TOOLS.filter((tool) => !['Claude Code', 'Codex'].includes(tool.name));
+const courseBanner = pageBannerUrl('one-on-one');
+const courseBannerPath = new URL(courseBanner).pathname;
 ---
 
 <Base
-  title="AI 一對一私人教學｜雙北實體、線上皆可的付費 AI 家教"
-  description="Alex 提供付費一對一 AI 私人教學：手把手帶你完成 Claude Code / Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）安裝、Meta API 串接與自動發文系統。雙北咖啡廳實體課，或 Google Meet / Discord 線上課。"
-  ogImage={pageBannerUrl('one-on-one')}
-  ogImageAlt="AI 一對一私人教學｜講師 Alex"
+  title="AI 新手實戰課｜3 小時從 0 到 1 完成第一個專案"
+  description="3 小時 AI 新手實戰課，以 Claude Code 或 Codex 為主要工具，手把手帶零基礎學員從 0 到 1 完成第一個實際專案，並可延伸學習 API、自動化、生圖與拍片。"
+  ogImage={courseBanner}
+  ogImageAlt="AI 新手實戰課｜講師 Alex"
   schema={schema}
 >
   <div class="mx-auto max-w-4xl px-6 py-12">
-    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: 'AI 一對一私人教學' }]} class="mb-8" />
-    <h1 class="t-h1 font-semibold text-ink">AI 一對一私人教學</h1>
+    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: 'AI 新手實戰課' }]} class="mb-8" />
+    <h1 class="t-h1 font-semibold text-ink">AI 新手實戰課</h1>
 
-    <p class="mt-8 text-lg leading-9 text-ink">
-      這是付費的一對一 AI 私人教學服務：由我（<a href="/about/" class="text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="text-accent">你自己的電腦、你自己的帳號</strong>上，把
-      AI 自動化流程真正跑通一次——從四大 AI Agent（Claude Code、Codex、OpenClaw 龍蝦、Hermes 愛馬仕）的安裝使用、<strong class="text-accent">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>（例如用 LINE 跟 AI 對話，整理其他平台的訊息），到做出可排程的社群自動發文系統，以及打造你的生圖、拍片工作流。
-    </p>
+    <img
+      src={courseBannerPath}
+      alt="AI 新手實戰課｜講師 Alex"
+      width="1200"
+      height="630"
+      fetchpriority="high"
+      class="mt-8 h-auto w-full border border-rule"
+    />
 
-    <nav aria-label="頁面目錄" class="mt-8 border-y border-rule px-0.5 py-6">
-      <p class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">目錄</p>
-      <ol class="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
-        {pageToc.map((item, index) => (
-          <li class="flex gap-3 leading-7">
-            <span class="shrink-0 font-mono text-[13px] tabular-nums text-ink-3" aria-hidden="true">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <a href={`#${item.id}`} class="text-accent underline-offset-4 hover:underline">{item.label}</a>
+    <nav aria-label="課程目錄" class="mt-8 border-y border-rule">
+      <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+        {pageToc.map((item) => (
+          <li>
+            <a
+              href={`#${item.id}`}
+              class="block px-3 py-4 text-center font-semibold text-ink transition hover:bg-paper-2 hover:text-accent"
+            >
+              {item.label}
+            </a>
           </li>
         ))}
-      </ol>
+      </ul>
     </nav>
 
-    <SectionHeading id="class-formats" size="md" class="mt-14 scroll-mt-24">上課形式</SectionHeading>
+    <SectionHeading id="course-introduction" size="md" class="mt-14 scroll-mt-24">課程介紹</SectionHeading>
+    <dl class="mt-6 grid grid-cols-2 gap-x-8">
+      <div class="border-t-2 border-accent px-0.5 py-5">
+        <dt class="text-sm text-ink-3">課程時間</dt>
+        <dd class="mt-2 text-xl font-semibold text-ink">3 小時</dd>
+      </div>
+      <div class="border-t-2 border-accent px-0.5 py-5">
+        <dt class="text-sm text-ink-3">教學費用</dt>
+        <dd class="mt-2 text-xl font-semibold text-ink">NT$1,000／小時起</dd>
+        <dd class="mt-2 text-sm leading-6 text-ink-2">第二位起每位 NT$800／小時</dd>
+      </div>
+    </dl>
+    <p class="mt-4 text-lg leading-9 text-ink">
+      這是一堂付費的 AI 新手實戰課，適合想從零開始、完成第一個實際專案的新手。由我（<a href="/about/" class="text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="text-accent">你自己的電腦、你自己的帳號</strong>上，以 Claude Code 或 Codex 作為主要開發工具，再依專案需求搭配 ChatGPT、OpenClaw（龍蝦）、Hermes Agent（愛馬仕）與 GitHub，從想法、規劃一路做到可以使用的成品。過程中會盡可能把複雜操作交給 AI，你主要用中文下提示詞或點按鈕就能完成，不需要先學複雜的程式語法與操作；完成第一個專案後，再依需求延伸到 API 串接、自動發文、生圖或拍片工作流。
+    </p>
+    <p class="mt-4 leading-8 text-ink-2">
+      課程共 3 小時，重點不是背程式語法，而是學會建立規則、規劃功能，以及用正確提示詞請 AI 分析與修改程式。
+    </p>
+    <h3 class="mt-8 text-xl font-semibold text-ink">教學內容</h3>
+    <div class="mt-6 grid gap-5 sm:grid-cols-2">
+      {TEACHING_CONTENT.map((item) => (
+        <Card>
+          <h4 class="text-lg font-semibold text-ink">{item.category}</h4>
+          {item.logos && (
+            <div class="mt-4 flex gap-2.5">
+              {item.logos.map((logo) => (
+                <Image src={logo.image} alt={logo.alt} width={96} class="h-9 w-9 object-cover" />
+              ))}
+            </div>
+          )}
+          <p class="mt-3 leading-7 text-ink-2">{item.detail}</p>
+        </Card>
+      ))}
+    </div>
+    <h3 class="mt-8 text-xl font-semibold text-ink">上課形式</h3>
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {CLASS_FORMATS.map((format) => (
         <Card>
@@ -123,27 +168,37 @@ const pageToc = [
       也可安排一對多教學：第一位學員依原價計費，<strong class="font-semibold text-ink">第二位起每位教學費用享八折</strong>。
     </p>
 
-    <SectionHeading id="teaching-content" size="md" class="mt-14 scroll-mt-24">教學內容</SectionHeading>
-    <div class="mt-6 grid gap-5 sm:grid-cols-2">
-      {TEACHING_CONTENT.map((item) => (
-        <Card>
-          <h3 class="text-xl font-semibold text-ink">{item.category}</h3>
-          {item.logos && (
-            <div class="mt-4 flex gap-2.5">
-              {item.logos.map((logo) => (
-                <Image src={logo.image} alt={logo.alt} width={96} class="h-9 w-9 object-cover" />
-              ))}
-            </div>
-          )}
-          <p class="mt-3 leading-7 text-ink-2">{item.detail}</p>
-        </Card>
+    <SectionHeading id="course-outcomes" size="md" class="mt-14 scroll-mt-24">學到什麼</SectionHeading>
+    <ul class="mt-6 grid gap-x-8 sm:grid-cols-2">
+      {VIBE_CODING_OUTCOMES.map((outcome) => (
+        <li class="flex gap-3 border-t border-rule px-0.5 py-5 leading-7 text-ink-2">
+          <span aria-hidden="true" class="text-accent">✓</span>
+          <span>{outcome}</span>
+        </li>
+      ))}
+    </ul>
+    <h3 class="mt-8 text-xl font-semibold text-ink">可使用的工具</h3>
+    <p class="mt-3 leading-7 text-ink-2">課程會從 Claude Code 或 Codex 選擇一套作為主力，其餘工具依你的專案需求搭配，不需要六套全部學會。</p>
+    <p class="mt-6 font-mono text-[11.5px] tracking-[0.12em] text-ink-3">主要開發工具</p>
+    <div class="mt-3 grid grid-cols-2 gap-x-8">
+      {primaryTools.map((tool) => (
+        <div class="flex items-center gap-4 border-t-2 border-accent px-0.5 py-5">
+          <Image src={tool.image} alt={tool.imageAlt} width={96} class="h-12 w-12 shrink-0 object-cover" />
+          <span class="font-semibold text-ink">{tool.name}</span>
+        </div>
+      ))}
+    </div>
+    <p class="mt-6 font-mono text-[11.5px] tracking-[0.12em] text-ink-3">依需求搭配</p>
+    <div class="mt-3 grid grid-cols-2 gap-x-8 sm:grid-cols-4">
+      {supportingTools.map((tool) => (
+        <div class="flex items-center gap-3 border-t border-rule px-0.5 py-4">
+          <Image src={tool.image} alt={tool.imageAlt} width={96} class="h-9 w-9 shrink-0 object-contain" />
+          <span class="text-sm leading-6 text-ink-2">{tool.note ? `${tool.name}（${tool.note}）` : tool.name}</span>
+        </div>
       ))}
     </div>
 
-    <SectionHeading id="vibe-coding-syllabus" size="md" class="mt-14 scroll-mt-24">Vibe Coding 新手實戰課綱</SectionHeading>
-    <p class="mt-4 leading-7 text-ink-2">
-      適合沒有程式背景，或已經用 AI 寫出作品，卻經常遇到功能互相影響、改 A 壞 B 的新手。課程時間約 3 小時。
-    </p>
+    <SectionHeading id="course-syllabus" size="md" class="mt-14 scroll-mt-24">課程大綱</SectionHeading>
     <div class="mt-6 grid gap-5">
       {VIBE_CODING_SYLLABUS.map((item) => (
         <Card>
@@ -168,10 +223,7 @@ const pageToc = [
       </ul>
     </Card>
 
-    <SectionHeading id="teaching-tools" size="md" class="mt-14 scroll-mt-24">可教學工具</SectionHeading>
-    <TeachingTools />
-
-    <SectionHeading id="teaching-cases" size="md" class="mt-14 scroll-mt-24">實際教學案例</SectionHeading>
+    <SectionHeading id="course-cases" size="md" class="mt-14 scroll-mt-24">課程案例</SectionHeading>
     <p class="mt-4 leading-7 text-ink-2">
       以下是四個實際的一對一教學案例，涵蓋不同背景的學員與客製化主題：
     </p>
@@ -186,6 +238,22 @@ const pageToc = [
           <p class="mt-3 leading-7 text-ink-2">{item.description}</p>
         </Card>
       ))}
+    </div>
+
+    <SectionHeading id="instructor" size="md" class="mt-14 scroll-mt-24">講師介紹</SectionHeading>
+    <div class="mt-6 grid items-start gap-8 sm:grid-cols-[220px_1fr]">
+      <Image
+        src={instructorPortrait}
+        alt={`AI 講師 ${AUTHOR.name} 形象照`}
+        class="w-full border border-rule object-cover"
+      />
+      <div>
+        <h3 class="text-xl font-semibold text-ink">{AUTHOR.name}（王士麟）</h3>
+        <p class="mt-3 leading-8 text-ink-2">
+          AI 應用講師、全職接案工程師，也是 21 萬人 OpenClaw 中文社群版主。沒有軟體業背景，靠 AI 一步一步自學到全職接案，教學重點是讓沒有程式背景的人也能用對話完成實際作品。
+        </p>
+        <a href="/about/" class="mt-4 inline-block text-accent underline underline-offset-4">查看完整講師介紹 →</a>
+      </div>
     </div>
 
     <SectionHeading id="faq" size="md" class="mt-14 scroll-mt-24">常見問題</SectionHeading>
