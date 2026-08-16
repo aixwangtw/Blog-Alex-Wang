@@ -77,3 +77,9 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
   無卡片、主標單行大字自動縮放、副標小字，全部內容集中中央 4:3（x=180–1020）；
   人物 x=585 與講師卡 x=800 位置已定案不得調整；
   改版時 `src/data/banner-version.json` 版本號 +1 再重跑生成器。
+
+## 新手教學視覺素材規則（必須遵守）
+
+- 首頁或服務入口呈現「新手教學」時，視覺素材必須優先使用真實教學案例，並搭配案例實際使用的 Claude Code、Codex、Hermes、OpenClaw 等工具 Logo。
+- 不得以一般人物合照、純裝飾照片或與案例無關的形象照作為新手教學的主要圖片。
+- 案例與工具 Logo 無法使用時，才可改用能清楚看出操作成果的課程實作畫面；素材仍須與該段文案直接對應。

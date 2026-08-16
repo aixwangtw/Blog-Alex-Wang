@@ -1,5 +1,8 @@
 ---
 import ogBanner from '../assets/banner-v2.png';
+import githubLogo from '../assets/github-logo.svg';
+import lineLogo from '../assets/line-logo.png';
+import tookaLogo from '../assets/tooka-logo.svg';
 import { NAV, LINKS, SITE, SERVICE_SITE, AUTHOR, PERSON_SCHEMA, pageBannerUrl, speakingBannerUrl } from '../consts';
 import '../styles/global.css';
 
@@ -8,25 +11,21 @@ import '../styles/global.css';
 const HEADER_NAV = [
   { href: '/about/', label: '關於' },
 ];
+const CLAIM_INSTALL_HINT = '貼給你的 AI Agent，說「幫我安裝」';
 const DROPDOWN_NAV = [
   {
     key: 'articles',
     label: '文章',
+    href: '/blog/',
     subtitle: '從新手入門、工具安裝到社群自動化',
     previews: [
-      {
-        href: '/blog/',
-        eyebrow: '全部文章',
-        title: 'AI 新手部落格',
-        description: '每篇文章解決一個真實問題，依發佈時間完整瀏覽。',
-        image: new URL(pageBannerUrl('blog')).pathname,
-      },
       {
         href: '/blog/codex-windows-wsl-install/',
         eyebrow: '工具安裝',
         title: 'Codex 新手安裝',
         description: '從 VS Code 插件開始，不用先學終端機操作。',
         image: '/images/blog/codex-windows-wsl-install.png',
+        cta: '閱讀安裝教學',
       },
       {
         href: '/blog/threads-api-tutorial/',
@@ -34,33 +33,44 @@ const DROPDOWN_NAV = [
         title: 'Meta API 實戰',
         description: 'Threads、Instagram 申請與自動發文工作流。',
         image: '/images/blog/threads-api-tutorial.png',
+        cta: '閱讀 API 教學',
       },
     ],
   },
   {
     key: 'resources',
     label: '領取',
+    href: '/resources/',
     subtitle: '免費教學影片、開源工具與學習路線',
     previews: [
       {
-        href: '/resources/',
-        eyebrow: '免費專區',
-        title: '全部免費資源',
-        description: '把免費工具、影片與建議的學習順序整理在同一頁。',
-        image: new URL(pageBannerUrl('resources')).pathname,
+        href: '/blog/why-i-built-tooka/',
+        eyebrow: '我開發的工具',
+        title: 'Tooka 社群圖文',
+        description: '解決生圖常見的跑版、失真與文字亂碼，用對話生成 IG、Facebook 與 Threads 圖文。',
+        image: tookaLogo.src,
+        navIcon: tookaLogo.src,
+        tookaIcon: true,
+        cta: '領取',
+        repo: 'https://github.com/js0980420/tooka',
       },
       {
-        href: '/blog/why-i-built-tooka/',
-        eyebrow: '開源工具',
-        title: 'Tooka 社群圖文',
-        description: '用對話生成不跑版的 IG、Facebook 與 Threads 圖文。',
-        image: '/images/blog/why-i-built-tooka.png',
+        href: 'https://www.instagram.com/reel/DbwqIJkydIQ/',
+        eyebrow: '提升開發效率 Skill',
+        title: 'grill-me：別等 AI 做完才發現搞錯',
+        description: '你以為 AI 聽懂了，做完才發現完全不是你要的。它會在動工前一路問清楚，把需求、選項和每個分支先確認好。',
+        image: githubLogo.src,
+        navIcon: githubLogo.src,
+        external: true,
+        cta: '領取',
+        repo: 'https://github.com/mattpocock/skills',
       },
     ],
   },
   {
     key: 'services',
     label: '服務',
+    href: `${SERVICE_SITE.url}/course/`,
     subtitle: '先看內容，再選適合你的合作方式',
     accent: true,
     previews: [
@@ -70,6 +80,7 @@ const DROPDOWN_NAV = [
         title: 'AI 新手實戰課',
         description: '從工具安裝、專案規則到除錯解耦，帶你從 0 到 1 完成第一個專案。',
         image: new URL(pageBannerUrl('one-on-one')).pathname,
+        cta: '查看課綱',
       },
       {
         href: `${SERVICE_SITE.url}/services/speaking/`,
@@ -77,6 +88,7 @@ const DROPDOWN_NAV = [
         title: 'AI 主題演講',
         description: 'AI Agent、社群自動化與對話式拍片，可依企業、協會或社群需求規劃。',
         image: new URL(speakingBannerUrl()).pathname,
+        cta: '查看演講服務',
       },
     ],
   },
@@ -234,80 +246,65 @@ const jsonLd = {
             ))}
             {DROPDOWN_NAV.map((menu) => (
               <li class:list={['service-nav-item', { 'service-nav-item--accent': menu.accent }]}>
-                <details class="service-nav nav-dropdown" id={`nav-dropdown-${menu.key}`}>
-                  <summary>
-                    <span>{menu.label}</span>
-                    <span class="service-nav-mark" aria-hidden="true">▾</span>
-                  </summary>
-                  <div class:list={['service-menu', { 'service-menu--plain': !menu.accent, 'service-menu--featured': menu.accent }]}>
-                    <div class="service-menu-head">
-                      <span>{menu.label}</span>
-                      <small>{menu.subtitle}</small>
-                    </div>
-                    {menu.accent ? (
+                <div class:list={['service-nav-shell', { 'service-nav-shell--split': menu.href }]}>
+                  {menu.href && <a class="service-nav-direct" href={menu.href}>{menu.label}</a>}
+                  <details class="service-nav nav-dropdown" id={`nav-dropdown-${menu.key}`}>
+                    <summary aria-label={menu.href ? `展開${menu.label}分類` : undefined}>
+                      <span class:list={{ 'sr-only': menu.href }}>{menu.label}</span>
+                      <span class="service-nav-mark" aria-hidden="true">▾</span>
+                    </summary>
+                    <div class="service-menu service-menu--featured">
+                      <div class="service-menu-head">
+                        <span>{menu.label}</span>
+                        <small>{menu.subtitle}</small>
+                      </div>
                       <div class="service-menu-grid">
                         {menu.previews.map((item) => (
-                          <a class="service-preview" href={item.href}>
-                            <img src={item.image} alt="" width="1200" height="630" loading="lazy" />
-                            <span class="service-preview-copy">
-                              <small>{item.eyebrow}</small>
-                              <strong>{item.title}</strong>
-                              <span>{item.description}</span>
-                            </span>
-                            <span class="service-preview-go" aria-hidden="true">→</span>
-                          </a>
+                          <div
+                            class:list={['service-preview', {
+                              'service-preview--icon': 'navIcon' in item,
+                              'service-preview--tooka': 'tookaIcon' in item,
+                            }]}
+                          >
+                            <a
+                              class="service-preview-main"
+                              href={item.href}
+                              target={'external' in item && item.external ? '_blank' : undefined}
+                              rel={'external' in item && item.external ? 'noreferrer' : undefined}
+                            >
+                              <img src={item.image} alt="" width="1200" height="630" loading="lazy" />
+                              <span class="service-preview-copy">
+                                <small>{item.eyebrow}</small>
+                                <strong>{item.title}</strong>
+                                <span>{item.description}</span>
+                                {item.cta !== '領取' && (
+                                  <b class="service-preview-cta">{item.cta}<span aria-hidden="true">→</span></b>
+                                )}
+                              </span>
+                            </a>
+                            {item.cta === '領取' && 'repo' in item && (
+                              <span class="service-preview-actions">
+                                <button
+                                  type="button"
+                                  class="service-preview-cta"
+                                  data-copy-repo={item.repo}
+                                  aria-label={`複製 ${item.title} Repo 連結`}
+                                ><span class="service-preview-cta-label">領取</span><span aria-hidden="true">→</span></button>
+                                <em>{CLAIM_INSTALL_HINT}</em>
+                              </span>
+                            )}
+                          </div>
                         ))}
                       </div>
-                    ) : (
-                      <ul class="service-menu-links">
-                        {menu.previews.map((item) => (
-                          <li><a href={item.href}>{item.title}<span aria-hidden="true">→</span></a></li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </details>
+                    </div>
+                  </details>
+                </div>
               </li>
             ))}
           </ul>
         </nav>
 
         <div class="hd-tools">
-          <div id="search-container" class="hd-search">
-            <button
-              id="search-toggle"
-              type="button"
-              aria-label="開啟搜尋"
-              aria-expanded="false"
-              aria-controls="search-popover"
-              class="hicon hicon--solo"
-            >
-              <span class="hicon-ic" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" focusable="false">
-                  <circle cx="11" cy="11" r="7" />
-                  <line x1="16.2" y1="16.2" x2="21" y2="21" />
-                </svg>
-              </span>
-            </button>
-            <div id="search-popover" class="search-pop hidden">
-              <input
-                id="site-search"
-                type="search"
-                aria-label="搜尋文章"
-                autocomplete="off"
-                placeholder="搜尋文章"
-                class="search-input"
-              />
-              <div id="search-examples" class="search-ex">
-                <div class="search-ex-h">搜尋範例</div>
-                <button type="button" data-search-example="新手要怎麼學 AI" data-search-query="AI 入門">新手要怎麼學 AI</button>
-                <button type="button" data-search-example="如何做自動發文" data-search-query="自動發文">如何做自動發文</button>
-                <button type="button" data-search-example="如何自動拍片" data-search-query="教學影片">如何自動拍片</button>
-              </div>
-              <div id="search-results" class="search-res hidden"></div>
-            </div>
-          </div>
-
           <button
             class="hd-cue"
             id="nav-cue"
@@ -334,6 +331,68 @@ const jsonLd = {
       </svg>
       <span>LINE</span>
     </a>
+
+    <div class="search-chatbot" id="search-chatbot">
+      <button
+        class="search-chat-toggle"
+        id="search-chat-toggle"
+        type="button"
+        aria-label="開啟 AI 站內搜尋"
+        aria-expanded="false"
+        aria-controls="search-chat-panel"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5.8 4.5h12.4A3.8 3.8 0 0 1 22 8.3v6.1a3.8 3.8 0 0 1-3.8 3.8h-7.1L5 21l1.2-3A3.8 3.8 0 0 1 2 14.4V8.3a3.8 3.8 0 0 1 3.8-3.8Z" />
+          <circle cx="8" cy="11.4" r="1.15" />
+          <circle cx="12" cy="11.4" r="1.15" />
+          <circle cx="16" cy="11.4" r="1.15" />
+        </svg>
+        <span>AI 問答</span>
+      </button>
+
+      <section class="search-chat-panel" id="search-chat-panel" role="dialog" aria-label="AI 站內搜尋" hidden>
+        <div class="search-chat-bar">
+          <span class="search-chat-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <b>alex@aixwang: search</b>
+          <button id="search-chat-close" type="button" aria-label="關閉 AI 站內搜尋">×</button>
+        </div>
+        <div class="search-chat-screen">
+          <p class="search-chat-boot"><span>AIX SEARCH AGENT</span><span>ONLINE</span></p>
+          <div class="search-chat-dialog">
+            <span class="search-chat-ai">AI</span>
+            <p>你想搜尋什麼文章或教學？</p>
+          </div>
+          <div class="search-chat-examples" id="search-examples">
+            <button type="button" data-search-example="新手要怎麼學 AI" data-search-query="AI 入門"><span>❯</span> 新手要怎麼學 AI</button>
+            <button type="button" data-search-example="如何安裝 Codex" data-search-query="Codex 安裝"><span>❯</span> 如何安裝 Codex</button>
+            <button type="button" data-search-example="如何申請 API" data-search-query="API 申請"><span>❯</span> 如何申請 API</button>
+          </div>
+          <div class="search-chat-answer" id="search-chat-answer" hidden>
+            <p class="search-chat-command"><span>❯</span><b id="search-chat-query"></b></p>
+            <div class="search-chat-response">
+              <span class="search-chat-ai">AI</span>
+              <div class="search-chat-results" id="search-results" aria-live="polite"></div>
+            </div>
+          </div>
+          <a class="search-chat-line" href={LINKS.line} target="_blank" rel="noreferrer">
+            <img src={lineLogo.src} width="38" height="38" alt="LINE" />
+            <span><small>想直接問我？</small><b>加 LINE 免費諮詢</b></span>
+            <i aria-hidden="true">→</i>
+          </a>
+        </div>
+        <form class="search-chat-form" id="search-chat-form" role="search">
+          <label class="sr-only" for="site-search">搜尋站內文章、教學或工具</label>
+          <span aria-hidden="true">alex@aixwang:~$</span>
+          <input id="site-search" type="search" autocomplete="off" placeholder="輸入你的問題…" />
+          <button type="submit" aria-label="送出搜尋" title="送出搜尋">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path d="M12 19V5M6.5 10.5 12 5l5.5 5.5" />
+            </svg>
+          </button>
+        </form>
+        <div class="search-chat-status" aria-hidden="true"><span>● ONLINE</span><span>ENTER 送出 · ESC 關閉</span></div>
+      </section>
+    </div>
 
     <script is:inline>
       /* 收合選單：獨立的 try 區塊，跟下面的搜尋互不影響。
@@ -393,8 +452,8 @@ const jsonLd = {
             if (!window.matchMedia('(min-width: 1024px)').matches) return;
             var list = panel.querySelector('ul');
             if (!list) return;
-            // 22 左內距 + 32 字標（展開只剩 logo）+ 42 搜尋 + 10 右內距 + 2 邊框
-            var CHROME = 108;
+            // 搜尋已移到右下角，這裡只保留字標、左右內距與邊框。
+            var CHROME = 66;
             var need = Math.ceil(list.scrollWidth) + CHROME;
             header.style.setProperty('--capw-open', need + 'px');
           }
@@ -473,13 +532,16 @@ const jsonLd = {
 
         dropdowns.forEach(function (dropdown) {
           var summary = dropdown.querySelector('summary');
-          dropdown.addEventListener('mouseenter', function () {
+          // 分離式導覽的文字連結與箭頭是兄弟節點；hover 監聽要掛在整個 shell，
+          // 才能做到游標碰到文字就展開，而不是只有碰到小箭頭才有反應。
+          var hoverTarget = dropdown.closest('.service-nav-shell') || dropdown;
+          hoverTarget.addEventListener('mouseenter', function () {
             if (!hoverMenu.matches) return;
             window.clearTimeout(closeTimers.get(dropdown));
             closeOthers(dropdown);
             dropdown.setAttribute('open', '');
           });
-          dropdown.addEventListener('mouseleave', function () {
+          hoverTarget.addEventListener('mouseleave', function () {
             if (!hoverMenu.matches) return;
             closeTimers.set(dropdown, window.setTimeout(function () {
               dropdown.removeAttribute('open');
@@ -522,37 +584,81 @@ const jsonLd = {
       })();
 
       (function () {
-        // 全站搜尋
-        var container = document.getElementById('search-container');
-        var toggle = document.getElementById('search-toggle');
-        var popover = document.getElementById('search-popover');
+        // 「領取」只複製 Repo 網址；預覽卡片則保留為內容入口。
+        // 用 data attribute 共用同一套行為，新增領取項目不需再寫一份 JS。
+        var copyButtons = document.querySelectorAll('[data-copy-repo]');
+        if (!copyButtons.length) return;
+
+        function legacyCopy(text) {
+          var field = document.createElement('textarea');
+          field.value = text;
+          field.setAttribute('readonly', '');
+          field.style.position = 'fixed';
+          field.style.opacity = '0';
+          document.body.appendChild(field);
+          field.select();
+          var copied = document.execCommand('copy');
+          field.remove();
+          return copied ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+        }
+
+        Array.prototype.forEach.call(copyButtons, function (button) {
+          button.addEventListener('click', function () {
+            var repo = button.getAttribute('data-copy-repo');
+            var label = button.querySelector('.service-preview-cta-label');
+            if (!repo || !label) return;
+            var copyPromise = navigator.clipboard && navigator.clipboard.writeText
+              ? navigator.clipboard.writeText(repo).catch(function () { return legacyCopy(repo); })
+              : legacyCopy(repo);
+            copyPromise.then(function () {
+              label.textContent = '已複製';
+              button.setAttribute('aria-label', '已複製 Repo 連結');
+              window.setTimeout(function () {
+                label.textContent = '領取';
+                button.setAttribute('aria-label', '複製 Repo 連結');
+              }, 1800);
+            }).catch(function () {
+              label.textContent = '複製失敗';
+            });
+          });
+        });
+      })();
+
+      (function () {
+        // 右下角 AI 終端機搜尋：只查本站索引，不連接外部 chatbot。
+        var container = document.getElementById('search-chatbot');
+        var toggle = document.getElementById('search-chat-toggle');
+        var panel = document.getElementById('search-chat-panel');
+        var closeButton = document.getElementById('search-chat-close');
+        var form = document.getElementById('search-chat-form');
         var input = document.getElementById('site-search');
         var box = document.getElementById('search-results');
         var examples = document.getElementById('search-examples');
+        var answer = document.getElementById('search-chat-answer');
+        var queryEcho = document.getElementById('search-chat-query');
         var pagefind = null;
         var pagefindPromise = null;
         var fallbackIndex = null;
         var debounceTimer = null;
         var searchSequence = 0;
         var activeResult = -1;
-        // 改版後搜尋在所有斷點都是「42px 圓形按鈕 → 下拉面板」，
-        // 不再有桌機常駐輸入框那個版本，因此開關邏輯不分斷點。
         function openSearch() {
-          if (!popover) return;
-          popover.classList.remove('hidden');
+          if (!panel) return;
+          panel.hidden = false;
+          document.body.classList.add('search-chat-open');
           if (toggle) {
             toggle.setAttribute('aria-expanded', 'true');
-            toggle.setAttribute('aria-label', '關閉搜尋');
+            toggle.setAttribute('aria-label', '關閉 AI 站內搜尋');
           }
           window.setTimeout(function () { input && input.focus(); }, 0);
         }
         function closeSearch() {
-          if (popover) popover.classList.add('hidden');
+          if (panel) panel.hidden = true;
+          document.body.classList.remove('search-chat-open');
           if (toggle) {
             toggle.setAttribute('aria-expanded', 'false');
-            toggle.setAttribute('aria-label', '開啟搜尋');
+            toggle.setAttribute('aria-label', '開啟 AI 站內搜尋');
           }
-          if (box) box.classList.add('hidden');
         }
         function loadFallback() {
           if (fallbackIndex) return Promise.resolve(fallbackIndex);
@@ -585,27 +691,25 @@ const jsonLd = {
         function render(list) {
           activeResult = list.length ? 0 : -1;
           if (!list.length) {
-            box.innerHTML = '<div class="px-3 py-2 text-sm text-ink-3">沒有符合的文章</div>';
+            box.innerHTML = '<p class="search-chat-empty">找不到符合的文章，請換個關鍵字再問一次。</p>';
           } else {
             box.innerHTML = list
-              .slice(0, 8)
+              .slice(0, 5)
               .map(function (item, index) {
-                return '<a href="' + escapeHtml(item.u) + '" data-search-result="' + index + '" class="search-result-item block px-3 py-2 leading-5 text-ink-2 hover:bg-paper-2 ' + (index === 0 ? 'bg-paper-2' : '') + '">' +
-                  '<span class="block text-sm font-medium">' + escapeHtml(item.t) + '</span>' +
-                  (item.d ? '<span class="mt-1 block text-xs leading-5 text-ink-3">' + item.d + '</span>' : '') +
+                return '<a href="' + escapeHtml(item.u) + '" data-search-result="' + index + '" class="search-chat-result ' + (index === 0 ? 'is-active' : '') + '">' +
+                  '<strong>' + escapeHtml(item.t) + '</strong>' +
+                  (item.d ? '<span>' + item.d + '</span>' : '') +
                   '</a>';
               })
               .join('');
           }
-          box.classList.remove('hidden');
         }
         function renderLoading() {
-          box.innerHTML = '<div class="px-3 py-2 text-sm text-ink-3">搜尋中…</div>';
-          box.classList.remove('hidden');
+          box.innerHTML = '<p class="search-chat-empty">正在搜尋站內資料…</p>';
         }
         function updateActiveResult() {
-          box.querySelectorAll('.search-result-item').forEach(function (item, index) {
-            item.classList.toggle('bg-paper-2', index === activeResult);
+          box.querySelectorAll('.search-chat-result').forEach(function (item, index) {
+            item.classList.toggle('is-active', index === activeResult);
           });
         }
         function searchFallback(query, sequence) {
@@ -623,6 +727,9 @@ const jsonLd = {
         }
         function executeSearch(query) {
           var sequence = ++searchSequence;
+          if (queryEcho) queryEcho.textContent = input && input.value.trim() ? input.value.trim() : query;
+          if (examples) examples.hidden = true;
+          if (answer) answer.hidden = false;
           renderLoading();
           loadPagefind().then(function (engine) {
             if (!engine) return searchFallback(query, sequence);
@@ -646,11 +753,12 @@ const jsonLd = {
         }
         function searchFor(query, immediate) {
           var q = query.trim().toLowerCase();
-          if (examples) examples.classList.toggle('hidden', !!q);
           window.clearTimeout(debounceTimer);
           if (!q) {
             searchSequence++;
-            box.classList.add('hidden');
+            if (examples) examples.hidden = false;
+            if (answer) answer.hidden = true;
+            if (box) box.replaceChildren();
             return;
           }
           if (immediate) executeSearch(q);
@@ -663,7 +771,13 @@ const jsonLd = {
             else openSearch();
           });
         }
-        if (input && box) {
+        if (closeButton) {
+          closeButton.addEventListener('click', function () {
+            closeSearch();
+            if (toggle) toggle.focus();
+          });
+        }
+        if (input && box && form) {
           input.addEventListener('focus', loadPagefind);
           input.addEventListener('input', function () {
             searchFor(input.value, false);
@@ -674,7 +788,7 @@ const jsonLd = {
               if (toggle) toggle.focus();
               return;
             }
-            var results = box.querySelectorAll('.search-result-item');
+            var results = box.querySelectorAll('.search-chat-result');
             if (e.key === 'ArrowDown') {
               e.preventDefault();
               if (results.length) {
@@ -693,11 +807,10 @@ const jsonLd = {
               }
               return;
             }
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              var a = results[activeResult] || results[0];
-              if (a) location.href = a.getAttribute('href');
-            }
+          });
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value.trim()) searchFor(input.value, true);
           });
           if (examples) {
             examples.addEventListener('click', function (e) {
@@ -709,7 +822,7 @@ const jsonLd = {
             });
           }
           document.addEventListener('click', function (e) {
-            if (container && !container.contains(e.target)) closeSearch();
+            if (panel && !panel.hidden && container && !container.contains(e.target)) closeSearch();
           });
           document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -779,8 +892,7 @@ const jsonLd = {
          用 utility 拼出來會散在十幾個 class 裡，看不出彼此的關係。
 
          ⚠ 這段是「無層級（unlayered）」CSS，在串接順序上贏過 Tailwind 的
-         @layer utilities。因此絕對不要在這裡設 display——像 .search-pop
-         這種靠 Tailwind 的 .hidden 開關的元素會被鎖死在顯示狀態。
+         @layer utilities。互動元件若要切換顯示，統一搭配 [hidden] 明確控制。
          ============================================================ */
       :root {
         --bar: 68px; /* 頁首列高（jisto 實測值） */
@@ -821,11 +933,11 @@ const jsonLd = {
         border-bottom: 1px solid var(--color-rule);
       }
 
-      /* LINE 從導覽工具列獨立出來，固定在視窗右側中間。 */
+      /* LINE 與 AI 搜尋在右下角垂直排列：LINE 在上、Chatbot 在下。 */
       .floating-line {
         position: fixed;
-        top: 50%;
-        right: max(10px, env(safe-area-inset-right));
+        right: max(20px, env(safe-area-inset-right));
+        bottom: calc(max(18px, env(safe-area-inset-bottom)) + 78px);
         z-index: 35;
         display: grid;
         place-items: center;
@@ -837,10 +949,17 @@ const jsonLd = {
         color: #fff;
         text-decoration: none;
         box-shadow: 0 8px 24px rgb(22 22 26 / 18%);
-        transform: translateY(-50%);
         transition:
           background-color 0.18s var(--ease),
-          transform 0.18s var(--ease);
+          opacity 0.18s var(--ease),
+          transform 0.18s var(--ease),
+          visibility 0.18s var(--ease);
+      }
+      body.search-chat-open .floating-line {
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(8px);
       }
       .floating-line svg {
         width: 23px;
@@ -857,7 +976,8 @@ const jsonLd = {
       }
       @media (max-width: 767px) {
         .floating-line {
-          right: max(8px, env(safe-area-inset-right));
+          right: max(14px, env(safe-area-inset-right));
+          bottom: calc(max(12px, env(safe-area-inset-bottom)) + 70px);
           width: 46px;
           height: 46px;
         }
@@ -892,6 +1012,7 @@ const jsonLd = {
       .hd-mark {
         order: 1;
         margin-inline-end: auto;
+        margin-inline-start: 8px;
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -920,53 +1041,6 @@ const jsonLd = {
            讓圖示的墨跡切齊 .hd-cap 的右緣，而不是按鈕外框切齊——
            不補這 11px，頁首看起來會跟內文差一截、像沒對齊。 */
         margin-inline-end: -11px;
-      }
-
-      /* ---------- 42px 圓形圖示按鈕 ---------- */
-      /* 文字欄用「確定長度 0px」而不是 0fr：0fr 展開成 minmax(auto, 0fr)，
-         那個 auto 最小值會被文字欄自己的 padding 撐開，量到的軌道是 9px、
-         整顆按鈕變 53px 的橢圓。確定長度不吃 automatic minimum size，
-         溢出的部分由 overflow:hidden 切掉。 */
-      .hicon {
-        display: grid;
-        grid-template-columns: 18px 0px;
-        align-items: center;
-        height: 42px;
-        /* 1+11 + 18 + 11+1 = 42px 正圓。width 是 auto，box-sizing 不生效，
-           所以邊框那 2px 要自己算進去；用 12px 會得到 44×42 的橢圓。 */
-        padding: 0 11px;
-        border: 1px solid var(--color-rule-3); /* 可操作元件邊界，對紙底 3.35:1 */
-        border-radius: 999px;
-        background: transparent;
-        color: var(--color-ink-2);
-        text-decoration: none;
-        white-space: nowrap;
-        overflow: hidden;
-        cursor: pointer;
-        transition:
-          grid-template-columns 0.34s var(--ease),
-          color 0.2s var(--ease),
-          border-color 0.2s var(--ease),
-          background-color 0.2s var(--ease);
-      }
-      .hicon--solo {
-        grid-template-columns: 18px;
-        justify-content: center;
-        width: 42px;
-      }
-      .hicon-ic,
-      .hicon-ic svg {
-        display: block;
-        width: 18px;
-        height: 18px;
-      }
-      .hicon-tx {
-        overflow: hidden;
-        min-width: 0;
-        padding-inline-start: 9px; /* 收合時連同 padding 一起被裁掉 */
-        font-size: 12.5px;
-        line-height: 1;
-        font-weight: 500;
       }
 
       /* ---------- 收合選單開關 ---------- */
@@ -1045,10 +1119,28 @@ const jsonLd = {
         gap: 16px;
         padding: 15px 2px;
         text-decoration: none;
-        font-size: 17px;
+        font-size: 18px;
         font-weight: 500;
         color: var(--color-ink);
         transition: color 0.18s var(--ease);
+      }
+      .service-nav-shell--split {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+      }
+      .service-nav-shell--split .service-nav {
+        display: contents;
+      }
+      .mainnav .service-nav-direct {
+        min-width: 0;
+      }
+      .service-nav-shell--split .service-nav summary {
+        padding-inline: 12px 2px;
+      }
+      .service-nav-shell--split .service-menu {
+        grid-column: 1 / -1;
       }
       .service-nav summary {
         display: flex;
@@ -1057,7 +1149,7 @@ const jsonLd = {
         gap: 16px;
         padding: 15px 2px;
         color: var(--color-ink);
-        font-size: 17px;
+        font-size: 18px;
         font-weight: 500;
         cursor: pointer;
         list-style: none;
@@ -1083,6 +1175,19 @@ const jsonLd = {
         background: var(--color-accent);
         color: #fff;
         font-weight: 700;
+      }
+      .service-nav-item--accent .service-nav-shell--split {
+        padding-inline-start: 14px;
+        background: var(--color-accent);
+      }
+      .mainnav .service-nav-item--accent .service-nav-direct,
+      .service-nav-item--accent .service-nav-shell--split .service-nav summary {
+        color: #fff;
+        font-weight: 700;
+      }
+      .service-nav-item--accent .service-nav-shell--split .service-nav summary {
+        padding-inline: 10px 14px;
+        background: transparent;
       }
       .service-menu {
         padding: 4px 0 16px;
@@ -1118,25 +1223,71 @@ const jsonLd = {
         padding: 12px 2px;
         font-size: 14px;
       }
+      .service-menu-link-copy {
+        display: grid;
+        min-width: 0;
+      }
+      .service-menu-link-copy strong {
+        font-weight: 500;
+      }
+      .mainnav .service-menu-links .service-menu-link--icon {
+        display: grid;
+        grid-template-columns: 32px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+      }
+      .service-menu-link--icon > img {
+        display: block;
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+      }
+      .service-menu-link-copy small {
+        margin-top: 2px;
+        color: var(--color-ink-3);
+        font-size: 10px;
+        line-height: 1.45;
+      }
       .mainnav .service-preview {
         position: relative;
         display: grid;
-        grid-template-columns: 104px minmax(0, 1fr) 14px;
-        align-items: center;
-        gap: 12px;
+        grid-template-columns: 104px minmax(0, 1fr);
+        align-items: stretch;
+        column-gap: 12px;
+        row-gap: 3px;
         padding: 10px;
         border: 1px solid var(--color-rule-2);
         background: var(--color-paper-2);
         color: var(--color-ink);
       }
+      .mainnav .service-preview-main {
+        display: contents;
+        padding: 0;
+        color: inherit;
+        white-space: normal;
+      }
       .service-preview img {
         display: block;
+        grid-column: 1;
+        grid-row: 1 / span 2;
         width: 104px;
-        height: auto;
+        height: 100%;
+        min-height: 55px;
         border: 1px solid var(--color-rule);
+        background: #fff;
+        object-fit: cover;
+      }
+      .service-preview--icon img {
+        padding: 5px;
+        object-fit: contain;
+      }
+      .service-preview--tooka img {
+        padding: 5px;
       }
       .service-preview-copy {
         display: grid;
+        grid-column: 2;
+        grid-row: 1;
         min-width: 0;
         gap: 3px;
       }
@@ -1153,10 +1304,46 @@ const jsonLd = {
         color: var(--color-ink-2);
         font-size: 12px;
         line-height: 1.55;
+        overflow-wrap: anywhere;
       }
-      .service-preview-go {
+      .service-preview-cta {
+        display: inline-flex;
+        width: fit-content;
+        min-height: 31px;
+        align-items: center;
+        gap: 8px;
+        margin-top: 7px;
+        padding: 5px 10px;
+        border: 1px solid var(--color-accent);
+        border-radius: 3px;
         color: var(--color-accent);
-        font-size: 13px;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.2;
+      }
+      button.service-preview-cta {
+        appearance: none;
+        background: transparent;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .service-preview > .service-preview-actions {
+        display: flex;
+        grid-column: 2;
+        grid-row: 2;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 7px 10px;
+        color: inherit;
+        font-size: inherit;
+        line-height: inherit;
+      }
+      .service-preview-actions em {
+        color: var(--color-ink-3);
+        font-size: 10px;
+        font-style: normal;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
       }
       .np-go {
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -1210,7 +1397,8 @@ const jsonLd = {
           column-gap: 0;
         }
         .nav-js .hd-mark {
-          margin-inline-end: auto;
+          margin-inline-start: 16px;
+          margin-inline-end: 0;
         }
         .nav-js .hd-mark-t {
           max-width: none;
@@ -1220,7 +1408,7 @@ const jsonLd = {
         .nav-js .mainnav {
           order: 2;
           flex-basis: auto;
-          margin-inline: auto 28px;
+          margin-inline: auto 16px;
           max-height: none;
           max-width: none;
           padding-block: 0;
@@ -1250,7 +1438,7 @@ const jsonLd = {
         }
         .nav-js .mainnav a {
           padding: 12px 0;
-          font-size: 16px;
+          font-size: 18px;
           white-space: nowrap;
           font-weight: 400;
         }
@@ -1258,28 +1446,48 @@ const jsonLd = {
           align-items: baseline;
           gap: 4px;
           padding: 12px 0;
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 500;
           white-space: nowrap;
         }
         .service-nav {
           position: relative;
         }
+        .service-nav-shell--split {
+          grid-template-columns: auto auto;
+        }
+        .mainnav .service-nav-direct {
+          padding-right: 5px;
+        }
+        .service-nav-shell--split .service-nav summary {
+          padding-left: 0;
+        }
         .service-nav-item--accent .service-nav summary {
           padding-inline: 18px;
           border-radius: 4px;
           font-weight: 700;
         }
+        .service-nav-item--accent .service-nav-shell--split {
+          padding-inline-start: 18px;
+          border-radius: 4px;
+        }
+        .nav-js .mainnav .service-nav-item--accent .service-nav-direct {
+          padding-right: 5px;
+        }
+        .service-nav-item--accent .service-nav-shell--split .service-nav summary {
+          padding-inline: 0 18px;
+          border-radius: 0;
+        }
         .service-nav-mark {
-          font-size: 12px;
+          font-size: 13px;
         }
         .service-menu {
           position: fixed;
           top: 84px;
           left: 50%;
           z-index: 60;
-          width: min(760px, calc(100vw - 32px));
-          padding: 20px;
+          width: min(860px, calc(100vw - 32px));
+          padding: 24px;
           border: 1px solid var(--color-rule-2);
           background: rgb(247 245 241 / 98%);
           box-shadow: 0 20px 50px rgb(37 32 27 / 14%);
@@ -1291,7 +1499,7 @@ const jsonLd = {
           position: absolute;
           top: calc(100% + 10px);
           left: 50%;
-          width: 260px;
+          width: 300px;
           padding: 14px 18px;
           transform: translateX(-50%);
         }
@@ -1327,19 +1535,29 @@ const jsonLd = {
           gap: 14px;
         }
         .nav-js .mainnav .service-preview {
-          grid-template-columns: 132px minmax(0, 1fr) 14px;
-          gap: 14px;
-          padding: 12px;
+          grid-template-columns: 152px minmax(0, 1fr);
+          column-gap: 18px;
+          padding: 15px;
+          white-space: normal;
+        }
+        .nav-js .mainnav .service-preview-main {
           white-space: normal;
         }
         .service-preview img {
-          width: 132px;
+          width: 152px;
+          min-height: 80px;
+        }
+        .service-preview--icon img {
+          padding: 8px;
+        }
+        .service-preview--tooka img {
+          padding: 8px;
         }
         .service-preview-copy strong {
-          font-size: 15px;
+          font-size: 16px;
         }
         .service-preview-copy > span {
-          font-size: 12px;
+          font-size: 12.5px;
         }
         .nav-js .mainnav .np-go {
           display: none;
@@ -1350,76 +1568,348 @@ const jsonLd = {
         }
       }
 
-      /* ---------- 搜尋下拉面板 ---------- */
-      /* 這裡不能設 display（會壓過 Tailwind 的 .hidden，見檔頭警告）。 */
-      .search-pop {
-        position: absolute;
-        top: 100%;
-        left: 20px;
-        right: 20px;
-        z-index: 50;
-        margin-top: 10px;
-        border: 1px solid var(--color-rule);
-        background: var(--color-surface);
-        padding: 12px;
-        box-shadow: 0 18px 40px rgb(22 22 26 / 12%);
+      /* ---------- 右下角 AI 終端機搜尋 ---------- */
+      .search-chatbot {
+        position: fixed;
+        right: max(18px, env(safe-area-inset-right));
+        bottom: max(18px, env(safe-area-inset-bottom));
+        z-index: 80;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       }
-      @media (min-width: 768px) {
-        .search-pop {
-          left: auto;
-          right: 40px;
-          width: 320px;
-        }
-      }
-      @media (min-width: 1024px) {
-        /* 桌機才把定位基準交給搜尋按鈕本身。手機維持 static，
-           面板改以 sticky 的 .site-header 為基準拉成整條寬——
-           不然 288px 的面板掛在最左邊那顆 42px 按鈕上，右對齊會直接溢出畫面左緣。 */
-        .hd-search {
-          position: relative;
-        }
-        .search-pop {
-          right: 0;
-          margin-top: 14px;
-        }
-      }
-      .search-input {
-        width: 100%;
-        border: 1px solid var(--color-rule-3);
-        background: var(--color-surface);
-        padding: 9px 12px;
-        font-size: 14px;
-        line-height: 1.4;
-        color: var(--color-ink-2);
-      }
-      .search-input:focus {
-        border-color: var(--color-accent);
-      }
-      .search-ex {
-        margin-top: 10px;
-      }
-      .search-ex-h {
-        padding: 0 8px 4px;
-        font-size: 12px;
-        color: var(--color-ink-3);
-      }
-      .search-ex button {
-        display: block;
-        width: 100%;
-        padding: 7px 8px;
-        text-align: left;
-        font-size: 14px;
-        color: var(--color-ink-2);
-        background: transparent;
-        border: 0;
+      .search-chat-toggle {
+        display: grid;
+        width: 56px;
+        height: 56px;
+        margin-left: auto;
+        place-items: center;
+        padding: 0;
+        border: 1px solid #4b4643;
+        border-radius: 50%;
+        background: #1d1b1a;
+        color: #f7f3ee;
+        box-shadow: 0 12px 32px rgb(22 18 17 / 24%);
         cursor: pointer;
       }
-      .search-res {
-        margin-top: 10px;
-        max-height: 20rem;
+      .search-chat-toggle svg {
+        width: 25px;
+        height: 25px;
+        fill: currentColor;
+      }
+      .search-chat-toggle svg circle {
+        fill: #1d1b1a;
+      }
+      .search-chat-toggle > span {
+        position: absolute;
+        top: calc(100% + 3px);
+        color: var(--color-accent-2);
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        white-space: nowrap;
+      }
+      .search-chat-panel {
+        position: absolute;
+        right: 0;
+        bottom: 72px;
+        width: min(400px, calc(100vw - 24px));
+        max-height: min(640px, calc(100svh - 104px));
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #3f3b39;
+        border-radius: 8px;
+        background: #151414;
+        color: #f5f1eb;
+        box-shadow: 0 24px 70px rgb(22 18 17 / 28%);
+      }
+      .search-chat-panel:not([hidden]) {
+        display: flex;
+      }
+      .search-chat-bar {
+        display: grid;
+        min-height: 40px;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px 0 13px;
+        border-bottom: 1px solid #393635;
+        background: #242120;
+      }
+      .search-chat-dots {
+        display: flex;
+        gap: 5px;
+      }
+      .search-chat-dots i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #a94d59;
+      }
+      .search-chat-dots i:nth-child(2) { background: #b8924f; }
+      .search-chat-dots i:nth-child(3) { background: #5d9975; }
+      .search-chat-bar b {
+        overflow: hidden;
+        color: #aaa29d;
+        font-size: 9px;
+        font-weight: 400;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .search-chat-bar button {
+        display: grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #aaa29d;
+        font: 300 22px/1 sans-serif;
+        cursor: pointer;
+      }
+      .search-chat-screen {
+        min-height: 0;
+        flex: 1;
         overflow-y: auto;
-        border-top: 1px solid var(--color-rule);
-        padding-top: 6px;
+        padding: 18px;
+        overscroll-behavior: contain;
+      }
+      .search-chat-boot {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 0 0 20px;
+        color: #716b67;
+        font-size: 8px;
+        letter-spacing: 0.1em;
+      }
+      .search-chat-dialog,
+      .search-chat-response {
+        display: grid;
+        grid-template-columns: 29px minmax(0, 1fr);
+        align-items: start;
+        gap: 9px;
+      }
+      .search-chat-ai {
+        display: grid;
+        width: 29px;
+        height: 22px;
+        place-items: center;
+        border: 1px solid #bc6472;
+        border-radius: 3px;
+        color: #f09aa7;
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+      .search-chat-dialog p {
+        margin: 0;
+        color: #f7f3ee;
+        font-family: var(--font-display);
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.5;
+      }
+      .search-chat-examples {
+        display: grid;
+        gap: 3px;
+        margin: 13px 0 0 38px;
+      }
+      .search-chat-examples[hidden],
+      .search-chat-answer[hidden] {
+        display: none;
+      }
+      .search-chat-examples button {
+        min-height: 40px;
+        padding: 7px 9px;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        background: transparent;
+        color: #aaa39e;
+        font: 500 11px/1.5 var(--font-display);
+        text-align: left;
+        cursor: pointer;
+      }
+      .search-chat-examples button:first-child {
+        border-color: #514b48;
+        background: #272322;
+        color: #fffaf4;
+      }
+      .search-chat-examples button span,
+      .search-chat-command > span {
+        margin-right: 6px;
+        color: #ef8998;
+      }
+      .search-chat-answer {
+        margin-top: 18px;
+      }
+      .search-chat-command {
+        margin: 0 0 13px 38px;
+        color: #d7d0ca;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      .search-chat-command b {
+        font-weight: 500;
+      }
+      .search-chat-results {
+        display: grid;
+        min-width: 0;
+        gap: 4px;
+      }
+      .search-chat-result {
+        display: grid;
+        gap: 3px;
+        padding: 8px 9px;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        color: #d8d1cb;
+        text-decoration: none;
+      }
+      .search-chat-result.is-active {
+        border-color: #514b48;
+        background: #272322;
+      }
+      .search-chat-result strong {
+        color: #f1ebe5;
+        font-family: var(--font-display);
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.45;
+      }
+      .search-chat-result span {
+        display: -webkit-box;
+        overflow: hidden;
+        color: #918a84;
+        font-family: var(--font-display);
+        font-size: 9px;
+        line-height: 1.5;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+      .search-chat-empty {
+        margin: 0;
+        color: #918a84;
+        font-family: var(--font-display);
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .search-chat-line {
+        display: grid;
+        min-height: 58px;
+        grid-template-columns: 38px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+        padding: 9px 11px;
+        border: 1px solid #3d654c;
+        border-radius: 4px;
+        background: #1e2922;
+        color: #eef7f1;
+        text-decoration: none;
+      }
+      .search-chat-line img {
+        display: block;
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+      }
+      .search-chat-line span,
+      .search-chat-line small,
+      .search-chat-line b {
+        display: block;
+        min-width: 0;
+      }
+      .search-chat-line small {
+        margin-bottom: 2px;
+        color: #91ad9b;
+        font-family: var(--font-display);
+        font-size: 9px;
+      }
+      .search-chat-line b {
+        color: #f3faf5;
+        font-family: var(--font-display);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .search-chat-line > i {
+        color: #72bf8e;
+        font-size: 13px;
+        font-style: normal;
+      }
+      .search-chat-form {
+        display: grid;
+        min-height: 52px;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 9px 6px 12px;
+        border-top: 1px solid #393635;
+        background: #181716;
+      }
+      .search-chat-form > span {
+        color: #827b76;
+        font-size: 8px;
+      }
+      .search-chat-form input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: #f2ece5;
+        font: 400 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .search-chat-form input::placeholder { color: #716b67; }
+      .search-chat-form button {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: #eee8e1;
+        color: #1a1817;
+        cursor: pointer;
+      }
+      .search-chat-form button svg {
+        width: 17px;
+        height: 17px;
+        stroke-width: 1.9;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .search-chat-status {
+        display: flex;
+        min-height: 27px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 0 12px;
+        border-top: 1px solid #302e2c;
+        background: #211f1e;
+        color: #716b67;
+        font-size: 7px;
+        letter-spacing: 0.08em;
+      }
+      .search-chat-status span:first-child { color: #71b58a; }
+      @media (max-width: 767px) {
+        .search-chatbot {
+          right: max(12px, env(safe-area-inset-right));
+          bottom: max(12px, env(safe-area-inset-bottom));
+        }
+        .search-chat-toggle {
+          width: 50px;
+          height: 50px;
+        }
+        .search-chat-panel {
+          bottom: 64px;
+          max-height: calc(100svh - 88px - env(safe-area-inset-bottom));
+        }
+        .search-chat-screen { padding: 14px 12px; }
+        .search-chat-dialog p { font-size: 15px; }
+        .search-chat-examples { margin-left: 0; }
+        .search-chat-command { margin-left: 0; }
       }
 
       /* ---------- 頁尾 ---------- */
@@ -1565,12 +2055,12 @@ const jsonLd = {
       @media (hover: hover) and (pointer: fine) {
         .floating-line:hover {
           background: var(--color-accent-2);
-          transform: translateY(-50%) scale(1.06);
+          transform: scale(1.06);
         }
-        .hicon:hover {
-          color: var(--color-accent);
-          border-color: var(--color-accent);
-          background: var(--color-accent-tint);
+        .search-chat-toggle:hover {
+          border-color: #bc6472;
+          background: #292524;
+          transform: translateY(-2px);
         }
         .hd-cue:hover {
           border-color: var(--color-ink);
@@ -1601,16 +2091,27 @@ const jsonLd = {
           border-color: var(--color-accent);
           background: var(--color-accent-tint);
         }
-        .search-ex button:hover {
-          background: var(--color-paper-2);
+        .search-chat-examples button:hover,
+        .search-chat-result:hover {
+          border-color: #514b48;
+          background: #272322;
+          color: #fffaf4;
+        }
+        .search-chat-line:hover {
+          border-color: #72bf8e;
+          background: #24362a;
         }
       }
 
       /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
-      .hicon:focus-visible {
-        color: var(--color-accent);
-        border-color: var(--color-accent);
-        background: var(--color-accent-tint);
+      .search-chat-toggle:focus-visible,
+      .search-chat-bar button:focus-visible,
+      .search-chat-examples button:focus-visible,
+      .search-chat-result:focus-visible,
+      .search-chat-line:focus-visible,
+      .search-chat-form button:focus-visible {
+        outline: 2px solid #f09aa7;
+        outline-offset: 3px;
       }
       .mainnav a:focus-visible {
         color: var(--color-accent);
@@ -1635,7 +2136,7 @@ const jsonLd = {
           scroll-behavior: auto;
         }
         .site-header,
-        .hicon,
+        .search-chat-toggle,
         .hd-cue,
         .hd-cue-b i,
         .mainnav,
