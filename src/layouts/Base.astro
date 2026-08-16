@@ -151,8 +151,23 @@ const jsonLd = {
          noindex 頁面（草稿／不公開頁）完全不輸出 GA 腳本，不會被統計 -->
     {!noindex && <script is:inline>
       // 只統計正式網站；localhost、區域網路 IP 與其他預覽網址完全不載入 GA4。
+      // 自用裝置開一次 ?analytics=off 會寫入跨子網域 Cookie；?analytics=on 可恢復。
+      // 一般不執行 JavaScript 的爬蟲本來就不會送 GA；自動化瀏覽器則額外排除。
       var analyticsHosts = ['aixwang.dev', 'www.aixwang.dev'];
-      if (analyticsHosts.indexOf(window.location.hostname) !== -1) {
+      var analyticsControl = new URLSearchParams(window.location.search).get('analytics');
+      if (analyticsControl === 'off') {
+        document.cookie = 'aixwang_ga_opt_out=1; Max-Age=315360000; Path=/; Domain=.aixwang.dev; SameSite=Lax; Secure';
+      } else if (analyticsControl === 'on') {
+        document.cookie = 'aixwang_ga_opt_out=; Max-Age=0; Path=/; Domain=.aixwang.dev; SameSite=Lax; Secure';
+      }
+      if (analyticsControl === 'off' || analyticsControl === 'on') {
+        var cleanAnalyticsUrl = new URL(window.location.href);
+        cleanAnalyticsUrl.searchParams.delete('analytics');
+        window.history.replaceState({}, '', cleanAnalyticsUrl.pathname + cleanAnalyticsUrl.search + cleanAnalyticsUrl.hash);
+      }
+      var analyticsOptedOut = /(?:^|;\s*)aixwang_ga_opt_out=1(?:;|$)/.test(document.cookie);
+      var analyticsAutomation = navigator.webdriver === true || /HeadlessChrome|Playwright|Puppeteer|Selenium|Aixwang[^\s]*Bot/i.test(navigator.userAgent);
+      if (analyticsHosts.indexOf(window.location.hostname) !== -1 && !analyticsOptedOut && !analyticsAutomation) {
         var preconnect = document.createElement('link');
         preconnect.rel = 'preconnect';
         preconnect.href = 'https://www.googletagmanager.com';
@@ -173,8 +188,39 @@ const jsonLd = {
           document.head.appendChild(s);
         });
 
-        // 自訂事件：追蹤關鍵轉換點擊（LINE 諮詢 / Tooka / YouTube）
+        // 今日新增的互動入口統一送 button_click，以參數區分按鈕、位置與動作。
+        // 搜尋文字會先在瀏覽器遮罩 Email、電話、URL 與帳號，再以 search_term 送出。
+        function redactSearchTerm(value) {
+          return String(value || '')
+            .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, '[email]')
+            .replace(/https?:\/\/\S+|www\.\S+/gi, '[url]')
+            .replace(/(^|\s)@[a-z0-9._-]+/gi, '$1[account]')
+            .replace(/(?:\+?\d[\d\s().-]{7,}\d)/g, '[phone]')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .slice(0, 100);
+        }
+
+        function trackButton(control) {
+          if (!control) return;
+          var label = control.getAttribute('data-ga-label') || control.textContent || '';
+          var destination = control.href || control.getAttribute('data-copy-repo') || '';
+          var parameters = {
+            button_id: control.getAttribute('data-ga-button') || control.getAttribute('data-ga-submit') || 'unknown',
+            button_label: label.replace(/\s+/g, ' ').trim().slice(0, 100),
+            button_location: control.getAttribute('data-ga-location') || 'unknown',
+            button_action: control.getAttribute('data-ga-action') || 'click',
+            destination_url: destination,
+            page_path: location.pathname,
+          };
+          window.gtag('event', 'button_click', parameters);
+        }
+
+        // 自訂事件：追蹤按鈕與關鍵轉換點擊（LINE 諮詢 / Tooka / YouTube）
         document.addEventListener('click', function (e) {
+          var control = e.target.closest && e.target.closest('[data-ga-button]');
+          if (control) trackButton(control);
+
           var a = e.target.closest && e.target.closest('a[href]');
           if (!a) return;
           var href = a.href || '';
@@ -188,6 +234,24 @@ const jsonLd = {
             window.gtag('event', 'tooka_click', { link_url: href, page_path: location.pathname });
           } else if (href.indexOf('youtube.com') !== -1 || href.indexOf('youtu.be') !== -1) {
             window.gtag('event', 'youtube_click', { link_url: href, page_path: location.pathname });
+          }
+        });
+
+        // 透過 submit 追蹤搜尋送出，點箭頭與按 Enter 只會各記一次。
+        document.addEventListener('submit', function (e) {
+          var form = e.target.closest && e.target.closest('form[data-ga-submit]');
+          if (!form) return;
+          var inputSelector = form.getAttribute('data-ga-input');
+          var input = inputSelector ? document.querySelector(inputSelector) : null;
+          if (inputSelector && (!input || !input.value.trim())) return;
+          trackButton(form);
+          if (input) {
+            window.gtag('event', 'view_search_results', {
+              search_term: redactSearchTerm(input.value),
+              search_location: form.getAttribute('data-ga-location') || 'unknown',
+              input_length: input.value.trim().length,
+              page_path: location.pathname,
+            });
           }
         });
       }
@@ -232,7 +296,15 @@ const jsonLd = {
 
     <header class="site-header" id="site-header" data-open="false">
       <div class="hd-cap">
-        <a class="hd-mark" href="/" aria-label={`回首頁 — ${SITE.title}`}>
+        <a
+          class="hd-mark"
+          href="/"
+          aria-label={`回首頁 — ${SITE.title}`}
+          data-ga-button="header_logo"
+          data-ga-label="Aix Logo"
+          data-ga-location="header"
+          data-ga-action="home"
+        >
           <img class="hd-logo" src="/aixwang-icon.png" width="24" height="24" alt="" aria-hidden="true" />
           <span class="hd-mark-t">Aix</span>
         </a>
@@ -241,15 +313,36 @@ const jsonLd = {
           <ul>
             {HEADER_NAV.map((item) => (
               <li>
-                <a href={item.href}>{item.label}<span class="np-go" aria-hidden="true">→</span></a>
+                <a
+                  href={item.href}
+                  data-ga-button="header_about"
+                  data-ga-label={item.label}
+                  data-ga-location="header_nav"
+                  data-ga-action="navigate"
+                >{item.label}<span class="np-go" aria-hidden="true">→</span></a>
               </li>
             ))}
             {DROPDOWN_NAV.map((menu) => (
               <li class:list={['service-nav-item', { 'service-nav-item--accent': menu.accent }]}>
                 <div class:list={['service-nav-shell', { 'service-nav-shell--split': menu.href }]}>
-                  {menu.href && <a class="service-nav-direct" href={menu.href}>{menu.label}</a>}
+                  {menu.href && (
+                    <a
+                      class="service-nav-direct"
+                      href={menu.href}
+                      data-ga-button={`header_${menu.key}`}
+                      data-ga-label={menu.label}
+                      data-ga-location="header_nav"
+                      data-ga-action="navigate"
+                    >{menu.label}</a>
+                  )}
                   <details class="service-nav nav-dropdown" id={`nav-dropdown-${menu.key}`}>
-                    <summary aria-label={menu.href ? `展開${menu.label}分類` : undefined}>
+                    <summary
+                      aria-label={menu.href ? `展開${menu.label}分類` : undefined}
+                      data-ga-button={`header_${menu.key}_dropdown`}
+                      data-ga-label={`${menu.label}下拉`}
+                      data-ga-location="header_nav"
+                      data-ga-action="toggle_dropdown"
+                    >
                       <span class:list={{ 'sr-only': menu.href }}>{menu.label}</span>
                       <span class="service-nav-mark" aria-hidden="true">▾</span>
                     </summary>
@@ -259,7 +352,7 @@ const jsonLd = {
                         <small>{menu.subtitle}</small>
                       </div>
                       <div class="service-menu-grid">
-                        {menu.previews.map((item) => (
+                        {menu.previews.map((item, itemIndex) => (
                           <div
                             class:list={['service-preview', {
                               'service-preview--icon': 'navIcon' in item,
@@ -271,6 +364,10 @@ const jsonLd = {
                               href={item.href}
                               target={'external' in item && item.external ? '_blank' : undefined}
                               rel={'external' in item && item.external ? 'noreferrer' : undefined}
+                              data-ga-button={`header_${menu.key}_card_${itemIndex + 1}`}
+                              data-ga-label={item.title}
+                              data-ga-location={`header_${menu.key}_dropdown`}
+                              data-ga-action="open_content"
                             >
                               <img src={item.image} alt="" width="1200" height="630" loading="lazy" />
                               <span class="service-preview-copy">
@@ -288,6 +385,10 @@ const jsonLd = {
                                   type="button"
                                   class="service-preview-cta"
                                   data-copy-repo={item.repo}
+                                  data-ga-button={`header_resources_claim_${itemIndex + 1}`}
+                                  data-ga-label={item.title}
+                                  data-ga-location="header_resources_dropdown"
+                                  data-ga-action="copy_repo"
                                   aria-label={`複製 ${item.title} Repo 連結`}
                                 ><span class="service-preview-cta-label">領取</span><span aria-hidden="true">→</span></button>
                                 <em>{CLAIM_INSTALL_HINT}</em>
@@ -312,6 +413,10 @@ const jsonLd = {
             aria-expanded="false"
             aria-controls="mainnav"
             aria-label="開啟選單"
+            data-ga-button="header_mobile_menu"
+            data-ga-label="手機導覽選單"
+            data-ga-location="header"
+            data-ga-action="toggle_menu"
           >
             <span class="hd-cue-b" aria-hidden="true"><i></i><i></i></span>
           </button>
@@ -325,6 +430,10 @@ const jsonLd = {
       target="_blank"
       rel="noreferrer"
       aria-label="加 LINE 免費諮詢（開新分頁）"
+      data-ga-button="floating_line"
+      data-ga-label="LINE 免費諮詢"
+      data-ga-location="floating_actions"
+      data-ga-action="contact"
     >
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
         <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
@@ -340,6 +449,10 @@ const jsonLd = {
         aria-label="開啟 AI 站內搜尋"
         aria-expanded="false"
         aria-controls="search-chat-panel"
+        data-ga-button="search_chat_toggle"
+        data-ga-label="我有問題"
+        data-ga-location="floating_actions"
+        data-ga-action="toggle_chat"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5.8 4.5h12.4A3.8 3.8 0 0 1 22 8.3v6.1a3.8 3.8 0 0 1-3.8 3.8h-7.1L5 21l1.2-3A3.8 3.8 0 0 1 2 14.4V8.3a3.8 3.8 0 0 1 3.8-3.8Z" />
@@ -354,7 +467,15 @@ const jsonLd = {
         <div class="search-chat-bar">
           <span class="search-chat-dots" aria-hidden="true"><i></i><i></i><i></i></span>
           <b>alex@aixwang: search</b>
-          <button id="search-chat-close" type="button" aria-label="關閉 AI 站內搜尋">×</button>
+          <button
+            id="search-chat-close"
+            type="button"
+            aria-label="關閉 AI 站內搜尋"
+            data-ga-button="search_chat_close"
+            data-ga-label="關閉問答視窗"
+            data-ga-location="search_chat"
+            data-ga-action="close"
+          >×</button>
         </div>
         <div class="search-chat-screen">
           <p class="search-chat-boot"><span>AIX SEARCH AGENT</span><span>ONLINE</span></p>
@@ -363,9 +484,9 @@ const jsonLd = {
             <p>你想搜尋什麼文章或教學？</p>
           </div>
           <div class="search-chat-examples" id="search-examples">
-            <button type="button" data-search-example="新手要怎麼學 AI" data-search-query="AI 入門"><span>❯</span> 新手要怎麼學 AI</button>
-            <button type="button" data-search-example="如何安裝 Codex" data-search-query="Codex 安裝"><span>❯</span> 如何安裝 Codex</button>
-            <button type="button" data-search-example="如何申請 API" data-search-query="API 申請"><span>❯</span> 如何申請 API</button>
+            <button type="button" data-search-example="新手要怎麼學 AI" data-search-query="AI 入門" data-ga-button="search_chat_example_ai_beginner" data-ga-label="新手要怎麼學 AI" data-ga-location="search_chat" data-ga-action="preset_search"><span>❯</span> 新手要怎麼學 AI</button>
+            <button type="button" data-search-example="如何安裝 Codex" data-search-query="Codex 安裝" data-ga-button="search_chat_example_codex" data-ga-label="如何安裝 Codex" data-ga-location="search_chat" data-ga-action="preset_search"><span>❯</span> 如何安裝 Codex</button>
+            <button type="button" data-search-example="如何申請 API" data-search-query="API 申請" data-ga-button="search_chat_example_api" data-ga-label="如何申請 API" data-ga-location="search_chat" data-ga-action="preset_search"><span>❯</span> 如何申請 API</button>
           </div>
           <div class="search-chat-answer" id="search-chat-answer" hidden>
             <p class="search-chat-command"><span>❯</span><b id="search-chat-query"></b></p>
@@ -374,13 +495,31 @@ const jsonLd = {
               <div class="search-chat-results" id="search-results" aria-live="polite"></div>
             </div>
           </div>
-          <a class="search-chat-line" href={LINKS.line} target="_blank" rel="noreferrer">
+          <a
+            class="search-chat-line"
+            href={LINKS.line}
+            target="_blank"
+            rel="noreferrer"
+            data-ga-button="search_chat_line"
+            data-ga-label="加 LINE 免費諮詢"
+            data-ga-location="search_chat"
+            data-ga-action="contact"
+          >
             <img src={lineLogo.src} width="38" height="38" alt="LINE" />
             <span><small>想直接問我？</small><b>加 LINE 免費諮詢</b></span>
             <i aria-hidden="true">→</i>
           </a>
         </div>
-        <form class="search-chat-form" id="search-chat-form" role="search">
+        <form
+          class="search-chat-form"
+          id="search-chat-form"
+          role="search"
+          data-ga-submit="search_chat_submit"
+          data-ga-label="搜尋站內內容"
+          data-ga-location="search_chat"
+          data-ga-action="search"
+          data-ga-input="#site-search"
+        >
           <label class="sr-only" for="site-search">搜尋站內文章、教學或工具</label>
           <span aria-hidden="true">alex@aixwang:~$</span>
           <input id="site-search" type="search" autocomplete="off" placeholder="輸入你的問題…" />
@@ -696,7 +835,7 @@ const jsonLd = {
             box.innerHTML = list
               .slice(0, 5)
               .map(function (item, index) {
-                return '<a href="' + escapeHtml(item.u) + '" data-search-result="' + index + '" class="search-chat-result ' + (index === 0 ? 'is-active' : '') + '">' +
+                return '<a href="' + escapeHtml(item.u) + '" data-search-result="' + index + '" data-ga-button="search_chat_result" data-ga-label="' + escapeHtml(item.t) + '" data-ga-location="search_chat" data-ga-action="open_result" class="search-chat-result ' + (index === 0 ? 'is-active' : '') + '">' +
                   '<strong>' + escapeHtml(item.t) + '</strong>' +
                   (item.d ? '<span>' + item.d + '</span>' : '') +
                   '</a>';

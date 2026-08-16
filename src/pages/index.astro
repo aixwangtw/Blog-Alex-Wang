@@ -104,6 +104,10 @@ const schema = [
                 data-image-kind="cases"
                 data-href={`${SERVICE_SITE.url}/course/`}
                 data-link-label="查看 AI 新手實戰課"
+                data-ga-button="hero_cli_newbie"
+                data-ga-label="我的新手教學內容"
+                data-ga-location="hero_cli"
+                data-ga-action="select_topic"
               ><span class="cli-selector" aria-hidden="true">❯</span><span class="cli-index">01</span><strong>我的新手教學內容</strong></button>
               <button
                 type="button"
@@ -114,6 +118,10 @@ const schema = [
                 data-image-alt="Alex 在台中場進行 AI 社群圖文演講"
                 data-href={`${SERVICE_SITE.url}/services/speaking/`}
                 data-link-label="查看完整演講履歷"
+                data-ga-button="hero_cli_speaking"
+                data-ga-label="我的演講履歷"
+                data-ga-location="hero_cli"
+                data-ga-action="select_topic"
               ><span class="cli-selector" aria-hidden="true">❯</span><span class="cli-index">02</span><strong>我的演講履歷</strong></button>
               <button
                 type="button"
@@ -124,6 +132,10 @@ const schema = [
                 data-image-alt="Alex AI 服務與專案合作介紹"
                 data-href={`${SERVICE_SITE.url}/`}
                 data-link-label="查看接案與合作方式"
+                data-ga-button="hero_cli_freelance"
+                data-ga-label="我的接案項目"
+                data-ga-location="hero_cli"
+                data-ga-action="select_topic"
               ><span class="cli-selector" aria-hidden="true">❯</span><span class="cli-index">03</span><strong>我的接案項目</strong></button>
               <button
                 type="button"
@@ -134,6 +146,10 @@ const schema = [
                 data-image-alt="Tooka 開源社群圖文卡片工具操作畫面"
                 data-href="/resources/"
                 data-link-label="查看免費工具與教學"
+                data-ga-button="hero_cli_tools"
+                data-ga-label="推薦的開源工具"
+                data-ga-location="hero_cli"
+                data-ga-action="select_topic"
               ><span class="cli-selector" aria-hidden="true">❯</span><span class="cli-index">04</span><strong>推薦的開源工具</strong></button>
               <button
                 type="button"
@@ -143,6 +159,10 @@ const schema = [
                 data-image-kind="articles"
                 data-href="/blog/"
                 data-link-label="閱讀全部文章"
+                data-ga-button="hero_cli_articles"
+                data-ga-label="看我的文章"
+                data-ga-location="hero_cli"
+                data-ga-action="select_topic"
               ><span class="cli-selector" aria-hidden="true">❯</span><span class="cli-index">05</span><strong>看我的文章</strong></button>
             </div>
             <div class="cli-output" id="cli-output" aria-live="polite" aria-atomic="true">
@@ -165,7 +185,7 @@ const schema = [
                       </ul>
                     </div>
                     <div class="cli-article-visual" id="cli-article-visual" aria-label="文章分類" hidden>
-                      <a href="/blog/codex-windows-wsl-install/">
+                      <a href="/blog/codex-windows-wsl-install/" data-ga-button="hero_article_codex" data-ga-label="Codex 安裝教學" data-ga-location="hero_answer" data-ga-action="open_article">
                         <img src="/images/blog/codex-windows-wsl-install.png" alt="Codex Windows 與 WSL 安裝教學" loading="lazy" />
                         <span><small>工具安裝</small><b>Codex 安裝教學</b></span>
                       </a>
@@ -173,23 +193,23 @@ const schema = [
                         <img src="/images/blog/threads-api-tutorial.png" alt="Threads API 申請教學" loading="lazy" />
                         <span>
                           <small>API 申請</small>
-                          <a href="/blog/threads-api-tutorial/">Threads API</a>
-                          <a href="/blog/instagram-api-tutorial/">Instagram API</a>
+                          <a href="/blog/threads-api-tutorial/" data-ga-button="hero_article_threads_api" data-ga-label="Threads API" data-ga-location="hero_answer" data-ga-action="open_article">Threads API</a>
+                          <a href="/blog/instagram-api-tutorial/" data-ga-button="hero_article_instagram_api" data-ga-label="Instagram API" data-ga-location="hero_answer" data-ga-action="open_article">Instagram API</a>
                         </span>
                       </div>
                     </div>
                   </div>
                   <p id="cli-answer-text"></p>
                 </div>
-                <a id="cli-answer-link" href="/">繼續查看 <span aria-hidden="true">→</span></a>
-                <button class="cli-end" id="cli-end" type="button"><span aria-hidden="true">[x]</span> 結束對話</button>
+                <a id="cli-answer-link" href="/" data-ga-button="hero_answer_cta" data-ga-label="繼續查看" data-ga-location="hero_answer" data-ga-action="navigate">繼續查看 <span aria-hidden="true">→</span></a>
+                <button class="cli-end" id="cli-end" type="button" data-ga-button="hero_end_conversation" data-ga-label="結束對話" data-ga-location="hero_answer" data-ga-action="reset"><span aria-hidden="true">[x]</span> 結束對話</button>
               </div>
             </div>
             </div>
           </div>
           <div class="cli-search-area">
             <div class="cli-search-results" id="cli-search-results" aria-live="polite" hidden></div>
-            <form class="cli-search-form" id="cli-search-form" role="search">
+            <form class="cli-search-form" id="cli-search-form" role="search" data-ga-submit="hero_search_submit" data-ga-label="搜尋站內內容" data-ga-location="hero_cli" data-ga-action="search" data-ga-input="#cli-search-input">
               <label class="sr-only" for="cli-search-input">搜尋站內文章、教學或工具</label>
               <span class="cli-search-prompt" aria-hidden="true">alex@aixwang:~$</span>
               <input id="cli-search-input" type="search" autocomplete="off" placeholder="search 文章、教學或工具…" />
@@ -496,6 +516,7 @@ const schema = [
         }
         answerLink.href = option.dataset.href || '/';
         answerLink.firstChild.textContent = (option.dataset.linkLabel || '繼續查看') + ' ';
+        answerLink.dataset.gaLabel = option.dataset.linkLabel || '繼續查看';
         cli.classList.add('is-answered');
         answer.hidden = false;
         answer.classList.add('is-visible');
@@ -553,6 +574,10 @@ const schema = [
             title.className = 'cli-search-title';
             description.className = 'cli-search-description';
             link.href = item.u;
+            link.dataset.gaButton = 'hero_search_result';
+            link.dataset.gaLabel = item.t;
+            link.dataset.gaLocation = 'hero_cli';
+            link.dataset.gaAction = 'open_result';
             title.textContent = item.t;
             description.textContent = item.d || '';
             link.append(title, description);
@@ -610,7 +635,7 @@ const schema = [
           setActive(active + (event.key === 'ArrowDown' ? 1 : -1), true);
         } else if (event.key === 'Enter' && event.target === cli) {
           event.preventDefault();
-          runAnswer(options[active]);
+          options[active].click();
         }
       });
 
@@ -630,7 +655,7 @@ const schema = [
         } else if (event.key === 'Enter') {
           event.preventDefault();
           if (links.length && searchActive >= 0) {
-            location.href = links[searchActive].href;
+            links[searchActive].click();
           } else {
             searchSite(searchInput.value);
           }

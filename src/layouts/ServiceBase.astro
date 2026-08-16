@@ -79,7 +79,21 @@ const jsonLd = {
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script is:inline>
-      if (window.location.hostname === 'service.aixwang.dev') {
+      // 與主站共用內部流量排除 Cookie：在任一子網域開 ?analytics=off 即可停用。
+      var analyticsControl = new URLSearchParams(window.location.search).get('analytics');
+      if (analyticsControl === 'off') {
+        document.cookie = 'aixwang_ga_opt_out=1; Max-Age=315360000; Path=/; Domain=.aixwang.dev; SameSite=Lax; Secure';
+      } else if (analyticsControl === 'on') {
+        document.cookie = 'aixwang_ga_opt_out=; Max-Age=0; Path=/; Domain=.aixwang.dev; SameSite=Lax; Secure';
+      }
+      if (analyticsControl === 'off' || analyticsControl === 'on') {
+        var cleanAnalyticsUrl = new URL(window.location.href);
+        cleanAnalyticsUrl.searchParams.delete('analytics');
+        window.history.replaceState({}, '', cleanAnalyticsUrl.pathname + cleanAnalyticsUrl.search + cleanAnalyticsUrl.hash);
+      }
+      var analyticsOptedOut = /(?:^|;\s*)aixwang_ga_opt_out=1(?:;|$)/.test(document.cookie);
+      var analyticsAutomation = navigator.webdriver === true || /HeadlessChrome|Playwright|Puppeteer|Selenium|Aixwang[^\s]*Bot/i.test(navigator.userAgent);
+      if (window.location.hostname === 'service.aixwang.dev' && !analyticsOptedOut && !analyticsAutomation) {
         window.dataLayer = window.dataLayer || [];
         window.gtag = function () { window.dataLayer.push(arguments); };
         window.gtag('js', new Date());
