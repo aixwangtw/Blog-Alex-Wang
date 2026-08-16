@@ -29,7 +29,8 @@ const PANELS = [
   {
     name: '最後同步時間', icon: 'sync', type: 'metric',
     position_x: 13, position_y: 1, width: 6, height: 4,
-    options: { collection: 'articles', field: 'views_synced_at', function: 'max' },
+    // timestamp 和 date 一樣不能走 Directus GraphQL 的 min/max 聚合；改取排序後最後一列。
+    options: { collection: 'articles', field: 'views_synced_at', function: 'last', sortField: 'views_synced_at' },
   },
   {
     name: '所有文章觀看次數', icon: 'format_list_numbered', type: 'list',

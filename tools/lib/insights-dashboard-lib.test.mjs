@@ -61,6 +61,24 @@ test('PANELS：group A 的 panel 只查 articles collection（不依賴還沒寫
   }
 });
 
+test('PANELS：發佈日期指標使用 first/last 排序，不對 date 欄位做 min/max 聚合', () => {
+  const earliest = PANELS.find((p) => p.name === '最早發佈日');
+  const latest = PANELS.find((p) => p.name === '最新發佈日');
+
+  assert.deepEqual(earliest?.options, {
+    collection: 'articles',
+    field: 'pub_date',
+    function: 'first',
+    sortField: 'pub_date',
+  });
+  assert.deepEqual(latest?.options, {
+    collection: 'articles',
+    field: 'pub_date',
+    function: 'last',
+    sortField: 'pub_date',
+  });
+});
+
 // ── validatePanelDefs：邊界情況 ────────────────────────────────────────────
 
 test('validatePanelDefs：抓出未知的 panel type', () => {

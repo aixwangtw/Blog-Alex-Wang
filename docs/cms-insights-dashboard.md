@@ -43,7 +43,7 @@ count/countDistinct/avg/avgDistinct/sum/sumDistinct/min/max/first/last 這幾種
 | 1 | status 分布 | ✅ 可以 | Pie/Bar chart，`column=status`, `function=count` |
 | 1 | featured 篇數 | ✅ 可以 | Metric panel，`filter={featured:{_eq:true}}` |
 | 1 | featured **比例**（%） | ⚠️ 部分可以 | 篇數可以個別查到，但 panel 沒有「兩個 aggregate 相除」的功能，比例本身要預先算好 |
-| 1 | 最早／最新發佈日 | ✅ 可以 | Metric panel，`function=min`/`max`, `field=pub_date` |
+| 1 | 最早／最新發佈日 | ✅ 可以 | Metric panel，`function=first`/`last`, `field=pub_date`, `sortField=pub_date`；日期欄位不能用 `min`/`max` 聚合 |
 | 2 | 每日／每週／每月發文數 | ✅ 可以 | Time-series panel，`dateField=pub_date`, `precision=day/week/month` |
 | 2 | 相鄰兩篇發文間隔／最長空窗 | ❌ 不行 | 要比較「相鄰兩列」的日期差，panel 沒有 row-to-row 比較功能 |
 | 3 | 每篇「距今更新天數」 | ⚠️ 部分可以 | List panel 可以照 `updated_date` 排序顯示原始日期，但「距今幾天」這個數字本身 panel 算不出來（沒有日期相減的 aggregate/display） |

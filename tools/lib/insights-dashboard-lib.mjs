@@ -71,7 +71,9 @@ export const PANELS = [
     icon: 'first_page',
     minWidth: 6,
     minHeight: 4,
-    options: { collection: 'articles', field: 'pub_date', function: 'min' },
+    // Directus GraphQL 的 aggregated_fields 不包含 date 欄位；日期不可用 min/max 聚合。
+    // metric 的 first/last 會改走一般 items 查詢，再依 sortField 取第一列／最後一列。
+    options: { collection: 'articles', field: 'pub_date', function: 'first', sortField: 'pub_date' },
   },
   {
     group: 'A',
@@ -80,7 +82,7 @@ export const PANELS = [
     icon: 'last_page',
     minWidth: 6,
     minHeight: 4,
-    options: { collection: 'articles', field: 'pub_date', function: 'max' },
+    options: { collection: 'articles', field: 'pub_date', function: 'last', sortField: 'pub_date' },
   },
   {
     group: 'A',
