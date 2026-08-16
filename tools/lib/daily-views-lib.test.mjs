@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildDailyContentViewRows, buildDailyViewRows, parseGa4DailyRows, parseGa4DailyUserRows } from './daily-views-lib.mjs';
+import { buildDailyContentViewRows, buildDailyViewRows, parseGa4AudienceMetrics, parseGa4DailyRows, parseGa4DailyUserRows } from './daily-views-lib.mjs';
 
 test('parseGa4DailyRows 讀取日期、路徑、觀看與使用者指標', () => {
   assert.deepEqual(parseGa4DailyRows({ rows: [{ dimensionValues: [{ value: '20260816' }, { value: '/' }], metricValues: [{ value: '3' }, { value: '2' }, { value: '2' }] }] }), [{ date: '20260816', path: '/', views: 3, active_users: 2, total_users: 2 }]);
@@ -8,6 +8,25 @@ test('parseGa4DailyRows 讀取日期、路徑、觀看與使用者指標', () =>
 
 test('parseGa4DailyUserRows 讀取不重複加總的全站每日使用者', () => {
   assert.deepEqual(parseGa4DailyUserRows({ rows: [{ dimensionValues: [{ value: '20260816' }], metricValues: [{ value: '5' }, { value: '6' }] }] }), [{ date: '20260816', active_users: 5, total_users: 6 }]);
+});
+
+test('parseGa4AudienceMetrics 將三個日期區間轉成置頂數字', () => {
+  const response = {
+    rows: [
+      { dimensionValues: [{ value: 'today' }], metricValues: [{ value: '3' }, { value: '2' }] },
+      { dimensionValues: [{ value: 'since_launch' }], metricValues: [{ value: '120' }, { value: '115' }] },
+      { dimensionValues: [{ value: 'last_30_days' }], metricValues: [{ value: '80' }, { value: '72' }] },
+    ],
+  };
+  assert.deepEqual(parseGa4AudienceMetrics(response), {
+    key: 'site', total_users: 120, active_users_30d: 72, active_users_today: 2,
+  });
+});
+
+test('parseGa4AudienceMetrics 沒有資料時回傳 0', () => {
+  assert.deepEqual(parseGa4AudienceMetrics({}), {
+    key: 'site', total_users: 0, active_users_30d: 0, active_users_today: 0,
+  });
 });
 
 test('buildDailyViewRows 分開文章與頁面、排除舊站並補零日期', () => {

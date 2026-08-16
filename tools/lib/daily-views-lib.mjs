@@ -19,6 +19,25 @@ export function parseGa4DailyUserRows(response) {
   }));
 }
 
+export function parseGa4AudienceMetrics(response) {
+  const byRange = new Map(
+    (response?.rows ?? []).map((row) => [
+      row?.dimensionValues?.[0]?.value ?? '',
+      {
+        total_users: Number(row?.metricValues?.[0]?.value ?? 0),
+        active_users: Number(row?.metricValues?.[1]?.value ?? 0),
+      },
+    ]),
+  );
+
+  return {
+    key: 'site',
+    total_users: byRange.get('since_launch')?.total_users ?? 0,
+    active_users_30d: byRange.get('last_30_days')?.active_users ?? 0,
+    active_users_today: byRange.get('today')?.active_users ?? 0,
+  };
+}
+
 function formatGaDate(raw) {
   if (!/^\d{8}$/.test(raw)) return null;
   return `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}`;

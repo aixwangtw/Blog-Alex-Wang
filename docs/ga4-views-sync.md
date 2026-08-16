@@ -22,6 +22,7 @@ Astro 新站上線日 2026-07-22 起算；StarJobTW 舊站、非現行路徑與�
 npm run page-views:create-collection -- --apply
 npm run daily-views:create-collection -- --apply
 npm run daily-content-views:create-collection -- --apply
+npm run audience-metrics:create-collection -- --apply
 npm run traffic-sources:create-collection -- --apply
 npm run page-views:sync -- --apply
 npm run daily-views:sync -- --apply
@@ -46,6 +47,11 @@ npm run views:create-dashboard -- --apply
 同步查詢會要求 GA4 回傳目前的 Property quota，終端輸出會顯示本次消耗與剩餘的每日 tokens，方便確認
 實際消耗。標準 GA4 Property 目前每天有 200,000 Core tokens，多數一般查詢少於 10 tokens；完整
 排程每天執行一次，常態用量只占極小比例。
+
+`audience_metrics` 固定保存一筆全站摘要，流量統計最上方直接顯示「總使用者」、「近 30 天活躍
+使用者」與「當日活躍使用者」。三個區間透過同一個 GA4 多日期範圍請求取得；總使用者從新站
+2026-07-22 上線日起算，近 30 天使用 `29daysAgo` 到今天的 30 個曆日，數字都是區間內去重結果，
+不會把每日使用者相加。
 `traffic_sources` 會保存 GA4 的來源、媒介、活動名稱、進站頁、工作階段與觀看數。Instagram 留言、
 YouTube 資訊欄等具體位置無法從未加標記的歷史網址反推；分享時需使用 `utm_source`、`utm_medium`
 與 `utm_campaign`，例如 `utm_source=ig&utm_medium=comment` 或
