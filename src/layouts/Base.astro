@@ -1115,14 +1115,18 @@ const jsonLd = {
       }
       @media (max-width: 767px) {
         .floating-line {
-          right: max(14px, env(safe-area-inset-right));
-          bottom: calc(max(12px, env(safe-area-inset-bottom)) + 70px);
+          /* 手機改與 chatbot 左右並排，避免垂直堆疊時按鈕與標籤互相遮住。 */
+          right: calc(max(12px, env(safe-area-inset-right)) + 62px);
+          bottom: max(12px, env(safe-area-inset-bottom));
           width: 46px;
           height: 46px;
         }
         .floating-line svg {
           width: 21px;
           height: 21px;
+        }
+        .floating-line span {
+          display: none;
         }
       }
 
@@ -1714,6 +1718,10 @@ const jsonLd = {
         bottom: max(18px, env(safe-area-inset-bottom));
         z-index: 80;
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        transition:
+          opacity 0.18s var(--ease),
+          transform 0.18s var(--ease),
+          visibility 0.18s var(--ease);
       }
       .search-chat-toggle {
         display: grid;
@@ -2033,6 +2041,14 @@ const jsonLd = {
       }
       .search-chat-status span:first-child { color: #71b58a; }
       @media (max-width: 767px) {
+        /* 首頁終端機仍在 viewport 時先收起浮動操作，避免遮住搜尋列與狀態列。 */
+        body.home-cli-visible:not(.search-chat-open) .floating-line,
+        body.home-cli-visible:not(.search-chat-open) .search-chatbot {
+          visibility: hidden;
+          opacity: 0;
+          pointer-events: none;
+          transform: translateY(8px);
+        }
         .search-chatbot {
           right: max(12px, env(safe-area-inset-right));
           bottom: max(12px, env(safe-area-inset-bottom));
@@ -2040,6 +2056,9 @@ const jsonLd = {
         .search-chat-toggle {
           width: 50px;
           height: 50px;
+        }
+        .search-chat-toggle > span {
+          display: none;
         }
         .search-chat-panel {
           bottom: 64px;

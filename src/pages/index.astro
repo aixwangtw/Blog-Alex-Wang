@@ -356,6 +356,37 @@ const schema = [
   </div>
 
   <script is:inline>
+    /* 手機首屏的終端機本身已有站內搜尋；終端機還在畫面時隱藏右下角浮動操作，
+       避免 LINE 與 chatbot 蓋住搜尋列／ONLINE 狀態列。滑過終端機後再顯示。 */
+    (function () {
+      var cli = document.getElementById('hero-cli');
+      if (!cli) return;
+
+      function setCliVisible(visible) {
+        document.body.classList.toggle('home-cli-visible', visible);
+      }
+
+      setCliVisible(true);
+
+      if ('IntersectionObserver' in window) {
+        var cliObserver = new IntersectionObserver(function (entries) {
+          setCliVisible(entries[0].isIntersecting);
+        });
+        cliObserver.observe(cli);
+        return;
+      }
+
+      function updateCliVisibility() {
+        var rect = cli.getBoundingClientRect();
+        setCliVisible(rect.bottom > 0 && rect.top < window.innerHeight);
+      }
+      window.addEventListener('scroll', updateCliVisibility, { passive: true });
+      window.addEventListener('resize', updateCliVisibility);
+      updateCliVisibility();
+    })();
+  </script>
+
+  <script is:inline>
     /* 逐段浮現：內容 100% 寫在初始 HTML 裡，只有「顯示與否」交給 CSS。
        `js` 這個 class 加在 #home-root（不是 <html>）上，因為這一頁的樣式是
        Astro 的元件範圍樣式——選擇器會被加上 data-astro-cid-*，
