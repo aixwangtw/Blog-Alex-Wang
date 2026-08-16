@@ -21,6 +21,7 @@ Astro 新站上線日 2026-07-22 起算；StarJobTW 舊站、非現行路徑與�
 ```bash
 npm run page-views:create-collection -- --apply
 npm run daily-views:create-collection -- --apply
+npm run daily-content-views:create-collection -- --apply
 npm run traffic-sources:create-collection -- --apply
 npm run page-views:sync -- --apply
 npm run daily-views:sync -- --apply
@@ -33,7 +34,18 @@ npm run views:create-dashboard -- --apply
 `@directus-labs/table-view-panel`。
 日常排程 `tools/daily-ga4-views-cron.sh` 會依序同步文章與全站頁面，不增加前台請求，也不影響頁面載入。
 
-`daily_views` 會保存新站自 2026-07-22 起每天的總流量、文章流量與一般頁面流量，供 Insights 畫折線圖。
+`daily_views` 會保存新站自 2026-07-22 起每天的總流量、文章流量、一般頁面流量、活躍使用者與
+總使用者，供 Insights 畫折線圖。全站使用者數使用日期層級的獨立 GA4 查詢，不會把同一個人看過
+多頁的數字相加而重複計算。
+`daily_content_views` 會保存每篇文章與每個一般頁面的逐日觀看明細，只寫入有觀看的日期。流量統計內
+分成「每篇文章每日流量」與「每個頁面每日流量」兩張表，可依名稱或路徑篩選單一內容，並列出
+觀看數、活躍使用者與總使用者。這份明細
+直接沿用 `daily_views` 已取得的 GA4 報表，不增加 GA4 查詢，也不增加任何前台請求；同步時使用批次
+寫入，避免逐筆請求造成不必要的 CMS 負擔。
+
+同步查詢會要求 GA4 回傳目前的 Property quota，終端輸出會顯示本次消耗與剩餘的每日 tokens，方便確認
+實際消耗。標準 GA4 Property 目前每天有 200,000 Core tokens，多數一般查詢少於 10 tokens；完整
+排程每天執行一次，常態用量只占極小比例。
 `traffic_sources` 會保存 GA4 的來源、媒介、活動名稱、進站頁、工作階段與觀看數。Instagram 留言、
 YouTube 資訊欄等具體位置無法從未加標記的歷史網址反推；分享時需使用 `utm_source`、`utm_medium`
 與 `utm_campaign`，例如 `utm_source=ig&utm_medium=comment` 或

@@ -10,6 +10,8 @@ const FIELDS = [
   { field: 'total_views', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '當日新站總觀看數。' } },
   { field: 'article_views', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '當日單篇文章觀看數。' } },
   { field: 'page_views', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '當日一般頁面觀看數。' } },
+  { field: 'active_users', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '當日全站活躍使用者；使用日期層級查詢，避免跨頁重複加總。' } },
+  { field: 'total_users', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '當日全站總使用者；使用日期層級查詢，避免跨頁重複加總。' } },
   { field: 'views_synced_at', type: 'timestamp', meta: { interface: 'datetime', display: 'datetime', display_options: { relative: false, format: 'short', use24: true }, readonly: true, width: 'half', note: '最後同步時間。' } },
 ];
 const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };

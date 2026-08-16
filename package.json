@@ -19,6 +19,7 @@
     "page-views:create-collection": "node tools/create-page-views-collection.mjs",
     "page-views:sync": "node tools/sync-ga4-page-views.mjs",
     "daily-views:create-collection": "node tools/create-daily-views-collection.mjs",
+    "daily-content-views:create-collection": "node tools/create-daily-content-views-collection.mjs",
     "daily-views:sync": "node tools/sync-ga4-daily-views.mjs",
     "traffic-sources:create-collection": "node tools/create-traffic-sources-collection.mjs",
     "traffic-sources:sync": "node tools/sync-ga4-traffic-sources.mjs",
