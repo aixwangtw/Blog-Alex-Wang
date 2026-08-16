@@ -64,6 +64,9 @@ const FIELD_DEFS = [
     schema: { is_nullable: true },
     meta: {
       interface: 'datetime',
+      display: 'datetime',
+      // @directus-labs/table-view-panel 1.0.0 會直接讀 display_options.relative；不可留 null。
+      display_options: { relative: false, format: 'short', use24: true },
       readonly: true,
       hidden: false,
       note: '最後一次從 GA4 同步瀏覽數的時間，由 tools/sync-ga4-views.mjs 自動寫入。',

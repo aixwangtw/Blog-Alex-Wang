@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 每小時檢查一次、每天實際同步一次 GA4 文章觀看數到 Directus。
+# 每小時檢查一次、每天實際同步一次 GA4 文章與全站頁面觀看數到 Directus。
 # WSL 若在固定時刻未啟動，會在當天第一次啟動後補跑，不影響網站前台載入。
 #
 # 手動測試：bash tools/daily-ga4-views-cron.sh --force
@@ -52,14 +52,33 @@ fi
 
 cd "$PROJECT" || { log "失敗：進不了 $PROJECT"; exit 1; }
 
-output=$("$NODE" tools/sync-ga4-views.mjs --apply 2>&1)
-status=$?
+article_output=$("$NODE" tools/sync-ga4-views.mjs --apply 2>&1)
+article_status=$?
+page_output=''
+daily_output=''
+source_output=''
+page_status=0
+daily_status=0
+source_status=0
+if [ "$article_status" -eq 0 ]; then
+  page_output=$("$NODE" tools/sync-ga4-page-views.mjs --apply 2>&1)
+  page_status=$?
+fi
+if [ "$article_status" -eq 0 ] && [ "$page_status" -eq 0 ]; then
+  daily_output=$("$NODE" tools/sync-ga4-daily-views.mjs --apply 2>&1)
+  daily_status=$?
+fi
+if [ "$article_status" -eq 0 ] && [ "$page_status" -eq 0 ] && [ "$daily_status" -eq 0 ]; then
+  source_output=$("$NODE" tools/sync-ga4-traffic-sources.mjs --apply 2>&1)
+  source_status=$?
+fi
+status=$((article_status != 0 ? article_status : page_status != 0 ? page_status : daily_status != 0 ? daily_status : source_status))
 
 if [ "$status" -eq 0 ]; then
   echo "$TODAY" > "$RUN_STAMP"
-  log "成功：$(printf '%s' "$output" | tail -n 1)"
+  log "成功：文章 $(printf '%s' "$article_output" | tail -n 1)｜頁面 $(printf '%s' "$page_output" | tail -n 1)｜每日 $(printf '%s' "$daily_output" | tail -n 1)｜入口 $(printf '%s' "$source_output" | tail -n 1)"
 else
-  log "失敗（exit $status）：$(printf '%s' "$output" | tail -n 3 | tr '\n' ' | ')"
+  log "失敗（exit $status）：$(printf '%s\n%s\n%s\n%s' "$article_output" "$page_output" "$daily_output" "$source_output" | tail -n 6 | tr '\n' ' | ')"
 fi
 
 exit "$status"

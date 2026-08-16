@@ -19,9 +19,8 @@
 //     GitHub main 分支的原始碼，不保證跟這台實際跑的版本逐欄位相同。--apply 前建議先手動在
 //     後台試建一個 panel，確認選單跟這裡假設的欄位一致。
 //
-// 版面配置：這裡採用「單欄由上往下堆疊」，每個 panel 的 width 用官方原始碼裡各 panel type 的
-// minWidth（或略寬一點），position_y 依序往下疊，保證不會互相重疊。沒有查到這台 Directus
-// 的 Insights 工作區網格總寬度是多少格，所以不假設「一排放幾個」，建好之後可以在後台自由拖曳調整。
+// 版面配置：依 Directus VWorkspace 每格 18px 的實際規格，使用 48 格寬版網格。摘要數字每列三張，
+// 清單與圖表每列兩張，並在 A/B/C 資料群組間留白；詳細規則見 layoutPanels()。
 //
 // 冪等：用「名稱」比對——dashboard 用 name 查是否已存在（存在就沿用該 dashboard，不重建）；
 // panel 用「同一個 dashboard 底下 name 是否已存在」查（存在就跳過，不會建出重複 panel）。
@@ -37,7 +36,8 @@
 import { layoutPanels, PANELS, validatePanelDefs } from './lib/insights-dashboard-lib.mjs';
 
 const CMS = 'https://cms.aixwang.dev';
-const DASHBOARD_NAME = 'Blog 內容統計';
+const DASHBOARD_NAME = '網站內容統計';
+const LEGACY_DASHBOARD_NAMES = ['Blog 內容統計', '內容統計'];
 
 const args = process.argv.slice(2);
 const apply = args.includes('--apply');
@@ -73,6 +73,26 @@ async function findDashboardByName(name) {
   return { found: data.length > 0, dashboard: data[0] ?? null, unreadable: false };
 }
 
+async function findDashboard() {
+  const preferred = await findDashboardByName(DASHBOARD_NAME);
+  if (preferred.found || preferred.unreadable) return preferred;
+  for (const legacyName of LEGACY_DASHBOARD_NAMES) {
+    const legacy = await findDashboardByName(legacyName);
+    if (legacy.found || legacy.unreadable) return legacy;
+  }
+  return preferred;
+}
+
+async function renameDashboard(id) {
+  const res = await fetch(`${CMS}/dashboards/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ name: DASHBOARD_NAME }),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`重新命名 dashboard 失敗，HTTP ${res.status}：${text.slice(0, 300)}`);
+}
+
 async function createDashboard(name) {
   const res = await fetch(`${CMS}/dashboards`, {
     method: 'POST',
@@ -90,7 +110,7 @@ async function findPanelByName(dashboardId, name) {
   if (res.status === 403 || res.status === 404) return { found: false, unreadable: true };
   if (!res.ok) throw new Error(`查詢 panel 失敗，HTTP ${res.status}：${(await res.text()).slice(0, 300)}`);
   const { data } = await res.json();
-  return { found: data.length > 0, unreadable: false };
+  return { found: data.length > 0, panel: data[0] ?? null, unreadable: false };
 }
 
 async function createPanel(dashboardId, panel) {
@@ -116,6 +136,28 @@ async function createPanel(dashboardId, panel) {
   return JSON.parse(text).data;
 }
 
+async function updatePanel(panelId, dashboardId, panel) {
+  const body = {
+    dashboard: dashboardId,
+    name: panel.name,
+    icon: panel.icon,
+    show_header: true,
+    type: panel.type,
+    position_x: panel.position_x,
+    position_y: panel.position_y,
+    width: panel.width,
+    height: panel.height,
+    options: panel.options,
+  };
+  const res = await fetch(`${CMS}/panels/${panelId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`更新 panel「${panel.name}」失敗，HTTP ${res.status}：${text.slice(0, 300)}`);
+}
+
 // ── 主流程 ──────────────────────────────────────────────────────────────
 
 const GROUP_LABEL = {
@@ -133,7 +175,7 @@ async function main() {
 
   if (!apply) {
     if (token) {
-      const existing = await findDashboardByName(DASHBOARD_NAME);
+      const existing = await findDashboard();
       if (existing.unreadable) {
         console.log('Dashboard 目前狀態：查不到（沒有權限讀 directus_dashboards，或這個 collection 不存在——都可能是 token 權限不夠）。');
       } else if (existing.found) {
@@ -161,12 +203,16 @@ async function main() {
 
   // --apply
   let dashboardId;
-  const existing = await findDashboardByName(DASHBOARD_NAME);
+  const existing = await findDashboard();
   if (existing.unreadable) {
     throw new Error('讀不到 directus_dashboards，token 權限可能不夠（需要能讀寫 directus_dashboards / directus_panels 的權限）。');
   }
   if (existing.found) {
     dashboardId = existing.dashboard.id;
+    if (existing.dashboard.name !== DASHBOARD_NAME) {
+      await renameDashboard(dashboardId);
+      console.log(`已將 Dashboard「${existing.dashboard.name}」改名為「${DASHBOARD_NAME}」。`);
+    }
     console.log(`Dashboard「${DASHBOARD_NAME}」已存在（id=${dashboardId}），沿用它。`);
   } else {
     const created = await createDashboard(DASHBOARD_NAME);
@@ -184,7 +230,8 @@ async function main() {
         continue;
       }
       if (found.found) {
-        console.log('已存在，跳過。');
+        await updatePanel(found.panel.id, dashboardId, panel);
+        console.log('已存在，更新版面與設定。');
         continue;
       }
       await createPanel(dashboardId, panel);
@@ -195,7 +242,7 @@ async function main() {
   }
 
   console.log('\n完成。到 Directus 後台左側選單的 Insights 找到「' + DASHBOARD_NAME + '」查看。');
-  console.log('版面是單欄由上往下堆疊的初始配置，可以在後台自由拖曳調整位置與大小。');
+  console.log('版面已整理成 48 格寬版網格，可以在後台繼續拖曳微調。');
 }
 
 main().catch((err) => {

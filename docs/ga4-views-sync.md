@@ -1,4 +1,4 @@
-# GA4 文章瀏覽數同步回 Directus
+# GA4 文章與全站頁面瀏覽數同步回 Directus
 
 把 GA4（Google Analytics 4）記錄的 `/blog/<slug>/` 瀏覽數，定期同步回 Directus `articles`
 collection 的三個欄位：
@@ -10,6 +10,38 @@ collection 的三個欄位：
 | `views_synced_at` | timestamp | 最後一次同步時間 |
 
 三個欄位在 Directus 後台都是**唯讀**（`meta.readonly = true`），手動改了也會在下次同步時被覆蓋。
+
+此外，`tools/sync-ga4-page-views.mjs` 會把 GA4 所有網址路徑同步到 `page_views` collection。每列包含
+頁面名稱、路徑、內容類型、是否為現行內容、累積觀看、近 30 天觀看及同步時間。頁面統計從目前
+Astro 新站上線日 2026-07-22 起算；StarJobTW 舊站、非現行路徑與單篇文章不寫入 `page_views`。
+單篇文章只同步到 `articles`，避免在文章表格與頁面表格重複出現；`/blog/` 文章列表頁仍算一般頁面。
+
+首次設定與手動同步：
+
+```bash
+npm run page-views:create-collection -- --apply
+npm run daily-views:create-collection -- --apply
+npm run traffic-sources:create-collection -- --apply
+npm run page-views:sync -- --apply
+npm run daily-views:sync -- --apply
+npm run traffic-sources:sync -- --apply
+npm run views:create-dashboard -- --apply
+```
+
+最後一行會在「流量統計」直接建立文章觀看次數表格，並建立兩個 Content 原生表格書籤：
+「文章觀看次數表格」與「全站頁面觀看次數表格」。Insights 表格使用 Marketplace 的
+`@directus-labs/table-view-panel`。
+日常排程 `tools/daily-ga4-views-cron.sh` 會依序同步文章與全站頁面，不增加前台請求，也不影響頁面載入。
+
+`daily_views` 會保存新站自 2026-07-22 起每天的總流量、文章流量與一般頁面流量，供 Insights 畫折線圖。
+`traffic_sources` 會保存 GA4 的來源、媒介、活動名稱、進站頁、工作階段與觀看數。Instagram 留言、
+YouTube 資訊欄等具體位置無法從未加標記的歷史網址反推；分享時需使用 `utm_source`、`utm_medium`
+與 `utm_campaign`，例如 `utm_source=ig&utm_medium=comment` 或
+`utm_source=youtube&utm_medium=description`，之後同步時會自動分類。
+
+所有自動同步查詢都固定篩選 `hostName = aixwang.dev`。因此 `localhost` 本機開發、預覽環境與在本機
+執行的 Browser Agent 即使曾載入 GA4，也不會寫進 CMS 的文章、頁面、每日趨勢或流量入口統計。
+這個條件也會在每次重算時回溯套用，可清掉早期已進入 GA4、但不屬於正式站的測試流量。
 
 > 這份文件與對應的程式碼是在**沒有任何 GA4／Google Cloud 憑證**的環境下寫的。GA4 Data API 路徑
 > （下方「模式 A」）完全沒有真的打過 API 驗證，CSV 解析（「模式 B」）也沒有拿真實匯出檔案對過格式。

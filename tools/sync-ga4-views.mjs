@@ -178,6 +178,8 @@ async function fetchGa4ApiRows({ startDate, endDate }) {
       dateRanges: [{ startDate, endDate }],
       dimensions: [{ name: 'pagePath' }],
       metrics: [{ name: 'screenPageViews' }],
+      // 只同步正式站；排除 localhost 本機開發、Browser Agent 與預覽環境反覆載入。
+      dimensionFilter: { filter: { fieldName: 'hostName', stringFilter: { matchType: 'EXACT', value: 'aixwang.dev', caseSensitive: false } } },
       limit: pageSize,
       offset,
     });

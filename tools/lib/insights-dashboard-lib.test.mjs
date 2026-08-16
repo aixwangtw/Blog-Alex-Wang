@@ -119,39 +119,51 @@ test('validatePanelDefs：欄位齊全時回傳空陣列', () => {
 
 // ── layoutPanels ─────────────────────────────────────────────────────────
 
-test('layoutPanels：單欄堆疊，position_x 固定 1，position_y 由 1 開始依序累加 minHeight', () => {
+test('layoutPanels：48 格寬版網格，metric 每列三張、list／圖表每列兩張', () => {
   const panels = [
-    { name: 'a', minWidth: 6, minHeight: 4 },
-    { name: 'b', minWidth: 12, minHeight: 6 },
-    { name: 'c', minWidth: 10, minHeight: 10 },
+    { name: 'a', group: 'A', type: 'metric', minWidth: 6, minHeight: 4 },
+    { name: 'b', group: 'A', type: 'metric', minWidth: 6, minHeight: 4 },
+    { name: 'c', group: 'A', type: 'metric', minWidth: 6, minHeight: 4 },
+    { name: 'd', group: 'A', type: 'list', minWidth: 12, minHeight: 6 },
+    { name: 'e', group: 'B', type: 'time-series', minWidth: 12, minHeight: 6 },
   ];
   const laidOut = layoutPanels(panels);
 
   assert.deepEqual(
     laidOut.map((p) => [p.position_x, p.position_y, p.width, p.height]),
     [
-      [1, 1, 6, 4],
-      [1, 5, 12, 6],
-      [1, 11, 10, 10],
+      [1, 1, 16, 5],
+      [17, 1, 16, 5],
+      [33, 1, 16, 5],
+      [1, 6, 24, 12],
+      [1, 20, 24, 14],
     ],
   );
 });
 
-test('layoutPanels：任兩個 panel 的 y 範圍不重疊（每個 panel 的 [position_y, position_y+height) 互斥）', () => {
+test('layoutPanels：所有 panel 都在 48 格寬度內，任兩張矩形不重疊', () => {
   const laidOut = layoutPanels(PANELS);
-  const ranges = laidOut
-    .map((p) => [p.position_y, p.position_y + p.height])
-    .sort((a, b) => a[0] - b[0]);
+  for (const panel of laidOut) {
+    assert.ok(panel.position_x >= 1, `「${panel.name}」超出左界`);
+    assert.ok(panel.position_x + panel.width - 1 <= 48, `「${panel.name}」超出 48 格右界`);
+  }
 
-  for (let i = 1; i < ranges.length; i++) {
-    const [, prevEnd] = ranges[i - 1];
-    const [curStart] = ranges[i];
-    assert.ok(curStart >= prevEnd, `第 ${i} 個 panel 的起點 ${curStart} 跟前一個的結束 ${prevEnd} 重疊`);
+  for (let i = 0; i < laidOut.length; i++) {
+    for (let j = i + 1; j < laidOut.length; j++) {
+      const a = laidOut[i];
+      const b = laidOut[j];
+      const overlaps =
+        a.position_x < b.position_x + b.width &&
+        b.position_x < a.position_x + a.width &&
+        a.position_y < b.position_y + b.height &&
+        b.position_y < a.position_y + a.height;
+      assert.equal(overlaps, false, `「${a.name}」和「${b.name}」重疊`);
+    }
   }
 });
 
 test('layoutPanels：不修改傳入的原始陣列與物件（回傳新物件）', () => {
-  const original = [{ name: 'a', minWidth: 6, minHeight: 4 }];
+  const original = [{ name: 'a', group: 'A', type: 'metric', minWidth: 6, minHeight: 4 }];
   const laidOut = layoutPanels(original);
   assert.equal('position_x' in original[0], false);
   assert.notEqual(laidOut[0], original[0]);

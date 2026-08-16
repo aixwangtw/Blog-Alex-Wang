@@ -318,18 +318,50 @@ export const PANELS = [
 ];
 
 /**
- * 版面配置：單欄由上往下堆疊。position_x 固定 1，position_y 依序疊加每個 panel 的 minHeight，
- * 保證不會互相重疊——沒有查到這台 Directus 的 Insights 工作區網格總寬度是多少格，
- * 所以不假設「一排放幾個」，這是刻意保守的版面（見 tools/create-insights-dashboard.mjs 開頭說明）。
+ * 版面配置：以 48 格（每格 18px，約 864px）排成寬版網格。
+ * metric 一張 16 格、每列三張；list／圖表一張 24 格、每列兩張；不同資料群組間留兩格空白。
+ * 這是依 Directus 11 的 VWorkspace gridSize=18 實際規格調整，避免舊版只用 minWidth
+ * 造成 metric 只有 108px、list 只有 216px，所有標題與數字擠成一團。
  *
  * @param {typeof PANELS} panels
  * @returns {Array<typeof PANELS[number] & { position_x: number, position_y: number, width: number, height: number }>}
  */
 export function layoutPanels(panels) {
+  const gridWidth = 48;
+  const sizeByType = {
+    metric: { width: 16, height: 5 },
+    list: { width: 24, height: 12 },
+    'time-series': { width: 24, height: 14 },
+    'bar-chart': { width: 24, height: 14 },
+    'pie-chart': { width: 24, height: 14 },
+  };
+  let cursorX = 1;
   let cursorY = 1;
+  let rowHeight = 0;
+  let currentGroup = panels[0]?.group;
+
+  const nextRow = () => {
+    cursorX = 1;
+    cursorY += rowHeight;
+    rowHeight = 0;
+  };
+
   return panels.map((p) => {
-    const laidOut = { ...p, position_x: 1, position_y: cursorY, width: p.minWidth, height: p.minHeight };
-    cursorY += p.minHeight;
+    if (currentGroup !== undefined && p.group !== currentGroup) {
+      if (cursorX !== 1) nextRow();
+      cursorY += 2;
+      currentGroup = p.group;
+    }
+
+    const preferred = sizeByType[p.type] ?? { width: Math.max(p.minWidth, 16), height: Math.max(p.minHeight, 6) };
+    const width = Math.max(p.minWidth, preferred.width);
+    const height = Math.max(p.minHeight, preferred.height);
+
+    if (cursorX + width - 1 > gridWidth) nextRow();
+
+    const laidOut = { ...p, position_x: cursorX, position_y: cursorY, width, height };
+    cursorX += width;
+    rowHeight = Math.max(rowHeight, height);
     return laidOut;
   });
 }

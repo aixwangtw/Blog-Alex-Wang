@@ -163,15 +163,16 @@ collection 要先有資料，panel 才看得到數字；panel 本身可以先建
 
 ### 建好之後在哪裡看
 
-Directus 後台左側選單找 **Insights**，會看到一個叫「Blog 內容統計」的 dashboard。
+Directus 後台左側選單找 **Insights**，會看到一個叫「網站內容統計」的 dashboard。
 
-版面是這支腳本自動排的**單欄由上往下堆疊**（每個 panel 依它的最小尺寸往下疊，保證不重疊），
-不是刻意設計過的美觀版面——因為沒有查到這台 Directus 的 Insights 工作區網格總共有多少欄
-（沒有 admin token 沒辦法打開後台實際看格數），所以不敢假設「一排放幾個」。建好之後可以在
-後台自由拖曳調整每個 panel 的位置跟大小，只需要做一次，之後 `insights:write-stats` 更新資料
-不會動到版面。
+版面使用 **48 格寬版網格**（Directus 每格 18px，總寬約 864px）：摘要數字每列三張，圖表與清單
+每列兩張，A/B/C 資料群組之間保留空白。重跑 `insights:create-dashboard -- --apply` 會同步更新
+面板設定與這份標準版面；`insights:write-stats` 只更新資料，不會動到版面。
 
-## dashboard 裡的 25 個 panel
+觀看次數明細不使用 Insights 的 list 假裝表格；改用 Content 模組的原生 tabular 書籤，可依累積或
+近 30 天觀看數排序。建立方式與頁面統計見 `docs/ga4-views-sync.md`。
+
+## dashboard 裡的 26 個 panel
 
 分三組，對照上面的分類表：
 
@@ -217,8 +218,8 @@ type 是已知型別、必要 options 欄位沒缺）與 `layoutPanels()` 排出
   後台實際顯示的介面（interface）長相是否符合預期。所有 `meta.interface` 選的都是最基本款
   （`input`/`boolean`/`datetime`/`input-code`），照 `tools/create-views-fields.mjs` 的既有慣例，
   但沒有真的在後台看過畫面。
-- Directus Insights 工作區網格的總欄數，因此 `layoutPanels()` 採用保守的單欄堆疊，見上方
-  「建好之後在哪裡看」。
+- Directus Insights 工作區沒有固定總欄數；目前依官方前端 `VWorkspace` 的 18px gridSize，採用
+  48 格（約 864px）作為可讀性與一般桌機寬度之間的基準。
 
 ## 還沒解決、需要你決定的問題
 

@@ -1,0 +1,11 @@
+import { BetaAnalyticsDataClient } from '@google-analytics/data'; import { buildTrafficSourceRows, parseGa4SourceRows } from './lib/traffic-sources-lib.mjs';
+const CMS = 'https://cms.aixwang.dev'; const apply = process.argv.slice(2).includes('--apply'); const token = process.env.DIRECTUS_TOKEN; const propertyId = process.env.GA4_PROPERTY_ID;
+if (!propertyId) throw new Error('缺少 GA4_PROPERTY_ID。'); if (apply && !token) throw new Error('要 --apply 必須設定 DIRECTUS_TOKEN。');
+async function directus(path, init = {}) { const r = await fetch(`${CMS}${path}`, { ...init, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', ...(init.headers ?? {}) } }); const t = await r.text(); if (!r.ok) throw new Error(`Directus HTTP ${r.status}：${t.slice(0, 300)}`); return t ? JSON.parse(t).data : null; }
+const client = new BetaAnalyticsDataClient(); const [report] = await client.runReport({ property: `properties/${propertyId}`, dateRanges: [{ startDate: '2026-07-22', endDate: 'today' }], dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }, { name: 'sessionCampaignName' }, { name: 'landingPagePlusQueryString' }], metrics: [{ name: 'sessions' }, { name: 'screenPageViews' }], dimensionFilter: { filter: { fieldName: 'hostName', stringFilter: { matchType: 'EXACT', value: 'aixwang.dev', caseSensitive: false } } }, limit: 10000 });
+const articles = await directus('/items/articles?fields=slug,title&limit=-1'); const syncedAt = new Date().toISOString(); const rows = buildTrafficSourceRows({ gaRows: parseGa4SourceRows(report), articleTitles: new Map(articles.map((a) => [a.slug, a.title])), syncedAt });
+console.log(`流量入口 ${rows.length} 組；合計 ${rows.reduce((s, r) => s + r.sessions, 0)} 個工作階段。`); if (!apply) process.exit(0);
+const existing = await directus('/items/traffic_sources?fields=id,source_key&limit=-1'); const ids = new Map(existing.map((x) => [x.source_key, x.id]));
+for (const row of rows) { const id = ids.get(row.source_key); await directus(id ? `/items/traffic_sources/${id}` : '/items/traffic_sources', { method: id ? 'PATCH' : 'POST', body: JSON.stringify(row) }); }
+const keep = new Set(rows.map((r) => r.source_key)); for (const item of existing) if (!keep.has(item.source_key)) await directus(`/items/traffic_sources/${item.id}`, { method: 'DELETE' });
+console.log(`完成：已同步 ${rows.length} 組流量入口。`);
