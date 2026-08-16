@@ -167,8 +167,8 @@ DIRECTUS_TOKEN=xxx npm run views:create-fields -- --apply
    （本站文章正規網址固定是 `/blog/<slug>/`；不帶尾斜線會被 307 導到有斜線版本，
    所以 GA4 裡兩種形式都可能出現，正規化後才比得起來）。
 3. 套用 `tools/ga4-slug-aliases.json` 的舊 slug → 現在 slug 對應表，把改過 slug 的舊網址流量
-   併回現在這篇文章。**這個檔案目前是空的 `{}`**——原本有一組 `meta-api-application` →
-   `threads-api-tutorial`，2026-07-31 依指示連同該網址的轉址一起移除。改過文章 slug 時，
+   併回現在這篇文章。目前包含 `meta-api-application` → `threads-api-tutorial`：前者內容已整併進
+   後者，因此只在統計層合併歷史流量，不代表網站會恢復舊網址轉址。之後改過文章 slug 時，
    請手動把舊 slug 加進這個檔案。
 4. 加總同一 slug 的所有路徑變形。
 5. 對到 Directus 文章清單（依 slug），同時嘗試讀回每篇文章目前的 `views` 值（給下面的「累積值

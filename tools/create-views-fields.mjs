@@ -9,9 +9,8 @@
 //   - https://directus.com/docs/guides/data-model/fields（Create Field in Collection：POST /fields/:collection）
 //   - https://github.com/directus/directus/blob/main/packages/constants/src/fields.ts（TYPES 列舉，含 'integer'、'timestamp'）
 //   - https://github.com/directus/directus/blob/main/packages/types/src/fields.ts（FieldMeta.readonly / note）
-// 沒有 DIRECTUS_TOKEN，所以這支腳本本身沒有真的打過 POST /fields 建立過欄位，只用 GET /fields/:collection/:field
-// 讀過既有欄位清單做交叉核對（見專案已知的 articles 欄位：id, status, slug, title, description, body,
-// pub_date, updated_date, tags, faqs, featured, sort）。
+// 2026-08-16 已在 cms.aixwang.dev 實際建立並驗證三個欄位。存在檢查使用整份欄位清單，避免
+// Directus 對不存在的單一欄位回 403、無法和真正的權限不足區分。
 //
 // 用法：
 //   node tools/create-views-fields.mjs                    # 預設 dry-run，只印出要送的 payload
@@ -74,14 +73,16 @@ const FIELD_DEFS = [
   },
 ];
 
-async function fieldExists(field) {
-  const res = await fetch(`${CMS}/fields/${COLLECTION}/${field}`, {
+async function fetchExistingFieldNames() {
+  const res = await fetch(`${CMS}/fields/${COLLECTION}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (res.status === 404) return false;
-  if (res.ok) return true;
   const text = await res.text();
-  throw new Error(`檢查欄位 ${field} 是否存在時失敗，HTTP ${res.status}：${text.slice(0, 300)}`);
+  if (!res.ok) {
+    throw new Error(`讀取 ${COLLECTION} 欄位清單失敗，HTTP ${res.status}：${text.slice(0, 300)}`);
+  }
+  const { data } = JSON.parse(text);
+  return new Set(data.map((item) => item.field));
 }
 
 async function createField(def) {
@@ -103,15 +104,18 @@ console.log('');
 
 if (!apply) {
   // dry-run：有 token 就順便查詢是否已存在，沒 token 就只印 payload。
+  let existingFields = null;
+  if (token) {
+    try {
+      existingFields = await fetchExistingFieldNames();
+    } catch (err) {
+      console.log(`目前欄位清單查不到（${err.message}）\n`);
+    }
+  }
   for (const def of FIELD_DEFS) {
     console.log(`── ${def.field} ──`);
-    if (token) {
-      try {
-        const exists = await fieldExists(def.field);
-        console.log(exists ? '目前狀態：已存在（實際執行時會跳過）' : '目前狀態：不存在（實際執行時會新建）');
-      } catch (err) {
-        console.log(`目前狀態：查不到（${err.message}）`);
-      }
+    if (existingFields) {
+      console.log(existingFields.has(def.field) ? '目前狀態：已存在（實際執行時會跳過）' : '目前狀態：不存在（實際執行時會新建）');
     } else {
       console.log('目前狀態：未檢查（沒有 DIRECTUS_TOKEN，無法呼叫 GET /fields 確認是否已存在）');
     }
@@ -124,15 +128,16 @@ if (!apply) {
 }
 
 // --apply：真的檢查＋建立
+const existingFields = await fetchExistingFieldNames();
 for (const def of FIELD_DEFS) {
   process.stdout.write(`${def.field} … `);
   try {
-    const exists = await fieldExists(def.field);
-    if (exists) {
+    if (existingFields.has(def.field)) {
       console.log('已存在，跳過。');
       continue;
     }
     await createField(def);
+    existingFields.add(def.field);
     console.log('建立成功。');
   } catch (err) {
     console.log(`失敗：${err.message}`);
