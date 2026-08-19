@@ -62,6 +62,21 @@ export function pathToSlug(rawPath) {
 }
 
 /**
+ * GA4「網頁和畫面」報表用的平均停留秒數算法：userEngagementDuration（累積互動秒數）÷
+ * activeUsers（不是除以瀏覽數）。四捨五入成整數秒。
+ * users 為 0（沒有使用者資料，或除以 0）回傳 null，代表「沒有平均值可算」，不是 0 秒。
+ * 已用真實 GA4 API 實測驗證過公式（近 7 天範例）：
+ *   /services/one-on-one/       duration=189 users=2 → 94.5s
+ *   /blog/threads-api-tutorial/ duration=69  users=9 → 7.7s
+ */
+export function computeAvgEngagementSeconds(duration, users) {
+  const numDuration = Number(duration ?? 0);
+  const numUsers = Number(users ?? 0);
+  if (!numUsers) return null;
+  return Math.round(numDuration / numUsers);
+}
+
+/**
  * 把一份 GA4 資料列（[{path, views}, ...]）依 slug 加總。
  * 回傳：
  *   - bySlug: Map(slug -> 總瀏覽數)
@@ -99,6 +114,68 @@ export function aggregateViewsBySlug(rows) {
 }
 
 /**
+ * 把一份 GA4 互動資料列（[{path, duration, users}, ...]，duration=userEngagementDuration
+ * 累積秒數、users=activeUsers）依 slug 分別加總 duration 與 users（刻意不在這裡先算平均——
+ * 平均值不能直接相加，要等套用完 remapSlugAliases 的別名合併後才能算，見 buildAvgEngagementSecondsBySlug）。
+ * 路徑正規化／slug 抽取規則與 aggregateViewsBySlug 完全一致。
+ * 回傳：
+ *   - durationBySlug / usersBySlug: Map(slug -> 加總後的秒數／使用者數)
+ *   - matched: [{ path, normalizedPath, slug, duration, users }]
+ *   - unmatchedBlogPaths: [{ path, normalizedPath, duration, users }]
+ *   - excludedNonBlogCount: 數字
+ */
+export function aggregateEngagementBySlug(rows) {
+  const durationBySlug = new Map();
+  const usersBySlug = new Map();
+  const matched = [];
+  const unmatchedBlogPaths = [];
+  let excludedNonBlogCount = 0;
+
+  for (const row of rows ?? []) {
+    const path = row?.path;
+    const duration = Number(row?.duration ?? 0);
+    const users = Number(row?.users ?? 0);
+    const normalized = normalizeGa4Path(path);
+
+    if (!normalized || !normalized.startsWith(BLOG_PREFIX)) {
+      excludedNonBlogCount += 1;
+      continue;
+    }
+
+    const slug = extractBlogSlug(normalized);
+    if (!slug) {
+      unmatchedBlogPaths.push({ path, normalizedPath: normalized, duration, users });
+      continue;
+    }
+
+    durationBySlug.set(slug, (durationBySlug.get(slug) ?? 0) + duration);
+    usersBySlug.set(slug, (usersBySlug.get(slug) ?? 0) + users);
+    matched.push({ path, normalizedPath: normalized, slug, duration, users });
+  }
+
+  return { durationBySlug, usersBySlug, matched, unmatchedBlogPaths, excludedNonBlogCount };
+}
+
+/**
+ * 把「依 slug 加總後的 duration／users」（套用過 remapSlugAliases 別名合併之後）換算成
+ * 每個 slug 的平均停留秒數。users 為 0 的 slug 不會出現在回傳的 Map 裡（沒有使用者資料時
+ * 平均秒數沒有意義，不是 0 秒；要不要在同步計畫裡補現值或跳過，交給 buildSyncPlan 決定）。
+ *
+ * @param {Map<string, number>} durationBySlug
+ * @param {Map<string, number>} usersBySlug
+ * @returns {Map<string, number>} slug -> 平均停留秒數（四捨五入整數）
+ */
+export function buildAvgEngagementSecondsBySlug(durationBySlug, usersBySlug) {
+  const result = new Map();
+  for (const [slug, duration] of (durationBySlug ?? new Map()).entries()) {
+    const users = usersBySlug?.get(slug) ?? 0;
+    const avg = computeAvgEngagementSeconds(duration, users);
+    if (avg !== null) result.set(slug, avg);
+  }
+  return result;
+}
+
+/**
  * 把 GA4 Data API runReport() 的回應（dimensions=[pagePath], metrics=[screenPageViews]）
  * 轉成 aggregateViewsBySlug() 吃的 [{path, views}] 格式。
  * 未實測：這是照官方 quickstart 範例（dimensionValues[0].value / metricValues[0].value）推的形狀，
@@ -109,6 +186,26 @@ export function parseGa4ApiRows(response) {
   return rows.map((row) => ({
     path: row?.dimensionValues?.[0]?.value ?? '',
     views: Number(row?.metricValues?.[0]?.value ?? 0),
+  }));
+}
+
+/**
+ * 把 GA4 Data API runReport() 的回應轉成同時含 views／duration／users 的
+ * [{path, views, duration, users}] 格式，供 aggregateViewsBySlug 與 aggregateEngagementBySlug
+ * 共用同一次查詢結果，不用為了平均停留秒數多打一次 API。
+ * 已用真實 GA4 API 實測驗證過：pagePath 可以跟 userEngagementDuration、activeUsers 放在
+ * 同一個 runReport 呼叫裡查詢。
+ *
+ * 呼叫端下 metrics 時**順序必須是** [screenPageViews, userEngagementDuration, activeUsers]，
+ * 這裡依 metricValues 的陣列順序（而非欄名）取值，順序對不上會取到錯的數字。
+ */
+export function parseGa4ApiRowsWithEngagement(response) {
+  const rows = response?.rows ?? [];
+  return rows.map((row) => ({
+    path: row?.dimensionValues?.[0]?.value ?? '',
+    views: Number(row?.metricValues?.[0]?.value ?? 0),
+    duration: Number(row?.metricValues?.[1]?.value ?? 0),
+    users: Number(row?.metricValues?.[2]?.value ?? 0),
   }));
 }
 
@@ -301,10 +398,19 @@ export function parseGa4Csv(csvText, options = {}) {
  *      現值來源是 `currentViewsBySlug`；值為 `null`／`undefined`（欄位剛建立、從未同步過、
  *      或呼叫端根本沒有讀到現值）一律視為「沒有現值可比較」，不當作下降處理。
  *
+ *   3. `avg_engagement_seconds_30d`（近 30 天平均停留秒數）未涵蓋的 slug 一律**跳過、保留現值**，
+ *      沒有 `zeroMissing` 旗標可覆蓋。理由跟 `views_30d` 不同：這是平均值不是次數，「這次沒資料」
+ *      沒辦法區分是「真的沒有使用者互動」還是「這次查詢/資料來源沒涵蓋到」，寫 0 秒會誤導成
+ *      「使用者平均待了 0 秒」；不像 `views_30d` 缺資料時「0 次瀏覽」在語意上就是正確答案。
+ *      也不需要 `allowDecrease` 這類保護，因為它是每次重算就整個覆蓋的滾動平均，不是累積值。
+ *
  * @param {object} params
  * @param {Array<{id: number|string, slug: string, title?: string}>} params.articles Directus 文章清單
  * @param {Map<string, number>|null} params.totalBySlug 全期間資料（沒有這個資料來源就傳 null，完全不動 views 欄位）
  * @param {Map<string, number>|null} params.last30dBySlug 近 30 天資料（沒有就傳 null，完全不動 views_30d 欄位）
+ * @param {Map<string, number>|null} [params.avgEngagementBySlug] 近 30 天平均停留秒數（見
+ *        buildAvgEngagementSecondsBySlug），沒有這個資料來源就傳 null（或不傳），完全不動
+ *        avg_engagement_seconds_30d 欄位。
  * @param {Map<string, number|null|undefined>|null} [params.currentViewsBySlug] Directus 目前的 views 值
  *        （slug → 現值）。傳 `null`（預設）代表沒有讀到現值（例如 views 欄位還不存在），
  *        此時完全不做累積值下降保護。Map 裡個別 slug 的值是 `null`／`undefined` 一樣視為沒有現值。
@@ -314,7 +420,7 @@ export function parseGa4Csv(csvText, options = {}) {
  *        `undefined`（預設）＝寫 0；`true`＝強制寫 0；`false`＝強制跳過。
  * @param {boolean} [params.allowDecrease] `true` 時允許 views 寫入比 Directus 現值小的數字（預設 `false`）。
  * @returns {{
- *   updates: Array<{id, slug, title, views?: number, views_30d?: number}>,
+ *   updates: Array<{id, slug, title, views?: number, views_30d?: number, avg_engagement_seconds_30d?: number}>,
  *   report: {
  *     views: {
  *       updated: Array<{id, slug, title, value: number}>,
@@ -327,6 +433,12 @@ export function parseGa4Csv(csvText, options = {}) {
  *       keptExisting: Array<{id, slug, title}>,
  *       zeroed: Array<{id, slug, title}>,
  *     },
+ *     avg_engagement_seconds_30d: {
+ *       updated: Array<{id, slug, title, value: number}>,
+ *       keptExisting: Array<{id, slug, title}>,
+ *       zeroed: Array<{id, slug, title}>,
+ *       decreaseSkipped: Array<{id, slug, title, currentValue: number, newValue: number}>,
+ *     },
  *   },
  * }}
  */
@@ -334,6 +446,7 @@ export function buildSyncPlan({
   articles,
   totalBySlug,
   last30dBySlug,
+  avgEngagementBySlug = null,
   currentViewsBySlug = null,
   zeroMissingTotal,
   zeroMissing30d,
@@ -343,6 +456,9 @@ export function buildSyncPlan({
   const report = {
     views: { updated: [], keptExisting: [], zeroed: [], decreaseSkipped: [] },
     views_30d: { updated: [], keptExisting: [], zeroed: [] },
+    // zeroed／decreaseSkipped 這兩欄一直維持空陣列（見上方註解第 3 點：這個欄位未涵蓋一律跳過、
+    // 不做下降保護），保留跟另外兩個欄位一致的形狀，方便呼叫端共用同一套報表列印邏輯。
+    avg_engagement_seconds_30d: { updated: [], keptExisting: [], zeroed: [], decreaseSkipped: [] },
   };
 
   // 兩個欄位的「未涵蓋 slug」預設行為刻意不同，見函式上方註解。
@@ -390,6 +506,18 @@ export function buildSyncPlan({
         report.views_30d.zeroed.push({ id, slug, title });
       } else {
         report.views_30d.keptExisting.push({ id, slug, title });
+      }
+    }
+
+    if (avgEngagementBySlug) {
+      const hasData = avgEngagementBySlug.has(slug);
+      if (hasData) {
+        const newValue = avgEngagementBySlug.get(slug);
+        update.avg_engagement_seconds_30d = newValue;
+        touched = true;
+        report.avg_engagement_seconds_30d.updated.push({ id, slug, title, value: newValue });
+      } else {
+        report.avg_engagement_seconds_30d.keptExisting.push({ id, slug, title });
       }
     }
 

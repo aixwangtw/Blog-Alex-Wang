@@ -1,8 +1,12 @@
-// 在 Directus 的 articles collection 建立 GA4 瀏覽數同步要用的三個欄位：
-//   views          integer  預設 0   ── 累積（全期間）瀏覽數
-//   views_30d      integer  預設 0   ── 近 30 天瀏覽數
-//   views_synced_at timestamp        ── 最後一次同步時間
-// 三個欄位都設成後台唯讀（meta.readonly=true），並附中文 note 說明是自動同步、手改會被覆蓋。
+// 在 Directus 的 articles collection 建立 GA4 瀏覽數同步要用的四個欄位：
+//   views                     integer  預設 0   ── 累積（全期間）瀏覽數
+//   views_30d                 integer  預設 0   ── 近 30 天瀏覽數
+//   avg_engagement_seconds_30d integer 預設 null ── 近 30 天平均停留秒數
+//     （userEngagementDuration ÷ activeUsers，四捨五入；沒有使用者資料時是 null，不是 0——
+//      見 tools/lib/ga4-views-lib.mjs 的 computeAvgEngagementSeconds() 與
+//      docs/ga4-views-sync.md「平均停留秒數」一節）
+//   views_synced_at           timestamp        ── 最後一次同步時間
+// 四個欄位都設成後台唯讀（meta.readonly=true），並附中文 note 說明是自動同步、手改會被覆蓋。
 //
 // 依據：Directus Fields API（POST /fields/:collection，body 為 {field, type, schema, meta}）
 // 與欄位型別字串（'integer' / 'timestamp'）皆已對照官方文件與原始碼確認：
@@ -59,6 +63,20 @@ const FIELD_DEFS = [
     },
   },
   {
+    field: 'avg_engagement_seconds_30d',
+    type: 'integer',
+    schema: { is_nullable: true },
+    meta: {
+      interface: 'input',
+      readonly: true,
+      hidden: false,
+      note: '近 30 天平均停留秒數（userEngagementDuration ÷ activeUsers，四捨五入），由 GA4 自動同步' +
+        '（tools/sync-ga4-views.mjs）。沒有使用者資料時是 null，不是 0。手動修改會在下次同步時被覆蓋。',
+      sort: 102,
+      width: 'half',
+    },
+  },
+  {
     field: 'views_synced_at',
     type: 'timestamp',
     schema: { is_nullable: true },
@@ -70,7 +88,7 @@ const FIELD_DEFS = [
       readonly: true,
       hidden: false,
       note: '最後一次從 GA4 同步瀏覽數的時間，由 tools/sync-ga4-views.mjs 自動寫入。',
-      sort: 102,
+      sort: 103,
       width: 'half',
     },
   },

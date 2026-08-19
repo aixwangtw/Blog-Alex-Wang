@@ -13,6 +13,7 @@ const FIELDS = [
   { field: 'is_current', type: 'boolean', schema: { default_value: false }, meta: { interface: 'boolean', readonly: true, width: 'half', note: '是否仍是目前網站已知的正式頁面或 CMS 文章。' } },
   { field: 'views', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '目前 Astro 新站自 2026-07-22 上線後的累積觀看次數；不包含 StarJobTW 舊站。' } },
   { field: 'views_30d', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: 'GA4 近 30 天觀看次數。' } },
+  { field: 'avg_engagement_seconds_30d', type: 'integer', schema: { is_nullable: true }, meta: { interface: 'input', readonly: true, width: 'half', note: '近 30 天平均停留秒數（userEngagementDuration ÷ activeUsers，四捨五入）。沒有使用者資料時是 null，不是 0。' } },
   { field: 'views_synced_at', type: 'timestamp', meta: { interface: 'datetime', display: 'datetime', display_options: { relative: false, format: 'short', use24: true }, readonly: true, width: 'half', note: '最後一次同步時間。' } },
 ];
 

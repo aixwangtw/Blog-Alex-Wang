@@ -1,6 +1,9 @@
 // 查詢 GA4 全站 pagePath，依路徑彙總後 upsert 到 Directus page_views。
+// avg_engagement_seconds_30d（近 30 天平均停留秒數）只在近 30 天這次查詢一併帶
+// userEngagementDuration／activeUsers 算出，不用多打一次 API；累積（views）查詢維持只查
+// screenPageViews，平均停留秒數只做近 30 天滾動值，不做全期間累積平均。
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
-import { parseGa4ApiRows } from './lib/ga4-views-lib.mjs';
+import { parseGa4ApiRows, parseGa4ApiRowsWithEngagement } from './lib/ga4-views-lib.mjs';
 import { buildPageViewRows } from './lib/page-views-lib.mjs';
 
 const CMS = 'https://cms.aixwang.dev';
@@ -11,22 +14,27 @@ const propertyId = process.env.GA4_PROPERTY_ID;
 if (!propertyId) throw new Error('缺少 GA4_PROPERTY_ID。');
 if (apply && !token) throw new Error('要 --apply 必須設定 DIRECTUS_TOKEN。');
 
-async function fetchRows(startDate) {
+async function fetchRows(startDate, { includeEngagement = false } = {}) {
   const client = new BetaAnalyticsDataClient();
   const all = [];
   let offset = 0;
   let rowCount = Infinity;
+  // parseGa4ApiRowsWithEngagement 依 metricValues 的陣列順序取值，順序必須對應
+  // [screenPageViews, userEngagementDuration, activeUsers]。
+  const metrics = includeEngagement
+    ? [{ name: 'screenPageViews' }, { name: 'userEngagementDuration' }, { name: 'activeUsers' }]
+    : [{ name: 'screenPageViews' }];
   while (offset < rowCount) {
     const [response] = await client.runReport({
       property: `properties/${propertyId}`,
       dateRanges: [{ startDate, endDate: 'today' }],
       dimensions: [{ name: 'pagePath' }],
-      metrics: [{ name: 'screenPageViews' }],
+      metrics,
       dimensionFilter: { filter: { fieldName: 'hostName', stringFilter: { matchType: 'EXACT', value: 'aixwang.dev', caseSensitive: false } } },
       limit: 10000,
       offset,
     });
-    all.push(...parseGa4ApiRows(response));
+    all.push(...(includeEngagement ? parseGa4ApiRowsWithEngagement(response) : parseGa4ApiRows(response)));
     rowCount = response.rowCount ?? 0;
     offset += 10000;
   }
@@ -49,14 +57,17 @@ async function directus(path, init = {}) {
 
 const [totalRows, recentRows, articles] = await Promise.all([
   fetchRows(SITE_LAUNCH_DATE),
-  fetchRows(getRecentStartDate()),
+  fetchRows(getRecentStartDate(), { includeEngagement: true }),
   directus('/items/articles?fields=slug,title&limit=-1'),
 ]);
 const articleTitles = new Map(articles.map((article) => [article.slug, article.title]));
 const rows = buildPageViewRows({ totalRows, last30dRows: recentRows, articleTitles, syncedAt: new Date().toISOString() });
 
 console.log(`新站路徑 ${rows.length} 筆；上線後累積 ${rows.reduce((sum, row) => sum + row.views, 0)}；近 30 天 ${rows.reduce((sum, row) => sum + row.views_30d, 0)}。`);
-for (const row of rows) console.log(`${String(row.views).padStart(5)} / ${String(row.views_30d).padStart(4)}　${row.content_type}　${row.path}　${row.name}`);
+for (const row of rows) {
+  const avg = row.avg_engagement_seconds_30d === null ? '—' : `${row.avg_engagement_seconds_30d}s`;
+  console.log(`${String(row.views).padStart(5)} / ${String(row.views_30d).padStart(4)} / ${avg.padStart(5)}　${row.content_type}　${row.path}　${row.name}`);
+}
 if (!apply) {
   console.log('dry-run：沒有寫入 CMS。');
   process.exit(0);

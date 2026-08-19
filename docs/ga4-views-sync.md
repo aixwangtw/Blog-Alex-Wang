@@ -1,18 +1,39 @@
 # GA4 文章與全站頁面瀏覽數同步回 Directus
 
 把 GA4（Google Analytics 4）記錄的 `/blog/<slug>/` 瀏覽數，定期同步回 Directus `articles`
-collection 的三個欄位：
+collection 的四個欄位：
 
 | 欄位 | 型別 | 說明 |
 | --- | --- | --- |
 | `views` | integer | 累積（全期間）瀏覽數 |
 | `views_30d` | integer | 近 30 天瀏覽數 |
+| `avg_engagement_seconds_30d` | integer | 近 30 天平均停留秒數 |
 | `views_synced_at` | timestamp | 最後一次同步時間 |
 
-三個欄位在 Directus 後台都是**唯讀**（`meta.readonly = true`），手動改了也會在下次同步時被覆蓋。
+四個欄位在 Directus 後台都是**唯讀**（`meta.readonly = true`），手動改了也會在下次同步時被覆蓋。
+
+### 平均停留秒數（`avg_engagement_seconds_30d`）
+
+公式是 GA4 官方「網頁和畫面」報表用的算法：**平均停留秒數 = userEngagementDuration（累積互動秒數）
+÷ activeUsers（不是除以瀏覽數）**，四捨五入成整數秒。只做**近 30 天滾動值**，不做全期間累積平均——
+累積平均值隨時間拉長意義會變淡，且站目前才上線約 4 週，之後真的需要時再考慮加累積欄位。
+
+只有 **GA4 Data API 模式**才會算這個欄位：近 30 天查詢會一併把 `userEngagementDuration`、
+`activeUsers` 兩個 metrics 跟 `screenPageViews` 放進同一個 `runReport` 呼叫裡查（已實測驗證過
+`pagePath` 可以跟這兩個 metrics 相容查詢，一次查詢只花 GA4 Property 每日配額的 1 個 token），不用
+多打一次 API。**CSV 模式**（`--csv-total` / `--csv-30d`）目前不支援這個欄位——GA4 後台「網頁和畫面」
+報表匯出的 CSV 不含 `userEngagementDuration` 欄位，用 CSV 模式跑同步時 `avg_engagement_seconds_30d`
+這次不會被更新（保留 Directus 現值）。
+
+沒有使用者資料時（`activeUsers = 0`）這個欄位是 **`null`，不是 `0`**：`0` 秒代表「有使用者但平均只
+待了 0 秒」，`null` 代表「這次沒有互動資料可算」，兩者語意不同。GA4 這次的查詢結果裡完全沒涵蓋到的
+文章／頁面，一律**跳過、保留 Directus 現值不動**（沒有 `--zero-missing` 這類旗標可以覆蓋這個欄位的
+行為，因為「平均值缺資料」跟「累積值/次數缺資料」的正確處理方式不一樣，寫 0 秒或用現有旗標語意都
+兜不起來——見 `tools/lib/ga4-views-lib.mjs` 的 `buildSyncPlan()` 開頭註解）。
 
 此外，`tools/sync-ga4-page-views.mjs` 會把 GA4 所有網址路徑同步到 `page_views` collection。每列包含
-頁面名稱、路徑、內容類型、是否為現行內容、累積觀看、近 30 天觀看及同步時間。頁面統計從目前
+頁面名稱、路徑、內容類型、是否為現行內容、累積觀看、近 30 天觀看、近 30 天平均停留秒數
+（`avg_engagement_seconds_30d`，算法與未涵蓋時的行為同上面「平均停留秒數」一節）及同步時間。頁面統計從目前
 Astro 新站上線日 2026-07-22 起算；StarJobTW 舊站、非現行路徑與單篇文章不寫入 `page_views`。
 單篇文章只同步到 `articles`，避免在文章表格與頁面表格重複出現；`/blog/` 文章列表頁仍算一般頁面。
 
@@ -61,10 +82,16 @@ YouTube 資訊欄等具體位置無法從未加標記的歷史網址反推；分
 執行的 Browser Agent 即使曾載入 GA4，也不會寫進 CMS 的文章、頁面、每日趨勢或流量入口統計。
 這個條件也會在每次重算時回溯套用，可清掉早期已進入 GA4、但不屬於正式站的測試流量。
 
-> 這份文件與對應的程式碼是在**沒有任何 GA4／Google Cloud 憑證**的環境下寫的。GA4 Data API 路徑
-> （下方「模式 A」）完全沒有真的打過 API 驗證，CSV 解析（「模式 B」）也沒有拿真實匯出檔案對過格式。
-> 兩者都用官方文件描述的格式與寫死的假資料寫測試（`tools/lib/ga4-views-lib.test.mjs`），
-> 實際串接後如果格式跟預期不同，錯誤訊息會直接印出來，不會默默吃掉或用猜的填資料。
+> **更新（2026-08-19）：GA4 Data API 路徑（下方「模式 A」）已經實測驗證過，不是下面這段舊文字寫的
+> 「沒有真的打過」。** 依據：`~/.cache/aixwang-ga4-views/cron.log` 顯示自 2026-08-16 起，正式排程
+> 每天都有成功的真實 API 執行紀錄（16 篇文章、10 個頁面、27-28 天每日資料、42-45 組流量入口）；
+> 這次新增 `avg_engagement_seconds_30d` 欄位時，也已用同一組憑證實測驗證過 `pagePath` 可以跟
+> `userEngagementDuration`、`activeUsers` 放在同一個 `runReport` 呼叫裡查詢並拿到合理的數字。
+> CSV 解析（「模式 B」）目前仍然沒有拿真實匯出檔案對過格式，這部分維持下面舊文字的說法。
+> 以下這段是這份文件與程式碼最初寫成時的背景（當時**沒有任何 GA4／Google Cloud 憑證**），保留
+> 原文供參考：兩條路徑都用官方文件描述的格式與寫死的假資料寫測試
+> （`tools/lib/ga4-views-lib.test.mjs`），實際串接後如果格式跟預期不同，錯誤訊息會直接印出來，
+> 不會默默吃掉或用猜的填資料。
 
 ## 你需要準備的東西
 
@@ -309,15 +336,22 @@ npm run test:views
 
 ## 已知限制／沒實測過的部分
 
-- GA4 Data API 那條路徑（`@google-analytics/data`）完全沒有真的打過，因為這台機器沒有
-  `GOOGLE_APPLICATION_CREDENTIALS`、沒有 `GA4_PROPERTY_ID`。程式碼是照官方 quickstart
+- **GA4 Data API 那條路徑（`@google-analytics/data`）已經實測過，不是「完全沒有真的打過」。**
+  下面這段原本寫「這台機器沒有 `GOOGLE_APPLICATION_CREDENTIALS`、沒有 `GA4_PROPERTY_ID`，完全沒
+  打過真的 API」，那是這份文件最初寫成時的狀態，**現在已經過時**：自 2026-08-16 起，正式排程
+  （`tools/daily-ga4-views-cron.sh`）每天都有成功的真實 API 執行紀錄，見
+  `~/.cache/aixwang-ga4-views/cron.log`（16 篇文章、10 個頁面、27-28 天每日資料、
+  42-45 組流量入口）。`views:sync`／`page-views:sync` 的 dry-run 也已經用真實憑證直接對線上 GA4
+  Property 跑過，數字合理（例如近 30 天 `/services/one-on-one/` 平均停留 77 秒、
+  `/blog/threads-api-tutorial/` 平均停留 27 秒）。程式碼仍是照官方 quickstart
   （<https://developers.google.com/analytics/devguides/reporting/data/v1/quickstart-client-libraries>）
-  與 npm 套件 README 寫的，第一次真的跑之前要有心理準備可能要修。
-- CSV 解析邏輯沒有拿過真實匯出檔案驗證，是照 GA4 匯出報表的已知一般格式（開頭幾行 `#` metadata、
+  與 npm 套件 README 寫的，但這條路徑本身已經跑得動，不是理論上的推測。
+- CSV 解析邏輯**仍然**沒有拿過真實匯出檔案驗證，是照 GA4 匯出報表的已知一般格式（開頭幾行 `#` metadata、
   逗號分隔、數字欄位可能有千分位逗號）寫的。內建的中文欄名候選字樣（見上方「CSV 欄名對不到怎麼辦」）
   是推測的，沒有拿真實的中文 GA4 匯出檔驗證過；如果猜錯或猜不到，一定要用 `--path-col` /
-  `--views-col` 手動指定欄名，這條路徑不受語系或猜測正確與否影響。
-- `views:sync` 的 dry-run 已經用手刻的假 CSV 對過線上 Directus 的真實文章清單（9 篇已發布文章），
-  對應與加總邏輯照預期運作；但這只驗證了「Directus 讀取＋比對邏輯」，沒有驗證「GA4 資料真的長這樣」。
-  當時一併驗過的別名合併（`meta-api-application` → `threads-api-tutorial`）已於 2026-07-31 移除，
-  別名機制本身仍在（`remapSlugAliases` 與其單元測試都保留），只是對應表目前是空的。
+  `--views-col` 手動指定欄名，這條路徑不受語系或猜測正確與否影響。CSV 模式也不支援
+  `avg_engagement_seconds_30d`（見上方「平均停留秒數」一節），這是既有限制，不是新增的缺口。
+- `views:sync` 的 dry-run 已經用真實 GA4 資料對過線上 Directus 的真實文章清單（16 篇已發布文章），
+  對應、加總與平均停留秒數的算法都照預期運作。當時一併驗過的別名合併
+  （`meta-api-application` → `threads-api-tutorial`）目前仍在 `tools/ga4-slug-aliases.json`
+  裡（`remapSlugAliases` 與其單元測試都保留，供之後改 slug 時繼續使用）。

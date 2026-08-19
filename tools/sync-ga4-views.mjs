@@ -1,4 +1,9 @@
-// 把 GA4 的文章瀏覽數同步回 Directus articles collection（views / views_30d / views_synced_at）。
+// 把 GA4 的文章瀏覽數同步回 Directus articles collection
+// （views / views_30d / avg_engagement_seconds_30d / views_synced_at）。
+//
+// avg_engagement_seconds_30d（近 30 天平均停留秒數，公式 userEngagementDuration ÷ activeUsers）
+// 只有 API 模式才會算：近 30 天查詢會一併帶 userEngagementDuration／activeUsers 兩個 metrics，
+// 不用多打一次 API；CSV 模式（--csv-total / --csv-30d）匯出格式沒有這兩欄，這個欄位這次不會被更新。
 //
 // 兩種資料來源，選一種：
 //   A. GA4 Data API（需要 GA4_PROPERTY_ID + GOOGLE_APPLICATION_CREDENTIALS service account）
@@ -40,10 +45,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
+  aggregateEngagementBySlug,
   aggregateViewsBySlug,
+  buildAvgEngagementSecondsBySlug,
   buildSyncPlan,
   findUnmatchedSlugs,
   parseGa4ApiRows,
+  parseGa4ApiRowsWithEngagement,
   parseGa4Csv,
   remapSlugAliases,
 } from './lib/ga4-views-lib.mjs';
@@ -144,12 +152,15 @@ function loadAliasMap(filePath) {
 // ── 資料來源 A：GA4 Data API ──────────────────────────────────────────────
 
 /**
- * 透過 GA4 Data API 查詢 pagePath × screenPageViews。
- * 未實測：沒有 GA4_PROPERTY_ID / service account，這段程式碼從沒真的執行過。
+ * 透過 GA4 Data API 查詢 pagePath × screenPageViews（`includeEngagement: true` 時另外一併查
+ * userEngagementDuration 與 activeUsers，用來算平均停留秒數）。
+ * 已於 2026-08-16 起在正式排程（`~/.cache/aixwang-ga4-views/cron.log`）每天成功執行；
+ * pagePath 跟 userEngagementDuration、activeUsers 放在同一個 runReport 呼叫裡查詢也已實測驗證過，
+ * 詳見 docs/ga4-views-sync.md「已知限制／沒實測過的部分」。
  * 分頁：runReport 的 limit 預設回 10000 列，用 offset 迴圈把 rowCount 內的資料抓完，
  * 避免文章數／路徑變形數超過單頁上限時漏資料。
  */
-async function fetchGa4ApiRows({ startDate, endDate }) {
+async function fetchGa4ApiRows({ startDate, endDate, includeEngagement = false }) {
   const propertyId = process.env.GA4_PROPERTY_ID;
   if (!propertyId) {
     throw new Error('缺少 GA4_PROPERTY_ID 環境變數（GA4 後台 Admin > Property Settings 看到的數字 ID）。');
@@ -170,6 +181,11 @@ async function fetchGa4ApiRows({ startDate, endDate }) {
   let offset = 0;
   let rowCount = Infinity;
   const allRows = [];
+  // parseGa4ApiRowsWithEngagement 依 metricValues 的陣列順序取值，這裡的 metrics 順序必須
+  // 對應 [screenPageViews, userEngagementDuration, activeUsers]，見該函式的說明。
+  const metrics = includeEngagement
+    ? [{ name: 'screenPageViews' }, { name: 'userEngagementDuration' }, { name: 'activeUsers' }]
+    : [{ name: 'screenPageViews' }];
 
   while (offset < rowCount) {
     // eslint-disable-next-line no-await-in-loop
@@ -177,14 +193,14 @@ async function fetchGa4ApiRows({ startDate, endDate }) {
       property: `properties/${propertyId}`,
       dateRanges: [{ startDate, endDate }],
       dimensions: [{ name: 'pagePath' }],
-      metrics: [{ name: 'screenPageViews' }],
+      metrics,
       // 只同步正式站；排除 localhost 本機開發、Browser Agent 與預覽環境反覆載入。
       dimensionFilter: { filter: { fieldName: 'hostName', stringFilter: { matchType: 'EXACT', value: 'aixwang.dev', caseSensitive: false } } },
       limit: pageSize,
       offset,
     });
     rowCount = response.rowCount ?? 0;
-    allRows.push(...parseGa4ApiRows(response));
+    allRows.push(...(includeEngagement ? parseGa4ApiRowsWithEngagement(response) : parseGa4ApiRows(response)));
     offset += pageSize;
   }
 
@@ -379,8 +395,10 @@ async function main() {
     console.log(`\n使用 GA4 Data API，查詢區間：全期間（${sinceDate} ~ today）與近 30 天（30daysAgo ~ today）`);
     totalRows = await fetchGa4ApiRows({ startDate: sinceDate, endDate: 'today' });
     console.log(`  全期間共 ${totalRows.length} 列`);
-    last30dRows = await fetchGa4ApiRows({ startDate: '30daysAgo', endDate: 'today' });
-    console.log(`  近 30 天共 ${last30dRows.length} 列`);
+    // 近 30 天這次查詢一併帶 userEngagementDuration／activeUsers，用來算平均停留秒數；
+    // 全期間查詢維持只查 screenPageViews（平均停留秒數只做近 30 天滾動值，不做全期間累積平均）。
+    last30dRows = await fetchGa4ApiRows({ startDate: '30daysAgo', endDate: 'today', includeEngagement: true });
+    console.log(`  近 30 天共 ${last30dRows.length} 列（含平均停留秒數所需的 userEngagementDuration／activeUsers）`);
   }
 
   const { articles, currentViewsBySlug } = await fetchArticlesWithCurrentViews();
@@ -388,6 +406,7 @@ async function main() {
 
   let totalBySlug = null;
   let last30dBySlug = null;
+  let avgEngagementBySlug = null;
 
   if (totalRows) {
     const agg = aggregateViewsBySlug(totalRows);
@@ -407,12 +426,24 @@ async function main() {
     const unmatched = findUnmatchedSlugs(bySlug, articles);
     printUnmatched('近 30 天', agg.unmatchedBlogPaths, unmatched);
     console.log(`  （另外有 ${agg.excludedNonBlogCount} 列不是 /blog/ 開頭，已略過，不列出）`);
+
+    // 平均停留秒數只有 API 模式的近 30 天資料才有 duration／users（CSV 匯出格式不含這兩欄，
+    // 見 docs/ga4-views-sync.md）；duration／users 個別套用別名合併後才能算平均，
+    // 不能直接加總「已經算好的平均值」（見 buildAvgEngagementSecondsBySlug 的說明）。
+    if (usingApi) {
+      const engagementAgg = aggregateEngagementBySlug(last30dRows);
+      const { bySlug: durationBySlug } = remapSlugAliases(engagementAgg.durationBySlug, aliasMap);
+      const { bySlug: usersBySlug } = remapSlugAliases(engagementAgg.usersBySlug, aliasMap);
+      avgEngagementBySlug = buildAvgEngagementSecondsBySlug(durationBySlug, usersBySlug);
+      console.log(`\n【近 30 天】平均停留秒數：算出 ${avgEngagementBySlug.size} 篇文章的平均值（沒有使用者資料的 slug 不會出現在這裡）`);
+    }
   }
 
   const { updates, report } = buildSyncPlan({
     articles,
     totalBySlug,
     last30dBySlug,
+    avgEngagementBySlug,
     currentViewsBySlug,
     zeroMissingTotal: zeroMissingFlag,
     zeroMissing30d: zeroMissingFlag,
@@ -425,7 +456,8 @@ async function main() {
       zeroMissingFlag === true ? '強制寫 0（--zero-missing）' : zeroMissingFlag === false ? '強制跳過（--no-zero-missing）' : '預設跳過保留現值'
     }／views_30d ${
       zeroMissingFlag === true ? '強制寫 0（--zero-missing）' : zeroMissingFlag === false ? '強制跳過（--no-zero-missing）' : '預設寫 0'
-    }；累積值下降保護：${allowDecrease ? '關閉（--allow-decrease）' : currentViewsBySlug ? '開啟' : '停用（沒有讀到 views 現值）'}`,
+    }；累積值下降保護：${allowDecrease ? '關閉（--allow-decrease）' : currentViewsBySlug ? '開啟' : '停用（沒有讀到 views 現值）'}` +
+      '；avg_engagement_seconds_30d 未涵蓋一律跳過保留現值（沒有 --zero-missing 這類旗標可覆蓋，見 buildSyncPlan() 註解）',
   );
 
   if (totalBySlug) {
@@ -433,6 +465,9 @@ async function main() {
   }
   if (last30dBySlug) {
     printFieldReport('views_30d（近 30 天）', report.views_30d, { showDecrease: false });
+  }
+  if (avgEngagementBySlug) {
+    printFieldReport('avg_engagement_seconds_30d（近 30 天平均停留秒數）', report.avg_engagement_seconds_30d, { showDecrease: false });
   }
 
   console.log('\n實際會送出的 PATCH（依文章 id 排序）：');
@@ -443,6 +478,7 @@ async function main() {
     const parts = [];
     if ('views' in u) parts.push(`views=${u.views}`);
     if ('views_30d' in u) parts.push(`views_30d=${u.views_30d}`);
+    if ('avg_engagement_seconds_30d' in u) parts.push(`avg_engagement_seconds_30d=${u.avg_engagement_seconds_30d}`);
     console.log(`  [id=${u.id}] ${u.slug}（${u.title}）── ${parts.join('，')}`);
   }
 
@@ -459,6 +495,7 @@ async function main() {
     const payload = { views_synced_at: syncedAt };
     if ('views' in u) payload.views = u.views;
     if ('views_30d' in u) payload.views_30d = u.views_30d;
+    if ('avg_engagement_seconds_30d' in u) payload.avg_engagement_seconds_30d = u.avg_engagement_seconds_30d;
     try {
       // eslint-disable-next-line no-await-in-loop
       await patchArticle(u.id, payload);

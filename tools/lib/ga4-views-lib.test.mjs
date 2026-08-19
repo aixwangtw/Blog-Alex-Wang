@@ -8,12 +8,16 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  aggregateEngagementBySlug,
   aggregateViewsBySlug,
+  buildAvgEngagementSecondsBySlug,
   buildSyncPlan,
+  computeAvgEngagementSeconds,
   extractBlogSlug,
   findUnmatchedSlugs,
   normalizeGa4Path,
   parseGa4ApiRows,
+  parseGa4ApiRowsWithEngagement,
   parseGa4Csv,
   pathToSlug,
   remapSlugAliases,
@@ -104,6 +108,68 @@ test('aggregateViewsBySlug：不存在的 slug 一樣會被加總（比對交給
   assert.equal(bySlug.get('this-slug-does-not-exist'), 7);
 });
 
+// ── computeAvgEngagementSeconds ────────────────────────────────────────────
+
+test('computeAvgEngagementSeconds：duration/users 四捨五入成整數秒（已用真實 GA4 API 資料驗證公式）', () => {
+  assert.equal(computeAvgEngagementSeconds(189, 2), 95); // 94.5 → 四捨五入 95
+  assert.equal(computeAvgEngagementSeconds(69, 9), 8); // 7.666… → 四捨五入 8
+});
+
+test('computeAvgEngagementSeconds：users 為 0 回傳 null，不是 0（避免除以 0，也避免誤導成「平均 0 秒」）', () => {
+  assert.equal(computeAvgEngagementSeconds(100, 0), null);
+  assert.equal(computeAvgEngagementSeconds(0, 0), null);
+});
+
+// ── aggregateEngagementBySlug / buildAvgEngagementSecondsBySlug ───────────
+
+test('aggregateEngagementBySlug：同一篇文章的多個路徑變形分別加總 duration 與 users', () => {
+  const rows = [
+    { path: '/blog/threads-api-tutorial', duration: 40, users: 5 },
+    { path: '/blog/threads-api-tutorial/', duration: 29, users: 4 },
+  ];
+  const { durationBySlug, usersBySlug, matched } = aggregateEngagementBySlug(rows);
+  assert.equal(durationBySlug.get('threads-api-tutorial'), 69);
+  assert.equal(usersBySlug.get('threads-api-tutorial'), 9);
+  assert.equal(matched.length, 2);
+});
+
+test('aggregateEngagementBySlug：排除 /blog/ 列表頁與非 /blog/ 路徑', () => {
+  const rows = [
+    { path: '/blog/', duration: 999, users: 700 },
+    { path: '/about/', duration: 10, users: 8 },
+    { path: '/blog/threads-api-tutorial/', duration: 69, users: 9 },
+  ];
+  const { durationBySlug, usersBySlug, unmatchedBlogPaths, excludedNonBlogCount } = aggregateEngagementBySlug(rows);
+  assert.equal(durationBySlug.size, 1);
+  assert.equal(durationBySlug.get('threads-api-tutorial'), 69);
+  assert.equal(usersBySlug.get('threads-api-tutorial'), 9);
+  assert.equal(unmatchedBlogPaths.length, 1);
+  assert.equal(excludedNonBlogCount, 1);
+});
+
+test('buildAvgEngagementSecondsBySlug：套用真實 GA4 API 實測範例算出平均秒數', () => {
+  const durationBySlug = new Map([
+    ['threads-api-tutorial', 69],
+    ['no-users-slug', 50],
+  ]);
+  const usersBySlug = new Map([
+    ['threads-api-tutorial', 9],
+    ['no-users-slug', 0],
+  ]);
+  const avgBySlug = buildAvgEngagementSecondsBySlug(durationBySlug, usersBySlug);
+  assert.equal(avgBySlug.get('threads-api-tutorial'), 8); // 69/9 = 7.666… → 8
+  assert.equal(avgBySlug.has('no-users-slug'), false); // users=0 沒有平均值可算，不進 Map
+});
+
+test('buildAvgEngagementSecondsBySlug：先加總（含別名合併）再算平均，不是直接加總平均值本身', () => {
+  // 模擬套用 remapSlugAliases 後兩個舊 slug 合併進同一個新 slug 的情境：
+  // duration/users 個別加總完才算平均，若誤把「已經算好的平均值」直接相加會得到錯誤結果。
+  const durationBySlug = new Map([['merged-slug', 40 + 29]]);
+  const usersBySlug = new Map([['merged-slug', 5 + 4]]);
+  const avgBySlug = buildAvgEngagementSecondsBySlug(durationBySlug, usersBySlug);
+  assert.equal(avgBySlug.get('merged-slug'), 8); // 69/9 = 7.666… → 8，不是 (40/5 + 29/4)/2 之類的算法
+});
+
 // ── parseGa4ApiRows ─────────────────────────────────────────────────────
 
 test('parseGa4ApiRows：轉換 GA4 Data API runReport() 回應形狀', () => {
@@ -123,6 +189,33 @@ test('parseGa4ApiRows：轉換 GA4 Data API runReport() 回應形狀', () => {
 test('parseGa4ApiRows：空回應不炸掉', () => {
   assert.deepEqual(parseGa4ApiRows({}), []);
   assert.deepEqual(parseGa4ApiRows(null), []);
+});
+
+// ── parseGa4ApiRowsWithEngagement ──────────────────────────────────────────
+
+test('parseGa4ApiRowsWithEngagement：轉換含 userEngagementDuration／activeUsers 的回應形狀', () => {
+  const fakeResponse = {
+    rows: [
+      {
+        dimensionValues: [{ value: '/blog/threads-api-tutorial/' }],
+        metricValues: [{ value: '175' }, { value: '69' }, { value: '9' }],
+      },
+      {
+        dimensionValues: [{ value: '/services/one-on-one/' }],
+        metricValues: [{ value: '3' }, { value: '189' }, { value: '2' }],
+      },
+    ],
+  };
+  const rows = parseGa4ApiRowsWithEngagement(fakeResponse);
+  assert.deepEqual(rows, [
+    { path: '/blog/threads-api-tutorial/', views: 175, duration: 69, users: 9 },
+    { path: '/services/one-on-one/', views: 3, duration: 189, users: 2 },
+  ]);
+});
+
+test('parseGa4ApiRowsWithEngagement：空回應不炸掉', () => {
+  assert.deepEqual(parseGa4ApiRowsWithEngagement({}), []);
+  assert.deepEqual(parseGa4ApiRowsWithEngagement(null), []);
 });
 
 // ── splitCsvLine / parseGa4Csv ────────────────────────────────────────────
@@ -486,4 +579,80 @@ test('buildSyncPlan：currentViewsBySlug 傳 null（例如 views 欄位還不存
   assert.equal(updates.length, 1);
   assert.equal(updates[0].views, 5);
   assert.deepEqual(report.views.decreaseSkipped, []);
+});
+
+// ── buildSyncPlan：avg_engagement_seconds_30d（近 30 天平均停留秒數）─────────
+
+test('buildSyncPlan：avgEngagementBySlug 有資料的 slug 正常寫入', () => {
+  const articles = [
+    { id: 17, slug: 'threads-api-tutorial', title: 'Threads API 教學' },
+    { id: 18, slug: 'instagram-api-tutorial', title: 'IG API 教學' },
+  ];
+  const avgEngagementBySlug = new Map([['threads-api-tutorial', 8]]);
+  const { updates, report } = buildSyncPlan({
+    articles,
+    totalBySlug: null,
+    last30dBySlug: null,
+    avgEngagementBySlug,
+  });
+
+  assert.equal(updates.length, 1);
+  const threads = updates.find((u) => u.slug === 'threads-api-tutorial');
+  assert.equal(threads.avg_engagement_seconds_30d, 8);
+  assert.deepEqual(report.avg_engagement_seconds_30d.updated, [
+    { id: 17, slug: 'threads-api-tutorial', title: 'Threads API 教學', value: 8 },
+  ]);
+  assert.deepEqual(report.avg_engagement_seconds_30d.keptExisting, [
+    { id: 18, slug: 'instagram-api-tutorial', title: 'IG API 教學' },
+  ]);
+});
+
+test('buildSyncPlan：avgEngagementBySlug 未涵蓋的 slug 一律跳過保留現值，不會寫 0（跟 views_30d 的預設不同）', () => {
+  const articles = [{ id: 1, slug: 'no-data-slug', title: '沒資料的文章' }];
+  const avgEngagementBySlug = new Map(); // 空 Map：這次查詢完全沒涵蓋到這篇文章
+  const { updates, report } = buildSyncPlan({
+    articles,
+    totalBySlug: null,
+    last30dBySlug: null,
+    avgEngagementBySlug,
+  });
+
+  assert.equal(updates.length, 0);
+  assert.deepEqual(report.avg_engagement_seconds_30d.keptExisting.map((r) => r.slug), ['no-data-slug']);
+  assert.deepEqual(report.avg_engagement_seconds_30d.zeroed, []);
+  assert.deepEqual(report.avg_engagement_seconds_30d.updated, []);
+});
+
+test('buildSyncPlan：avgEngagementBySlug 傳 null（例如沒有查這份資料）完全不動這個欄位', () => {
+  const articles = [{ id: 1, slug: 'threads-api-tutorial', title: 'Threads API 教學' }];
+  const { updates, report } = buildSyncPlan({
+    articles,
+    totalBySlug: null,
+    last30dBySlug: null,
+    avgEngagementBySlug: null,
+  });
+
+  assert.equal(updates.length, 0);
+  assert.deepEqual(report.avg_engagement_seconds_30d.updated, []);
+  assert.deepEqual(report.avg_engagement_seconds_30d.keptExisting, []);
+});
+
+test('buildSyncPlan：三個欄位（views／views_30d／avg_engagement_seconds_30d）同時給資料時合併進同一筆 update', () => {
+  const articles = [{ id: 17, slug: 'threads-api-tutorial', title: 'Threads API 教學' }];
+  const { updates } = buildSyncPlan({
+    articles,
+    totalBySlug: new Map([['threads-api-tutorial', 1284]]),
+    last30dBySlug: new Map([['threads-api-tutorial', 300]]),
+    avgEngagementBySlug: new Map([['threads-api-tutorial', 8]]),
+  });
+
+  assert.equal(updates.length, 1);
+  assert.deepEqual(updates[0], {
+    id: 17,
+    slug: 'threads-api-tutorial',
+    title: 'Threads API 教學',
+    views: 1284,
+    views_30d: 300,
+    avg_engagement_seconds_30d: 8,
+  });
 });

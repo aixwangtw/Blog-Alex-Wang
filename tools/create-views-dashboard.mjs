@@ -42,13 +42,19 @@ const PANELS = [
   },
   {
     name: '文章累積觀看總數', icon: 'visibility', type: 'metric',
-    position_x: 1, position_y: 6, width: 30, height: 5,
+    position_x: 1, position_y: 6, width: 20, height: 5,
     options: { collection: 'articles', field: 'views', function: 'sum' },
   },
   {
     name: '文章近 30 天觀看總數', icon: 'date_range', type: 'metric',
-    position_x: 31, position_y: 6, width: 30, height: 5,
+    position_x: 21, position_y: 6, width: 20, height: 5,
     options: { collection: 'articles', field: 'views_30d', function: 'sum' },
+  },
+  {
+    name: '文章平均停留秒數（近 30 天）', icon: 'timer', type: 'metric',
+    note: '公式：userEngagementDuration ÷ activeUsers（GA4「網頁和畫面」報表算法，不是除以瀏覽數）。沒有使用者資料的文章不計入平均。',
+    position_x: 41, position_y: 6, width: 20, height: 5,
+    options: { collection: 'articles', field: 'avg_engagement_seconds_30d', function: 'avg', maximumFractionDigits: 0, suffix: 's' },
   },
   {
     name: '每日流量趨勢', icon: 'show_chart', type: 'time-series',
@@ -68,7 +74,7 @@ const PANELS = [
     position_x: 1, position_y: 47, width: 60, height: 50,
     options: {
       collection: 'articles',
-      fields: ['title', 'status', 'views', 'views_30d', 'views_synced_at'],
+      fields: ['title', 'status', 'views', 'views_30d', 'avg_engagement_seconds_30d', 'views_synced_at'],
       sort_field: 'views',
       sort_direction: 'desc',
       limit: 100,
@@ -88,13 +94,19 @@ const PANELS = [
   },
   {
     name: '新站上線後累積觀看總數', icon: 'language', type: 'metric',
-    position_x: 1, position_y: 146, width: 30, height: 5,
+    position_x: 1, position_y: 146, width: 20, height: 5,
     options: { collection: 'page_views', field: 'views', function: 'sum' },
   },
   {
     name: '全站頁面近 30 天觀看總數', icon: 'date_range', type: 'metric',
-    position_x: 31, position_y: 146, width: 30, height: 5,
+    position_x: 21, position_y: 146, width: 20, height: 5,
     options: { collection: 'page_views', field: 'views_30d', function: 'sum' },
+  },
+  {
+    name: '全站頁面平均停留秒數（近 30 天）', icon: 'timer', type: 'metric',
+    note: '公式：userEngagementDuration ÷ activeUsers（GA4「網頁和畫面」報表算法，不是除以瀏覽數）。沒有使用者資料的頁面不計入平均。',
+    position_x: 41, position_y: 146, width: 20, height: 5,
+    options: { collection: 'page_views', field: 'avg_engagement_seconds_30d', function: 'avg', maximumFractionDigits: 0, suffix: 's' },
   },
   {
     name: '所有頁面觀看次數', icon: 'table_view', type: 'directus-panel-table',
@@ -102,7 +114,7 @@ const PANELS = [
     position_x: 1, position_y: 151, width: 60, height: 50,
     options: {
       collection: 'page_views',
-      fields: ['name', 'views', 'views_30d', 'path'],
+      fields: ['name', 'views', 'views_30d', 'avg_engagement_seconds_30d', 'path'],
       sort_field: 'views',
       sort_direction: 'desc',
       limit: 100,
@@ -143,13 +155,13 @@ const OBSOLETE_PANEL_NAMES = ['最後同步時間', '近 30 天熱門文章', '�
 const TABLES = [
   {
     bookmark: '文章觀看次數表格', collection: 'articles', icon: 'article',
-    fields: ['title', 'status', 'views', 'views_30d', 'views_synced_at'],
-    widths: { title: 520, status: 120, views: 120, views_30d: 140, views_synced_at: 200 },
+    fields: ['title', 'status', 'views', 'views_30d', 'avg_engagement_seconds_30d', 'views_synced_at'],
+    widths: { title: 480, status: 120, views: 120, views_30d: 140, avg_engagement_seconds_30d: 160, views_synced_at: 200 },
   },
   {
     bookmark: '全站頁面觀看次數表格', collection: 'page_views', icon: 'table_view',
-    fields: ['name', 'views', 'views_30d', 'path'],
-    widths: { name: 360, views: 160, views_30d: 140, path: 420 },
+    fields: ['name', 'views', 'views_30d', 'avg_engagement_seconds_30d', 'path'],
+    widths: { name: 320, views: 160, views_30d: 140, avg_engagement_seconds_30d: 160, path: 420 },
   },
   {
     bookmark: '文章每日流量表格', collection: 'daily_content_views', icon: 'article',
