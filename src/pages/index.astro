@@ -29,7 +29,17 @@ import { getCollection } from 'astro:content';
 import freeResourcesHome from '../assets/free-resources-home-v2.png';
 import instructorShirt from '../assets/instructor-shirt.jpg';
 import taichungTalk from '../assets/taichung-talk.jpg';
-import { AUTHOR, LEARNING_ENTRY_LINKS, LINKS, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
+import {
+  AUTHOR,
+  COLLABORATION_ENTRY_LINKS,
+  FREE_ENTRY_LINKS,
+  GUIDED_ENTRY_LINKS,
+  LEARNING_ENTRY_LINKS,
+  LINKS,
+  SERVICE_SITE,
+  SITE,
+  pageBannerUrl,
+} from '../consts';
 import { SYLLABUS } from '../data/home';
 import { TEACHING_CASES } from '../data/services';
 import Base from '../layouts/Base.astro';
@@ -118,20 +128,42 @@ const schema = [
                 <div class="cli-question-bubble">
                   <p class="cli-eyebrow">AI LEARNING RADAR</p>
                   <h2 class="cli-question">今天想先做哪一件事？</h2>
-                  <p class="cli-intro">選擇後直接前往，不需要等待回答。</p>
                 </div>
               </div>
-              <nav class="cli-options" aria-label="選擇 AI 學習方向">
-                {LEARNING_ENTRY_LINKS.map((entry, index) => (
-                  <a
-                    href={entry.href}
-                    data-ga-button={`hero_cli_${entry.analyticsKey}`}
-                    data-ga-label={entry.analyticsLabel}
-                    data-ga-location="hero_cli"
-                    data-ga-action="navigate"
-                  ><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
-                ))}
-              </nav>
+              <div class="cli-tabs" role="tablist" aria-label="選擇需求">
+                <button id="cli-tab-learn" type="button" role="tab" aria-selected="true" aria-controls="cli-panel-learn" data-radar-tab="learn" data-ga-button="hero_radar_tab_learn" data-ga-label="自己學" data-ga-location="hero_cli" data-ga-action="switch_tab">自己學</button>
+                <button id="cli-tab-guided" type="button" role="tab" aria-selected="false" aria-controls="cli-panel-guided" data-radar-tab="guided" data-ga-button="hero_radar_tab_guided" data-ga-label="找人帶" data-ga-location="hero_cli" data-ga-action="switch_tab" tabindex="-1">找人帶</button>
+                <button id="cli-tab-collaborate" type="button" role="tab" aria-selected="false" aria-controls="cli-panel-collaborate" data-radar-tab="collaborate" data-ga-button="hero_radar_tab_collaborate" data-ga-label="邀合作" data-ga-location="hero_cli" data-ga-action="switch_tab" tabindex="-1">邀合作</button>
+                <button id="cli-tab-free" type="button" role="tab" aria-selected="false" aria-controls="cli-panel-free" data-radar-tab="free" data-ga-button="hero_radar_tab_free" data-ga-label="找免費" data-ga-location="hero_cli" data-ga-action="switch_tab" tabindex="-1">找免費</button>
+              </div>
+              <div id="cli-panel-learn" class="cli-tab-panel" role="tabpanel" aria-labelledby="cli-tab-learn" data-radar-panel="learn">
+                <nav class="cli-options" aria-label="自己學">
+                  {LEARNING_ENTRY_LINKS.map((entry, index) => (
+                    <a href={entry.href} data-ga-button={`hero_cli_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="hero_cli" data-ga-action="navigate"><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
+                  ))}
+                </nav>
+              </div>
+              <div id="cli-panel-guided" class="cli-tab-panel" role="tabpanel" aria-labelledby="cli-tab-guided" data-radar-panel="guided" hidden>
+                <nav class="cli-options" aria-label="找人帶">
+                  {GUIDED_ENTRY_LINKS.map((entry, index) => (
+                    <a href={entry.href} data-ga-button={`hero_cli_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="hero_cli" data-ga-action="navigate"><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
+                  ))}
+                </nav>
+              </div>
+              <div id="cli-panel-collaborate" class="cli-tab-panel" role="tabpanel" aria-labelledby="cli-tab-collaborate" data-radar-panel="collaborate" hidden>
+                <nav class="cli-options" aria-label="邀合作">
+                  {COLLABORATION_ENTRY_LINKS.map((entry, index) => (
+                    <a href={entry.href} data-ga-button={`hero_cli_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="hero_cli" data-ga-action="navigate"><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
+                  ))}
+                </nav>
+              </div>
+              <div id="cli-panel-free" class="cli-tab-panel" role="tabpanel" aria-labelledby="cli-tab-free" data-radar-panel="free" hidden>
+                <nav class="cli-options" aria-label="找免費">
+                  {FREE_ENTRY_LINKS.map((entry, index) => (
+                    <a href={entry.href} data-ga-button={`hero_cli_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="hero_cli" data-ga-action="navigate"><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
+                  ))}
+                </nav>
+              </div>
             </div>
           </div>
           <div class="cli-search-area">
@@ -287,8 +319,48 @@ const schema = [
       var cli = document.getElementById('hero-cli');
       if (!cli) return;
 
+      var wasVisible = true;
+      var tabs = Array.from(cli.querySelectorAll('[data-radar-tab]'));
+      var panels = Array.from(cli.querySelectorAll('[data-radar-panel]'));
+
+      function activateTab(key, moveFocus) {
+        tabs.forEach(function (tab) {
+          var selected = tab.getAttribute('data-radar-tab') === key;
+          tab.setAttribute('aria-selected', String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+          if (selected && moveFocus) tab.focus();
+        });
+        panels.forEach(function (panel) {
+          panel.hidden = panel.getAttribute('data-radar-panel') !== key;
+        });
+      }
+
+      tabs.forEach(function (tab, index) {
+        tab.addEventListener('click', function () {
+          activateTab(tab.getAttribute('data-radar-tab'), false);
+        });
+        tab.addEventListener('keydown', function (event) {
+          var nextIndex = index;
+          if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+          else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+          else if (event.key === 'Home') nextIndex = 0;
+          else if (event.key === 'End') nextIndex = tabs.length - 1;
+          else return;
+          event.preventDefault();
+          activateTab(tabs[nextIndex].getAttribute('data-radar-tab'), true);
+        });
+      });
+
       function setCliVisible(visible) {
         document.body.classList.toggle('home-cli-visible', visible);
+        var chatbot = document.getElementById('search-chatbot');
+        if (wasVisible && !visible && chatbot && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          chatbot.classList.remove('is-terminal-collapse');
+          void chatbot.offsetWidth;
+          chatbot.classList.add('is-terminal-collapse');
+          window.setTimeout(function () { chatbot.classList.remove('is-terminal-collapse'); }, 650);
+        }
+        wasVisible = visible;
       }
 
       setCliVisible(true);
@@ -788,17 +860,40 @@ const schema = [
       letter-spacing: 0;
       overflow-wrap: anywhere;
     }
-    .cli-intro {
-      max-width: 650px;
-      margin: 12px 0 0;
-      color: #bdb6b0;
-      font: 400 clamp(13px, 1.5vw, 15px)/1.8 var(--font-display);
+    .cli-tabs {
+      display: grid;
+      max-width: 820px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      margin: 26px 0 0;
+      padding: 4px;
+      border: 1px solid #403b38;
+      border-radius: 9px;
+      background: #171615;
+    }
+    .cli-tabs button {
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #aaa39d;
+      font: 600 13px/1.3 var(--font-display);
+      cursor: pointer;
+    }
+    .cli-tabs button[aria-selected='true'] {
+      background: #a85b67;
+      color: #fffaf4;
+      box-shadow: 0 4px 14px rgb(0 0 0 / 22%);
+    }
+    .cli-tab-panel[hidden] {
+      display: none;
     }
     .cli-options {
       display: grid;
       gap: 10px;
       max-width: 820px;
-      margin: 28px 0 0;
+      margin: 10px 0 0;
     }
     .cli-options a {
       display: grid;
@@ -978,10 +1073,14 @@ const schema = [
       .cli-question {
         font-size: clamp(22px, 7vw, 28px);
       }
-      .cli-intro { margin-top: 8px; font-size: 13px; line-height: 1.7; }
+      .cli-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 18px;
+      }
+      .cli-tabs button { min-height: 38px; font-size: 12px; }
       .cli-options {
         gap: 8px;
-        margin: 20px 0 0;
+        margin: 8px 0 0;
       }
       .cli-options a {
         min-height: 62px;
@@ -1592,6 +1691,7 @@ const schema = [
         transform: translateY(-1px);
       }
       .cli-options a:hover .cli-option-arrow { transform: translate(2px, -2px); }
+      .cli-tabs button:hover { color: #fffaf4; }
       :global(.cli-search-result:hover) {
         border-color: var(--color-accent-line-2);
         background: var(--color-accent-tint);
@@ -1607,6 +1707,7 @@ const schema = [
     .instructor-socials a:focus-visible,
     .featured-list a:focus-visible,
     .cli-options a:focus-visible,
+    .cli-tabs button:focus-visible,
     :global(.cli-search-result:focus-visible),
     .cli-search-form button:focus-visible {
       outline: 2px solid #f0a6b1;

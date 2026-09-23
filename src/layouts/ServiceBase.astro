@@ -201,6 +201,14 @@ const jsonLd = {
 
         <nav class="service-mainnav" id="service-mainnav" aria-label="服務站主要導覽">
           <a href={serviceHomeHref}>服務首頁</a>
+          <a
+            class="service-main-site-link"
+            href={SITE.url}
+            data-ga-button="service_header_main_site"
+            data-ga-label="AI 新手教學主站"
+            data-ga-location="service_header"
+            data-ga-action="navigate"
+          >AI 新手教學 <span aria-hidden="true">↗</span></a>
           <a href={`${SITE.url}/about/`}>關於講師</a>
           <details class="service-mega" id="service-mega">
             <summary>
@@ -324,7 +332,7 @@ const jsonLd = {
         </section>
         <section>
           <h2>內容品牌</h2>
-          <a href={SITE.url}>AI 新手教學部落格</a>
+          <a href={SITE.url}>AI 新手教學主站</a>
           <a href={`${SITE.url}/about/`}>關於講師 Alex</a>
         </section>
       </div>
@@ -344,6 +352,8 @@ const jsonLd = {
       .service-brand small { margin-top:5px; color:var(--color-accent); font:700 8px/1 ui-monospace, monospace; letter-spacing:.18em; }
       .service-mainnav { display:flex; align-items:center; gap:30px; }
       .service-mainnav > a, .service-mega summary { color:var(--color-ink); font-size:15px; font-weight:650; text-decoration:none; white-space:nowrap; }
+      .service-mainnav > .service-main-site-link { padding:8px 11px; border:1px solid var(--color-accent-line-2); color:var(--color-accent); }
+      .service-main-site-link span { margin-left:4px; font-size:12px; }
       .service-mega summary { display:flex; align-items:center; gap:6px; cursor:pointer; list-style:none; }
       .service-mega summary::-webkit-details-marker { display:none; }
       .service-mega-cue { color:var(--color-accent); font-size:15px; transition:transform .2s ease; }
@@ -388,6 +398,7 @@ const jsonLd = {
         .service-nav-js .service-mainnav { display:none; }
         .service-nav-js .service-header[data-open='true'] .service-mainnav { display:grid; }
         .service-mainnav > a, .service-mega summary { display:flex; min-height:52px; align-items:center; justify-content:space-between; border-top:1px solid var(--color-rule); font-size:16px; }
+        .service-mainnav > .service-main-site-link { padding:0; border-width:1px 0 0; border-color:var(--color-rule); }
         .service-book { justify-content:center !important; margin-top:10px; border-top:0 !important; }
         .service-mega-panel { position:static; display:block; width:100%; padding:0 0 10px; border:0; box-shadow:none; transform:none; }
         .service-mega-intro { display:none; }

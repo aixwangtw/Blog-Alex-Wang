@@ -79,7 +79,7 @@ export const LINKS = {
   email: 'mailto:js0980420@gmail.com',
 };
 
-// 首屏與右下角快速入口共用同一組學習路徑，避免兩處文案與目的頁漂移。
+// 首屏與右下角快速入口共用同一組路徑，避免兩處文案與目的頁漂移。
 export const LEARNING_ENTRY_LINKS = [
   {
     href: '/blog/how-to-start-learning-ai/',
@@ -89,19 +89,35 @@ export const LEARNING_ENTRY_LINKS = [
     analyticsLabel: 'AI 新手零基礎入門文章',
   },
   {
-    href: '/blog/codex-windows-wsl-install/',
-    title: '先把 Codex 裝好',
-    description: '最多人閱讀的新手教學，不用先碰終端機',
-    analyticsKey: 'codex',
-    analyticsLabel: 'Codex 新手安裝教學',
-  },
-  {
     href: '/blog/',
     title: '找 AI 實作主題文章',
     description: 'Codex、AI Skills、API 串接與工作流自動化',
     analyticsKey: 'articles',
     analyticsLabel: 'AI 實作主題文章',
   },
+] as const;
+
+export const GUIDED_ENTRY_LINKS = [
+  {
+    href: `${SERVICE_SITE.url}/course/`,
+    title: '找 AI 家教',
+    description: '從工具安裝到完成第一個專案，適合零基礎學員。',
+    analyticsKey: 'tutor',
+    analyticsLabel: 'AI 一對一家教',
+  },
+] as const;
+
+export const COLLABORATION_ENTRY_LINKS = [
+  {
+    href: `${SERVICE_SITE.url}/services/speaking/`,
+    title: '邀請 AI 講師',
+    description: 'AI Agent、社群自動化與對話式拍片主題。',
+    analyticsKey: 'speaker',
+    analyticsLabel: 'AI 講師與企業內訓',
+  },
+] as const;
+
+export const FREE_ENTRY_LINKS = [
   {
     href: '/resources/',
     title: '免費工具與資源',
