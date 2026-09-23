@@ -29,8 +29,7 @@ import { getCollection } from 'astro:content';
 import freeResourcesHome from '../assets/free-resources-home-v2.png';
 import instructorShirt from '../assets/instructor-shirt.jpg';
 import taichungTalk from '../assets/taichung-talk.jpg';
-import tookaCover from '../assets/tooka-cover.jpg';
-import { AUTHOR, LINKS, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
+import { AUTHOR, LEARNING_ENTRY_LINKS, LINKS, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
 import { SYLLABUS } from '../data/home';
 import { TEACHING_CASES } from '../data/services';
 import Base from '../layouts/Base.astro';
@@ -76,119 +75,63 @@ const schema = [
   schema={schema}
 >
   <div class="home" id="home-root">
-    <!-- 1／Hero：對話式介面，讓訪客直接選擇自己目前最接近的狀況 -->
+    <!-- 1／Hero：終端機式快速入口；每個選項直接前往目的頁，不加入模擬思考或中繼回答。 -->
     <section class="hero" aria-labelledby="hero-h">
-        <div class="cli hero-reveal" id="hero-cli" tabindex="0" style="--d:0ms">
-          <div class="cli-brand" aria-hidden="true">
-            <img src="/aixwang-icon.png" width="24" height="24" alt="" />
-            <span>Aix</span>
+        <div class="hero-copy hero-reveal" style="--d:0ms">
+          <p class="hero-kicker">AI 新手教學</p>
+          <h1 id="hero-h">AI 新手，從零開始做出成果</h1>
+          <p class="hero-summary">從 Codex 安裝、AI Skills 到 API 串接與工作流自動化，用不預設技術背景的文章與實作教學，陪你完成第一步。</p>
+          <div class="hero-actions">
+            <a
+              class="hero-primary"
+              href="/blog/how-to-start-learning-ai/"
+              data-ga-button="hero_beginner_primary"
+              data-ga-label="看 AI 新手學習路線"
+              data-ga-location="hero_intro"
+              data-ga-action="navigate"
+            >看 AI 新手學習路線 <span aria-hidden="true">→</span></a>
+            <a
+              class="hero-secondary"
+              href={`${SERVICE_SITE.url}/course/`}
+              data-ga-button="hero_course_secondary"
+              data-ga-label="了解一對一實作教學"
+              data-ga-location="hero_intro"
+              data-ga-action="navigate"
+            >需要陪著做？了解一對一教學</a>
+          </div>
+          <ul class="hero-proof" aria-label="教學特色">
+            <li>零基礎可讀</li>
+            <li>繁體中文</li>
+            <li>以實作為主</li>
+          </ul>
+        </div>
+        <div class="cli hero-reveal" id="hero-cli" style="--d:0ms">
+          <div class="cli-brand">
+            <span class="cli-window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="cli-window-title">alex@aixwang: ~/ai-learning</span>
+            <span class="cli-status"><i aria-hidden="true"></i> READY</span>
           </div>
           <div class="cli-screen">
             <div class="cli-conversation">
-            <div class="cli-dialog">
-              <div class="cli-bubble cli-question-bubble">
-                <h1 class="cli-question" id="hero-h" data-cli-question="你希望我怎麼幫助你？">你希望我怎麼幫助你？</h1>
-              </div>
-            </div>
-            <div class="cli-options" aria-label="選擇你需要的幫助">
-              <button
-                type="button"
-                data-answer="手把手帶你從0到1，用 Claude Code 或 Codex，從工具安裝、建立專案規則、環境建置、功能拆分、除錯到完成第一個可用作品，零基礎也能開始。"
-                data-image-kind="cases"
-                data-href={`${SERVICE_SITE.url}/course/`}
-                data-link-label="查看 AI 新手實戰課"
-                data-ga-button="hero_cli_newbie"
-                data-ga-label="我完全零基礎，想從頭學"
-                data-ga-location="hero_cli"
-                data-ga-action="select_topic"
-              ><span class="cli-option-index" aria-hidden="true">01</span><strong>我完全零基礎，想從頭學</strong><span class="cli-option-arrow" aria-hidden="true">→</span></button>
-              <button
-                type="button"
-                data-answer="曾受 MixerBox、TAIA 與地方社群邀請，分享 AI Agent、社群自動化與對話式拍片，內容以現場實作為主。"
-                data-image={taichungTalk.src}
-                data-image-alt="Alex 在台中場進行 AI 社群圖文演講"
-                data-href={`${SERVICE_SITE.url}/services/speaking/`}
-                data-link-label="查看完整演講履歷"
-                data-ga-button="hero_cli_speaking"
-                data-ga-label="我想找AI講師來演講"
-                data-ga-location="hero_cli"
-                data-ga-action="select_topic"
-              ><span class="cli-option-index" aria-hidden="true">02</span><strong>我想找AI講師來演講</strong><span class="cli-option-arrow" aria-hidden="true">→</span></button>
-              <button
-                type="button"
-                data-answer="推薦從 Tooka 社群圖文工具開始；網站也整理了 Codex、Skills、Meta API 與 AI 自動化的免費資源。"
-                data-image={tookaCover.src}
-                data-image-alt="Tooka 開源社群圖文卡片工具操作畫面"
-                data-href="/resources/"
-                data-link-label="查看免費工具與教學"
-                data-ga-button="hero_cli_tools"
-                data-ga-label="我想先自己摸索免費資源"
-                data-ga-location="hero_cli"
-                data-ga-action="select_topic"
-              ><span class="cli-option-index" aria-hidden="true">03</span><strong>我想先自己摸索免費資源</strong><span class="cli-option-arrow" aria-hidden="true">→</span></button>
-              <button
-                type="button"
-                data-answer="文章依照實作目的整理，可以先從 Codex 工具安裝開始，再依需求查看 Threads 與 Instagram API 申請教學。"
-                data-image-kind="articles"
-                data-href="/blog/"
-                data-link-label="閱讀全部文章"
-                data-ga-button="hero_cli_articles"
-                data-ga-label="我想找相關主題的文章"
-                data-ga-location="hero_cli"
-                data-ga-action="select_topic"
-              ><span class="cli-option-index" aria-hidden="true">04</span><strong>我想找相關主題的文章</strong><span class="cli-option-arrow" aria-hidden="true">→</span></button>
-              <button
-                type="button"
-                data-answer="無論想做自動發文、社群圖文、剪輯或配音，第一步都先安裝 Codex；回答 3 題後，再告訴你每個需求要搭配哪一個工具。"
-                data-image-kind="articles"
-                data-href={`${SERVICE_SITE.url}/quiz/`}
-                data-link-label="開始 30 秒測驗"
-                data-ga-button="hero_cli_quiz"
-                data-ga-label="我想知道每個需求該用什麼工具（30秒測驗）"
-                data-ga-location="hero_cli"
-                data-ga-action="select_topic"
-              ><span class="cli-option-index" aria-hidden="true">05</span><strong>我想知道每個需求該用什麼工具（30秒測驗）</strong><span class="cli-option-arrow" aria-hidden="true">→</span></button>
-            </div>
-            <div class="cli-output" id="cli-output" aria-live="polite" aria-atomic="true">
-              <p class="cli-command" id="cli-command-text"></p>
-              <div class="cli-answer" id="cli-answer" hidden>
-                <div class="cli-bubble cli-answer-bubble">
-                  <div class="cli-answer-content">
-                    <div class="cli-answer-media" id="cli-answer-media">
-                      <img id="cli-answer-image" src={taichungTalk.src} alt="" hidden />
-                      <div class="cli-case-visual" id="cli-case-visual" aria-label="AI 新手教學實際案例與使用工具">
-                        <div class="cli-case-visual-head"><span>CASE LOG</span><b>實際教學案例</b></div>
-                        <ul>
-                          {TEACHING_CASES.slice(0, 3).map((item) => (
-                            <li>
-                              <Image src={item.image} alt={item.imageAlt} width={42} />
-                              <span><small>{item.student}</small><b>{item.topic}</b></span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div class="cli-article-visual" id="cli-article-visual" aria-label="文章分類" hidden>
-                        <a href="/blog/codex-windows-wsl-install/" data-ga-button="hero_article_codex" data-ga-label="Codex 安裝教學" data-ga-location="hero_answer" data-ga-action="open_article">
-                          <img src="/images/blog/codex-windows-wsl-install.png" alt="Codex Windows 與 WSL 安裝教學" loading="lazy" />
-                          <span><small>工具安裝</small><b>Codex 安裝教學</b></span>
-                        </a>
-                        <div class="cli-article-category">
-                          <img src="/images/blog/threads-api-tutorial.png" alt="Threads API 申請教學" loading="lazy" />
-                          <span>
-                            <small>API 申請</small>
-                            <a href="/blog/threads-api-tutorial/" data-ga-button="hero_article_threads_api" data-ga-label="Threads API" data-ga-location="hero_answer" data-ga-action="open_article">Threads API</a>
-                            <a href="/blog/instagram-api-tutorial/" data-ga-button="hero_article_instagram_api" data-ga-label="Instagram API" data-ga-location="hero_answer" data-ga-action="open_article">Instagram API</a>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <p id="cli-answer-text"></p>
-                  </div>
-                  <a id="cli-answer-link" href="/" data-ga-button="hero_answer_cta" data-ga-label="繼續查看" data-ga-location="hero_answer" data-ga-action="navigate">繼續查看 <span aria-hidden="true">→</span></a>
-                  <button class="cli-end" id="cli-end" type="button" data-ga-button="hero_end_conversation" data-ga-label="結束對話" data-ga-location="hero_answer" data-ga-action="reset"><span aria-hidden="true">×</span> 結束對話</button>
+              <div class="cli-dialog">
+                <p class="cli-prompt" aria-hidden="true"><span>alex@aixwang:~$</span> choose-learning-path</p>
+                <div class="cli-question-bubble">
+                  <p class="cli-eyebrow">AI LEARNING RADAR</p>
+                  <h2 class="cli-question">今天想先做哪一件事？</h2>
+                  <p class="cli-intro">選擇後直接前往，不需要等待回答。</p>
                 </div>
               </div>
-            </div>
+              <nav class="cli-options" aria-label="選擇 AI 學習方向">
+                {LEARNING_ENTRY_LINKS.map((entry, index) => (
+                  <a
+                    href={entry.href}
+                    data-ga-button={`hero_cli_${entry.analyticsKey}`}
+                    data-ga-label={entry.analyticsLabel}
+                    data-ga-location="hero_cli"
+                    data-ga-action="navigate"
+                  ><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
+                ))}
+              </nav>
             </div>
           </div>
           <div class="cli-search-area">
@@ -338,8 +281,8 @@ const schema = [
   </div>
 
   <script is:inline>
-    /* 手機首屏的終端機本身已有站內搜尋；終端機還在畫面時隱藏右下角浮動操作，
-       避免 LINE 與 chatbot 蓋住搜尋列／ONLINE 狀態列。滑過終端機後再顯示。 */
+    /* 首屏終端機與右下角入口是同一個功能：終端機還在畫面時收起 chatbot，
+       離開終端機後再顯示縮合入口，避免同一用途在首屏重複出現。 */
     (function () {
       var cli = document.getElementById('hero-cli');
       if (!cli) return;
@@ -436,58 +379,13 @@ const schema = [
     (function () {
       var cli = document.getElementById('hero-cli');
       if (!cli) return;
-      var question = cli.querySelector('[data-cli-question]');
-      var options = Array.prototype.slice.call(cli.querySelectorAll('.cli-options button'));
-      var commandText = document.getElementById('cli-command-text');
-      var answer = document.getElementById('cli-answer');
-      var answerText = document.getElementById('cli-answer-text');
-      var answerImage = document.getElementById('cli-answer-image');
-      var caseVisual = document.getElementById('cli-case-visual');
-      var articleVisual = document.getElementById('cli-article-visual');
-      var answerLink = document.getElementById('cli-answer-link');
-      var endButton = document.getElementById('cli-end');
       var searchForm = document.getElementById('cli-search-form');
       var searchInput = document.getElementById('cli-search-input');
       var searchResults = document.getElementById('cli-search-results');
-      if (!question || !options.length || !commandText || !answer || !answerText || !answerImage || !caseVisual || !articleVisual || !answerLink || !endButton || !searchForm || !searchInput || !searchResults) return;
+      if (!searchForm || !searchInput || !searchResults) return;
 
       var searchIndexPromise;
       var searchActive = -1;
-
-      function runAnswer(option) {
-        if (!cli.classList.contains('is-ready')) return;
-        var pageScrollY = window.scrollY;
-        cli.focus({ preventScroll: true });
-        question.textContent = question.dataset.cliQuestion || '';
-        cli.classList.add('has-output');
-        commandText.textContent = option.querySelector('strong').textContent;
-        var showCases = option.dataset.imageKind === 'cases';
-        var showArticles = option.dataset.imageKind === 'articles';
-        caseVisual.hidden = !showCases;
-        articleVisual.hidden = !showArticles;
-        answerImage.hidden = showCases || showArticles;
-        if (!showCases && !showArticles) {
-          answerImage.src = option.dataset.image || '';
-          answerImage.alt = option.dataset.imageAlt || '';
-        }
-        answerLink.href = option.dataset.href || '/';
-        answerLink.firstChild.textContent = (option.dataset.linkLabel || '繼續查看') + ' ';
-        answerLink.dataset.gaLabel = option.dataset.linkLabel || '繼續查看';
-
-        answerText.textContent = option.dataset.answer || '';
-        answer.hidden = false;
-
-        window.requestAnimationFrame(function () { window.scrollTo(0, pageScrollY); });
-      }
-
-      function endConversation() {
-        cli.classList.remove('has-output');
-        answer.hidden = true;
-        commandText.textContent = '';
-        answerText.textContent = '';
-        answerImage.alt = '';
-        cli.focus({ preventScroll: true });
-      }
 
       function loadSearchIndex() {
         if (!searchIndexPromise) {
@@ -558,14 +456,6 @@ const schema = [
         });
       }
 
-      // 每個選項都是獨立按鈕（不再是單選 listbox），點擊直接觸發對應回答，
-      // Tab／Enter／Space 走瀏覽器原生按鈕鍵盤行為即可，不需要自訂方向鍵邏輯。
-      options.forEach(function (option) {
-        option.addEventListener('click', function () { runAnswer(option); });
-      });
-
-      endButton.addEventListener('click', endConversation);
-
       searchInput.addEventListener('focus', loadSearchIndex);
       searchInput.addEventListener('input', function () {
         searchSite(searchInput.value);
@@ -594,12 +484,6 @@ const schema = [
         event.preventDefault();
         searchSite(searchInput.value);
       });
-
-      function ready() {
-        cli.classList.add('is-ready');
-      }
-
-      ready();
     })();
   </script>
 
@@ -725,67 +609,145 @@ const schema = [
       white-space: nowrap;
     }
 
-    /* ---------- Hero：對話式介面（聊天泡泡＋建議選項） ----------
-       改版前是深色 macOS 終端機視覺；這裡换成淺色聊天 App 視覺，
-       色票一律沿用 global.css @theme 的 --color-*／--paper*，不寫新色碼
-       （案例卡、文章卡內部既有的深色卡片色也一併換成同一套亮色語彙）。
-       class 命名保留 .cli 前綴：純粹當作這顆元件的樣式命名空間，
-       不代表「command line interface」，避免大改名增加不必要的風險。 */
+    /* ---------- Hero：保留終端機語彙，但不模擬 AI 思考或等待 ----------
+       60／30／10 配色以全頁計算：中性紙色是主要底色、深色終端機是次要區塊，
+       酒紅只用於狀態與互動提示。每個選項都是原生連結，點擊後直接導頁。 */
     .hero {
       display: grid;
       width: 100%;
-      min-height: calc(100vh - var(--bar));
-      min-height: calc(100svh - var(--bar));
-      align-items: stretch;
-      justify-content: stretch;
-      padding: 20px;
+      max-width: 90rem;
+      grid-template-columns: minmax(0, 0.82fr) minmax(560px, 1.18fr);
+      align-items: start;
+      gap: clamp(36px, 6vw, 88px);
+      margin: 0 auto;
+      padding: clamp(58px, 8vw, 108px) 40px;
+    }
+    .hero-copy {
+      align-self: center;
+      max-width: 510px;
+    }
+    .hero-kicker {
+      margin: 0 0 16px;
+      color: var(--color-accent);
+      font: 700 12px/1.4 var(--font-mono);
+      letter-spacing: 0.12em;
+    }
+    .hero-copy h1 {
+      margin: 0;
+      color: var(--color-ink);
+      font: 650 clamp(42px, 5vw, 68px)/1.15 var(--font-display);
+      letter-spacing: -0.045em;
+    }
+    .hero-summary {
+      max-width: 470px;
+      margin: 24px 0 0;
+      color: var(--color-ink-2);
+      font: 400 clamp(15px, 1.45vw, 18px)/1.85 var(--font-display);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 18px;
+      margin-top: 30px;
+    }
+    .hero-primary {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px 20px;
+      border: 1px solid var(--color-accent);
+      border-radius: 6px;
+      background: var(--color-accent);
+      color: #fff;
+      font: 600 14px/1.5 var(--font-display);
+      text-decoration: none;
+      transition: background-color 0.18s var(--ease), transform 0.18s var(--ease);
+    }
+    .hero-secondary {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      color: var(--color-ink-2);
+      font: 500 13px/1.5 var(--font-display);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .hero-proof {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin: 22px 0 0;
+      padding: 0;
+      color: var(--color-ink-3);
+      font: 500 12px/1.5 var(--font-display);
+      list-style: none;
+    }
+    .hero-proof li::before {
+      margin-right: 7px;
+      color: var(--color-accent);
+      content: '✓';
     }
     .cli {
       display: flex;
       width: 100%;
-      /* 72rem 全站版心扣掉桌機兩側各 40px 內距，與導覽、免費區塊內容左右緣對齊。 */
-      max-width: 67rem;
-      min-height: calc(100vh - var(--bar) - 40px);
-      min-height: calc(100svh - var(--bar) - 40px);
       flex-direction: column;
-      margin: 0 auto;
-      border: 1px solid var(--color-rule-2);
+      border: 1px solid #3f3a37;
       border-radius: 14px;
-      background: var(--color-paper);
-      color: var(--color-ink-2);
-      box-shadow: 0 26px 70px rgb(22 22 26 / 10%);
-      outline: none;
-      overflow: hidden; /* 品牌列／搜尋列的方角背景色塊不會溢出外框的圓角 */
+      background: #181716;
+      color: #f7f3ed;
+      box-shadow: 0 26px 70px rgb(22 22 26 / 18%);
+      overflow: hidden;
       overflow-anchor: none;
     }
-    .cli:focus-visible {
-      outline: 2px solid var(--color-accent);
-      outline-offset: 4px;
-    }
-    /* 品牌小標記：取代原本的 mac 視窗列，重用頁首同一顆 icon。純裝飾。 */
+    /* 視窗列提供終端機位置與立即可操作狀態，不放品牌動畫。 */
     .cli-brand {
       display: flex;
       height: 44px;
       flex: none;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       padding: 0 18px;
-      border-bottom: 1px solid var(--color-rule);
-      background: var(--color-paper-2);
+      border-bottom: 1px solid #3f3a37;
+      background: #24211f;
       border-radius: 13px 13px 0 0;
     }
-    .cli-brand img {
-      display: block;
-      width: 22px;
-      height: 22px;
-      border-radius: 5px;
+    .cli-window-dots {
+      display: flex;
+      gap: 6px;
     }
-    .cli-brand span {
-      color: var(--color-ink-3);
-      font-family: var(--font-display);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+    .cli-window-dots i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #665f5a;
+    }
+    .cli-window-dots i:first-child { background: #d96c70; }
+    .cli-window-dots i:nth-child(2) { background: #d6a34d; }
+    .cli-window-dots i:last-child { background: #69aa79; }
+    .cli-window-title,
+    .cli-status {
+      color: #aaa39d;
+      font: 500 11px/1.4 var(--font-mono);
+      letter-spacing: 0.01em;
+    }
+    .cli-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      color: #d6a34d;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+    .cli-status i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #d6a34d;
+      box-shadow: 0 0 0 3px rgb(214 163 77 / 12%);
     }
     .cli-screen {
       display: flex;
@@ -793,321 +755,111 @@ const schema = [
       min-height: 0;
       flex: 1;
       flex-direction: column;
-      padding: clamp(22px, 4vw, 46px);
-      font-family: var(--font-display);
+      padding: clamp(24px, 4vw, 44px);
+      font-family: var(--font-mono);
     }
     .cli-conversation {
       width: 100%;
     }
-    /* 訊息列：不模擬 AI 身分或等待狀態，選擇後直接顯示內容。 */
     .cli-dialog {
       display: block;
       min-width: 0;
     }
-    .cli-bubble {
-      min-width: 0;
-      max-width: 640px;
-      padding: 16px 18px;
-      border: 1px solid var(--color-rule);
-      border-radius: 12px;
-      background: var(--color-surface);
-      box-shadow: 0 2px 10px rgb(22 22 26 / 6%);
+    .cli-prompt {
+      margin: 0 0 18px;
+      color: #8f8882;
+      font: 500 12px/1.5 var(--font-mono);
     }
+    .cli-prompt span { color: #f0a6b1; }
     .cli-question-bubble {
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      max-width: 760px;
+    }
+    .cli-eyebrow {
+      margin: 0 0 8px;
+      color: #f0a6b1;
+      font: 600 11px/1.4 var(--font-mono);
+      letter-spacing: 0.12em;
     }
     .cli-question {
       min-width: 0;
       margin: 0;
-      color: var(--color-ink);
-      font: 600 clamp(20px, 3.2vw, 34px)/1.45 var(--font-display);
+      color: #fffaf4;
+      font: 650 clamp(25px, 4vw, 42px)/1.3 var(--font-display);
       letter-spacing: 0;
       overflow-wrap: anywhere;
     }
-    /* 建議選項：每個選項各自一張獨立卡片，直向列成一排並排的平行卡片列
-       （參考 creatorhome.tw 資源雷達區塊的編號卡片清單），
-       不再是擠在一起的膠囊按鈕（見上方 script 的說明）。 */
-    .cli-options {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-width: 720px;
-      margin: 6px 0 0;
+    .cli-intro {
+      max-width: 650px;
+      margin: 12px 0 0;
+      color: #bdb6b0;
+      font: 400 clamp(13px, 1.5vw, 15px)/1.8 var(--font-display);
     }
-    .cli-options button {
-      display: flex;
+    .cli-options {
+      display: grid;
+      gap: 10px;
+      max-width: 820px;
+      margin: 28px 0 0;
+    }
+    .cli-options a {
+      display: grid;
       width: 100%;
-      min-height: 58px;
+      min-height: 68px;
+      grid-template-columns: 32px minmax(0, 1fr) auto;
       align-items: center;
       gap: 14px;
-      padding: 14px 18px;
-      border: 1px solid var(--color-rule-2);
-      border-radius: 12px;
-      background: var(--color-surface);
-      color: var(--color-ink-2);
-      font: inherit;
-      text-align: left;
-      cursor: pointer;
-      box-shadow: 0 1px 3px rgb(22 22 26 / 6%);
+      padding: 13px 18px;
+      border: 1px solid #403b38;
+      border-radius: 8px;
+      background: #211f1e;
+      color: #f7f3ed;
+      text-decoration: none;
       transition: border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
     }
     .cli-option-index {
       flex: none;
-      color: var(--color-accent);
-      font-family: var(--font-display);
-      font-size: 13px;
+      color: #f0a6b1;
+      font-family: var(--font-mono);
+      font-size: 12px;
       font-weight: 700;
     }
+    .cli-options a > span:nth-child(2) { min-width: 0; }
     .cli-options strong {
-      min-width: 0;
-      flex: 1;
-      color: inherit;
+      display: block;
+      color: #fffaf4;
       font-family: var(--font-display);
-      font-size: clamp(13px, 1.6vw, 15px);
+      font-size: clamp(14px, 1.6vw, 16px);
       font-weight: 600;
-      line-height: 1.35;
+      line-height: 1.4;
+    }
+    .cli-options small {
+      display: block;
+      margin-top: 2px;
+      color: #aaa39d;
+      font: 400 12px/1.55 var(--font-display);
     }
     .cli-option-arrow {
       flex: none;
-      color: var(--color-accent-line-2);
-      font-size: 15px;
+      color: #f0a6b1;
+      font-size: 17px;
       transition: transform 0.16s ease;
-    }
-    .cli-options button:hover .cli-option-arrow {
-      transform: translateX(3px);
-    }
-    .cli.has-output .cli-options {
-      display: none;
-    }
-    .cli-output {
-      display: none;
-      max-width: 720px;
-      margin-top: 20px;
-      gap: 16px;
-    }
-    .cli.has-output .cli-output {
-      display: grid;
-    }
-    /* 使用者選擇泡泡：靠右對齊，酒紅淺色底，像聊天紀錄裡「我剛剛說了什麼」。 */
-    .cli-command {
-      width: fit-content;
-      max-width: 80%;
-      margin: 0 0 0 auto;
-      padding: 10px 16px;
-      border-radius: 16px 4px 16px 16px;
-      background: var(--color-accent-tint);
-      color: var(--color-ink);
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.6;
-      box-shadow: 0 2px 8px rgb(122 46 59 / 10%);
-    }
-    .cli-answer[hidden] {
-      display: none;
-    }
-    .cli-answer {
-      display: block;
-      min-width: 0;
-    }
-    .cli-answer-bubble {
-      display: grid;
-      gap: 14px;
-    }
-    .cli-answer-content {
-      display: grid;
-      min-width: 0;
-      grid-template-columns: minmax(180px, 0.85fr) minmax(220px, 1fr);
-      align-items: center;
-      gap: clamp(14px, 2.5vw, 24px);
-    }
-    .cli-answer-media {
-      min-width: 0;
-    }
-    .cli-answer-media > img {
-      display: block;
-      width: 100%;
-      max-height: 230px;
-      border: 1px solid var(--color-rule);
-      border-radius: 4px;
-      background: var(--color-paper-2);
-      object-fit: cover;
-      aspect-ratio: 16 / 9;
-    }
-    .cli-answer-media > img[hidden],
-    .cli-case-visual[hidden],
-    .cli-article-visual[hidden] {
-      display: none;
-    }
-    .cli-case-visual {
-      padding: 12px;
-      border: 1px solid var(--color-rule);
-      border-radius: 4px;
-      background: var(--color-paper-2);
-    }
-    .cli-case-visual-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--color-rule);
-    }
-    .cli-case-visual-head span {
-      color: var(--color-accent);
-      font-size: 8px;
-      letter-spacing: 0.12em;
-    }
-    .cli-case-visual-head b {
-      color: var(--color-ink);
-      font: 600 11px/1.4 var(--font-display);
-    }
-    .cli-case-visual ul {
-      display: grid;
-      gap: 6px;
-      margin: 8px 0 0;
-      padding: 0;
-      list-style: none;
-    }
-    .cli-case-visual li {
-      display: grid;
-      min-width: 0;
-      grid-template-columns: 28px minmax(0, 1fr);
-      align-items: center;
-      gap: 8px;
-      padding: 6px 7px;
-      border: 1px solid var(--color-rule);
-      border-radius: 3px;
-      background: var(--color-surface);
-    }
-    .cli-case-visual li img {
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      object-fit: contain;
-    }
-    .cli-case-visual li span,
-    .cli-case-visual li b,
-    .cli-case-visual li small {
-      display: block;
-      min-width: 0;
-    }
-    .cli-case-visual li small {
-      margin-bottom: 1px;
-      color: var(--color-ink-3);
-      font-size: 7px;
-      line-height: 1.3;
-    }
-    .cli-case-visual li b {
-      overflow: hidden;
-      color: var(--color-ink);
-      font-size: 8px;
-      font-weight: 500;
-      line-height: 1.4;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .cli-article-visual {
-      display: grid;
-      gap: 7px;
-    }
-    .cli-article-visual > a,
-    .cli-article-category {
-      display: grid;
-      min-width: 0;
-      min-height: 72px;
-      grid-template-columns: 92px minmax(0, 1fr);
-      align-items: center;
-      gap: 10px;
-      padding: 7px;
-      border: 1px solid var(--color-rule);
-      border-radius: 4px;
-      background: var(--color-paper-2);
-      color: var(--color-ink);
-      text-decoration: none;
-    }
-    .cli-article-visual img {
-      display: block;
-      width: 92px;
-      height: 58px;
-      border-radius: 3px;
-      object-fit: cover;
-    }
-    .cli-article-visual span,
-    .cli-article-visual small,
-    .cli-article-visual b {
-      display: block;
-      min-width: 0;
-    }
-    .cli-article-visual small {
-      margin-bottom: 3px;
-      color: var(--color-accent);
-      font-size: 8px;
-      letter-spacing: 0.08em;
-    }
-    .cli-article-visual b,
-    .cli-article-category span > a {
-      color: var(--color-ink);
-      font: 500 10px/1.45 var(--font-display);
-    }
-    .cli-article-category span > a {
-      display: inline-block;
-      min-height: 32px;
-      margin-right: 8px;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-    .cli-answer p {
-      margin: 0;
-      color: var(--color-ink-2);
-      font-family: var(--font-display);
-      font-size: clamp(12px, 1.5vw, 14px);
-      line-height: 1.9;
-    }
-    .cli-answer-bubble > a {
-      display: inline-flex;
-      width: fit-content;
-      min-height: 44px;
-      align-items: center;
-      color: var(--color-accent);
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.5;
-      text-underline-offset: 4px;
-    }
-    .cli-end {
-      display: inline-flex;
-      width: fit-content;
-      min-height: 44px;
-      align-items: center;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: var(--color-ink-3);
-      font: 500 12px/1.5 var(--font-display);
-      text-decoration: underline;
-      text-underline-offset: 4px;
-      cursor: pointer;
     }
     .cli-search-area {
       flex: none;
-      border-top: 1px solid var(--color-rule);
-      background: var(--color-paper-2);
+      border-top: 1px solid #3f3a37;
+      background: #11100f;
       border-radius: 0 0 13px 13px;
-      font-family: var(--font-display);
+      font-family: var(--font-mono);
     }
     .cli-search-results {
       display: grid;
       gap: 3px;
       padding: 12px clamp(15px, 4vw, 46px) 8px;
-      border-bottom: 1px solid var(--color-rule);
+      border-bottom: 1px solid #3f3a37;
     }
     .cli-search-results[hidden] { display: none; }
     :global(.cli-search-empty) {
       margin: 0;
-      color: var(--color-ink-3);
+      color: #aaa39d;
       font-size: 11px;
       line-height: 1.7;
     }
@@ -1117,15 +869,15 @@ const schema = [
       padding: 8px 10px;
       border: 1px solid transparent;
       border-radius: 6px;
-      color: var(--color-ink-2);
+      color: #d9d3cc;
       text-decoration: none;
     }
     :global(.cli-search-result.is-active) {
-      border-color: var(--color-accent-line-2);
-      background: var(--color-accent-tint);
+      border-color: #8f4652;
+      background: #2a2323;
     }
     :global(.cli-search-title) {
-      color: var(--color-ink);
+      color: #fffaf4;
       font-family: var(--font-display);
       font-size: 13px;
       font-weight: 500;
@@ -1133,7 +885,7 @@ const schema = [
     }
     :global(.cli-search-description) {
       overflow: hidden;
-      color: var(--color-ink-3);
+      color: #aaa39d;
       font-family: var(--font-display);
       font-size: 10px;
       line-height: 1.5;
@@ -1154,10 +906,10 @@ const schema = [
       border: 0;
       outline: 0;
       background: transparent;
-      color: var(--color-ink);
-      font: 400 14px/1.5 var(--font-display);
+      color: #fffaf4;
+      font: 400 13px/1.5 var(--font-mono);
     }
-    .cli-search-form input::placeholder { color: var(--color-ink-3); }
+    .cli-search-form input::placeholder { color: #817a75; }
     .cli-search-form button {
       display: grid;
       width: 36px;
@@ -1165,10 +917,10 @@ const schema = [
       min-height: 36px;
       place-items: center;
       padding: 0;
-      border: 1px solid var(--color-accent);
+      border: 1px solid #9d4c5a;
       border-radius: 50%;
-      background: var(--color-accent);
-      color: var(--color-paper);
+      background: #7a2e3b;
+      color: #fffaf4;
       cursor: pointer;
     }
     .cli-search-form button svg {
@@ -1179,68 +931,68 @@ const schema = [
       stroke-linejoin: round;
     }
     @media (min-width: 768px) {
+      .hero { padding-inline: 40px; }
+    }
+    @media (max-width: 1080px) {
       .hero {
-        min-height: calc(100vh - 84px);
-        min-height: calc(100svh - 84px);
-        padding: 32px 40px;
+        grid-template-columns: minmax(0, 0.72fr) minmax(520px, 1.28fr);
+        gap: 32px;
       }
-      .cli {
-        min-height: calc(100vh - 148px);
-        min-height: calc(100svh - 148px);
+      .hero-copy h1 { font-size: clamp(36px, 5vw, 52px); }
+    }
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 36px;
       }
+      .hero-copy { max-width: 680px; }
     }
     @media (max-width: 767px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 38px 20px 42px;
+      }
+      .hero-copy { max-width: none; }
+      .hero-kicker { margin-bottom: 10px; font-size: 10px; }
+      .hero-copy h1 { font-size: clamp(34px, 10vw, 46px); line-height: 1.18; }
+      .hero-summary { margin-top: 16px; font-size: 15px; line-height: 1.75; }
+      .hero-actions { display: grid; gap: 8px; margin-top: 22px; }
+      .hero-primary { width: 100%; }
+      .hero-secondary { justify-content: center; }
+      .hero-proof { justify-content: center; gap: 8px 14px; margin-top: 16px; }
       .cli { border-radius: 10px; }
       .cli-brand {
         height: 36px;
         padding-inline: 12px;
         border-radius: 9px 9px 0 0;
       }
-      .cli-brand img { width: 18px; height: 18px; }
-      .cli-brand span { font-size: 11px; }
+      .cli-window-title { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+      .cli-status { font-size: 9px; }
       .cli-screen {
         min-height: 0;
         padding: 18px 12px 22px;
       }
-      .cli-bubble {
-        padding: 12px 14px;
-      }
+      .cli-prompt { margin-bottom: 13px; font-size: 10px; }
+      .cli-eyebrow { font-size: 9px; }
       .cli-question {
-        font-size: clamp(17px, 5.2vw, 21px);
+        font-size: clamp(22px, 7vw, 28px);
       }
+      .cli-intro { margin-top: 8px; font-size: 13px; line-height: 1.7; }
       .cli-options {
         gap: 8px;
-        margin: 6px 0 0;
+        margin: 20px 0 0;
       }
-      .cli-options button {
-        min-height: 48px;
-        padding: 12px 14px;
+      .cli-options a {
+        min-height: 62px;
+        grid-template-columns: 26px minmax(0, 1fr) auto;
+        padding: 11px 12px;
         gap: 10px;
       }
       .cli-options strong { font-size: 13px; }
-      .cli-option-index { font-size: 12px; }
+      .cli-options small { font-size: 11px; }
+      .cli-option-index { font-size: 11px; }
       .cli-option-arrow { font-size: 13px; }
-      .cli-output {
-        margin-top: 16px;
-        gap: 12px;
-      }
-      .cli-command { font-size: 11px; }
-      .cli-answer {
-        display: block;
-      }
-      .cli-answer-content {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-      .cli-answer-media > img {
-        max-height: 190px;
-      }
-      .cli-answer p {
-        font-size: 11px;
-        line-height: 1.75;
-      }
-      .cli-answer-bubble > a { font-size: 11px; }
-      .cli-end { font-size: 10px; }
       .cli-search-results {
         padding-inline: 10px;
       }
@@ -1257,11 +1009,7 @@ const schema = [
       }
     }
     @media (max-width: 767px) and (max-height: 520px) {
-      .hero { padding-block: 8px; }
-      .cli {
-        min-height: calc(100vh - var(--bar) - 16px);
-        min-height: calc(100svh - var(--bar) - 16px);
-      }
+      .hero { padding-block: 24px; }
       .cli-screen { padding-block: 10px; }
       .cli-conversation { margin-top: 0; }
       .cli-search-form { min-height: 44px; }
@@ -1836,39 +1584,36 @@ const schema = [
       .featured-list a:hover h3 {
         color: var(--color-accent);
       }
-      .cli-options button:hover {
-        border-color: var(--color-accent-line-2);
-        background: var(--color-accent-tint);
-        color: var(--color-accent-2);
-        box-shadow: 0 4px 10px rgb(122 46 59 / 10%);
+      .cli-options a:hover {
+        border-color: #a85b67;
+        background: #2a2323;
+        color: #fffaf4;
+        box-shadow: 0 8px 24px rgb(0 0 0 / 20%);
         transform: translateY(-1px);
       }
-      .cli-answer a:hover { color: var(--color-accent-2); }
-      .cli-end:hover { color: var(--color-accent-2); }
+      .cli-options a:hover .cli-option-arrow { transform: translate(2px, -2px); }
       :global(.cli-search-result:hover) {
         border-color: var(--color-accent-line-2);
         background: var(--color-accent-tint);
       }
       .cli-search-form button:hover {
-        border-color: var(--color-accent-2);
-        background: var(--color-accent-2);
-        color: var(--color-paper);
+        border-color: #bc6472;
+        background: #944252;
+        color: #fffaf4;
       }
     }
 
     /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
     .instructor-socials a:focus-visible,
     .featured-list a:focus-visible,
-    .cli-options button:focus-visible,
-    .cli-answer a:focus-visible,
-    .cli-end:focus-visible,
+    .cli-options a:focus-visible,
     :global(.cli-search-result:focus-visible),
     .cli-search-form button:focus-visible {
-      outline: 2px solid var(--color-accent);
+      outline: 2px solid #f0a6b1;
       outline-offset: 3px;
     }
     .cli-search-form:focus-within {
-      box-shadow: inset 3px 0 var(--color-accent);
+      box-shadow: inset 3px 0 #a85b67;
     }
     .hero-contact-actions a:focus-visible {
       outline: 2px solid var(--color-accent);
@@ -1938,10 +1683,6 @@ const schema = [
       .terminal-done {
         opacity: 1;
         transform: none;
-      }
-      .cli-answer {
-        animation: none !important;
-        transition: none !important;
       }
     }
   </style>
