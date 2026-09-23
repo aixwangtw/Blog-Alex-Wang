@@ -13,7 +13,8 @@ export const SITE = {
 export const SERVICE_SITE = {
   title: 'Alex AI 服務',
   url: 'https://service.aixwang.dev',
-  description: 'Alex 的 AI 新手實戰課、企業內訓、社群講座與實作工作坊。',
+  description:
+    '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），也接受企業與社群的 AI 演講邀約。',
 };
 
 export const AUTHOR = {
@@ -84,14 +85,14 @@ export const LEARNING_ENTRY_LINKS = [
   {
     href: '/blog/how-to-start-learning-ai/',
     title: 'AI 新手／零基礎',
-    description: '先看學習路線，了解工具、觀念與第一個實作',
+    description: '第一次學 AI，先從這篇開始。',
     analyticsKey: 'newbie',
     analyticsLabel: 'AI 新手零基礎入門文章',
   },
   {
     href: '/blog/',
     title: '找 AI 實作主題文章',
-    description: 'Codex、AI Skills、API 串接與工作流自動化',
+    description: '查看所有 AI 教學文章。',
     analyticsKey: 'articles',
     analyticsLabel: 'AI 實作主題文章',
   },
@@ -101,7 +102,7 @@ export const GUIDED_ENTRY_LINKS = [
   {
     href: `${SERVICE_SITE.url}/course/`,
     title: '找 AI 家教',
-    description: '從工具安裝到完成第一個專案，適合零基礎學員。',
+    description: '查看一對一教學內容與上課方式。',
     analyticsKey: 'tutor',
     analyticsLabel: 'AI 一對一家教',
   },
@@ -111,7 +112,7 @@ export const COLLABORATION_ENTRY_LINKS = [
   {
     href: `${SERVICE_SITE.url}/services/speaking/`,
     title: '邀請 AI 講師',
-    description: 'AI Agent、社群自動化與對話式拍片主題。',
+    description: '邀請 Alex 到公司、學校或社群分享。',
     analyticsKey: 'speaker',
     analyticsLabel: 'AI 講師與企業內訓',
   },
@@ -121,7 +122,7 @@ export const FREE_ENTRY_LINKS = [
   {
     href: '/resources/',
     title: '免費工具與資源',
-    description: '直接領取 Skills、開源工具與操作教學',
+    description: '查看可以直接使用的免費內容。',
     analyticsKey: 'tools',
     analyticsLabel: '免費工具與學習資源',
   },

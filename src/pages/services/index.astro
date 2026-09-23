@@ -2,24 +2,24 @@
 import { Image } from 'astro:assets';
 import instructorPortrait from '../../assets/instructor-shirt.jpg';
 import Cta from '../../components/Cta.astro';
-import { AUTHOR, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../../consts';
+import { AUTHOR, CTA_VARIANTS, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../../consts';
 import { SPEAKING_ENGAGEMENTS } from '../../data/services';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
 const serviceCards = [
   {
     number: '01',
-    eyebrow: 'FOR BEGINNERS',
-    title: 'AI 新手實戰課',
-    description: '不需要程式背景。3 小時帶你在自己的電腦上，從工具安裝到完成第一個可以使用的專案。',
+    eyebrow: '一對一教學',
+    title: 'AI 一對一私人教學',
+    description: '手把手帶你完成 Claude Code／Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）安裝、Meta API 串接與自動發文系統。',
     href: '/course/',
     action: '查看課程',
   },
   {
     number: '02',
-    eyebrow: 'FOR TEAMS',
+    eyebrow: '演講／內訓／工作坊',
     title: 'AI 演講與企業內訓',
-    description: '以真實任務現場演示 AI Agent、社群自動化與對話式拍片，主題可依聽眾背景調整。',
+    description: 'AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計。',
     href: '/services/speaking/',
     action: '查看演講服務',
   },
@@ -58,12 +58,12 @@ const schema = [
 >
   <section class="service-hero">
     <div class="service-hero-copy">
-      <p class="service-kicker">AI LEARNING × REAL WORK</p>
-      <h1><span>把 AI 從</span><span>「會聊天」</span><strong>變成真的做完事</strong></h1>
-      <p class="service-lead">我是 {AUTHOR.name}，用課程、演講與實作工作坊，帶個人與團隊把 AI Agent 用在真實工作裡。</p>
+      <p class="service-kicker">Alex AI 服務</p>
+      <h1>AI 一對一私人教學與演講邀約</h1>
+      <p class="service-lead">{CTA_VARIANTS[0].text}</p>
       <div class="service-hero-actions">
         <a href="#services">查看服務</a>
-        <a href={LINKS.line} target="_blank" rel="noreferrer">先加 LINE 聊聊</a>
+        <a href={LINKS.line} target="_blank" rel="noreferrer">LINE 免費諮詢</a>
       </div>
     </div>
     <figure>
@@ -77,16 +77,15 @@ const schema = [
   </section>
 
   <section class="service-proof" aria-label="講師實戰經驗">
-    <p><strong>21 萬人</strong><span>OpenClaw 中文社群版主</span></p>
-    <p><strong>全職接案</strong><span>把 AI 實際用在客戶專案</span></p>
-    <p><strong>實作導向</strong><span>現場完成，不只講觀念</span></p>
+    <p><strong>AI 應用講師</strong></p>
+    <p><strong>全職接案工程師</strong></p>
+    <p><strong>21 萬人 OpenClaw 中文社群版主</strong></p>
   </section>
 
   <section class="service-options" id="services">
     <header>
-      <p class="service-kicker">HOW CAN I HELP?</p>
-      <h2>選擇適合你的學習方式</h2>
-      <p>想自己學會，或想讓一整個團隊快速建立共同的 AI 工作流程，都可以從這裡開始。</p>
+      <p class="service-kicker">服務項目</p>
+      <h2>選擇你需要的服務</h2>
     </header>
     <div class="service-option-grid">
       {serviceCards.map((item) => (
@@ -104,8 +103,8 @@ const schema = [
 
   <section class="service-experience">
     <header>
-      <p class="service-kicker">REAL EXPERIENCE</p>
-      <h2>內容來自真實授課與接案</h2>
+      <p class="service-kicker">演講邀約</p>
+      <h2>過往演講紀錄</h2>
     </header>
     <div>
       {SPEAKING_ENGAGEMENTS.slice(0, 3).map((item, index) => (
@@ -124,19 +123,17 @@ const schema = [
 
   <div class="service-home-cta">
     <Cta
-      title="不確定該選課程還是演講？"
-      text="加 LINE 告訴我你的目標、人數與預計日期，我會建議適合的方式。"
+      title={CTA_VARIANTS[2].title}
+      text={CTA_VARIANTS[2].text}
       label={'加 LINE\n免費諮詢'}
       links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
     />
   </div>
 
   <style>
-    .service-kicker { color:var(--color-accent); font:700 11px/1.3 ui-monospace, monospace; letter-spacing:.16em; }
+    .service-kicker { color:var(--color-accent); font-size:13px; font-weight:700; letter-spacing:.08em; }
     .service-hero { display:grid; grid-template-columns:minmax(0, 1.06fr) minmax(320px, .8fr); gap:64px; align-items:center; width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:80px 0 70px; }
-    .service-hero h1 { margin-top:22px; font-family:var(--font-serif, serif); font-size:clamp(48px, 6.1vw, 82px); font-weight:600; line-height:1.08; letter-spacing:-.055em; }
-    .service-hero h1 span, .service-hero h1 strong { display:block; }
-    .service-hero h1 strong { color:var(--color-accent); font-weight:inherit; }
+    .service-hero h1 { max-width:12ch; margin-top:22px; font-family:var(--font-serif, serif); font-size:clamp(48px, 6.1vw, 78px); font-weight:600; line-height:1.12; letter-spacing:-.055em; }
     .service-lead { max-width:620px; margin-top:28px; color:var(--color-ink-2); font-size:18px; line-height:1.9; }
     .service-hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:34px; }
     .service-hero-actions a { display:inline-flex; min-height:50px; align-items:center; justify-content:center; padding:0 24px; border:1px solid var(--color-accent); color:var(--color-accent); font-weight:700; text-decoration:none; }
@@ -147,16 +144,14 @@ const schema = [
     .service-hero figcaption span, .service-hero figcaption small { color:var(--color-ink-3); font-size:11px; }
     .service-hero figcaption strong { margin:5px 0; font-size:20px; }
     .service-proof { display:grid; grid-template-columns:repeat(3, 1fr); width:min(1120px, calc(100% - 48px)); margin:auto; border-block:1px solid var(--color-rule); }
-    .service-proof p { display:grid; gap:6px; margin:0; padding:24px; text-align:center; }
+    .service-proof p { display:grid; place-items:center; min-height:82px; margin:0; padding:20px; text-align:center; }
     .service-proof p + p { border-left:1px solid var(--color-rule); }
-    .service-proof strong { color:var(--color-accent); font-size:18px; }
-    .service-proof span { color:var(--color-ink-3); font-size:12px; }
+    .service-proof strong { max-width:24ch; color:var(--color-accent); font-size:16px; line-height:1.55; }
     .service-options, .service-experience { width:min(1120px, calc(100% - 48px)); margin:110px auto 0; }
     .service-options > header, .service-experience > header { max-width:700px; }
     .service-options h2, .service-experience h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
-    .service-options > header > p:last-child { margin-top:18px; color:var(--color-ink-3); line-height:1.8; }
     .service-option-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:20px; margin-top:42px; }
-    .service-option-grid article { position:relative; min-height:380px; padding:34px; border:1px solid var(--color-rule-2); background:var(--color-paper-2); }
+    .service-option-grid article { position:relative; min-height:330px; padding:34px 34px 76px; border:1px solid var(--color-rule-2); background:var(--color-paper-2); }
     .service-option-grid article:nth-child(2) { background:var(--color-ink); color:#fff; }
     .service-option-number { position:absolute; top:30px; right:32px; color:var(--color-accent-line-2); font:700 13px/1 ui-monospace, monospace; }
     .service-option-grid article > p:first-of-type { color:var(--color-accent); font:700 10px/1.3 ui-monospace, monospace; letter-spacing:.15em; }
@@ -186,7 +181,7 @@ const schema = [
       .service-proof p + p { border-top:1px solid var(--color-rule); border-left:0; }
       .service-options, .service-experience, .service-home-cta { width:calc(100% - 40px); margin-top:76px; }
       .service-option-grid { grid-template-columns:1fr; }
-      .service-option-grid article { min-height:390px; padding:28px 24px; }
+      .service-option-grid article { min-height:0; padding:28px 24px 72px; }
       .service-option-grid article > a { left:24px; }
       .service-experience article { grid-template-columns:42px minmax(0, 1fr); gap:10px; }
     }

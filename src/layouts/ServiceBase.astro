@@ -25,15 +25,15 @@ const serviceHomeHref = import.meta.env.DEV ? '/services/' : '/';
 const serviceLinks = [
   {
     href: '/course/',
-    eyebrow: '3 小時實戰課',
-    title: 'AI 新手課程',
-    description: '從工具安裝到完成第一個專案，適合零基礎學員。',
+    eyebrow: '一對一教學',
+    title: 'AI 一對一私人教學',
+    description: '手把手帶你完成 Claude Code／Codex、OpenClaw、Hermes 安裝、API 串接與自動發文系統。',
   },
   {
     href: '/services/speaking/',
     eyebrow: '企業／社群／學校',
     title: 'AI 演講與內訓',
-    description: 'AI Agent、社群自動化與對話式拍片主題。',
+    description: 'AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計。',
   },
 ];
 
@@ -181,7 +181,7 @@ const jsonLd = {
       <div class="service-header-inner">
         <a class="service-brand" href={serviceHomeHref} aria-label={`${SERVICE_SITE.title} 首頁`}>
           <img src="/aixwang-icon.png" width="30" height="30" alt="" aria-hidden="true" />
-          <span><strong>AIX</strong><small>AI SERVICE</small></span>
+          <span><strong>AIX</strong><small>AI 服務</small></span>
         </a>
 
         <button
@@ -201,15 +201,6 @@ const jsonLd = {
 
         <nav class="service-mainnav" id="service-mainnav" aria-label="服務站主要導覽">
           <a href={serviceHomeHref}>服務首頁</a>
-          <a
-            class="service-main-site-link"
-            href={SITE.url}
-            data-ga-button="service_header_main_site"
-            data-ga-label="AI 新手教學主站"
-            data-ga-location="service_header"
-            data-ga-action="navigate"
-          >AI 新手教學 <span aria-hidden="true">↗</span></a>
-          <a href={`${SITE.url}/about/`}>關於講師</a>
           <details class="service-mega" id="service-mega">
             <summary>
               <span>服務項目</span>
@@ -217,9 +208,7 @@ const jsonLd = {
             </summary>
             <div class="service-mega-panel">
               <div class="service-mega-intro">
-                <small>HOW CAN I HELP?</small>
-                <strong>選擇你需要的服務</strong>
-                <p>學會自己做，或邀請 Alex 把實戰經驗帶進你的團隊。</p>
+                <strong>服務項目</strong>
               </div>
               <div class="service-mega-grid">
                 {serviceLinks.map((item, index) => (
@@ -236,7 +225,16 @@ const jsonLd = {
               </div>
             </div>
           </details>
-          <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer">立即預約</a>
+          <a href={`${SITE.url}/about/`}>關於講師</a>
+          <a
+            class="service-main-site-link"
+            href={SITE.url}
+            data-ga-button="service_header_main_site"
+            data-ga-label="AI 新手教學主站"
+            data-ga-location="service_header"
+            data-ga-action="navigate"
+          >AI 新手教學 <span aria-hidden="true">↗</span></a>
+          <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer">LINE 免費諮詢</a>
         </nav>
       </div>
     </header>
@@ -321,13 +319,12 @@ const jsonLd = {
         <section>
           <a class="service-brand" href={serviceHomeHref}>
             <img src="/aixwang-icon.png" width="30" height="30" alt="" />
-            <span><strong>AIX</strong><small>AI SERVICE</small></span>
+            <span><strong>AIX</strong><small>AI 服務</small></span>
           </a>
-          <p>{SERVICE_SITE.description}</p>
         </section>
         <section>
           <h2>服務項目</h2>
-          <a href="/course/">AI 新手實戰課</a>
+          <a href="/course/">AI 一對一私人教學</a>
           <a href="/services/speaking/">AI 演講與內訓</a>
         </section>
         <section>
@@ -359,17 +356,15 @@ const jsonLd = {
       .service-mega-cue { color:var(--color-accent); font-size:15px; transition:transform .2s ease; }
       .service-mega[open] .service-mega-cue { transform:rotate(180deg); }
       .service-book { padding:15px 22px; background:var(--color-accent); color:#fff !important; }
-      .service-menu-toggle { display:none; width:44px; height:44px; border:1px solid var(--color-rule-3); border-radius:50%; background:transparent; place-items:center; position:relative; }
-      .service-menu-toggle i { position:absolute; width:16px; height:1.5px; background:var(--color-ink); transition:transform .2s ease, top .2s ease; }
+      .service-menu-toggle { display:none; width:44px; height:44px; border:1px solid var(--color-rule-3); border-radius:6px; background:var(--color-ink); place-items:center; position:relative; }
+      .service-menu-toggle i { position:absolute; width:16px; height:1.5px; background:var(--color-paper); transition:transform .2s ease, top .2s ease; }
       .service-menu-toggle i:first-child { top:17px; }
       .service-menu-toggle i:last-child { top:25px; }
       .service-menu-toggle[aria-expanded='true'] i:first-child { top:21px; transform:rotate(45deg); }
       .service-menu-toggle[aria-expanded='true'] i:last-child { top:21px; transform:rotate(-45deg); }
       .service-mega-panel { position:fixed; top:var(--service-header-height); left:50%; display:grid; grid-template-columns:250px 1fr; gap:28px; width:min(920px, calc(100vw - 40px)); padding:28px; border:1px solid var(--color-rule-2); background:rgb(247 245 241 / 99%); box-shadow:0 28px 60px rgb(22 22 26 / 16%); transform:translateX(-50%); }
       .service-mega-intro { padding:6px 20px 6px 2px; border-right:1px solid var(--color-rule); }
-      .service-mega-intro small { color:var(--color-accent); font:700 10px/1.2 ui-monospace, monospace; letter-spacing:.14em; }
-      .service-mega-intro strong { display:block; margin-top:12px; font:600 23px/1.35 var(--font-serif, serif); }
-      .service-mega-intro p { margin-top:12px; color:var(--color-ink-3); font-size:13px; line-height:1.8; }
+      .service-mega-intro strong { display:block; font:600 23px/1.35 var(--font-serif, serif); }
       .service-mega-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
       .service-mega-grid > a { display:grid; grid-template-columns:32px minmax(0, 1fr) 18px; gap:10px; align-items:start; padding:18px; border:1px solid var(--color-rule-2); color:var(--color-ink); text-decoration:none; transition:background .18s ease, border-color .18s ease; }
       .service-mega-number { color:var(--color-accent); font:700 11px/1.3 ui-monospace, monospace; }
@@ -391,14 +386,15 @@ const jsonLd = {
         .service-mega-grid > a:hover { border-color:var(--color-accent-line-2); background:var(--color-accent-tint); }
       }
       @media (max-width:899px) {
-        :root { --service-header-height: 66px; }
-        .service-header-inner { flex-wrap:wrap; padding:0 20px; gap:0; }
+        :root { --service-header-height: 70px; }
+        .service-header { top:0; margin:12px 16px 0; border:1px solid var(--color-rule-2); border-radius:8px; background:rgb(247 245 241 / 98%); }
+        .service-header-inner { min-height:68px; flex-wrap:wrap; padding:0 12px 0 16px; gap:0; }
         .service-menu-toggle { display:grid; }
-        .service-mainnav { flex-basis:100%; order:3; display:grid; gap:0; padding:6px 0 18px; }
+        .service-mainnav { flex-basis:100%; order:3; display:grid; max-height:calc(100dvh - 106px); gap:0; overflow-y:auto; overscroll-behavior:contain; padding:6px 0 16px; }
         .service-nav-js .service-mainnav { display:none; }
         .service-nav-js .service-header[data-open='true'] .service-mainnav { display:grid; }
         .service-mainnav > a, .service-mega summary { display:flex; min-height:52px; align-items:center; justify-content:space-between; border-top:1px solid var(--color-rule); font-size:16px; }
-        .service-mainnav > .service-main-site-link { padding:0; border-width:1px 0 0; border-color:var(--color-rule); }
+        .service-mainnav > .service-main-site-link { padding:0; border-width:1px 0 0; border-color:var(--color-rule); color:var(--color-ink); }
         .service-book { justify-content:center !important; margin-top:10px; border-top:0 !important; }
         .service-mega-panel { position:static; display:block; width:100%; padding:0 0 10px; border:0; box-shadow:none; transform:none; }
         .service-mega-intro { display:none; }
@@ -407,7 +403,8 @@ const jsonLd = {
         .service-footer > div { grid-template-columns:1fr; gap:34px; }
       }
       @media (max-width:360px) {
-        .service-header-inner { padding-inline:16px; }
+        .service-header { margin-inline:12px; }
+        .service-header-inner { padding-left:14px; padding-right:10px; }
         .service-brand strong { font-size:16px; }
         .service-mega-grid > a { grid-template-columns:28px minmax(0, 1fr) 14px; gap:8px; padding:13px 10px; }
       }

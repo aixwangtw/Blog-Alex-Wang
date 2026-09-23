@@ -54,6 +54,13 @@ const schema = [
     })),
   },
 ];
+
+const pageToc = [
+  { id: 'speaking-records', label: '演講紀錄' },
+  { id: 'speaking-topics', label: '邀約主題' },
+  { id: 'speaking-formats', label: '形式與地區' },
+  { id: 'speaking-tools', label: '教學工具' },
+];
 ---
 
 <ServiceBase
@@ -63,33 +70,35 @@ const schema = [
   ogImageAlt="AI 演講與企業內訓邀約｜講師 Alex"
   schema={schema}
 >
-  <div class="mx-auto max-w-4xl px-6 py-12">
+  <div class="mx-auto max-w-6xl px-5 py-10 sm:px-6 sm:py-14">
     <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: 'AI 演講與企業內訓' }]} class="mb-8" />
-    <h1 class="t-h1 font-semibold text-ink">AI 演講與企業內訓邀約</h1>
 
-    <p class="mt-8 text-lg leading-9 text-ink">
-      我是 <a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，接受企業、學校與社群的
-      <strong class="text-accent">AI 主題演講、內訓與實作工作坊</strong>邀約。內容以「聽完就能動手」為原則：不談概念空話，現場直接演示
-      AI Agent 如何完成真實任務。曾受 MixerBox、TAIA 台灣人工智慧協會等單位邀請演講。
-    </p>
+    <section class="grid items-center gap-9 lg:grid-cols-[1fr_0.92fr] lg:gap-14">
+      <div>
+        <p class="text-sm font-semibold text-accent">公開演講／企業內訓／工作坊</p>
+        <h1 class="t-h1 mt-3 font-semibold text-ink">AI 演講與企業內訓邀約</h1>
+        <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
+          我是 <a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，接受企業、學校與社群的
+          <strong class="text-accent">AI 主題演講、內訓與實作工作坊</strong>邀約。內容以「聽完就能動手」為原則：不談概念空話，現場直接演示
+          AI Agent 如何完成真實任務。曾受 MixerBox、TAIA 台灣人工智慧協會等單位邀請演講。
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center bg-[#06c755] px-6 font-semibold text-white no-underline">加 LINE 洽談邀約</a>
+          <a href={LINKS.email} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline">Email 聯絡</a>
+        </div>
+      </div>
+      <Image src={SPEAKING_ENGAGEMENTS[0].image} alt={SPEAKING_ENGAGEMENTS[0].imageAlt} class="h-auto w-full border border-rule object-cover" loading="eager" />
+    </section>
 
-    <SectionHeading size="md" class="mt-14">可邀約的主題</SectionHeading>
-    <div class="mt-6 grid gap-5 sm:grid-cols-2">
-      {SPEAKING_TOPICS.map((topic) => (
-        <Card>
-          <h3 class="text-lg font-semibold text-ink">{topic.title}</h3>
-          <p class="mt-3 leading-7 text-ink-2">{topic.description}</p>
-        </Card>
-      ))}
-    </div>
-    <p class="mt-6 leading-7 text-ink-2">
-      以上主題皆可依聽眾背景（零基礎／行銷／工程）調整深度，也可以合併成半天或一天的實作工作坊。
-    </p>
+    <nav aria-label="演講服務目錄" class="mt-10 overflow-x-auto border-y border-rule">
+      <ul class="flex min-w-max sm:grid sm:min-w-0 sm:grid-cols-4">
+        {pageToc.map((item) => (
+          <li class="min-w-28 flex-1"><a href={`#${item.id}`} class="block px-3 py-4 text-center font-semibold text-ink transition hover:bg-paper-2 hover:text-accent">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
 
-    <SectionHeading size="md" class="mt-14">可教學工具</SectionHeading>
-    <TeachingTools />
-
-    <SectionHeading size="md" class="mt-14">過往演講紀錄</SectionHeading>
+    <SectionHeading id="speaking-records" size="md" class="mt-16 scroll-mt-24">過往演講紀錄</SectionHeading>
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {SPEAKING_ENGAGEMENTS.map((item) => (
         <Card padded={false} class="overflow-hidden">
@@ -113,10 +122,26 @@ const schema = [
       ))}
     </div>
 
-    <SectionHeading size="md" class="mt-14">形式與地區</SectionHeading>
+    <SectionHeading id="speaking-topics" size="md" class="mt-16 scroll-mt-24">可邀約的主題</SectionHeading>
+    <div class="mt-6 grid gap-5 sm:grid-cols-2">
+      {SPEAKING_TOPICS.map((topic) => (
+        <Card>
+          <h3 class="text-lg font-semibold text-ink">{topic.title}</h3>
+          <p class="mt-3 leading-7 text-ink-2">{topic.description}</p>
+        </Card>
+      ))}
+    </div>
+    <p class="mt-6 leading-7 text-ink-2">
+      以上主題皆可依聽眾背景（零基礎／行銷／工程）調整深度，也可以合併成半天或一天的實作工作坊。
+    </p>
+
+    <SectionHeading id="speaking-formats" size="md" class="mt-16 scroll-mt-24">形式與地區</SectionHeading>
     <ul class="mt-6 space-y-4">
       {SPEAKING_FORMATS.map((item) => <CheckItem>{item}</CheckItem>)}
     </ul>
+
+    <SectionHeading id="speaking-tools" size="md" class="mt-16 scroll-mt-24">可教學工具</SectionHeading>
+    <TeachingTools />
 
     <Cta
       title="邀約洽談"

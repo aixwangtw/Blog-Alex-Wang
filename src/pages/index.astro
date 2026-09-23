@@ -90,7 +90,7 @@ const schema = [
         <div class="hero-copy hero-reveal" style="--d:0ms">
           <p class="hero-kicker">AI 新手教學</p>
           <h1 id="hero-h">AI 新手，從零開始做出成果</h1>
-          <p class="hero-summary">從 Codex 安裝、AI Skills 到 API 串接與工作流自動化，用不預設技術背景的文章與實作教學，陪你完成第一步。</p>
+          <p class="hero-summary">第一次接觸 AI 也沒關係。這裡有入門文章、一對一教學、演講合作和免費資源。</p>
           <div class="hero-actions">
             <a
               class="hero-primary"
@@ -109,25 +109,17 @@ const schema = [
               data-ga-action="navigate"
             >需要陪著做？了解一對一教學</a>
           </div>
-          <ul class="hero-proof" aria-label="教學特色">
-            <li>零基礎可讀</li>
-            <li>繁體中文</li>
-            <li>以實作為主</li>
-          </ul>
         </div>
         <div class="cli hero-reveal" id="hero-cli" style="--d:0ms">
           <div class="cli-brand">
             <span class="cli-window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="cli-window-title">alex@aixwang: ~/ai-learning</span>
-            <span class="cli-status"><i aria-hidden="true"></i> READY</span>
+            <span class="cli-window-title">學習入口</span>
           </div>
           <div class="cli-screen">
             <div class="cli-conversation">
               <div class="cli-dialog">
-                <p class="cli-prompt" aria-hidden="true"><span>alex@aixwang:~$</span> choose-learning-path</p>
                 <div class="cli-question-bubble">
-                  <p class="cli-eyebrow">AI LEARNING RADAR</p>
-                  <h2 class="cli-question">今天想先做哪一件事？</h2>
+                  <h2 class="cli-question">你希望我如何幫你？</h2>
                 </div>
               </div>
               <div class="cli-tabs" role="tablist" aria-label="選擇需求">
@@ -188,7 +180,7 @@ const schema = [
           <div class="service-copy">
             <p class="service-kicker">先自己試試看</p>
             <h2>免費資源</h2>
-            <p>先把 Codex 裝好，再把現成的 Skills 交給 AI 安裝。想做社群自動化或社群圖文時，再依需求使用 API 教學與開源工具。</p>
+            <p>這裡整理了免費教學文章、影片與開源工具。點選你需要的主題，就能查看內容。</p>
             <ul>
               <li>Codex 新手安裝教學</li>
               <li>可直接交給 AI 安裝的 Skills</li>
@@ -747,21 +739,6 @@ const schema = [
       text-decoration: underline;
       text-underline-offset: 4px;
     }
-    .hero-proof {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 18px;
-      margin: 22px 0 0;
-      padding: 0;
-      color: var(--color-ink-3);
-      font: 500 12px/1.5 var(--font-display);
-      list-style: none;
-    }
-    .hero-proof li::before {
-      margin-right: 7px;
-      color: var(--color-accent);
-      content: '✓';
-    }
     .cli {
       display: flex;
       width: 100%;
@@ -774,7 +751,7 @@ const schema = [
       overflow: hidden;
       overflow-anchor: none;
     }
-    /* 視窗列提供終端機位置與立即可操作狀態，不放品牌動畫。 */
+    /* 保留視窗列與三色圓點的終端機識別，不加入英文狀態字。 */
     .cli-brand {
       display: flex;
       height: 44px;
@@ -799,27 +776,10 @@ const schema = [
     .cli-window-dots i:first-child { background: #d96c70; }
     .cli-window-dots i:nth-child(2) { background: #d6a34d; }
     .cli-window-dots i:last-child { background: #69aa79; }
-    .cli-window-title,
-    .cli-status {
+    .cli-window-title {
       color: #aaa39d;
       font: 500 11px/1.4 var(--font-mono);
       letter-spacing: 0.01em;
-    }
-    .cli-status {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-left: auto;
-      color: #d6a34d;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-    }
-    .cli-status i {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #d6a34d;
-      box-shadow: 0 0 0 3px rgb(214 163 77 / 12%);
     }
     .cli-screen {
       display: flex;
@@ -837,20 +797,8 @@ const schema = [
       display: block;
       min-width: 0;
     }
-    .cli-prompt {
-      margin: 0 0 18px;
-      color: #8f8882;
-      font: 500 12px/1.5 var(--font-mono);
-    }
-    .cli-prompt span { color: #f0a6b1; }
     .cli-question-bubble {
       max-width: 760px;
-    }
-    .cli-eyebrow {
-      margin: 0 0 8px;
-      color: #f0a6b1;
-      font: 600 11px/1.4 var(--font-mono);
-      letter-spacing: 0.12em;
     }
     .cli-question {
       min-width: 0;
@@ -1045,47 +993,43 @@ const schema = [
     @media (max-width: 767px) {
       .hero {
         grid-template-columns: 1fr;
-        gap: 30px;
-        padding: 38px 20px 42px;
+        gap: 14px;
+        padding: 20px 20px 30px;
       }
       .hero-copy { max-width: none; }
       .hero-kicker { margin-bottom: 10px; font-size: 10px; }
       .hero-copy h1 { font-size: clamp(34px, 10vw, 46px); line-height: 1.18; }
-      .hero-summary { margin-top: 16px; font-size: 15px; line-height: 1.75; }
-      .hero-actions { display: grid; gap: 8px; margin-top: 22px; }
+      .hero-summary { margin-top: 12px; font-size: 15px; line-height: 1.7; }
+      .hero-actions { display: none; }
       .hero-primary { width: 100%; }
       .hero-secondary { justify-content: center; }
-      .hero-proof { justify-content: center; gap: 8px 14px; margin-top: 16px; }
       .cli { border-radius: 10px; }
       .cli-brand {
-        height: 36px;
+        height: 32px;
         padding-inline: 12px;
         border-radius: 9px 9px 0 0;
       }
       .cli-window-title { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-      .cli-status { font-size: 9px; }
       .cli-screen {
         min-height: 0;
-        padding: 18px 12px 22px;
+        padding: 10px 12px 12px;
       }
-      .cli-prompt { margin-bottom: 13px; font-size: 10px; }
-      .cli-eyebrow { font-size: 9px; }
       .cli-question {
         font-size: clamp(22px, 7vw, 28px);
       }
       .cli-tabs {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        margin-top: 18px;
+        margin-top: 12px;
       }
-      .cli-tabs button { min-height: 38px; font-size: 12px; }
+      .cli-tabs button { min-height: 34px; font-size: 12px; }
       .cli-options {
         gap: 8px;
         margin: 8px 0 0;
       }
       .cli-options a {
-        min-height: 62px;
+        min-height: 54px;
         grid-template-columns: 26px minmax(0, 1fr) auto;
-        padding: 11px 12px;
+        padding: 8px 12px;
         gap: 10px;
       }
       .cli-options strong { font-size: 13px; }
@@ -1096,7 +1040,7 @@ const schema = [
         padding-inline: 10px;
       }
       .cli-search-form {
-        min-height: 48px;
+        min-height: 44px;
         gap: 7px;
         padding-inline: 10px;
       }
