@@ -9,17 +9,17 @@ import ServiceBase from '../../layouts/ServiceBase.astro';
 const serviceCards = [
   {
     number: '01',
-    eyebrow: '一對一教學',
-    title: 'AI 一對一私人教學',
-    description: '手把手帶你完成 Claude Code／Codex、OpenClaw（龍蝦）、Hermes（愛馬仕）安裝、Meta API 串接與自動發文系統。',
+    eyebrow: 'FOR BEGINNERS',
+    title: 'AI 新手實戰課',
+    description: '不需要程式背景。3 小時帶你在自己的電腦上，從工具安裝到完成第一個可以使用的專案。',
     href: '/course/',
     action: '查看課程',
   },
   {
     number: '02',
-    eyebrow: '演講／內訓／工作坊',
+    eyebrow: 'FOR TEAMS',
     title: 'AI 演講與企業內訓',
-    description: 'AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計。',
+    description: '以真實任務現場演示 AI Agent、社群自動化與對話式拍片，主題可依聽眾背景調整。',
     href: '/services/speaking/',
     action: '查看演講服務',
   },
@@ -58,12 +58,12 @@ const schema = [
 >
   <section class="service-hero">
     <div class="service-hero-copy">
-      <p class="service-kicker">Alex AI 服務</p>
-      <h1>AI 一對一私人教學與演講邀約</h1>
-      <p class="service-lead">{CTA_VARIANTS[0].text}</p>
+      <p class="service-kicker">AI LEARNING × REAL WORK</p>
+      <h1>把 AI 從「會聊天」變成真的做完事</h1>
+      <p class="service-lead">我是 {AUTHOR.name}，用課程、演講與實作工作坊，帶個人與團隊把 AI Agent 用在真實工作裡。</p>
       <div class="service-hero-actions">
         <a href="#services">查看服務</a>
-        <a href={LINKS.line} target="_blank" rel="noreferrer">LINE 免費諮詢</a>
+        <a href={LINKS.line} target="_blank" rel="noreferrer">先加 LINE 聊聊</a>
       </div>
     </div>
     <figure>
