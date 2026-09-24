@@ -1,5 +1,5 @@
 ---
-import { AUTHOR, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
+import { LINKS, PERSON_SCHEMA, SERVICE_SITE, pageBannerUrl } from '../consts';
 import '../styles/global.css';
 
 interface Props {
@@ -225,7 +225,7 @@ const jsonLd = {
               </div>
             </div>
           </details>
-          <a href={`${SITE.url}/about/`} target="_blank" rel="noreferrer">關於講師 <span aria-hidden="true">↗</span></a>
+          <a href="/quiz/">工具測驗</a>
           <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer">LINE 免費諮詢</a>
         </nav>
       </div>
@@ -320,9 +320,9 @@ const jsonLd = {
           <a href="/services/speaking/">AI 演講與內訓</a>
         </section>
         <section>
-          <h2>內容品牌</h2>
-          <a href={SITE.url} target="_blank" rel="noreferrer">AI 新手教學主站 <span aria-hidden="true">↗</span></a>
-          <a href={`${SITE.url}/about/`} target="_blank" rel="noreferrer">關於講師 Alex <span aria-hidden="true">↗</span></a>
+          <h2>站內導覽</h2>
+          <a href={serviceHomeHref}>服務首頁</a>
+          <a href="/quiz/">工具測驗</a>
         </section>
       </div>
       <p>© {new Date().getFullYear()} {SERVICE_SITE.title}</p>
