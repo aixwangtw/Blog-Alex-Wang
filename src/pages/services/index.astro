@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import instructorPortrait from '../../assets/instructor-shirt.jpg';
 import Cta from '../../components/Cta.astro';
-import { AUTHOR, CTA_VARIANTS, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../../consts';
+import { AUTHOR, CTA_VARIANTS, LINKS, PERSON_SCHEMA, SERVICE_SITE, pageBannerUrl } from '../../consts';
 import { SPEAKING_ENGAGEMENTS } from '../../data/services';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
@@ -101,24 +101,24 @@ const schema = [
     </div>
   </section>
 
-  <section class="service-experience">
+  <section class="service-experience" id="speaking-cases">
     <header>
       <p class="service-kicker">演講邀約</p>
       <h2>過往演講紀錄</h2>
     </header>
-    <div>
+    <div class="service-experience-grid">
       {SPEAKING_ENGAGEMENTS.slice(0, 3).map((item, index) => (
         <article>
-          <span>0{index + 1}</span>
-          <div>
-            <small>{item.host}</small>
+          <Image src={item.image} alt={item.imageAlt} widths={[420, 640, 840]} sizes="(min-width: 768px) 33vw, 100vw" />
+          <div class="service-experience-copy">
+            <div><small>{item.host}</small><span>CASE 0{index + 1}</span></div>
             <h3>{item.topic}</h3>
             <p>{item.description}</p>
           </div>
         </article>
       ))}
     </div>
-    <a class="service-text-link" href={`${SITE.url}/about/`}>查看完整講師經歷 →</a>
+    <a class="service-text-link" href="/services/speaking/">查看全部演講案例 →</a>
   </section>
 
   <div class="service-home-cta">
@@ -161,11 +161,14 @@ const schema = [
     .service-option-grid article:nth-child(2) > p:nth-of-type(2) { color:#c9c5c0; }
     .service-option-grid article > a { position:absolute; bottom:30px; left:34px; display:flex; gap:14px; color:inherit; font-weight:700; text-decoration:none; }
     .service-option-grid article > a span { color:var(--color-accent); }
-    .service-experience > div { margin-top:38px; border-top:1px solid var(--color-rule); }
-    .service-experience article { display:grid; grid-template-columns:64px 1fr; gap:20px; padding:28px 0; border-bottom:1px solid var(--color-rule); }
-    .service-experience article > span { color:var(--color-accent); font:700 12px/1.4 ui-monospace, monospace; }
+    .service-experience-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:18px; margin-top:38px; }
+    .service-experience article { overflow:hidden; border:1px solid var(--color-rule-2); background:var(--color-paper-2); }
+    .service-experience article > img { display:block; width:100%; aspect-ratio:4 / 3; object-fit:cover; }
+    .service-experience-copy { padding:22px; }
+    .service-experience-copy > div { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--color-rule); }
+    .service-experience-copy span { color:var(--color-ink-3); font:700 10px/1.4 ui-monospace, monospace; white-space:nowrap; }
     .service-experience small { color:var(--color-accent); font-weight:700; }
-    .service-experience h3 { margin-top:7px; font-size:21px; }
+    .service-experience h3 { margin-top:16px; font-size:20px; line-height:1.45; }
     .service-experience article p { margin-top:9px; color:var(--color-ink-3); line-height:1.75; }
     .service-text-link { display:inline-block; margin-top:24px; color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-home-cta { width:min(1120px, calc(100% - 48px)); margin:80px auto 0; }
@@ -183,7 +186,7 @@ const schema = [
       .service-option-grid { grid-template-columns:1fr; }
       .service-option-grid article { min-height:0; padding:28px 24px 72px; }
       .service-option-grid article > a { left:24px; }
-      .service-experience article { grid-template-columns:42px minmax(0, 1fr); gap:10px; }
+      .service-experience-grid { grid-template-columns:1fr; }
     }
     @media (max-width:340px) {
       .service-hero, .service-proof, .service-options, .service-experience, .service-home-cta { width:calc(100% - 32px); }

@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import teachingOneOnOne from '../assets/teaching-one-on-one.jpg';
 import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
@@ -151,21 +152,33 @@ const courseBannerPath = new URL(courseBanner).pathname;
         <SectionHeading size="md">實際教學案例</SectionHeading>
         <p class="leading-7 text-ink-2 lg:text-right">以下是四個實際的一對一教學案例，涵蓋不同背景的學員與客製化主題。</p>
       </div>
-      <ol class="mt-8 grid border-t border-rule lg:grid-cols-2">
-        {TEACHING_CASES.map((item, index) => (
-          <li class:list={['grid grid-cols-[3rem_1fr] gap-4 border-b border-rule py-7 sm:grid-cols-[4rem_1fr] sm:gap-6', index % 2 === 0 ? 'lg:border-r lg:pr-8' : 'lg:pl-8']}>
-            <div class="flex flex-col items-start gap-4">
-              <span class="font-mono text-xs text-accent">0{index + 1}</span>
-              <Image src={item.image} alt={item.imageAlt} width={96} class="h-9 w-9 object-contain" />
-            </div>
-            <div>
-              <p class="text-xs font-semibold tracking-[0.08em] text-accent">{item.student}</p>
+      <div class="mt-8 grid gap-6 lg:grid-cols-[minmax(280px,0.78fr)_minmax(0,1.22fr)] lg:items-start lg:gap-8">
+        <figure class="overflow-hidden border border-rule-2 bg-paper-2">
+          <Image
+            src={teachingOneOnOne}
+            alt="Alex 與學員進行一對一 AI 實體教學"
+            widths={[480, 720, 960]}
+            sizes="(min-width: 1024px) 38vw, 100vw"
+            class="aspect-[4/5] w-full object-cover object-[center_62%]"
+          />
+          <figcaption class="border-t border-rule px-5 py-4 text-sm leading-6 text-ink-3">
+            一對一實體上課紀錄；課程會直接使用學員自己的電腦完成設定。學員影像已做隱私處理。
+          </figcaption>
+        </figure>
+        <ol class="grid gap-4 sm:grid-cols-2">
+          {TEACHING_CASES.map((item, index) => (
+            <li class="flex min-h-full flex-col border border-rule-2 bg-paper-2 p-5 sm:p-6">
+              <div class="flex items-center justify-between gap-4 border-b border-rule pb-4">
+                <span class="font-mono text-xs text-accent">CASE 0{index + 1}</span>
+                <Image src={item.image} alt={item.imageAlt} width={96} class="h-9 w-9 object-contain" />
+              </div>
+              <p class="mt-5 text-xs font-semibold tracking-[0.08em] text-accent">{item.student}</p>
               <h3 class="mt-2 text-lg font-semibold leading-8 text-ink">{item.topic}</h3>
               <p class="mt-3 text-[15px] leading-7 text-ink-2">{item.description}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
 
     <section id="course-content" class="scroll-mt-24 pt-16 lg:pt-24">

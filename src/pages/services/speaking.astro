@@ -100,11 +100,14 @@ const pageToc = [
 
     <SectionHeading id="speaking-records" size="md" class="mt-16 scroll-mt-24">過往演講紀錄</SectionHeading>
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
-      {SPEAKING_ENGAGEMENTS.map((item) => (
-        <Card padded={false} class="overflow-hidden">
-          <Image src={item.image} alt={item.imageAlt} class="h-48 w-full object-cover" />
-          <div class="p-7">
-            <p class="text-xs uppercase tracking-[0.26em] text-accent">{item.host}</p>
+      {SPEAKING_ENGAGEMENTS.map((item, index) => (
+        <Card padded={false} class="flex h-full flex-col overflow-hidden">
+          <Image src={item.image} alt={item.imageAlt} widths={[480, 720, 960]} sizes="(min-width: 640px) 50vw, 100vw" class="aspect-[4/3] h-auto w-full object-cover" />
+          <div class="flex flex-1 flex-col p-6 sm:p-7">
+            <div class="flex items-center justify-between gap-4 border-b border-rule pb-4">
+              <p class="text-xs font-semibold tracking-[0.12em] text-accent">{item.host}</p>
+              <span class="font-mono text-[11px] text-ink-3">CASE 0{index + 1}</span>
+            </div>
             <h3 class="mt-3 text-lg font-semibold text-ink">{item.topic}</h3>
             <p class="mt-3 leading-7 text-ink-2">{item.description}</p>
             {item.link && (
@@ -112,7 +115,7 @@ const pageToc = [
                 href={item.link}
                 target="_blank"
                 rel="noreferrer"
-                class="mt-4 inline-block text-sm font-semibold text-accent transition hover:text-accent-2"
+                class="mt-auto inline-block pt-5 text-sm font-semibold text-accent transition hover:text-accent-2"
               >
                 {item.linkLabel}
               </a>
