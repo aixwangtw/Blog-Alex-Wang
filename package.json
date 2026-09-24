@@ -51,9 +51,11 @@
     "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@google-analytics/data": "^6.1.0",
     "pagefind": "^1.5.2",
     "satori": "^0.28.2",
+    "typescript": "^5.9.3",
     "wrangler": "^4.113.0"
   }
 }
