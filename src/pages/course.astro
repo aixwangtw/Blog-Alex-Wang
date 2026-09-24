@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import Card from '../components/Card.astro';
 import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
@@ -69,10 +68,26 @@ const schema = [
 ];
 
 const pageToc = [
-  { id: 'course-formats', label: '上課形式' },
+  { id: 'course-outcomes', label: '你會完成' },
   { id: 'course-cases', label: '實際案例' },
   { id: 'course-content', label: '教學內容' },
+  { id: 'course-formats', label: '形式與費用' },
   { id: 'faq', label: '常見問題' },
+];
+
+const courseOutcomes = [
+  {
+    title: '在自己的電腦完成設定',
+    description: '不是看講師操作，而是使用你自己的裝置與帳號，把安裝、權限與環境設定實際跑過一次。',
+  },
+  {
+    title: '做出能實際使用的流程',
+    description: '依你的需求選擇主題，從 AI Agent、API 串接到社群自動化，集中處理真正卡住的環節。',
+  },
+  {
+    title: '帶走可繼續使用的方法',
+    description: '理解需求拆解、測試與排錯方式，之後遇到工具更新或新任務，也知道該從哪裡開始處理。',
+  },
 ];
 
 const courseBanner = pageBannerUrl('one-on-one');
@@ -86,37 +101,54 @@ const courseBannerPath = new URL(courseBanner).pathname;
   ogImageAlt="AI 一對一私人教學｜講師 Alex"
   schema={schema}
 >
-  <div class="mx-auto max-w-6xl px-5 py-10 sm:px-6 sm:py-14">
-    <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: 'AI 一對一私人教學' }]} class="mb-8" />
+  <div class="mx-auto w-full max-w-6xl px-5 py-8 sm:px-6 sm:py-12">
+    <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: 'AI 一對一私人教學' }]} class="mb-7 sm:mb-10" />
 
-    <section class="grid items-center gap-9 lg:grid-cols-[1fr_0.92fr] lg:gap-14">
-      <div>
-        <p class="text-sm font-semibold text-accent">付費一對一 AI 私人教學</p>
-        <h1 class="t-h1 mt-3 font-semibold text-ink">AI 一對一私人教學</h1>
-        <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
-          這是付費的一對一 AI 私人教學服務：由我（<a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="text-accent">你自己的電腦、你自己的帳號</strong>上，把 AI 自動化流程真正跑通一次——從四大 AI Agent（Claude Code、Codex、OpenClaw 龍蝦、Hermes 愛馬仕）的安裝使用、<strong class="text-accent">讓 AI 可以跟你的社群軟體互動的 API 串接</strong>（例如用 LINE 跟 AI 對話，整理其他平台的訊息），到做出可排程的社群自動發文系統，以及打造你的生圖、拍片工作流。
+    <section class="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-start lg:gap-16">
+      <div class="pt-2 lg:pt-6">
+        <p class="font-mono text-xs font-medium tracking-[0.12em] text-accent">1 對 1 · 實作導向 · 零基礎可</p>
+        <h1 class="mt-5 max-w-[11ch] font-serif text-[clamp(2.5rem,6.5vw,4.5rem)] font-semibold leading-[1.12] tracking-[-0.045em] text-ink">
+          把 AI 裝進你的工作流程
+        </h1>
+        <p class="mt-6 max-w-[38rem] text-base leading-8 text-ink-2 sm:text-lg sm:leading-9">
+          由 <a href={`${SITE.url}/about/`} target="_blank" rel="noreferrer" class="font-semibold text-accent underline underline-offset-4">{AUTHOR.name}</a>
+          陪你在<strong class="font-semibold text-ink">自己的電腦與帳號</strong>上，完成一套真正能用的 AI 工作流。主題依你的目標調整，不需要技術背景。
         </p>
-        <dl class="mt-7 grid gap-4 sm:grid-cols-2">
-          <div class="border-t-2 border-accent py-4">
-            <dt class="text-sm text-ink-3">課程時間</dt>
-            <dd class="mt-2 text-xl font-semibold text-ink">3 小時</dd>
-          </div>
-          <div class="border-t-2 border-accent py-4">
-            <dt class="text-sm text-ink-3">教學費用</dt>
-            <dd class="mt-2 text-xl font-semibold text-ink">NT$1,000／小時起</dd>
-            <dd class="mt-1 text-sm leading-6 text-ink-2">第二位起每位 NT$800／小時</dd>
-          </div>
-        </dl>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center bg-[#06c755] px-6 font-semibold text-white no-underline">LINE 免費諮詢</a>
-          <a href={LINKS.email} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline">Email 聯絡</a>
+        <ul class="mt-7 grid gap-3 text-[15px] leading-7 text-ink sm:grid-cols-2">
+          <li class="flex gap-3 border-t border-rule pt-3"><span class="font-mono text-accent" aria-hidden="true">01</span><span>雙北實體或線上教學</span></li>
+          <li class="flex gap-3 border-t border-rule pt-3"><span class="font-mono text-accent" aria-hidden="true">02</span><span>一次 3 小時，依目標安排</span></li>
+        </ul>
+        <div class="mt-8 grid gap-3 sm:flex sm:flex-wrap">
+          <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-13 items-center justify-center bg-accent px-7 font-semibold text-white no-underline transition hover:bg-accent-2">LINE 免費諮詢</a>
+          <a href="#course-cases" class="inline-flex min-h-13 items-center justify-center border border-rule-3 px-7 font-semibold text-ink no-underline transition hover:bg-paper-2">先看實際案例</a>
         </div>
       </div>
-      <img src={courseBannerPath} alt="AI 一對一私人教學｜講師 Alex" width="1200" height="630" fetchpriority="high" class="h-auto w-full border border-rule" />
+
+      <aside class="border border-rule-2 bg-paper-2" aria-label="課程預約摘要">
+        <img src={courseBannerPath} alt="AI 一對一私人教學｜講師 Alex" width="1200" height="630" fetchpriority="high" class="h-auto w-full border-b border-rule-2" />
+        <div class="p-5 sm:p-6">
+          <p class="font-mono text-[11px] tracking-[0.12em] text-accent">預約摘要</p>
+          <dl class="mt-4 divide-y divide-rule border-y border-rule">
+            <div class="grid grid-cols-[5rem_1fr] gap-4 py-3.5">
+              <dt class="text-sm text-ink-3">時間</dt>
+              <dd class="font-semibold text-ink">3 小時</dd>
+            </div>
+            <div class="grid grid-cols-[5rem_1fr] gap-4 py-3.5">
+              <dt class="text-sm text-ink-3">費用</dt>
+              <dd><strong class="font-semibold text-ink">NT$1,000／小時起</strong><span class="mt-1 block text-xs leading-5 text-ink-3">第二位起每位 NT$800／小時</span></dd>
+            </div>
+            <div class="grid grid-cols-[5rem_1fr] gap-4 py-3.5">
+              <dt class="text-sm text-ink-3">地點</dt>
+              <dd class="text-sm leading-6 text-ink">雙北咖啡廳／線上</dd>
+            </div>
+          </dl>
+          <p class="mt-4 text-sm leading-6 text-ink-3">先告訴我想完成的目標，我會回覆適合的主題與堂數。</p>
+        </div>
+      </aside>
     </section>
 
-    <nav aria-label="課程目錄" class="mt-10 overflow-x-auto border-y border-rule">
-      <ul class="flex min-w-max sm:grid sm:min-w-0 sm:grid-cols-4">
+    <nav aria-label="課程目錄" class="mt-12 overflow-x-auto border-y border-rule lg:mt-16">
+      <ul class="flex min-w-max sm:grid sm:min-w-0 sm:grid-cols-5">
         {pageToc.map((item) => (
           <li class="min-w-28 flex-1">
             <a
@@ -130,57 +162,106 @@ const courseBannerPath = new URL(courseBanner).pathname;
       </ul>
     </nav>
 
-    <SectionHeading id="course-formats" size="md" class="mt-16 scroll-mt-24">上課形式</SectionHeading>
-    <div class="mt-6 grid gap-5 sm:grid-cols-2">
-      {CLASS_FORMATS.map((format) => (
-        <Card>
-          <h3 class="text-xl font-semibold text-ink">{format.title}</h3>
-          <p class="mt-3 leading-7 text-ink-2">{format.description}</p>
-        </Card>
-      ))}
-    </div>
-    <p class="mt-5 border-l-2 border-accent pl-4 leading-7 text-ink-2">
-      也可安排一對多教學：第一位學員依原價計費，<strong class="font-semibold text-ink">第二位起每位教學費用享八折</strong>。
-    </p>
+    <section id="course-outcomes" class="scroll-mt-24 pt-16 lg:pt-24">
+      <div class="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
+        <div>
+          <p class="font-mono text-xs tracking-[0.12em] text-accent">學完帶走什麼</p>
+          <SectionHeading size="md" class="mt-3">不只聽懂，而是親手完成</SectionHeading>
+          <p class="mt-4 max-w-md leading-8 text-ink-2">一對一的價值，是把時間集中在你的裝置、帳號與實際問題，不需要跟著固定進度等其他人。</p>
+        </div>
+        <ol class="border-t border-rule">
+          {courseOutcomes.map((item, index) => (
+            <li class="grid gap-2 border-b border-rule py-6 sm:grid-cols-[3rem_1fr] sm:gap-5">
+              <span class="font-mono text-xs text-accent">0{index + 1}</span>
+              <div>
+                <h3 class="text-xl font-semibold text-ink">{item.title}</h3>
+                <p class="mt-2 leading-7 text-ink-2">{item.description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
 
-    <SectionHeading id="course-cases" size="md" class="mt-16 scroll-mt-24">實際教學案例</SectionHeading>
-    <p class="mt-4 leading-7 text-ink-2">
-      以下是四個實際的一對一教學案例，涵蓋不同背景的學員與客製化主題：
-    </p>
-    <div class="mt-6 grid gap-5 sm:grid-cols-2">
-      {TEACHING_CASES.map((item) => (
-        <Card>
-          <div class="flex items-center gap-3">
-            <Image src={item.image} alt={item.imageAlt} width={96} class="h-10 w-10 shrink-0 object-contain" />
-            <h3 class="text-lg font-semibold leading-snug text-ink">{item.topic}</h3>
-          </div>
-          <p class="mt-3 text-sm text-accent">學員背景：{item.student}</p>
-          <p class="mt-3 leading-7 text-ink-2">{item.description}</p>
-        </Card>
-      ))}
-    </div>
-
-    <SectionHeading id="course-content" size="md" class="mt-16 scroll-mt-24">教學內容</SectionHeading>
-    <div class="mt-6 grid gap-5 sm:grid-cols-2">
-      {TEACHING_CONTENT.map((item) => (
-        <Card>
-          <h3 class="text-xl font-semibold text-ink">{item.category}</h3>
-          {item.logos && (
-            <div class="mt-4 flex gap-2.5">
-              {item.logos.map((logo) => (
-                <Image src={logo.image} alt={logo.alt} width={96} class="h-9 w-9 object-cover" />
-              ))}
+    <section id="course-cases" class="scroll-mt-24 pt-16 lg:pt-24">
+      <p class="font-mono text-xs tracking-[0.12em] text-accent">真實需求／實際操作</p>
+      <div class="mt-3 grid gap-4 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+        <SectionHeading size="md">過去學員完成的題目</SectionHeading>
+        <p class="leading-7 text-ink-2 lg:text-right">不同背景、不同工具，但都從學員原本卡住的任務開始。</p>
+      </div>
+      <ol class="mt-8 grid border-t border-rule lg:grid-cols-2">
+        {TEACHING_CASES.map((item, index) => (
+          <li class:list={['grid grid-cols-[3rem_1fr] gap-4 border-b border-rule py-7 sm:grid-cols-[4rem_1fr] sm:gap-6', index % 2 === 0 ? 'lg:border-r lg:pr-8' : 'lg:pl-8']}>
+            <div class="flex flex-col items-start gap-4">
+              <span class="font-mono text-xs text-accent">0{index + 1}</span>
+              <Image src={item.image} alt={item.imageAlt} width={96} class="h-9 w-9 object-contain" />
             </div>
-          )}
-          <p class="mt-3 leading-7 text-ink-2">{item.detail}</p>
-        </Card>
-      ))}
-    </div>
-    <h3 class="mt-9 text-xl font-semibold text-ink">可教學工具</h3>
-    <TeachingTools />
+            <div>
+              <p class="text-xs font-semibold tracking-[0.08em] text-accent">{item.student}</p>
+              <h3 class="mt-2 text-lg font-semibold leading-8 text-ink">{item.topic}</h3>
+              <p class="mt-3 text-[15px] leading-7 text-ink-2">{item.description}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
 
-    <SectionHeading id="faq" size="md" class="mt-16 scroll-mt-24">常見問題</SectionHeading>
-    <div class="mt-6">
+    <section id="course-content" class="scroll-mt-24 pt-16 lg:pt-24">
+      <div class="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
+        <div>
+          <p class="font-mono text-xs tracking-[0.12em] text-accent">依需求選擇主題</p>
+          <SectionHeading size="md" class="mt-3">可以一起完成的內容</SectionHeading>
+          <p class="mt-4 max-w-md leading-8 text-ink-2">不必一次學完所有工具。預約前先說明目標，再把 3 小時集中在最需要的主題。</p>
+        </div>
+        <ol class="border-t border-rule">
+          {TEACHING_CONTENT.map((item, index) => (
+            <li class="grid gap-3 border-b border-rule py-6 sm:grid-cols-[3rem_1fr_auto] sm:gap-5">
+              <span class="font-mono text-xs text-accent">0{index + 1}</span>
+              <div>
+                <h3 class="text-lg font-semibold leading-7 text-ink">{item.category}</h3>
+                <p class="mt-2 text-[15px] leading-7 text-ink-2">{item.detail}</p>
+              </div>
+              {item.logos && (
+                <div class="flex gap-2 sm:justify-end">
+                  {item.logos.map((logo) => (
+                    <Image src={logo.image} alt={logo.alt} width={96} class="h-8 w-8 object-cover" />
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div class="mt-10 border-l-2 border-accent pl-5 sm:pl-7">
+        <h3 class="text-lg font-semibold text-ink">目前可教學工具</h3>
+        <TeachingTools />
+      </div>
+    </section>
+
+    <section id="course-formats" class="scroll-mt-24 pt-16 lg:pt-24">
+      <p class="font-mono text-xs tracking-[0.12em] text-accent">上課資訊</p>
+      <SectionHeading size="md" class="mt-3">選擇適合你的上課方式</SectionHeading>
+      <div class="mt-8 grid border-y border-rule sm:grid-cols-2">
+        {CLASS_FORMATS.map((format, index) => (
+          <article class:list={['py-7', index === 0 ? 'sm:border-r sm:pr-8' : 'border-t border-rule sm:border-t-0 sm:pl-8']}>
+            <p class="font-mono text-xs text-accent">0{index + 1}</p>
+            <h3 class="mt-3 text-xl font-semibold text-ink">{format.title}</h3>
+            <p class="mt-3 leading-7 text-ink-2">{format.description}</p>
+          </article>
+        ))}
+      </div>
+      <div class="mt-8 grid gap-6 bg-ink p-6 text-white sm:grid-cols-[1fr_auto] sm:items-center sm:p-8">
+        <div>
+          <p class="text-sm text-[#c9c5c0]">3 小時一對一教學</p>
+          <p class="mt-2 text-2xl font-semibold">NT$1,000／小時起</p>
+          <p class="mt-2 text-sm leading-6 text-[#c9c5c0]">可安排一對多；第二位起每位 NT$800／小時。</p>
+        </div>
+        <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-13 items-center justify-center bg-accent px-7 font-semibold text-white no-underline transition hover:bg-accent-2">詢問適合堂數</a>
+      </div>
+    </section>
+
+    <SectionHeading id="faq" size="md" class="mt-16 scroll-mt-24 lg:mt-24">常見問題</SectionHeading>
+    <div class="mt-7">
       <FaqList faqs={ONE_ON_ONE_FAQS} />
     </div>
 
