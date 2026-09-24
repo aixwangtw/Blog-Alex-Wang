@@ -83,25 +83,28 @@ const DROPDOWN_NAV = [
   {
     key: 'services',
     label: '服務',
-    href: `${SERVICE_SITE.url}/course/`,
-    subtitle: '先看內容，再選適合你的合作方式',
+    href: `${SERVICE_SITE.url}/`,
+    subtitle: '先看你遇到的情況，再選適合的合作方式',
     accent: true,
+    external: true,
     previews: [
       {
         href: `${SERVICE_SITE.url}/course/`,
         eyebrow: '一對一教學',
         title: 'AI 一對一私人教學',
-        description: '雙北咖啡廳實體課，或 Google Meet／Discord 線上課。',
+        description: '自己摸索卡在安裝、串接或流程設計時，我陪你在自己的電腦上實際跑通一次。',
         image: new URL(pageBannerUrl('one-on-one')).pathname,
         cta: '查看上課方式',
+        external: true,
       },
       {
         href: `${SERVICE_SITE.url}/services/speaking/`,
         eyebrow: '演講與實作',
         title: 'AI 主題演講',
-        description: 'AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計。',
+        description: '想讓團隊真正看懂並用上 AI，可依受眾與目標設計演講、內訓或實作。',
         image: new URL(speakingBannerUrl()).pathname,
         cta: '查看演講服務',
+        external: true,
       },
     ],
   },
@@ -136,6 +139,7 @@ const {
 } = Astro.props;
 const ogImage = pageOgImage ?? new URL(ogBanner.src, SITE.url).href;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const serviceHostname = new URL(SERVICE_SITE.url).hostname;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -159,6 +163,12 @@ const jsonLd = {
 <!doctype html>
 <html lang="zh-TW">
   <head>
+    <script is:inline define:vars={{ serviceHostname }}>
+      // 內容站頁面若被共用 Worker 從服務子網域打開，不顯示內容站的學習入口。
+      if (window.location.hostname === serviceHostname) {
+        document.documentElement.classList.add('service-subdomain');
+      }
+    </script>
     <!-- Google Analytics（GA4）流量統計：gtag.js 延到頁面載入完才注入，避免佔用首次渲染的主執行緒；
          事件在此之前先排入 dataLayer，載入後照樣送出。
          noindex 頁面（草稿／不公開頁）完全不輸出 GA 腳本，不會被統計 -->
@@ -393,6 +403,9 @@ const jsonLd = {
                     <a
                       class="service-nav-direct"
                       href={menu.href}
+                      target={'external' in menu && menu.external ? '_blank' : undefined}
+                      rel={'external' in menu && menu.external ? 'noreferrer' : undefined}
+                      aria-label={'external' in menu && menu.external ? `${menu.label}（另開新頁籤）` : undefined}
                       data-ga-button={`header_${menu.key}`}
                       data-ga-label={menu.label}
                       data-ga-location="header_nav"
@@ -843,6 +856,10 @@ const jsonLd = {
       (function () {
         // 右下角站內搜尋：只查本站索引，不連接外部服務。
         var container = document.getElementById('search-chatbot');
+        if (document.documentElement.classList.contains('service-subdomain')) {
+          if (container) container.remove();
+          return;
+        }
         var toggle = document.getElementById('search-chat-toggle');
         var panel = document.getElementById('search-chat-panel');
         var closeButton = document.getElementById('search-chat-close');
@@ -1814,6 +1831,9 @@ const jsonLd = {
           transform 0.18s var(--ease),
           visibility 0.18s var(--ease);
         transform-origin: right bottom;
+      }
+      .service-subdomain .search-chatbot {
+        display: none;
       }
       body.home-cli-visible:not(.search-chat-open) .search-chatbot {
         visibility: hidden;

@@ -490,7 +490,8 @@ import { LINKS, SITE } from '../consts';
   const quizRoot = document.querySelector<HTMLElement>('[data-quiz-root]');
 
   if (quizRoot) {
-    const steps = quizRoot.querySelectorAll<HTMLElement>('[data-quiz-step]');
+    const root = quizRoot;
+    const steps = root.querySelectorAll<HTMLElement>('[data-quiz-step]');
     let q1Scores: Record<string, number> = {};
     let q3Scores: Record<string, number> = {};
     const q2Scores = new Map<string, Record<string, number>>();
@@ -530,7 +531,7 @@ import { LINKS, SITE } from '../consts';
       showStep(nextStep);
     }
 
-    quizRoot.querySelectorAll<HTMLButtonElement>('[data-question="q1"]').forEach((button) => {
+    root.querySelectorAll<HTMLButtonElement>('[data-question="q1"]').forEach((button) => {
       button.addEventListener('click', () => {
         handleSingleChoice(button, 'q2', (scores) => {
           q1Scores = scores;
@@ -538,7 +539,7 @@ import { LINKS, SITE } from '../consts';
       });
     });
 
-    quizRoot.querySelectorAll<HTMLButtonElement>('[data-question="q2"]').forEach((button) => {
+    root.querySelectorAll<HTMLButtonElement>('[data-question="q2"]').forEach((button) => {
       button.addEventListener('click', () => {
         const pressed = button.getAttribute('aria-pressed') === 'true';
         const next = !pressed;
@@ -553,8 +554,8 @@ import { LINKS, SITE } from '../consts';
       });
     });
 
-    quizRoot.querySelector<HTMLButtonElement>('[data-quiz-next]')?.addEventListener('click', () => {
-      const q2Status = quizRoot.querySelector<HTMLElement>('[data-quiz-q2-status]');
+    root.querySelector<HTMLButtonElement>('[data-quiz-next]')?.addEventListener('click', () => {
+      const q2Status = root.querySelector<HTMLElement>('[data-quiz-q2-status]');
       if (q2Scores.size === 0) {
         if (q2Status) q2Status.textContent = '請至少選擇一個任務。';
         return;
@@ -564,14 +565,14 @@ import { LINKS, SITE } from '../consts';
     });
 
     // 上一步：只換頁，不 reset 已選答案（q1Scores／q2Scores 的狀態本來就還在）。
-    quizRoot.querySelectorAll<HTMLButtonElement>('[data-quiz-back]').forEach((button) => {
+    root.querySelectorAll<HTMLButtonElement>('[data-quiz-back]').forEach((button) => {
       button.addEventListener('click', () => {
         const target = button.dataset.quizBack;
         if (target) showStep(target);
       });
     });
 
-    quizRoot.querySelectorAll<HTMLButtonElement>('[data-question="q3"]').forEach((button) => {
+    root.querySelectorAll<HTMLButtonElement>('[data-question="q3"]').forEach((button) => {
       button.addEventListener('click', () => {
         handleSingleChoice(button, 'result', (scores) => {
           q3Scores = scores;
@@ -599,7 +600,7 @@ import { LINKS, SITE } from '../consts';
       const winner = QUIZ_PRIORITY.find((key) => totals[key] === maxScore) ?? QUIZ_PRIORITY[0];
       currentWinner = winner;
 
-      quizRoot.querySelectorAll<HTMLElement>('[data-result-primary]').forEach((card) => {
+      root.querySelectorAll<HTMLElement>('[data-result-primary]').forEach((card) => {
         card.hidden = card.dataset.resultPrimary !== winner;
       });
 
@@ -608,15 +609,15 @@ import { LINKS, SITE } from '../consts';
       );
       currentSecondaries = secondaries;
 
-      const secondaryContainer = quizRoot.querySelector<HTMLElement>('[data-quiz-secondary]');
-      const secondaryList = quizRoot.querySelector<HTMLElement>('[data-quiz-secondary-list]');
-      quizRoot.querySelectorAll<HTMLElement>('[data-result-secondary]').forEach((item) => {
+      const secondaryContainer = root.querySelector<HTMLElement>('[data-quiz-secondary]');
+      const secondaryList = root.querySelector<HTMLElement>('[data-quiz-secondary-list]');
+      root.querySelectorAll<HTMLElement>('[data-result-secondary]').forEach((item) => {
         item.hidden = true;
       });
       if (secondaryContainer && secondaryList) {
         secondaryContainer.hidden = secondaries.length === 0;
         secondaries.forEach((key) => {
-          const item = quizRoot.querySelector<HTMLElement>(`[data-result-secondary="${key}"]`);
+          const item = root.querySelector<HTMLElement>(`[data-result-secondary="${key}"]`);
           if (item) {
             item.hidden = false;
             secondaryList.appendChild(item);
@@ -631,26 +632,26 @@ import { LINKS, SITE } from '../consts';
       q1Scores = {};
       q3Scores = {};
       q2Scores.clear();
-      const q2Status = quizRoot.querySelector<HTMLElement>('[data-quiz-q2-status]');
+      const q2Status = root.querySelector<HTMLElement>('[data-quiz-q2-status]');
       if (q2Status) q2Status.textContent = '';
       currentWinner = '';
       currentSecondaries = [];
-      quizRoot.querySelectorAll<HTMLButtonElement>('[role="radio"]').forEach((radio) => {
+      root.querySelectorAll<HTMLButtonElement>('[role="radio"]').forEach((radio) => {
         radio.setAttribute('aria-checked', 'false');
         setSelected(radio, false);
       });
-      quizRoot.querySelectorAll<HTMLButtonElement>('[data-question="q2"]').forEach((button) => {
+      root.querySelectorAll<HTMLButtonElement>('[data-question="q2"]').forEach((button) => {
         button.setAttribute('aria-pressed', 'false');
         setSelected(button, false);
       });
       showStep('q1');
     }
 
-    quizRoot.querySelector<HTMLButtonElement>('[data-quiz-restart]')?.addEventListener('click', resetQuiz);
+    root.querySelector<HTMLButtonElement>('[data-quiz-restart]')?.addEventListener('click', resetQuiz);
 
-    const emailForm = quizRoot.querySelector<HTMLFormElement>('[data-quiz-email-form]');
-    const emailStatus = quizRoot.querySelector<HTMLElement>('[data-quiz-email-status]');
-    const emailSubmit = quizRoot.querySelector<HTMLButtonElement>('[data-quiz-email-submit]');
+    const emailForm = root.querySelector<HTMLFormElement>('[data-quiz-email-form]');
+    const emailStatus = root.querySelector<HTMLElement>('[data-quiz-email-status]');
+    const emailSubmit = root.querySelector<HTMLButtonElement>('[data-quiz-email-submit]');
 
     emailForm?.addEventListener('submit', async (event) => {
       event.preventDefault();
