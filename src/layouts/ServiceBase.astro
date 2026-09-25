@@ -182,7 +182,7 @@ const jsonLd = {
       <div class="service-header-inner">
         <a class="service-brand" href={serviceHomeHref} aria-label={`${SERVICE_SITE.title} 首頁`}>
           <img src="/aixwang-icon.png" width="30" height="30" alt="" aria-hidden="true" />
-          <span><strong>AIX</strong><small>AI 服務</small></span>
+          <span><strong>AIX</strong><small>AI服務</small></span>
         </a>
 
         <button
@@ -314,7 +314,7 @@ const jsonLd = {
         <section>
           <a class="service-brand" href={serviceHomeHref}>
             <img src="/aixwang-icon.png" width="30" height="30" alt="" />
-            <span><strong>AIX</strong><small>AI 服務</small></span>
+            <span><strong>AIX</strong><small>AI服務</small></span>
           </a>
         </section>
         <section>
@@ -339,9 +339,10 @@ const jsonLd = {
       .service-header-inner { display:flex; min-height:var(--service-header-height); width:min(1200px, 100%); margin:auto; padding:0 24px; align-items:center; justify-content:space-between; gap:24px; }
       .service-brand { display:inline-flex; align-items:center; gap:10px; color:var(--color-ink); text-decoration:none; }
       .service-brand img { width:30px; height:30px; }
-      .service-brand > span { display:flex; align-items:baseline; gap:7px; line-height:1; }
-      .service-brand strong { font-size:18px; letter-spacing:.16em; }
-      .service-brand small { padding:3px 4px 2px; border:1px solid var(--color-accent-line-2); color:var(--color-accent); font:700 10px/1 ui-monospace, monospace; letter-spacing:.08em; white-space:nowrap; }
+      .service-brand > span { display:flex; align-items:center; gap:5px; line-height:1; }
+      .service-brand strong, .service-brand small { font-family:inherit; font-size:18px; font-weight:700; }
+      .service-brand strong { letter-spacing:.16em; }
+      .service-brand small { padding:2px 3px 1px; border:1px solid currentColor; color:inherit; line-height:1; letter-spacing:.04em; white-space:nowrap; }
       .service-mainnav { display:flex; align-items:center; gap:30px; }
       .service-mainnav > a, .service-mega summary { color:var(--color-ink); font-size:15px; font-weight:650; text-decoration:none; white-space:nowrap; }
       .service-mainnav > a span { margin-left:4px; font-size:12px; }
@@ -398,8 +399,7 @@ const jsonLd = {
       @media (max-width:360px) {
         .service-header { margin-inline:12px; }
         .service-header-inner { padding-left:14px; padding-right:10px; }
-        .service-brand strong { font-size:16px; }
-        .service-brand small { font-size:9px; }
+        .service-brand strong, .service-brand small { font-size:16px; }
         .service-mega-grid > a { grid-template-columns:28px minmax(0, 1fr) 14px; gap:8px; padding:13px 10px; }
       }
       @media (prefers-reduced-motion:reduce) {
