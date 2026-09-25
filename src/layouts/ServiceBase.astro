@@ -1,5 +1,6 @@
 ---
 import { LINKS, PERSON_SCHEMA, SERVICE_SITE, pageBannerUrl } from '../consts';
+import FloatingLine from '../components/FloatingLine.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -226,7 +227,7 @@ const jsonLd = {
             </div>
           </details>
           <a href="/quiz/">工具測驗</a>
-          <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer">LINE 免費諮詢</a>
+          <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer">免費諮詢</a>
         </nav>
       </div>
     </header>
@@ -303,6 +304,8 @@ const jsonLd = {
         }
       })();
     </script>
+
+    <FloatingLine />
 
     <main id="main"><slot /></main>
 
