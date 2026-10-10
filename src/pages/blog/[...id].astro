@@ -5,6 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Cta from '../../components/Cta.astro';
 import FaqList from '../../components/FaqList.astro';
 import { AUTHOR, SITE, pickArticleCta, pickAuthorIntro } from '../../consts';
+import ShareBar from '../../components/ShareBar.astro';
 import Base from '../../layouts/Base.astro';
 import { blogBannerPath } from '../../lib/blog-banner';
 
@@ -135,6 +136,10 @@ const updatedText = updatedDate
         ))}
       </p>
 
+      <div class="mt-5">
+        <ShareBar url={`${SITE.url}/blog/${post.id}/`} title={title} position="top" />
+      </div>
+
       {/* 目錄：改版前是 rounded-[1.75rem] ＋ bg-surface ＋ shadow 的卡片盒。
           改成上下各一條髮絲線夾住的區塊（border-y），不加底色也不加陰影。
           這裡用 border-y 而不是 Card 慣用的 border-t：Card 的 border-t 是給
@@ -187,7 +192,11 @@ const updatedText = updatedDate
         而 Cta 自己的第一件事就是畫一條 border-top，補了會變成兩條並排的線。
         標題從 18px 粗體降成等寬小標：這一段是文末的作者署名，
         不是一個要跟上面 FAQ 同級的內容章節，字級要說出這件事。 */}
-    <section class="mt-14 border-t border-rule px-0.5 pt-7">
+    <div class="mt-14">
+      <ShareBar url={`${SITE.url}/blog/${post.id}/`} title={title} position="bottom" />
+    </div>
+
+    <section class="mt-8 border-t border-rule px-0.5 pt-7">
       <h2 class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">關於作者</h2>
       <p class="mt-3 leading-8 text-ink-2">
         {AUTHOR.name}——{pickAuthorIntro(post.id, post.data.tags)}

@@ -1,0 +1,145 @@
+---
+// 文章分享列：讀者用「安裝成 App／捷徑以視窗開啟」時沒有網址列，靠這排按鈕分享或複製連結。
+// 手機支援 Web Share API 時顯示「分享」（叫出系統分享選單），不支援就隱藏；
+// 「複製連結」與 LINE、Facebook、Threads 分享連結一律顯示。每個按鈕都帶 data-ga-* 追蹤。
+interface Props {
+  url: string;
+  title: string;
+  /** 追蹤位置：top＝標題下方、bottom＝文末 */
+  position: 'top' | 'bottom';
+}
+
+const { url, title, position } = Astro.props;
+const encodedUrl = encodeURIComponent(url);
+const location = `article_share_${position}`;
+const shareLinks = [
+  { key: 'line', label: 'LINE', href: `https://social-plugins.line.me/lineit/share?url=${encodedUrl}` },
+  { key: 'facebook', label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
+  { key: 'threads', label: 'Threads', href: `https://www.threads.net/intent/post?text=${encodeURIComponent(`${title} ${url}`)}` },
+];
+---
+
+<div class="share-bar" data-share-bar data-share-url={url} data-share-title={title} role="group" aria-label="分享這篇文章">
+  <span class="share-bar-label">分享</span>
+  <button
+    type="button"
+    class="share-bar-btn share-bar-native"
+    data-share-native
+    hidden
+    data-ga-button={`article_share_native_${position}`}
+    data-ga-label="系統分享"
+    data-ga-location={location}
+    data-ga-action="share"
+  >分享到…</button>
+  <button
+    type="button"
+    class="share-bar-btn"
+    data-share-copy
+    data-ga-button={`article_share_copy_${position}`}
+    data-ga-label="複製連結"
+    data-ga-location={location}
+    data-ga-action="copy"
+  >複製連結</button>
+  {shareLinks.map((item) => (
+    <a
+      class="share-bar-btn"
+      href={item.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-ga-button={`article_share_${item.key}_${position}`}
+      data-ga-label={`分享到 ${item.label}`}
+      data-ga-location={location}
+      data-ga-action="share"
+    >{item.label}</a>
+  ))}
+</div>
+
+<script is:inline>
+  (function () {
+    document.querySelectorAll('[data-share-bar]:not([data-share-ready])').forEach(function (bar) {
+      bar.setAttribute('data-share-ready', '');
+      var url = bar.getAttribute('data-share-url');
+      var title = bar.getAttribute('data-share-title');
+      var nativeBtn = bar.querySelector('[data-share-native]');
+      var copyBtn = bar.querySelector('[data-share-copy]');
+
+      if (nativeBtn && navigator.share) {
+        nativeBtn.hidden = false;
+        nativeBtn.addEventListener('click', function () {
+          navigator.share({ title: title, url: url }).catch(function () {});
+        });
+      }
+
+      function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+        var textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          return Promise.resolve();
+        } catch (e) {
+          return Promise.reject(e);
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      }
+
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          copyText(url).then(
+            function () {
+              copyBtn.textContent = '已複製 ✓';
+              setTimeout(function () { copyBtn.textContent = '複製連結'; }, 1600);
+            },
+            function () {
+              copyBtn.textContent = '複製失敗';
+              setTimeout(function () { copyBtn.textContent = '複製連結'; }, 1600);
+            }
+          );
+        });
+      }
+    });
+  })();
+</script>
+
+<style>
+  .share-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .share-bar-label {
+    margin-right: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    color: var(--color-ink-3);
+  }
+  .share-bar-btn {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    padding: 0 14px;
+    border: 1px solid var(--color-rule-2);
+    background: transparent;
+    color: var(--color-ink-2);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .share-bar-btn:hover,
+  .share-bar-btn:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+  .share-bar-btn[hidden] {
+    display: none;
+  }
+</style>
