@@ -19,6 +19,8 @@
       "/services/",
       "/services/speaking",
       "/services/speaking/*",
+      "/services/development",
+      "/services/development/*",
       "/quiz",
       "/quiz/*",
       "/api/button-click",
