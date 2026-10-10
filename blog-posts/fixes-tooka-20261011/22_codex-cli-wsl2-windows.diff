@@ -1,0 +1,18 @@
+--- blog-posts/fixes-tooka-20261011/22_codex-cli-wsl2-windows.orig.md	2026-10-11 03:20:52.949940341 +0800
++++ blog-posts/fixes-tooka-20261011/22_codex-cli-wsl2-windows.new.md	2026-10-11 03:20:52.949940341 +0800
+@@ -127,14 +127,7 @@
+ <p><img src="/images/blog/codex-windows-wsl-install/13-vscode-terminal-start-codex-cli.png" alt="在 VS Code 下方終端機輸入 codex，成功開啟 Codex CLI"></p>
+ <p>如果畫面要求登入，依照提示使用 ChatGPT 帳號登入。CLI 與 IDE 插件在同一個執行環境下可以共用 Codex 設定與登入資料；若一個安裝在 Windows、另一個安裝在 WSL，則可能各自使用不同的 home 目錄。</p>
+ <p>VS Code 會自動讓新終端機位於剛開啟的專案資料夾，不需要先輸入 <code>cd</code>。Codex 會以這個資料夾作為工作位置，讀取並修改該專案。</p>
+-<p>可以拿 Tooka 開源專案實測。把下面這段直接貼給 CLI：</p>
+-<pre data-code-kind="prompt" data-code-label="提示詞"><code class="language-prompt">請幫我安裝並執行這個 GitHub 開源工具：
+-https://github.com/js0980420/tooka
+-
+-請先閱讀專案的 README，確認我的電腦環境與安裝方式，
+-再依照官方說明完成安裝、啟動與測試；如果遇到錯誤，請保留錯誤原文並繼續排查。
+-</code></pre>
+-<p>這類需要連續讀取說明、執行安裝指令、查看結果與排除錯誤的工作，使用 CLI 通常比插件版少切換視窗，也不必一直搬運終端機訊息，操作會順暢許多。</p>
++<p>像請 Codex 安裝並執行一個 GitHub 開源專案這類，需要連續讀取說明、執行安裝指令、查看結果與排除錯誤的工作，使用 CLI 通常比插件版少切換視窗，也不必一直搬運終端機訊息，操作會順暢許多。</p>
+ <h3 id="選用把-cli-權限改成-bypass">選用：把 CLI 權限改成 Bypass</h3>
+ <p>如果不想在 CLI 執行每個步驟時都手動同意，可以在 CLI 的權限選項中改成 <strong>Bypass</strong>。這會略過執行前的確認與沙盒限制，讓安裝流程更連續，但也代表 Codex 能直接執行更多電腦操作。</p>
+ <p>在已開啟的 Codex CLI 中操作：</p>

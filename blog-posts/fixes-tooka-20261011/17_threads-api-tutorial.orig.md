@@ -1,0 +1,113 @@
+---
+title: "Threads API 申請教學：從拿 Token、發出第一篇貼文到 Token 自動永久延期"
+description: "Threads API 申請完整教學：建立 Meta App、設定應用程式角色、加測試人員、生成 Access Token，17 張步驟截圖＋教學影片。含實測的防鎖規則：發文上限、spam 偵測、回覆頻率與 Token 60 天過期解法。"
+faqs: [
+ {
+  "question": "Threads API 申請是免費的嗎？",
+  "answer": "免費。你需要的是一個可用的 Facebook 帳號（登入 Meta 開發者後台）和一個 Threads 帳號，申請本身不收費。"
+ },
+ {
+  "question": "Threads API 的 Token 會過期嗎？",
+  "answer": "會，長期權杖的效期是 60 天。可以在過期前透過 API 換發延長；我開源的 Tooka 已內建自動延期，第一次手動申請後就不用再管過期問題。"
+ },
+ {
+  "question": "可以用 Threads API 做爬蟲抓別人的貼文嗎？",
+  "answer": "官方 API 的權限範圍以你自己帳號的發文、回覆、洞察數據為主，不是拿來爬別人資料的工具。想做自動發文、留言回覆這類自家帳號的自動化，官方 API 才是安全不被封號的做法。"
+ },
+ {
+  "question": "三個 API 都要分別申請嗎？",
+  "answer": "要，而且 Threads 跟另外兩個不一樣：FB 跟 IG 可以透過企業管理後台（Business Manager）新增資產管理，拿到永久權限的 Token；Threads 沒有這條路，只能拿 60 天的長期 Token——所以才需要本文的自動延期做法。"
+ },
+ {
+  "question": "沒有粉專可以串 Instagram API 嗎？",
+  "answer": "Instagram 的 API 串接需要把 IG 帳號轉為專業帳號並正確綁定，課程中會帶你完成這些帳號設定。"
+ },
+ {
+  "question": "測試人員邀請接受了，但應用程式裡的角色狀態還是沒有啟用？",
+  "answer": "點網站權限連結後會跳轉到 IG 後台，要從 IG 後台的「網站權限 > 應用程式和網站 > 測試員邀請」按接受，才會通過——很多人以為在 Threads 按過就好，少了這步角色狀態就一直不會啟用。"
+ },
+ {
+  "question": "自動回覆要怎麼設定才不會被鎖？",
+  "answer": "在排程裡設定回覆頻率，例如一次只回 5 人、過 10 分鐘後再回 5 人——我實測一則 thread 同時回 10 個人就被鎖了 24 小時，分批慢慢回就能避開 burst 偵測。"
+ },
+ {
+  "question": "Token 60 天到期要怎麼提醒自己？",
+  "answer": "可以設排程提醒，推播到常用的 LINE 或 Email；更省事的做法是用我開源的 Tooka 內建的自動延期——設一次就永久跑，不用再翻筆記。"
+ },
+ {
+  "question": "建立應用程式時的「隱私權政策網址」要填什麼？",
+  "answer": "可留空不用填。"
+ }
+]
+---
+<p>Threads API 的申請流程是——用你的 Facebook 帳號登入 Meta 開發者後台 → 建立應用程式 → 選 Threads 用例 → 把自己加成測試人員 → 生成 Access Token。拿到 Token 之後，就能用官方 API 自動發文。下面有完整教學影片＋每一步的實際畫面截圖。</p>
+<div style="aspect-ratio:16/9;"><iframe style="width:100%;height:100%;border-radius:1rem;" src="https://www.youtube-nocookie.com/embed/nTYrG7EuFHA" title="Threads API 申請教學" loading="lazy" allowfullscreen></iframe></div><p>這支教學最初發布在 Threads——下面的 FAQ 有一部分就是從留言區的真實提問整理出來的。</p>
+<blockquote class="text-post-media" data-no-copy data-text-post-permalink="https://www.threads.com/@alex_wang.ai/post/DXnWnLSEuMH" data-text-post-version="0" id="ig-tp-DXnWnLSEuMH" style="background:#FFF; border-width:1px; border-style:solid; border-color:#00000026; border-radius:16px; max-width:650px; margin:1px auto; min-width:270px; padding:0; width:calc(100% - 2px);">
+<a href="https://www.threads.com/@alex_wang.ai/post/DXnWnLSEuMH" style="background:#FFFFFF; line-height:0; padding:0; text-align:center; text-decoration:none; width:100%; font-family:-apple-system,BlinkMacSystemFont,sans-serif;" target="_blank">
+<div style="padding:40px; display:flex; flex-direction:column; align-items:center;"><div style="display:block; height:32px; width:32px; padding-bottom:20px;"><svg aria-label="Threads" height="32px" role="img" viewBox="0 0 192 192" width="32px" xmlns="http://www.w3.org/2000/svg"><path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.788C154.894 45.8136 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 27.974C147.036 9.60668 125.202 0.195148 97.0695 0H96.9569C68.8816 0.19447 47.2921 9.6418 32.7883 28.0793C19.8819 44.4864 13.2244 67.3157 13.0007 95.9325L13 96L13.0007 96.0675C13.2244 124.684 19.8819 147.514 32.7883 163.921C47.2921 182.358 68.8816 191.806 96.9569 192H97.0695C122.03 191.827 139.624 185.292 154.118 170.811C173.081 151.866 172.51 128.119 166.26 113.541C161.776 103.087 153.227 94.5962 141.537 88.9883ZM98.4405 129.507C88.0005 130.095 77.1544 125.409 76.6196 115.372C76.2232 107.93 81.9158 99.626 99.0812 98.6368C101.047 98.5234 102.976 98.468 104.871 98.468C111.106 98.468 116.939 99.0737 122.242 100.233C120.264 124.935 108.662 128.946 98.4405 129.507Z"/></svg></div>
+<div style="font-size:15px; line-height:21px; color:#000000; font-weight:600;">在 Threads 查看</div></div></a></blockquote>
+<script async src="https://www.threads.com/embed.js"></script><p class="social-quote-note">上方卡片的讚數、留言、轉發、分享由 Threads 即時提供；另外這則貼文的瀏覽數在 2026-07-30 擷取時為 7,696 次（瀏覽數不在官方卡片顯示範圍內）。</p><h2 id="申請前的準備">申請前的準備</h2>
+<ol>
+<li><strong>一個可用的 Facebook 帳號</strong>——Meta 開發者後台要用它登入</li>
+<li><strong>你要自動化的 Threads 帳號</strong>——要跟這個 FB 帳號完成綁定</li>
+</ol>
+<h2 id="先講重要的不被鎖的-4-條規則我踩過坑的">先講重要的：不被鎖的 4 條規則（我踩過坑的）</h2>
+<p>Threads API 是 Meta 官方推出的，不是第三方爬蟲工具——功能合法，但要照規則用：</p>
+<ol>
+<li>發文上限是 250 則 / 24 小時（rolling window），超過會被限流</li>
+<li>連續發完全相同的內容會觸發 Meta 的 spam 偵測，Threads 直接被鎖 24 小時，期間不能自動發文、自動回覆</li>
+<li>回覆也一樣：官方上限雖然寫 1000 / 24h，我實測一則 thread 同時回 10 個人就被鎖了 24 小時，別 burst 連發</li>
+<li>長期 Token 效期 60 天，到期的解法在文末</li>
+</ol>
+<h2 id="step-1建立-meta-app">Step 1：建立 Meta App</h2>
+<p>打開 <code>developers.facebook.com</code>，點「建立應用程式」，填 App 名稱。</p>
+<p><img src="https://cms.aixwang.dev/assets/b74da1b9-7b2a-4bf1-b23a-6679bf56c6fc" alt="在 Meta 開發者後台點建立應用程式"></p>
+<p><img src="https://cms.aixwang.dev/assets/01bef9d1-fb45-4b4b-a8d9-9179ef359bcf" alt="填寫應用程式名稱"></p>
+<p>下一頁選用例——<strong>選跟 Threads 相關的存取類別</strong>，然後確認。</p>
+<p><img src="https://cms.aixwang.dev/assets/c6a3c366-037a-422a-91e9-22f99915ca51" alt="選擇 Threads 相關的用例"></p>
+<p><img src="https://cms.aixwang.dev/assets/2926fd22-9219-4082-bb29-b5dc8c2eef9b" alt="確認應用程式資訊"></p>
+<blockquote data-no-copy><p>送出前再三確認：用例選錯不能改，只能整支 App 重建。</p>
+</blockquote>
+<h2 id="step-2設定使用案例應用程式角色">Step 2：設定使用案例＋應用程式角色</h2>
+<p>進 App 主控台，左欄找到「應用程式角色」，點進去切到「角色」分頁。</p>
+<p><img src="https://cms.aixwang.dev/assets/7c64a566-85b9-4638-9972-e7957abda493" alt="進入使用案例設定"></p>
+<p><img src="https://cms.aixwang.dev/assets/a34b9c35-39f4-4bca-b595-0cf2d0fe86a8" alt="進入應用程式角色的角色分頁"></p>
+<blockquote data-no-copy><p>💡 「應用程式角色」分頁是新手最常找不到的入口——記住這個位置，後面所有測試人員設定都從這裡進。</p>
+</blockquote>
+<h2 id="step-3加自己當測試人員">Step 3：加自己當測試人員</h2>
+<p>點「新增測試人員」，填自己 Meta 帳號的使用者名稱，送出。</p>
+<p><img src="https://cms.aixwang.dev/assets/6c9e6599-8355-43bb-827c-6e3452138e5c" alt="新增測試人員彈窗"></p>
+<p><img src="https://cms.aixwang.dev/assets/750e4e88-da17-4276-a230-f1df68610320" alt="邀請送出後的待確認狀態"></p>
+<p>然後去 Threads App 的設定（或信箱）<strong>接受邀請</strong>：</p>
+<p><img src="https://cms.aixwang.dev/assets/04f8ea5e-fb91-476f-b6a1-188c1fd73b14" alt="Threads App 的網站權限設定"></p>
+<p><img src="https://cms.aixwang.dev/assets/7726eb2b-f685-4f85-a329-6b47e0151dd4" alt="接受測試人員邀請"></p>
+<p><img src="https://cms.aixwang.dev/assets/7e742cb1-da28-4de1-a0fa-902fde8436cd" alt="邀請接受後的狀態"></p>
+<blockquote data-no-copy><p>這步別跳過，沒接受邀請就去拿 Token 只會得到 401。</p>
+</blockquote>
+<h2 id="step-4生成-access-token">Step 4：生成 Access Token</h2>
+<p>進測試工具（Token Generator），點生成 Access Token。</p>
+<p><img src="https://cms.aixwang.dev/assets/14c331db-b05a-4813-a8db-8d42097483ee" alt="開啟 Threads 測試工具"></p>
+<p><img src="https://cms.aixwang.dev/assets/e29253ee-53a8-470c-a4b5-0732a8ecbaee" alt="生成 Access Token"></p>
+<blockquote data-no-copy><p>這裡生的短期 Token 1 小時就過期。請 Claude Code 用 API 換成長期 Token（60 天），換完加進 <code>.env</code> 環境變數。</p>
+</blockquote>
+<h2 id="step-5oauth-同意">Step 5：OAuth 同意</h2>
+<p>OAuth 同意頁要勾兩個 scope：<code>threads_basic</code> + <code>threads_content_publish</code>，確認授權。</p>
+<p><img src="https://cms.aixwang.dev/assets/9ff04e3f-bf21-48a3-a90e-5b1f9451e6dd" alt="OAuth 同意頁勾選兩個 scope"></p>
+<blockquote data-no-copy><p>兩個都要勾，scope 缺一個，發文時拿到的就是 403。</p>
+</blockquote>
+<h2 id="step-6測試-api">Step 6：測試 API</h2>
+<p>先拿 Token 打 <code>/me</code> 端點確認身分：</p>
+<p><img src="https://cms.aixwang.dev/assets/3609b0c9-f744-46ac-ad88-0806e16aef16" alt="用 /me 端點測試 Token 身分"></p>
+<p>再試發一則貼文——Threads 發文是三段式：建立容器 → 輪詢狀態 → 發布。</p>
+<p><img src="https://cms.aixwang.dev/assets/cdef60f2-f297-42af-a927-ac1254d25dc1" alt="測試發文 API"></p>
+<p>最後用 Token Debugger 確認 Token 剩餘有效時間：</p>
+<p><img src="https://cms.aixwang.dev/assets/00e1dcbc-baba-472d-9163-40b927f87928" alt="Token 偵錯工具查看效期"></p>
+<h2 id="token-60-天過期怎麼辦">Token 60 天過期怎麼辦？</h2>
+<p>長期權杖效期 60 天。你可以在到期前手動重新換發，但更省事的做法：我開源的 <a href="/blog/free-resources/">Tooka</a> 內建 API 串接面板，Token 填進去會<strong>自動延期</strong>——第一次手動申請後就不用再管過期問題。</p>
+<h2 id="拿到-api-之後可以做什麼">拿到 API 之後可以做什麼？</h2>
+<ul>
+<li>自動發文與排程：AI 寫好內容定時發佈，注意上面的防鎖規則</li>
+<li>搭配 AI Agent：用中文對話就能操作，不用自己寫程式</li>
+<li>搭配 <a href="/blog/why-i-built-tooka/">Tooka</a>：連 1080×1350 的輪播圖文都自動生成、一鍵發佈</li>
+</ul>
+<p>照著做卡關了，歡迎加 <a href="https://lin.ee/raoKSVR">LINE 免費諮詢</a>，或直接約<a href="/services/ai-tutor/">一對一教學</a>手把手帶你跑通。</p>

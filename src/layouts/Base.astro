@@ -1417,9 +1417,13 @@ const jsonLd = {
       }
       /* 手機選單：服務與其他項目同一條左緣、不加底色，只用強調色文字區分 */
       @media (max-width: 1023px) {
-        .service-nav-item--accent .service-nav summary,
-        .service-nav-item--accent .service-nav-shell--split {
+        .service-nav-item--accent .service-nav summary {
           padding-inline-start: 2px;
+          background: transparent;
+        }
+        /* 外框不加內距：裡面的連結本身已有 2px，外框再加會比其他項目多縮 2px */
+        .service-nav-item--accent .service-nav-shell--split {
+          padding-inline-start: 0;
           background: transparent;
         }
         .mainnav .service-nav-item--accent .service-nav-direct,

@@ -1,0 +1,33 @@
+--- blog-posts/fixes-tooka-20261011/17_threads-api-tutorial.orig.md	2026-10-11 03:20:52.945940351 +0800
++++ blog-posts/fixes-tooka-20261011/17_threads-api-tutorial.new.md	2026-10-11 03:20:52.945940351 +0800
+@@ -8,7 +8,7 @@
+  },
+  {
+   "question": "Threads API 的 Token 會過期嗎？",
+-  "answer": "會，長期權杖的效期是 60 天。可以在過期前透過 API 換發延長；我開源的 Tooka 已內建自動延期，第一次手動申請後就不用再管過期問題。"
++  "answer": "會，長期權杖的效期是 60 天。可以在過期前透過 API 換發延長。"
+  },
+  {
+   "question": "可以用 Threads API 做爬蟲抓別人的貼文嗎？",
+@@ -32,7 +32,7 @@
+  },
+  {
+   "question": "Token 60 天到期要怎麼提醒自己？",
+-  "answer": "可以設排程提醒，推播到常用的 LINE 或 Email；更省事的做法是用我開源的 Tooka 內建的自動延期——設一次就永久跑，不用再翻筆記。"
++  "answer": "可以設排程提醒，推播到常用的 LINE 或 Email，在到期前手動換發。"
+  },
+  {
+   "question": "建立應用程式時的「隱私權政策網址」要填什麼？",
+@@ -103,11 +103,10 @@
+ <p>最後用 Token Debugger 確認 Token 剩餘有效時間：</p>
+ <p><img src="https://cms.aixwang.dev/assets/00e1dcbc-baba-472d-9163-40b927f87928" alt="Token 偵錯工具查看效期"></p>
+ <h2 id="token-60-天過期怎麼辦">Token 60 天過期怎麼辦？</h2>
+-<p>長期權杖效期 60 天。你可以在到期前手動重新換發，但更省事的做法：我開源的 <a href="/blog/free-resources/">Tooka</a> 內建 API 串接面板，Token 填進去會<strong>自動延期</strong>——第一次手動申請後就不用再管過期問題。</p>
++<p>長期權杖效期 60 天，請在到期前手動重新換發，避免 Token 失效。</p>
+ <h2 id="拿到-api-之後可以做什麼">拿到 API 之後可以做什麼？</h2>
+ <ul>
+ <li>自動發文與排程：AI 寫好內容定時發佈，注意上面的防鎖規則</li>
+ <li>搭配 AI Agent：用中文對話就能操作，不用自己寫程式</li>
+-<li>搭配 <a href="/blog/why-i-built-tooka/">Tooka</a>：連 1080×1350 的輪播圖文都自動生成、一鍵發佈</li>
+ </ul>
+ <p>照著做卡關了，歡迎加 <a href="https://lin.ee/raoKSVR">LINE 免費諮詢</a>，或直接約<a href="/services/ai-tutor/">一對一教學</a>手把手帶你跑通。</p>

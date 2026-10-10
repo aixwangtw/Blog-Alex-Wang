@@ -1,0 +1,11 @@
+--- blog-posts/fixes-tooka-20261011/25_how-to-start-learning-ai.orig.md	2026-10-11 03:20:52.925940399 +0800
++++ blog-posts/fixes-tooka-20261011/25_how-to-start-learning-ai.new.md	2026-10-11 03:20:52.925940399 +0800
+@@ -26,7 +26,7 @@
+ <li><strong>先安裝 Codex</strong>：Windows 新手先用 <a href="/blog/codex-windows-wsl-install/">VS Code＋Codex 插件版</a>，完成登入、開啟專案資料夾與第一次對話。日常使用夠了，不必一開始就裝 WSL2。</li>
+ <li><strong>學會安裝 Skills 與開源工具</strong>：Skills 是前輩整理好的工作流程，開源工具則是已經做好的成品。到<a href="/resources/">免費資源頁</a>複製安裝指令，交給 Codex 協助安裝，不用從空白 Prompt 或空白專案開始。</li>
+ <li><strong>直接使用現成工作流</strong>：先照原本的用法跑通，再練習替換自己的文字、圖片或資料。使用時仍要自己打開成果驗收，不要只看 AI 說「完成了」。</li>
+-<li><strong>延伸成自己的真實作品</strong>：熟悉現成流程後，再改成你真的會使用的成果。想做社群自動化，可跟著 <a href="/blog/threads-api-tutorial/">Threads API 教學</a>發出第一篇貼文；想做社群圖文，可使用開源工具 <a href="/blog/why-i-built-tooka/">Tooka</a>；沒有這些需求，也可以延伸成自己的網站或日常工作流程。</li>
++<li><strong>延伸成自己的真實作品</strong>：熟悉現成流程後，再改成你真的會使用的成果。想做社群自動化，可跟著 <a href="/blog/threads-api-tutorial/">Threads API 教學</a>發出第一篇貼文；沒有這些需求，也可以延伸成自己的網站或日常工作流程。</li>
+ </ol>
+ <p>走完這四步，你會同時練到安裝、任務拆解、權限、驗收與除錯。之後想做 AI 客服、AI 自動拍片或其他自動化，都是同一套邏輯的延伸。</p>
+ <h2 id="免費資源怎麼搭配這篇使用">免費資源怎麼搭配這篇使用？</h2>

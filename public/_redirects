@@ -19,3 +19,9 @@
 /services/one-on-one    /course/   301
 /services/ai-tutor/     /course/   301
 /services/ai-tutor      /course/   301
+
+# Tooka 下架（2026-10-11）
+# 原本是 /blog/why-i-built-tooka/（Directus id=16），網站不再提及 Tooka，文章在 CMS 改為 draft。
+# 備份見 blog-posts/fixes-tooka-20261011/16_why-i-built-tooka.orig.md。
+/blog/why-i-built-tooka/   /blog/   301
+/blog/why-i-built-tooka    /blog/   301

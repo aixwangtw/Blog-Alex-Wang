@@ -136,7 +136,8 @@ const updatedText = updatedDate
         )}
       </div>
 
-      <div class="mt-5">
+      {/* 標題下方的分享列只在桌機顯示；手機只留文末那排，避免一進文章就先看到一排按鈕 */}
+      <div class="mt-5 hidden md:block">
         <ShareBar url={`${SITE.url}/blog/${post.id}/`} title={title} position="top" />
       </div>
 

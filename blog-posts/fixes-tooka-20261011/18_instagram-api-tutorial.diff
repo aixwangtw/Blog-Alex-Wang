@@ -1,0 +1,45 @@
+--- blog-posts/fixes-tooka-20261011/18_instagram-api-tutorial.orig.md	2026-10-11 03:20:52.941940360 +0800
++++ blog-posts/fixes-tooka-20261011/18_instagram-api-tutorial.new.md	2026-10-11 03:20:52.941940360 +0800
+@@ -32,7 +32,7 @@
+  },
+  {
+   "question": "自動發文前 AI 要求要先把圖片放到公開網址？要怎麼做？",
+-  "answer": "因為 IG API 設計上要求 Meta 用 image_url 抓圖，圖片必須放在公開可存取的網址上。做法：到 api.imgbb.com 免費申請一組 API Key，填進我的發文工具 Tooka 的連結頁，匯出的圖就會自動上傳取得公開網址再發佈，細節可以私訊我詢問。"
++  "answer": "因為 IG API 設計上要求 Meta 用 image_url 抓圖，圖片必須放在公開可存取的網址上。做法：到 api.imgbb.com 免費申請一組 API Key，把匯出的圖上傳到 Imgbb 取得公開網址，再用這個網址發佈，細節可以私訊我詢問。"
+  },
+  {
+   "question": "建立應用程式時的「隱私權政策網址」要填什麼？",
+@@ -107,10 +107,6 @@
+ <p><img src="https://cms.aixwang.dev/assets/75914653-afa6-4b8d-9048-70087cb8b086" alt="提醒視窗直接繼續"></p>
+ <p>最後把要求的使用權限全部允許，完成圖形 API 測試工具的授權流程。</p>
+ <p><img src="https://cms.aixwang.dev/assets/5dfbdfac-a913-4b73-b5d6-b6e21944efba" alt="使用權限全部允許完成授權"></p>
+-<h2 id="step-5填進-tooka開始做圖文跟自動發布">Step 5：填進 Tooka，開始做圖文跟自動發布</h2>
+-<p>最後一步不用寫任何程式：打開我開源的發文工具連結頁——</p>
+-<p>👉 <strong><a href="https://tooka.js0980420.workers.dev/connects?tab=publish">tooka.js0980420.workers.dev/connects?tab=publish</a></strong></p>
+-<p>把剛剛拿到的 User ID 和 Access Token 直接貼上，你就能用這工具做圖文跟自動發布了——<code>.env</code> 會自動幫你建好，Token 的自動延期也內建。</p>
+ <h2 id="進階企業管理後台取得永久-token">進階：企業管理後台取得永久 Token</h2>
+ <p>不想跑 60 天續期的話，IG（和 FB）還有一條 Threads 沒有的路：透過企業管理後台把帳號連結為資產，取得永久權限的 Token。</p>
+ <ol>
+@@ -122,7 +118,7 @@
+ <p>IG API 設計上要求 Meta 用 <code>image_url</code> 抓圖——也就是說，要自動發文的話，貼文的圖片必須先放在一個公開可存取的網址上。怎麼做？</p>
+ <ol>
+ <li>到 <a href="https://api.imgbb.com/">api.imgbb.com</a> 免費申請一組 API Key</li>
+-<li>填進我的發文工具 <a href="https://github.com/js0980420/tooka">Tooka</a> 的連結頁就可以——匯出的圖會自動上傳 Imgbb 取得公開網址再發佈</li>
++<li>把匯出的圖上傳到 Imgbb 取得公開網址，再用這個網址發佈</li>
+ </ol>
+ <p>細節可以<a href="https://lin.ee/raoKSVR">私訊我</a>詢問。</p>
+ <h2 id="三大平台-token-差別速記">三大平台 Token 差別速記</h2>
+@@ -137,12 +133,11 @@
+ <tbody><tr>
+ <td>Token</td>
+ <td>企業管理後台連結資產 → <strong>永久權限</strong></td>
+-<td>長期 Token 60 天需延期（<a href="/blog/threads-api-tutorial/">自動延期做法</a>）</td>
++<td>長期 Token 60 天需延期（<a href="/blog/threads-api-tutorial/">延期做法</a>）</td>
+ </tr>
+ </tbody></table>
+ <h2 id="拿到-api-之後">拿到 API 之後</h2>
+ <ul>
+ <li>自動發文與權限設定：頻率像真人、權限只拿需要的</li>
+-<li>搭配 <a href="/blog/why-i-built-tooka/">Tooka</a>：1080×1350 輪播圖文自動生成、一鍵發佈 IG</li>
+ </ul>
+ <p>照著做卡關了，加 <a href="https://lin.ee/raoKSVR">LINE 免費諮詢</a>，或約<a href="/services/ai-tutor/">一對一教學</a>一次跑通。</p>
