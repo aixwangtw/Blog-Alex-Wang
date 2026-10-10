@@ -28,6 +28,9 @@ const SYNONYMS = [
   [/微軟 ?word|docx/g, 'word'],
   [/math ?type/g, 'mathtype'],
   [/示範|展示/g, 'demo'],
+  [/試用看看|試試看|試看看|試試|試玩|體驗|先用看看/g, '試用'],
+  // 「demo」和「試用」在 FAQ 裡講的是同一件事，兩個詞一起帶上，只問「有 demo 嗎」也算兩個詞段
+  [/demo|試用/g, ' demo 試用 '],
   [/上課|授課|教課|家教課/g, '教學'],
   [/一個月|每個月|月費/g, '每月'],
   [/多久|多長時間|工期|做多長/g, '時程'],
@@ -116,7 +119,7 @@ export function buildFaqIndex(items) {
   return { entries, idf };
 }
 
-export const MATCH_THRESHOLD = 0.52;
+export const MATCH_THRESHOLD = 0.53;
 
 /**
  * 依相似度排序所有可能的 FAQ（已排除證據不足的題目），分數高的在前。
