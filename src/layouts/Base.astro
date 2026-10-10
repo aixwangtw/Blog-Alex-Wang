@@ -1595,6 +1595,30 @@ const jsonLd = {
         line-height: 1.45;
         overflow-wrap: anywhere;
       }
+      /* 手機選單卡片改直式：橫幅滿版放上面、文字與按鈕排在下面；
+         並排時縮圖只有 104px 寬，等比縮小後橫幅上的字小到看不清楚 */
+      @media (max-width: 1023px) {
+        .mainnav .service-preview {
+          grid-template-columns: minmax(0, 1fr);
+          row-gap: 10px;
+        }
+        .service-preview img {
+          grid-column: 1;
+          grid-row: 1;
+          width: 100%;
+        }
+        .service-preview--icon img {
+          padding: 18px;
+        }
+        .service-preview-copy {
+          grid-column: 1;
+          grid-row: 2;
+        }
+        .service-preview > .service-preview-actions {
+          grid-column: 1;
+          grid-row: 3;
+        }
+      }
       /* 收合時要一起加 visibility:hidden。只有 max-height:0 的話，
          看不見的連結仍然可以被 Tab 選到，鍵盤焦點會跑進收起來的面板裡。 */
       .nav-js .mainnav {
