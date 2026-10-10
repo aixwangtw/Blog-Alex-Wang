@@ -24,5 +24,10 @@
     "platform": "Codex",
     "title": "Codex 額度燒完\n怎麼辦？",
     "subtitle": "省 Token＋手動重置"
+  },
+  "math-teacher-question-bank": {
+    "badge": "客製開發",
+    "title": "數學題庫系統\n出題流程自動化",
+    "subtitle": "不用再挑題挑到青光眼"
   }
 }
