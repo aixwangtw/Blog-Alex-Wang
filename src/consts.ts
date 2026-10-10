@@ -4,7 +4,7 @@ export const SITE = {
   titleEn: 'AI Beginner Blog',
   url: 'https://aixwang.dev',
   description:
-    'Alex 是台灣的 AI 應用講師與全職接案工程師。教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成。提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。',
+    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統；也是 AI 應用講師，教 AI Agent 工具、自動發文、AI 生圖模板與對話式拍片，提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。',
   locale: 'zh-TW',
 };
 
@@ -33,10 +33,12 @@ export const AUTHOR = {
   name: 'Alex',
   // 別名：讓 Google 知識圖譜與 AI 搜尋把不同稱呼認成同一個人
   alternateName: ['王士麟', 'Alex Wang', '艾克斯王', 'aixwang'],
-  jobTitle: 'AI 應用講師 / 全職接案工程師',
+  jobTitle: '系統開發工程師 / AI 應用講師',
   description:
-    '全職接案工程師、21 萬人 OpenClaw 中文社群版主。AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片教學——盡可能把工作流程簡化成對話就能完成，只需第一次使用前的安裝、串接成本，一次性教學，受用好幾次。',
+    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，把重複的工作做成一套系統；也是 21 萬人 OpenClaw 中文社群版主，教 AI Agent 工具使用、自動發文、AI 生圖模板與對話式拍片。',
   knowsAbout: [
+    '客製系統開發',
+    '後台管理系統',
     'AI Agent 工具',
     'Claude Code',
     'Codex',

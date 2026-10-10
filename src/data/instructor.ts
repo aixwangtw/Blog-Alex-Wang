@@ -6,7 +6,7 @@ export interface ExperienceItem {
 
 export const EXPERIENCE: ExperienceItem[] = [
   {
-    text: '全職接案工程師：作品包括 Line LIFF 網頁、AI 客服、CRM 後台管理系統等實際商業專案。',
+    text: '系統開發工程師：目前全職接案，和開發夥伴承接客製系統開發，作品包括補習班數學題庫系統、Line LIFF 網頁、AI 客服、CRM 後台管理系統等實際商業專案。',
     featured: true,
   },
   {

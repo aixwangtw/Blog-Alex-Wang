@@ -12,11 +12,11 @@ import { SPEAKING_ENGAGEMENTS, TEACHING_CASES } from '../data/services';
 import Base from '../layouts/Base.astro';
 
 const schema = [
-  breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '關於講師' }]),
+  breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '關於 Alex' }]),
   {
     '@type': 'ProfilePage',
     '@id': `${SITE.url}/about/#webpage`,
-    name: `關於講師 ${AUTHOR.name}`,
+    name: `關於 ${AUTHOR.name}`,
     url: `${SITE.url}/about/`,
     mainEntity: { '@id': AUTHOR.id },
   },
@@ -24,29 +24,29 @@ const schema = [
 ---
 
 <Base
-  title={`關於講師 ${AUTHOR.name}｜AI 應用講師、一對一教學與演講`}
+  title={`關於 ${AUTHOR.name}｜系統開發工程師、AI 教學與演講`}
   description={AUTHOR.description}
   ogType="profile"
   ogImage={pageBannerUrl('about')}
-  ogImageAlt={`關於 AI 講師 ${AUTHOR.name}`}
+  ogImageAlt={`關於 ${AUTHOR.name}｜系統開發工程師`}
   schema={schema}
 >
   <div class="mx-auto max-w-4xl px-6 py-12">
-    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '關於講師' }]} class="mb-8" />
-    <h1 class="t-h1 font-semibold text-ink">關於講師 {AUTHOR.name}</h1>
+    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '關於 Alex' }]} class="mb-8" />
+    <h1 class="t-h1 font-semibold text-ink">關於 {AUTHOR.name}</h1>
 
     <!-- 人像：拿掉 rounded-[1.75rem]、bg-surface 與陰影，只留 1px 邊框（同 PostCard 的縮圖）。
          不套灰階——這是講師本人的形象照，是內容不是裝飾。 -->
     <figure class="mx-auto mt-8 max-w-md border border-rule">
       <Image
         src={instructorPortrait}
-        alt={`AI 講師 ${AUTHOR.name} 形象照`}
+        alt={`系統開發工程師 ${AUTHOR.name} 形象照`}
         class="w-full object-cover"
       />
     </figure>
 
     <p class="mt-8 text-lg leading-9 text-ink">
-      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是 AI 講師，也是全職接案工程師與 21 萬人 OpenClaw 中文社群的版主。我教 AI Agent 工具使用、做自動發文、AI 生圖模板、對話式拍片——把工作流程簡化成對話就能完成，只需第一次使用前的安裝、串接成本，一次性教學，受用好幾次。目前提供<strong class="text-accent">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-accent">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
+      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，把重複的工作做成一套系統，代表案例是補習班數學老師用的題庫系統。我也是 AI 應用講師與 21 萬人 OpenClaw 中文社群的版主，教 AI Agent 工具使用、自動發文、AI 生圖模板、對話式拍片，提供<strong class="text-accent">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-accent">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
     </p>
     <a
       href="/blog/from-part-time-to-freelance/"

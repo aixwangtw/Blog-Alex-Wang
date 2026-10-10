@@ -50,9 +50,11 @@ const pages = [
   },
   {
     file: 'about',
-    badge: '講師介紹',
-    title: '關於 AI 講師',
-    subtitle: 'Alex Wang｜從 AI 自學到全職接案',
+    badgePrefix: '',
+    badge: '關於我',
+    title: '關於 Alex',
+    subtitle: 'Alex Wang｜系統開發工程師',
+    role: '工程師',
   },
   {
     file: 'blog',
