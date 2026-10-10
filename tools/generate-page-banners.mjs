@@ -42,9 +42,11 @@ async function loadFont() {
 const pages = [
   {
     file: 'home',
-    badge: '官方網站',
-    title: 'AI 新手教學',
-    subtitle: '把複雜工作流程，簡化成對話',
+    badgePrefix: '',
+    badge: '系統開發｜AI 教學',
+    title: '系統開發',
+    subtitle: '把重複的工作，做成一套系統',
+    role: '工程師',
   },
   {
     file: 'about',
@@ -97,7 +99,9 @@ function units(text) {
 const TITLE_MAX_WIDTH = 525;
 
 function buildLayer(page) {
-  const badgeText = `新手學 AI｜${page.badge}`;
+  // badgePrefix／role 可逐頁覆寫；沒設定時維持「新手學 AI｜」與「講師」
+  const prefix = page.badgePrefix ?? '新手學 AI';
+  const badgeText = prefix ? `${prefix}｜${page.badge}` : page.badge;
   const titleSize = Math.min(105, Math.floor(TITLE_MAX_WIDTH / units(page.title)));
 
   return {
@@ -209,7 +213,7 @@ function buildLayer(page) {
               fontSize: 21,
               color: ACCENT,
             },
-            children: '講師：Alex',
+            children: `${page.role ?? '講師'}：Alex`,
           },
         },
       ],
