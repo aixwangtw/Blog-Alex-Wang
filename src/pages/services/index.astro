@@ -71,7 +71,7 @@ const schema = [
 ---
 
 <ServiceBase
-  title="Aix 系統開發服務｜客製系統開發、AI 教學與演講"
+  title="Aix 系統開發服務｜AI 自動化系統開發、數學題庫系統案例"
   description={SERVICE_SITE.description}
   canonicalPath="/"
   ogImage={pageBannerUrl('service-home')}
@@ -80,21 +80,25 @@ const schema = [
 >
   <section class="service-hero">
     <div class="service-hero-copy">
-      <p class="service-kicker">SYSTEM DEVELOPMENT</p>
-      <h1>客製系統開發</h1>
-      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案，和開發夥伴一起把重複、瑣碎的工作做成一套系統。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解。</p>
+      <p class="service-kicker">AI 自動化系統開發｜代表案例：數學題庫系統</p>
+      <h1>用 AI 自動化整理資料、產出內容，每一筆都能人工審核</h1>
+      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案，和開發夥伴一起把重複、瑣碎的工作改成 AI 自動化。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解。</p>
       <div class="service-hero-actions">
         <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="查看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">查看系統開發服務</a>
         <a href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="service_home_line" data-ga-label="加官方 LINE 免費評估" data-ga-location="service_home_hero" data-ga-action="external">加官方 LINE 免費評估</a>
       </div>
     </div>
     <figure class="service-hero-case">
-      <img src={`${SITE.url}/images/blog/math-teacher-question-bank/import-review.jpg`} alt="數學題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目" width="1400" height="875" fetchpriority="high" />
-      <figcaption>
-        <span>代表案例</span>
-        <strong>補習班數學題庫系統</strong>
-        <small>考卷匯入・AI 出題・AI 詳解</small>
-      </figcaption>
+      <video
+        src={`${SITE.url}/videos/math-question-bank-reel.mp4`}
+        poster={`${SITE.url}/images/math-question-bank-reel-poster.webp`}
+        width="720"
+        height="1280"
+        controls
+        preload="metadata"
+        playsinline
+        aria-label="數學題庫系統介紹短影音：AI 辨識紙本考卷、AI 出題、AI 解析答案"
+      ></video>
     </figure>
   </section>
 
@@ -253,8 +257,8 @@ const schema = [
 
   <style>
     .service-kicker { color:var(--color-accent); font-size:13px; font-weight:700; letter-spacing:.08em; }
-    .service-hero { display:grid; grid-template-columns:minmax(0, 1.06fr) minmax(320px, .8fr); gap:64px; align-items:center; width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:80px 0 70px; }
-    .service-hero h1 { max-width:12ch; margin-top:22px; font-family:var(--font-serif, serif); font-size:clamp(48px, 6.1vw, 78px); font-weight:600; line-height:1.12; letter-spacing:-.055em; }
+    .service-hero { display:grid; grid-template-columns:minmax(0, 1fr) 340px; gap:64px; align-items:center; width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:80px 0 70px; }
+    .service-hero h1 { max-width:16ch; margin-top:22px; font-family:var(--font-serif, serif); font-size:clamp(40px, 4.6vw, 60px); font-weight:600; line-height:1.12; letter-spacing:-.055em; }
     .service-lead { max-width:620px; margin-top:28px; color:var(--color-ink-2); font-size:18px; line-height:1.9; }
     .service-hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:34px; }
     .service-hero-actions a { display:inline-flex; min-height:50px; align-items:center; justify-content:center; padding:0 24px; border:1px solid var(--color-accent); color:var(--color-accent); font-weight:700; text-decoration:none; }
@@ -294,7 +298,8 @@ const schema = [
     .service-text-link { display:inline-block; margin-top:24px; color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-home-cta { width:min(1120px, calc(100% - 48px)); margin:80px auto 0; }
     .service-hero-case { position:relative; margin:0; }
-    .service-hero-case img { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); box-shadow:0 18px 48px rgb(22 22 26 / 12%); }
+    .service-hero-case { justify-self:center; width:min(100%, calc((100svh - 160px) * 9 / 16)); }
+    .service-hero-case video { display:block; width:100%; height:auto; aspect-ratio:9 / 16; border:1px solid var(--color-rule-2); background:var(--color-ink); box-shadow:0 18px 48px rgb(22 22 26 / 12%); }
     .service-dev { display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, .95fr); gap:56px; width:min(1120px, calc(100% - 48px)); margin:96px auto 0; align-items:start; }
     .service-dev h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
     .service-dev-copy ul { display:grid; gap:8px; margin-top:18px; padding:0; list-style:none; color:var(--color-ink-3); }
@@ -317,7 +322,8 @@ const schema = [
     .service-free-media { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
     @media (max-width:767px) {
       .service-hero { grid-template-columns:1fr; gap:40px; width:min(100% - 40px, 620px); padding:54px 0 50px; }
-      .service-hero h1 { font-size:clamp(40px, 13vw, 58px); line-height:1.12; }
+      .service-hero h1 { font-size:clamp(32px, 9vw, 44px); line-height:1.18; }
+      .service-hero .service-hero-case { width:min(78%, 300px); }
       .service-lead { font-size:16px; line-height:1.8; }
       .service-hero-actions { display:grid; grid-template-columns:1fr; }
       .service-hero-actions a { width:100%; }

@@ -54,18 +54,18 @@ const schema = [
 ---
 
 <Base
-  title="系統開發與 AI 教學｜把重複的工作做成一套系統"
+  title="AI 自動化系統開發｜數學題庫系統案例"
   description="Alex 和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統（考卷匯入、AI 出題、AI 詳解）；也提供 AI 工具一對一教學、演講與免費資源。"
   ogImage={pageBannerUrl('home')}
-  ogImageAlt="系統開發｜把重複的工作，做成一套系統｜工程師 Alex"
+  ogImageAlt="AI 自動化系統開發｜數學題庫系統案例｜工程師 Alex"
   schema={schema}
 >
   <div class="home" id="home-root">
     <!-- 1／Hero：終端機式快速入口；每個選項直接前往目的頁，不加入模擬思考或中繼回答。 -->
     <section class="hero" aria-labelledby="hero-h">
         <div class="hero-copy hero-reveal" style="--d:0ms">
-          <p class="hero-kicker">系統開發／客製開發</p>
-          <h1 id="hero-h">把重複的工作，做成一套系統</h1>
+          <p class="hero-kicker">AI 自動化系統開發｜代表案例：數學題庫系統</p>
+          <h1 id="hero-h">用 AI 自動化整理資料、產出內容，每一筆都能人工審核</h1>
           <p class="hero-summary">我和開發夥伴承接客製系統開發。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解。</p>
           <div class="hero-actions">
             <a
@@ -89,8 +89,17 @@ const schema = [
           </div>
         </div>
         <figure class="hero-media hero-reveal" style="--d:0ms">
-          <img src="/images/blog/math-teacher-question-bank/import-review.jpg" alt="數學題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目" width="1400" height="875" fetchpriority="high" decoding="async" />
-          <figcaption>代表案例：補習班數學題庫系統</figcaption>
+          <video
+            src="/videos/math-question-bank-reel.mp4"
+            poster="/images/math-question-bank-reel-poster.webp"
+            width="720"
+            height="1280"
+            controls
+            preload="metadata"
+            playsinline
+            aria-label="數學題庫系統介紹短影音：AI 辨識紙本考卷、AI 出題、AI 解析答案"
+          ></video>
+          <figcaption>代表案例：補習班數學題庫系統（74 秒介紹）</figcaption>
         </figure>
     </section>
 
@@ -184,7 +193,7 @@ const schema = [
 
       <!-- 4／結尾 CTA -->
       <section class="closer" aria-labelledby="closer-h">
-        <h2 class="q q--sec reveal" id="closer-h"><span class="nb">想把手上的工作做成一套系統<span class="qt">？</span></span></h2>
+        <h2 class="q q--sec reveal" id="closer-h"><span class="nb">想把手上的工作改成 AI 自動化<span class="qt">？</span></span></h2>
         <div class="reveal" style="--d:70ms">
           <p class="closer-p">加官方 <span class="lat">LINE</span> 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。</p>
           <div class="actions">
@@ -574,10 +583,17 @@ const schema = [
       margin: 0;
       align-self: center;
     }
-    .hero-media img {
+    /* 首屏放 9:16 直式短影音：寬度固定上限，高度不超過一個畫面 */
+    .hero-media {
+      justify-self: center;
+      width: min(100%, calc((100svh - 160px) * 9 / 16));
+    }
+    .hero-media video {
       display: block;
       width: 100%;
       height: auto;
+      aspect-ratio: 9 / 16;
+      background: var(--color-ink);
       border: 1px solid var(--color-rule-2);
       box-shadow: 0 18px 48px rgb(22 22 26 / 12%);
     }
@@ -590,7 +606,7 @@ const schema = [
       display: grid;
       width: 100%;
       max-width: 72rem;
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      grid-template-columns: minmax(0, 1fr) 340px;
       align-items: start;
       gap: clamp(36px, 6vw, 88px);
       margin: 0 auto;
@@ -888,7 +904,7 @@ const schema = [
     }
     @media (max-width: 1080px) {
       .hero {
-        grid-template-columns: minmax(0, 0.72fr) minmax(520px, 1.28fr);
+        grid-template-columns: minmax(0, 1fr) 340px;
         gap: 32px;
       }
       .hero-copy h1 { font-size: clamp(36px, 5vw, 52px); }
@@ -907,6 +923,7 @@ const schema = [
         padding: 20px 20px 30px;
       }
       .hero-copy { max-width: none; }
+      .hero-media { width: min(78%, 300px); margin-top: 18px; }
       .hero-kicker { margin-bottom: 10px; font-size: 10px; }
       .hero-copy h1 { font-size: clamp(34px, 10vw, 46px); line-height: 1.18; }
       .hero-summary { margin-top: 12px; font-size: 15px; line-height: 1.7; }

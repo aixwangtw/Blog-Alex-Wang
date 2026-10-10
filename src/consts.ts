@@ -37,7 +37,7 @@ export const AUTHOR = {
   alternateName: ['王士麟', 'Alex Wang', '艾克斯王', 'aixwang'],
   jobTitle: '系統開發工程師 / AI 應用講師',
   description:
-    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，把重複的工作做成一套系統；也是 21 萬人 OpenClaw 中文社群版主，教 AI Agent 工具使用、自動發文、AI 生圖模板與對話式拍片。',
+    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，用 AI 自動化整理資料、產出內容；也是 21 萬人 OpenClaw 中文社群版主，教 AI Agent 工具使用、自動發文、AI 生圖模板與對話式拍片。',
   knowsAbout: [
     '客製系統開發',
     '後台管理系統',
@@ -131,7 +131,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
   {
     tags: ['客製開發', 'AI 導入'],
     cta: {
-      title: '想把手上的工作做成一套系統？',
+      title: '想把手上的工作改成 AI 自動化？',
       text: '加官方 LINE 詢問客製開發細節、費用。直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。',
       href: LINE_URLS.questionBank,
       label: '加入好友',
@@ -215,7 +215,7 @@ export const COLLABORATION_ENTRY_LINKS = [
   {
     href: `${SERVICE_SITE.url}/services/development/`,
     title: '系統開發',
-    description: '把重複的工作做成一套系統，代表案例：數學題庫。',
+    description: '用 AI 自動化整理資料、產出內容，代表案例：數學題庫。',
     analyticsKey: 'development',
     analyticsLabel: '系統開發服務',
   },

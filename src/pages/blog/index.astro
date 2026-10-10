@@ -51,7 +51,7 @@ const rest = posts.filter((post) => !post.data.featured && post.id !== PINNED_ID
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '部落格' }]} class="mb-8" />
     <h1 class="t-h1 font-semibold text-ink">部落格</h1>
     <p class="mt-6 text-lg leading-8 text-ink-2">
-      這裡記錄我和開發夥伴做過的系統開發案例，以及每天在用的 AI 實作做法。想把手上重複的工作做成一套系統，可以先看<a href={DEVELOPMENT_SERVICE.url} class="text-accent underline underline-offset-4" data-ga-button="blog_intro_development" data-ga-label="系統開發服務" data-ga-location="blog_intro" data-ga-action="navigate">系統開發服務</a>。
+      這裡記錄我和開發夥伴做過的系統開發案例，以及每天在用的 AI 實作做法。想把手上重複的工作改成 AI 自動化，可以先看<a href={DEVELOPMENT_SERVICE.url} class="text-accent underline underline-offset-4" data-ga-button="blog_intro_development" data-ga-label="系統開發服務" data-ga-location="blog_intro" data-ga-action="navigate">系統開發服務</a>。
     </p>
     {pinned && (
       <section class="mt-12 border-t border-rule pt-8" aria-labelledby="pinned-h">
@@ -120,7 +120,7 @@ const rest = posts.filter((post) => !post.data.featured && post.id !== PINNED_ID
       {rest.map((post) => <PostCard post={post} />)}
     </div>
     <Cta
-      title="想把手上的工作做成一套系統？"
+      title="想把手上的工作改成 AI 自動化？"
       text="加官方 LINE 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆；也可以先看系統開發服務的流程與費用。"
       href={LINE_URLS.blog}
       label={'加官方 LINE\n免費評估'}

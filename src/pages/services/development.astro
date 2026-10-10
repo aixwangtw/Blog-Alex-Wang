@@ -46,7 +46,7 @@ const schema = [
     name: '客製系統開發',
     serviceType: '客製系統開發 / 後台管理系統 / AI 自動化',
     description:
-      'Alex 和開發夥伴承接客製系統開發，把重複的工作做成一套系統。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解。',
+      'Alex 和開發夥伴承接客製系統開發，用 AI 自動化整理資料、產出內容。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解。',
     provider: { '@id': AUTHOR.id },
     areaServed: '台灣',
   },
@@ -54,7 +54,7 @@ const schema = [
 ---
 
 <ServiceBase
-  title="客製系統開發｜把重複的工作做成一套系統"
+  title="AI 自動化系統開發服務｜數學題庫系統案例"
   description="Alex 和開發夥伴承接客製系統開發：題庫與教學系統、後台管理系統、LINE 相關網頁與 AI 自動化流程。代表案例是補習班數學題庫系統，開發時程約兩個月，分三期付款。"
   ogImage={`${SITE.url}${blogBannerPath('math-teacher-question-bank')}`}
   ogImageAlt="客製系統開發｜代表案例：數學題庫系統"
@@ -63,20 +63,30 @@ const schema = [
   <div class="mx-auto max-w-6xl px-5 py-10 sm:px-6 sm:py-14">
     <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: '客製系統開發' }]} class="mb-8" />
 
-    <section class="grid items-center gap-9 lg:grid-cols-[1fr_0.92fr] lg:gap-14">
+    <section class="grid items-center gap-9 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14">
       <div>
-        <p class="text-sm font-semibold text-accent">系統開發／客製開發</p>
-        <h1 class="t-h1 mt-3 font-semibold text-ink">把重複的工作，做成一套系統</h1>
+        <p class="text-sm font-semibold text-accent">AI 自動化系統開發｜代表案例：數學題庫系統</p>
+        <h1 class="t-h1 mt-3 font-semibold text-ink">用 AI 自動化整理資料、產出內容，每一筆都能人工審核</h1>
         <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
           我是 <a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，目前全職接案，和開發夥伴承接
-          <strong class="text-accent">客製系統開發</strong>。先聊你手上的工作怎麼進行，再把重複、瑣碎的部分做成一套系統。
+          <strong class="text-accent">客製系統開發</strong>。先聊你手上的工作怎麼進行，再把重複、瑣碎的部分改成 AI 自動化。
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a href={LINE_URLS.blog} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center bg-[#06c755] px-6 font-semibold text-white no-underline" data-ga-button="development_hero_line" data-ga-label="加官方 LINE 免費評估" data-ga-location="development_hero" data-ga-action="external">加官方 LINE 免費評估</a>
           <a href={caseArticleUrl} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_case" data-ga-label="看題庫系統案例" data-ga-location="development_hero" data-ga-action="navigate">看題庫系統案例</a>
         </div>
       </div>
-      <img src={`${SITE.url}/images/blog/math-teacher-question-bank/import-review.jpg`} alt="題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目" width="1400" height="875" class="h-auto w-full border border-rule object-cover" loading="eager" />
+      <video
+        src={`${SITE.url}/videos/math-question-bank-reel.mp4`}
+        poster={`${SITE.url}/images/math-question-bank-reel-poster.webp`}
+        width="720"
+        height="1280"
+        controls
+        preload="metadata"
+        playsinline
+        aria-label="數學題庫系統介紹短影音：AI 辨識紙本考卷、AI 出題、AI 解析答案"
+        class="aspect-[9/16] h-auto w-[min(78%,300px)] justify-self-center border border-rule bg-ink lg:w-[min(340px,calc((100svh-160px)*9/16))]"
+      ></video>
     </section>
 
     <nav aria-label="系統開發服務目錄" class="mt-10 overflow-x-auto border-y border-rule">
@@ -130,7 +140,7 @@ const schema = [
     </ul>
 
     <Cta
-      title="想把手上的工作做成一套系統？"
+      title="想把手上的工作改成 AI 自動化？"
       text="加官方 LINE 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。"
       href={LINE_URLS.blog}
       label={'加官方 LINE\n免費評估'}
