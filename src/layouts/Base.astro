@@ -1,9 +1,8 @@
 ---
 import ogBanner from '../assets/banner-v2.png';
 import githubLogo from '../assets/github-logo.svg';
-import lineLogo from '../assets/line-logo.png';
+import lineBrandIcon from '../assets/line-brand-icon.png';
 import tookaLogo from '../assets/tooka-logo.svg';
-import FloatingLine from '../components/FloatingLine.astro';
 import {
   AUTHOR,
   COLLABORATION_ENTRY_LINKS,
@@ -504,32 +503,42 @@ const jsonLd = {
       </div>
     </header>
 
-    <FloatingLine paired />
-
     <div class="search-chatbot" id="search-chatbot">
       <button
         class="search-chat-toggle"
         id="search-chat-toggle"
         type="button"
-        aria-label="開啟學習入口與站內搜尋"
+        aria-label="開啟客服"
         aria-expanded="false"
         aria-controls="search-chat-panel"
         data-ga-button="search_chat_toggle"
-        data-ga-label="學習入口"
+        data-ga-label="客服"
         data-ga-location="floating_actions"
         data-ga-action="toggle_chat"
       >
-        <span class="search-chat-toggle-icon" aria-hidden="true">&gt;_</span>
+        <!-- 客服機器人：戴耳機麥克風的機器人頭像，自繪 inline SVG，不引入外部圖示庫 -->
+        <svg class="search-chat-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M12 3.6v2.4" />
+          <circle cx="12" cy="2.8" r="1" fill="currentColor" stroke="none" />
+          <rect x="5.5" y="6" width="13" height="10.5" rx="3.4" />
+          <circle cx="9.6" cy="10.8" r="1.25" fill="currentColor" stroke="none" />
+          <circle cx="14.4" cy="10.8" r="1.25" fill="currentColor" stroke="none" />
+          <path d="M9.9 13.6c1.2.8 3 .8 4.2 0" />
+          <rect x="2.6" y="9" width="2.9" height="5" rx="1.2" />
+          <rect x="18.5" y="9" width="2.9" height="5" rx="1.2" />
+          <path d="M20 14v1.6a3.4 3.4 0 0 1-3.4 3.4h-2.3" />
+          <circle cx="13.4" cy="19" r="1.1" fill="currentColor" stroke="none" />
+        </svg>
       </button>
 
-      <section class="search-chat-panel" id="search-chat-panel" role="dialog" aria-label="AI 學習入口與站內搜尋" hidden>
+      <section class="search-chat-panel" id="search-chat-panel" role="dialog" aria-label="客服：加 LINE 詢問、學習入口與站內搜尋" hidden>
         <div class="search-chat-bar">
           <span class="search-chat-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <b>學習入口</b>
+          <b>客服</b>
           <button
             id="search-chat-close"
             type="button"
-            aria-label="關閉學習入口與站內搜尋"
+            aria-label="關閉客服"
             data-ga-button="search_chat_close"
             data-ga-label="關閉問答視窗"
             data-ga-location="search_chat"
@@ -537,6 +546,20 @@ const jsonLd = {
           >×</button>
         </div>
         <div class="search-chat-screen">
+          <a
+            class="search-chat-line"
+            href={LINKS.line}
+            target="_blank"
+            rel="noreferrer"
+            data-ga-button="search_chat_line"
+            data-ga-label="加官方 LINE 詢問"
+            data-ga-location="search_chat"
+            data-ga-action="contact"
+          >
+            <img src={lineBrandIcon.src} width="40" height="40" alt="LINE" />
+            <span><small>想直接問我或團隊？</small><b>加官方 LINE 詢問</b></span>
+            <i aria-hidden="true">→</i>
+          </a>
           <div class="search-chat-dialog">
             <p>你希望我如何幫你？</p>
           </div>
@@ -575,20 +598,6 @@ const jsonLd = {
             </nav>
           </div>
           <div class="search-chat-results" id="search-results" aria-live="polite" hidden></div>
-          <a
-            class="search-chat-line"
-            href={LINKS.line}
-            target="_blank"
-            rel="noreferrer"
-            data-ga-button="search_chat_line"
-            data-ga-label="加 LINE 免費諮詢"
-            data-ga-location="search_chat"
-            data-ga-action="contact"
-          >
-            <img src={lineLogo.src} width="38" height="38" alt="LINE" />
-            <span><small>想直接問我？</small><b>加 LINE 免費諮詢</b></span>
-            <i aria-hidden="true">→</i>
-          </a>
         </div>
         <form
           class="search-chat-form"
@@ -893,7 +902,7 @@ const jsonLd = {
           document.body.classList.add('search-chat-open');
           if (toggle) {
             toggle.setAttribute('aria-expanded', 'true');
-            toggle.setAttribute('aria-label', '關閉站內搜尋');
+            toggle.setAttribute('aria-label', '關閉客服');
           }
           window.setTimeout(function () { input && input.focus(); }, 0);
         }
@@ -902,7 +911,7 @@ const jsonLd = {
           document.body.classList.remove('search-chat-open');
           if (toggle) {
             toggle.setAttribute('aria-expanded', 'false');
-            toggle.setAttribute('aria-label', '開啟站內搜尋');
+            toggle.setAttribute('aria-label', '開啟客服');
           }
         }
         function loadFallback() {
@@ -1793,11 +1802,9 @@ const jsonLd = {
         cursor: pointer;
       }
       .search-chat-toggle-icon {
-        color: #f0a6b1;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: -0.08em;
+        width: 28px;
+        height: 28px;
+        color: #f7f3ee;
       }
       .search-chatbot.is-terminal-collapse {
         animation: terminal-collapse 650ms cubic-bezier(.2, .85, .25, 1) both;
@@ -2009,25 +2016,26 @@ const jsonLd = {
         font-size: 10px;
         line-height: 1.6;
       }
+      /* LINE 放面板第一順位。底色用紙色、外框用 LINE 綠：LINE 官方 Brand icon 本身是綠底方塊，
+         放在綠底上會只剩白色氣泡，等於改了圖示外觀（line.me/en/logo 規定圖示須原樣使用）。 */
       .search-chat-line {
         display: grid;
-        min-height: 58px;
-        grid-template-columns: 38px minmax(0, 1fr) auto;
+        min-height: 60px;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
         align-items: center;
-        gap: 10px;
-        margin-top: 18px;
-        padding: 9px 11px;
-        border: 1px solid #06c755;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding: 9px 12px;
+        border: 2px solid #06c755;
         border-radius: 4px;
-        background: #06c755;
-        color: #fff;
+        background: var(--color-paper);
+        color: var(--color-ink);
         text-decoration: none;
       }
       .search-chat-line img {
         display: block;
-        width: 38px;
-        height: 38px;
-        border-radius: 8px;
+        width: 40px;
+        height: 40px;
       }
       .search-chat-line span,
       .search-chat-line small,
@@ -2037,18 +2045,18 @@ const jsonLd = {
       }
       .search-chat-line small {
         margin-bottom: 2px;
-        color: rgb(255 255 255 / 82%);
+        color: var(--color-ink-3);
         font-family: var(--font-display);
         font-size: 9px;
       }
       .search-chat-line b {
-        color: #fff;
+        color: var(--color-ink);
         font-family: var(--font-display);
         font-size: 12px;
         font-weight: 600;
       }
       .search-chat-line > i {
-        color: #fff;
+        color: #06a647;
         font-size: 13px;
         font-style: normal;
       }
