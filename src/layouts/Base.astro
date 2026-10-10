@@ -638,6 +638,23 @@ const jsonLd = {
             </nav>
           </div>
           <div class="search-chat-results" id="search-results" aria-live="polite" hidden></div>
+          <!-- 問句對上站內 FAQ 時，複製這個樣板顯示答案原文與原頁連結（public/faq-match.js 負責比對）。
+               題目、答案、出處一律用 textContent 填入，不解析 HTML。 -->
+          <template id="search-chat-faq-template">
+            <article class="search-chat-faq">
+              <p class="search-chat-faq-label">常見問題</p>
+              <h3 class="search-chat-faq-question"></h3>
+              <p class="search-chat-faq-answer"></p>
+              <a
+                class="search-chat-faq-link"
+                href="/faq/"
+                data-ga-button="search_chat_faq_link"
+                data-ga-label="常見問題"
+                data-ga-location="search_chat"
+                data-ga-action="open_faq"
+              ><span>看完整說明</span><small></small><i aria-hidden="true">→</i></a>
+            </article>
+          </template>
         </div>
         <form
           class="search-chat-form"
@@ -908,6 +925,9 @@ const jsonLd = {
         var pagefind = null;
         var pagefindPromise = null;
         var fallbackIndex = null;
+        var faqTemplate = document.getElementById('search-chat-faq-template');
+        var faqMatcher = null;
+        var faqMatcherPromise = null;
         var searchSequence = 0;
         var activeResult = -1;
         function activateRadarTab(key, moveFocus) {
@@ -975,6 +995,58 @@ const jsonLd = {
             });
           return pagefindPromise;
         }
+        // FAQ 比對器與索引只在使用者點進輸入框時才載入；任一個失敗就當作沒有 FAQ，照原本流程搜尋文章。
+        function loadFaqMatcher() {
+          if (faqMatcher) return Promise.resolve(faqMatcher);
+          if (faqMatcherPromise) return faqMatcherPromise;
+          faqMatcherPromise = Promise.all([
+            new Function('return import("/faq-match.js")')(),
+            fetch('/faq-index.json').then(function (r) {
+              if (!r.ok) throw new Error('faq-index ' + r.status);
+              return r.json();
+            }),
+          ])
+            .then(function (loaded) {
+              var module = loaded[0];
+              var index = module.buildFaqIndex(loaded[1]);
+              faqMatcher = function (query) { return module.matchFaq(index, query); };
+              return faqMatcher;
+            })
+            .catch(function () {
+              faqMatcherPromise = null;
+              return null;
+            });
+          return faqMatcherPromise;
+        }
+        function findFaq(query) {
+          return loadFaqMatcher().then(function (matcher) {
+            if (!matcher) return null;
+            try {
+              var match = matcher(query);
+              return match ? match.item : null;
+            } catch (error) {
+              return null;
+            }
+          });
+        }
+        // 只接受站內路徑或本站子網域的連結，避免索引資料異常時塞進 javascript: 之類的網址
+        function safeFaqUrl(url) {
+          var value = String(url || '');
+          if (/^\/(?!\/)/.test(value) || /^https:\/\/([a-z0-9-]+\.)*aixwang\.dev\//.test(value)) return value;
+          return '/faq/';
+        }
+        function buildFaqCard(faq) {
+          if (!faqTemplate || !faqTemplate.content) return null;
+          var card = faqTemplate.content.firstElementChild.cloneNode(true);
+          card.querySelector('.search-chat-faq-question').textContent = faq.q;
+          card.querySelector('.search-chat-faq-answer').textContent = faq.a;
+          var link = card.querySelector('.search-chat-faq-link');
+          link.setAttribute('href', safeFaqUrl(faq.u));
+          link.setAttribute('data-ga-label', String(faq.q || '').slice(0, 100));
+          link.querySelector('small').textContent = faq.p ? '出自：' + faq.p : '';
+          if (/^https?:/.test(link.getAttribute('href'))) link.setAttribute('rel', 'noreferrer');
+          return card;
+        }
         function escapeHtml(value) {
           return String(value || '')
             .replace(/&/g, '&amp;')
@@ -982,13 +1054,20 @@ const jsonLd = {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;');
         }
-        function render(list) {
+        function render(list, faq) {
           activeResult = list.length ? 0 : -1;
           box.hidden = false;
-          if (!list.length) {
-            box.innerHTML = '<p class="search-chat-empty">找不到符合的文章，請換個關鍵字再問一次。</p>';
+          var faqCard = faq ? buildFaqCard(faq) : null;
+          if (faqCard) {
+            box.replaceChildren(faqCard);
+            if (list.length) box.insertAdjacentHTML('beforeend', '<p class="search-chat-faq-more">相關文章</p>');
           } else {
-            box.innerHTML = list
+            box.replaceChildren();
+          }
+          if (!list.length) {
+            if (!faqCard) box.innerHTML = '<p class="search-chat-empty">找不到符合的文章，請換個關鍵字再問一次。</p>';
+          } else {
+            box.insertAdjacentHTML('beforeend', list
               .slice(0, 5)
               .map(function (item, index) {
                 return '<a href="' + escapeHtml(item.u) + '" data-search-result="' + index + '" data-ga-button="search_chat_result" data-ga-label="' + escapeHtml(item.t) + '" data-ga-location="search_chat" data-ga-action="open_result" class="search-chat-result ' + (index === 0 ? 'is-active' : '') + '">' +
@@ -996,17 +1075,24 @@ const jsonLd = {
                   (item.d ? '<span>' + item.d + '</span>' : '') +
                   '</a>';
               })
-              .join('');
+              .join(''));
           }
+        }
+        // 按 Enter／送出時把結果捲到看得到的位置（手機上結果在入口清單下方，不捲就看不到 FAQ 答案）
+        function revealResults() {
+          var screen = box.closest('.search-chat-screen');
+          if (!screen || box.hidden) return;
+          screen.scrollTop += box.getBoundingClientRect().top - screen.getBoundingClientRect().top - 8;
         }
         function updateActiveResult() {
           box.querySelectorAll('.search-chat-result').forEach(function (item, index) {
             item.classList.toggle('is-active', index === activeResult);
           });
         }
-        function searchFallback(query, sequence) {
-          return loadFallback().then(function (items) {
+        function searchFallback(query, sequence, faqPromise, reveal) {
+          return Promise.all([loadFallback(), faqPromise]).then(function (loaded) {
             if (sequence !== searchSequence) return;
+            var items = loaded[0];
             var q = query.toLowerCase();
             render(items
               .filter(function (item) {
@@ -1014,33 +1100,38 @@ const jsonLd = {
               })
               .map(function (item) {
                 return { u: item.u, t: item.t, d: escapeHtml(item.d) };
-              }));
+              }), loaded[1]);
+            if (reveal) revealResults();
           });
         }
-        function executeSearch(query) {
+        function executeSearch(query, reveal) {
           var sequence = ++searchSequence;
+          var faqPromise = findFaq(query);
           box.replaceChildren();
           loadPagefind().then(function (engine) {
-            if (!engine) return searchFallback(query, sequence);
+            if (!engine) return searchFallback(query, sequence, faqPromise, reveal);
             return engine.search(query).then(function (search) {
               return Promise.all(search.results.slice(0, 8).map(function (result) {
                 return result.data();
               }));
             }).then(function (results) {
-              if (!results || sequence !== searchSequence) return;
-              render(results.map(function (result) {
-                return {
-                  u: result.url,
-                  t: result.meta && result.meta.title ? result.meta.title : result.url,
-                  d: result.excerpt || '',
-                };
-              }));
+              return faqPromise.then(function (faq) {
+                if (!results || sequence !== searchSequence) return;
+                render(results.map(function (result) {
+                  return {
+                    u: result.url,
+                    t: result.meta && result.meta.title ? result.meta.title : result.url,
+                    d: result.excerpt || '',
+                  };
+                }), faq);
+                if (reveal) revealResults();
+              });
             }).catch(function () {
-              return searchFallback(query, sequence);
+              return searchFallback(query, sequence, faqPromise, reveal);
             });
           });
         }
-        function searchFor(query) {
+        function searchFor(query, reveal) {
           var q = query.trim().toLowerCase();
           if (!q) {
             searchSequence++;
@@ -1050,7 +1141,7 @@ const jsonLd = {
             }
             return;
           }
-          executeSearch(q);
+          executeSearch(q, reveal);
         }
         if (toggle) {
           toggle.addEventListener('click', function () {
@@ -1066,7 +1157,10 @@ const jsonLd = {
           });
         }
         if (input && box && form) {
-          input.addEventListener('focus', loadPagefind);
+          input.addEventListener('focus', function () {
+            loadPagefind();
+            loadFaqMatcher();
+          });
           input.addEventListener('input', function () {
             searchFor(input.value);
           });
@@ -1098,7 +1192,7 @@ const jsonLd = {
           });
           form.addEventListener('submit', function (e) {
             e.preventDefault();
-            if (input.value.trim()) searchFor(input.value);
+            if (input.value.trim()) searchFor(input.value, true);
           });
           document.addEventListener('click', function (e) {
             if (panel && !panel.hidden && container && !container.contains(e.target)) closeSearch();
@@ -2109,6 +2203,77 @@ const jsonLd = {
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
       }
+      /* FAQ 命中：答案原文＋原頁連結。答案是整段純文字，字級比搜尋結果大一階才讀得完；
+         長答案（題庫費用那幾題約 400 字）直接在 .search-chat-screen 裡捲動，不另設內層捲軸。 */
+      .search-chat-faq {
+        display: grid;
+        min-width: 0;
+        gap: 6px;
+        padding: 11px 12px 12px;
+        border: 1px solid var(--color-rule-2);
+        border-left: 3px solid var(--color-accent);
+        border-radius: 4px;
+        background: var(--color-accent-tint);
+      }
+      .search-chat-faq-label {
+        margin: 0;
+        color: var(--color-accent);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+      }
+      .search-chat-faq-question {
+        margin: 0;
+        color: var(--color-ink);
+        font: 600 13px/1.5 var(--font-display);
+        overflow-wrap: anywhere;
+      }
+      .search-chat-faq-answer {
+        margin: 0;
+        color: var(--color-ink-2);
+        font: 400 12.5px/1.75 var(--font-display);
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+      }
+      .search-chat-faq-link {
+        display: grid;
+        min-height: 40px;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        column-gap: 8px;
+        margin-top: 4px;
+        padding: 7px 10px;
+        border: 1px solid var(--color-rule-2);
+        border-radius: 3px;
+        background: var(--color-paper);
+        color: var(--color-ink);
+        text-decoration: none;
+      }
+      .search-chat-faq-link span {
+        font: 600 11px/1.45 var(--font-display);
+      }
+      .search-chat-faq-link small {
+        grid-column: 1;
+        overflow: hidden;
+        color: var(--color-ink-3);
+        font: 400 9px/1.45 var(--font-display);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .search-chat-faq-link small:empty {
+        display: none;
+      }
+      .search-chat-faq-link i {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        color: var(--color-accent);
+        font-style: normal;
+      }
+      .search-chat-faq-more {
+        margin: 10px 0 2px;
+        color: var(--color-ink-3);
+        font: 400 9px/1.45 var(--font-display);
+        letter-spacing: 0.08em;
+      }
       .search-chat-empty {
         margin: 0;
         color: var(--color-ink-3);
@@ -2413,7 +2578,8 @@ const jsonLd = {
           background: var(--color-accent-tint);
         }
         .search-chat-entries a:hover,
-        .search-chat-result:hover {
+        .search-chat-result:hover,
+        .search-chat-faq-link:hover {
           border-color: #514b48;
           background: #272322;
           color: #fffaf4;
@@ -2432,6 +2598,7 @@ const jsonLd = {
       .search-chat-tabs button:focus-visible,
       .search-chat-entries a:focus-visible,
       .search-chat-result:focus-visible,
+      .search-chat-faq-link:focus-visible,
       .search-chat-line:focus-visible,
       .search-chat-form button:focus-visible {
         outline: 2px solid #f09aa7;
