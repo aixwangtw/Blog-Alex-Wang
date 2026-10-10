@@ -4,7 +4,7 @@ import { getCollection, render } from 'astro:content';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Cta from '../../components/Cta.astro';
 import FaqList from '../../components/FaqList.astro';
-import { AUTHOR, AUTHOR_INTROS, CTA_VARIANTS, SITE, pickVariant } from '../../consts';
+import { AUTHOR, AUTHOR_INTROS, SITE, pickArticleCta, pickVariant } from '../../consts';
 import Base from '../../layouts/Base.astro';
 
 export async function getStaticPaths() {
@@ -194,7 +194,7 @@ const updatedText = updatedDate
       </p>
     </section>
 
-    <Cta {...CTA_VARIANTS[pickVariant(`cta:${post.id}`, CTA_VARIANTS.length)]} />
+    <Cta {...pickArticleCta(post.id, post.data.tags)} />
   </article>
 
   <script is:inline>

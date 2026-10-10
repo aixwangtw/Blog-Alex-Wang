@@ -74,6 +74,68 @@ export const LINE_URLS = {
   questionBank: 'https://lin.ee/raoKSVR',
 } as const;
 
+// 依文章性質（tags）決定文末 CTA。命中規則的文章用規則指定的 CTA，
+// 沒命中的維持原本的 CTA_VARIANTS 雜湊輪替，行為與加規則前完全相同。
+// 規則由上往下比對，第一條命中就用；比對的是 Directus 文章的 tags 欄位（完全相符）。
+export interface ArticleCta {
+  title: string;
+  text: string;
+  href?: string;
+  label?: string;
+  tone?: 'default' | 'line';
+  links?: { href: string; label: string; external?: boolean }[];
+}
+
+export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
+  {
+    tags: ['題庫系統'],
+    cta: {
+      title: '想做一套自己的題庫？',
+      text: '加官方 LINE 詢問題庫細節、費用。直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。',
+      href: LINE_URLS.questionBank,
+      label: '加入好友',
+      tone: 'line',
+      links: [],
+    },
+  },
+  {
+    tags: ['客製開發', 'AI 導入'],
+    cta: {
+      title: '想把手上的工作做成一套系統？',
+      text: '加官方 LINE 詢問客製開發細節、費用。直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。',
+      href: LINE_URLS.questionBank,
+      label: '加入好友',
+      tone: 'line',
+      links: [],
+    },
+  },
+  {
+    tags: ['講師故事', '演講'],
+    cta: {
+      title: '想邀請 Alex 演講或內訓？',
+      text: '接受企業、學校與社群的 AI 演講邀約，可以先看過去的演講主題與邀約方式。',
+      href: `${SERVICE_SITE.url}/services/speaking/`,
+      label: '找講師',
+      links: [{ href: LINE_URLS.blog, label: '加 LINE 免費諮詢', external: true }],
+    },
+  },
+  {
+    tags: ['新手入門', '安裝教學', 'API 教學', 'AI 入門'],
+    cta: {
+      title: '想更快上手？可以直接找我一對一',
+      text: '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），從安裝到做出第一個成品帶你走一遍。',
+      href: `${SERVICE_SITE.url}/course/`,
+      label: '找教學',
+      links: [{ href: LINE_URLS.blog, label: '加 LINE 免費諮詢', external: true }],
+    },
+  },
+];
+
+export function pickArticleCta(slug: string, tags: readonly string[]): ArticleCta {
+  const rule = CTA_RULES.find((candidate) => candidate.tags.some((tag) => tags.includes(tag)));
+  return rule ? rule.cta : CTA_VARIANTS[pickVariant(`cta:${slug}`, CTA_VARIANTS.length)];
+}
+
 // 依字串雜湊挑選輪替版本：同一個 key 永遠選到同一版
 export function pickVariant(key: string, length: number): number {
   let h = 0;

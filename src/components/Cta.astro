@@ -29,6 +29,13 @@ interface Props {
   external?: boolean;
   /** 次要行動：純文字連結，不做成第二顆按鈕 */
   links?: SecondaryLink[];
+  /**
+   * line：主要行動改用 LINE 官方「加入好友」按鈕圖，也就是 LINE 官方帳號管理後台
+   * （Home > Gain Friends > "Add friend" tools > Create a button）產生的 HTML 所引用的圖檔，
+   * 只指定高度、不改圖。出處：https://developers.line.biz/en/docs/messaging-api/sharing-bot/
+   * 只給依 CTA_RULES 命中的文章用；其他頁面維持預設酒紅圓形。
+   */
+  tone?: 'default' | 'line';
 }
 
 const {
@@ -41,6 +48,7 @@ const {
     { href: `${SERVICE_SITE.url}/course/`, label: '了解一對一教學', external: true },
     { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講邀約', external: true },
   ],
+  tone = 'default',
 } = Astro.props;
 
 const labelLines = label.split('\n');
@@ -68,14 +76,25 @@ const labelLines = label.split('\n');
       )}
     </div>
 
-    <a
-      class="cta-go"
-      href={href}
-      target={external ? '_blank' : undefined}
-      rel={external ? 'noreferrer' : undefined}
-    >
-      {labelLines.map((line) => <span>{line}</span>)}
-    </a>
+    {tone === 'line' ? (
+      <a class="cta-line-add" href={href} target="_blank" rel="noreferrer">
+        <img
+          src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png"
+          alt={label}
+          height="44"
+          width="142"
+        />
+      </a>
+    ) : (
+      <a
+        class="cta-go"
+        href={href}
+        target={external ? '_blank' : undefined}
+        rel={external ? 'noreferrer' : undefined}
+      >
+        {labelLines.map((line) => <span>{line}</span>)}
+      </a>
+    )}
   </div>
 </aside>
 
@@ -188,6 +207,19 @@ const labelLines = label.split('\n');
         transform: rotate(-8deg) scale(1.03);
       }
     }
+  }
+
+  /* LINE 官方加入好友按鈕：直接放官方圖檔（232×72，顯示高 44px 等比縮放），
+     不另外畫底色、不墊白底，外觀和一般網站常見的 LINE 加好友按鈕一致。 */
+  .cta-line-add {
+    display: inline-block;
+    justify-self: start;
+    line-height: 0;
+  }
+  .cta-line-add img {
+    display: block;
+    width: auto;
+    height: 44px;
   }
 
   @media (prefers-reduced-motion: reduce) {
