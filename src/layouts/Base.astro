@@ -85,10 +85,20 @@ const DROPDOWN_NAV = [
     key: 'services',
     label: '服務',
     href: `${SERVICE_SITE.url}/`,
-    subtitle: '先看你遇到的情況，再選適合的合作方式',
+    subtitle: '系統開發、AI 教學與演講，先看你遇到的情況再選',
     accent: true,
     external: true,
     previews: [
+      {
+        href: `${SERVICE_SITE.url}/services/development/`,
+        eyebrow: '系統開發',
+        title: '客製系統開發',
+        description: '把重複的工作做成一套系統。代表案例：補習班數學題庫系統，考卷匯入、AI 出題、AI 詳解。',
+        image: blogBannerPath('math-teacher-question-bank'),
+        cta: '查看系統開發服務',
+        external: true,
+        wide: true,
+      },
       {
         href: `${SERVICE_SITE.url}/course/`,
         eyebrow: '一對一教學',
@@ -437,6 +447,7 @@ const jsonLd = {
                             class:list={['service-preview', {
                               'service-preview--icon': 'navIcon' in item,
                               'service-preview--tooka': 'tookaIcon' in item,
+                              'service-preview--wide': 'wide' in item,
                             }]}
                           >
                             <a
@@ -565,12 +576,12 @@ const jsonLd = {
             <p>你希望我如何幫你？</p>
           </div>
           <div class="search-chat-tabs" role="tablist" aria-label="選擇需求">
-            <button id="search-tab-learn" type="button" role="tab" aria-selected="true" aria-controls="search-panel-learn" data-search-radar-tab="learn" data-ga-button="search_radar_tab_learn" data-ga-label="自己學" data-ga-location="search_chat" data-ga-action="switch_tab">自己學</button>
+            <button id="search-tab-collaborate" type="button" role="tab" aria-selected="true" aria-controls="search-panel-collaborate" data-search-radar-tab="collaborate" data-ga-button="search_radar_tab_collaborate" data-ga-label="邀合作" data-ga-location="search_chat" data-ga-action="switch_tab">邀合作</button>
+            <button id="search-tab-learn" type="button" role="tab" aria-selected="false" aria-controls="search-panel-learn" data-search-radar-tab="learn" data-ga-button="search_radar_tab_learn" data-ga-label="自己學" data-ga-location="search_chat" data-ga-action="switch_tab" tabindex="-1">自己學</button>
             <button id="search-tab-guided" type="button" role="tab" aria-selected="false" aria-controls="search-panel-guided" data-search-radar-tab="guided" data-ga-button="search_radar_tab_guided" data-ga-label="找人帶" data-ga-location="search_chat" data-ga-action="switch_tab" tabindex="-1">找人帶</button>
-            <button id="search-tab-collaborate" type="button" role="tab" aria-selected="false" aria-controls="search-panel-collaborate" data-search-radar-tab="collaborate" data-ga-button="search_radar_tab_collaborate" data-ga-label="邀合作" data-ga-location="search_chat" data-ga-action="switch_tab" tabindex="-1">邀合作</button>
             <button id="search-tab-free" type="button" role="tab" aria-selected="false" aria-controls="search-panel-free" data-search-radar-tab="free" data-ga-button="search_radar_tab_free" data-ga-label="找免費" data-ga-location="search_chat" data-ga-action="switch_tab" tabindex="-1">找免費</button>
           </div>
-          <div id="search-panel-learn" class="search-chat-tab-panel" role="tabpanel" aria-labelledby="search-tab-learn" data-search-radar-panel="learn">
+          <div id="search-panel-learn" class="search-chat-tab-panel" role="tabpanel" aria-labelledby="search-tab-learn" data-search-radar-panel="learn" hidden>
             <nav class="search-chat-entries" aria-label="自己學">
               {LEARNING_ENTRY_LINKS.map((entry, index) => (
                 <a href={entry.href} data-ga-button={`search_chat_entry_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="search_chat" data-ga-action="navigate"><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><i aria-hidden="true">↗</i></a>
@@ -584,7 +595,7 @@ const jsonLd = {
               ))}
             </nav>
           </div>
-          <div id="search-panel-collaborate" class="search-chat-tab-panel" role="tabpanel" aria-labelledby="search-tab-collaborate" data-search-radar-panel="collaborate" hidden>
+          <div id="search-panel-collaborate" class="search-chat-tab-panel" role="tabpanel" aria-labelledby="search-tab-collaborate" data-search-radar-panel="collaborate">
             <nav class="search-chat-entries" aria-label="邀合作">
               {COLLABORATION_ENTRY_LINKS.map((entry, index) => (
                 <a href={entry.href} data-ga-button={`search_chat_entry_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="search_chat" data-ga-action="navigate"><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><i aria-hidden="true">↗</i></a>
@@ -1390,6 +1401,9 @@ const jsonLd = {
       .service-menu-head small {
         color: var(--color-ink-3);
         font-size: 11px;
+      }
+      .service-menu-grid .service-preview--wide {
+        grid-column: 1 / -1;
       }
       .service-menu-grid {
         display: grid;

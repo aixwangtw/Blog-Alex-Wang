@@ -14,7 +14,18 @@ export const SERVICE_SITE = {
   title: 'Alex AI 服務',
   url: 'https://service.aixwang.dev',
   description:
-    '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），也接受企業與社群的 AI 演講邀約。',
+    '我和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統；也提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），並接受企業與社群的 AI 演講邀約。',
+};
+
+// 系統開發服務頁與首頁共用的事實（流程、時程、付款），內容需與題庫文章 FAQ 第 1 題一致，不得寫開發費金額。
+export const DEVELOPMENT_SERVICE = {
+  url: `${SERVICE_SITE.url}/services/development/`,
+  caseArticle: '/blog/math-teacher-question-bank/',
+  demoUrl: 'https://demo-question.aixwang.dev/admin/auth/login',
+  steps: ['先聊需求，看看你手上的資料', '試用 Demo，確認方向', '確認功能後報價', '分階段開發，每個階段都讓你試用', '上線並教你怎麼用', '持續維護'],
+  timeline: '開發時程約兩個月，實際依功能範圍而定；開發過程中需求原則上可以隨時調整。',
+  payment: '開發費依功能報價，加 LINE 可以免費評估；分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。',
+  hosting: '主機建置依規格約新台幣 5,000 元（一次性），主機基本規格每月約新台幣 500 元；AI 使用費依實際用量另計。',
 };
 
 export const AUTHOR = {
@@ -199,6 +210,13 @@ export const GUIDED_ENTRY_LINKS = [
 
 export const COLLABORATION_ENTRY_LINKS = [
   {
+    href: `${SERVICE_SITE.url}/services/development/`,
+    title: '系統開發',
+    description: '把重複的工作做成一套系統，代表案例：數學題庫。',
+    analyticsKey: 'development',
+    analyticsLabel: '系統開發服務',
+  },
+  {
     href: `${SERVICE_SITE.url}/services/speaking/`,
     title: '邀請 AI 講師',
     description: '邀請 Alex 到公司、學校或社群分享。',
@@ -221,6 +239,7 @@ export const NAV = [
   { href: '/', label: '首頁' },
   { href: '/blog/', label: '文章' },
   { href: '/resources/', label: '免費' },
+  { href: `${SERVICE_SITE.url}/services/development/`, label: '系統開發' },
   { href: `${SERVICE_SITE.url}/course/`, label: '課程' },
   { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講' },
   { href: '/faq/', label: '問題' },

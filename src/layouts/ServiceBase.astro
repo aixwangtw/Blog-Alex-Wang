@@ -25,6 +25,12 @@ const canonical = new URL(canonicalPath, SERVICE_SITE.url);
 const serviceHomeHref = import.meta.env.DEV ? '/services/' : '/';
 const serviceLinks = [
   {
+    href: '/services/development/',
+    eyebrow: '系統開發',
+    title: '客製系統開發',
+    description: '把重複的工作做成一套系統，代表案例：補習班數學題庫系統。',
+  },
+  {
     href: '/course/',
     eyebrow: '一對一教學',
     title: 'AI 一對一私人教學',
@@ -319,6 +325,7 @@ const jsonLd = {
         </section>
         <section>
           <h2>服務項目</h2>
+          <a href="/services/development/">客製系統開發</a>
           <a href="/course/">AI 一對一私人教學</a>
           <a href="/services/speaking/">AI 演講與內訓</a>
         </section>

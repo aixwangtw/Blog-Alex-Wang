@@ -9,6 +9,8 @@ const serviceRedirects = new Map([
   ['/services/', `${SERVICE_ORIGIN}/`],
   ['/services/speaking', `${SERVICE_ORIGIN}/services/speaking/`],
   ['/services/speaking/', `${SERVICE_ORIGIN}/services/speaking/`],
+  ['/services/development', `${SERVICE_ORIGIN}/services/development/`],
+  ['/services/development/', `${SERVICE_ORIGIN}/services/development/`],
 ]);
 
 export default {
@@ -43,8 +45,8 @@ export default {
         return Response.redirect(url.toString(), 308);
       }
 
-      // 課程與演講皆已預渲染，直接取得靜態資產，不重複 SSR。
-      if (url.pathname.startsWith('/course') || url.pathname.startsWith('/services/speaking')) {
+      // 課程、演講與系統開發皆已預渲染，直接取得靜態資產，不重複 SSR。
+      if (url.pathname.startsWith('/course') || url.pathname.startsWith('/services/speaking') || url.pathname.startsWith('/services/development')) {
         return env.ASSETS.fetch(request);
       }
     }
