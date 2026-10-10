@@ -1,5 +1,4 @@
 ---
-import { blogBannerPath } from '../lib/blog-banner';
 // ============================================================
 // 首頁（2026-08 改版第三階段）
 // ------------------------------------------------------------
@@ -26,45 +25,19 @@ import { blogBannerPath } from '../lib/blog-banner';
 //           首頁那份從一開始就是重複的。
 // ============================================================
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import freeResourcesHome from '../assets/free-resources-home-v2.png';
 import instructorShirt from '../assets/instructor-shirt.jpg';
-import taichungTalk from '../assets/taichung-talk.jpg';
 import {
   AUTHOR,
-  COLLABORATION_ENTRY_LINKS,
   DEVELOPMENT_SERVICE,
-  FREE_ENTRY_LINKS,
   LINE_URLS,
-  GUIDED_ENTRY_LINKS,
-  LEARNING_ENTRY_LINKS,
   LINKS,
   SERVICE_SITE,
   SITE,
   pageBannerUrl,
 } from '../consts';
 import { SYLLABUS } from '../data/home';
-import { TEACHING_CASES } from '../data/services';
 import Base from '../layouts/Base.astro';
 
-const HOME_FEATURED_ORDER = ['how-to-start-learning-ai'];
-const featuredPosts = (await getCollection('blog', ({ data }) => !data.unlisted && data.featured))
-  .sort(
-    (a, b) => {
-      const aPriority = HOME_FEATURED_ORDER.indexOf(a.id);
-      const bPriority = HOME_FEATURED_ORDER.indexOf(b.id);
-      if (aPriority !== -1 || bPriority !== -1) {
-        if (aPriority === -1) return 1;
-        if (bPriority === -1) return -1;
-        return aPriority - bPriority;
-      }
-      return (
-        b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
-        (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0)
-      );
-    },
-  )
-  .slice(0, 3);
 const schema = [
   {
     '@type': 'Course',
@@ -115,67 +88,10 @@ const schema = [
             >看題庫系統案例</a>
           </div>
         </div>
-        <div class="cli hero-reveal" id="hero-cli" style="--d:0ms">
-          <div class="cli-brand">
-            <span class="cli-window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="cli-window-title">快速入口</span>
-          </div>
-          <div class="cli-screen">
-            <div class="cli-conversation">
-              <div class="cli-dialog">
-                <div class="cli-question-bubble">
-                  <h2 class="cli-question">你希望我如何幫你？</h2>
-                </div>
-              </div>
-              <div class="cli-tabs" role="tablist" aria-label="選擇需求">
-                <button id="cli-tab-collaborate" type="button" role="tab" aria-selected="true" aria-controls="cli-panel-collaborate" data-radar-tab="collaborate" data-ga-button="hero_radar_tab_collaborate" data-ga-label="邀合作" data-ga-location="hero_cli" data-ga-action="switch_tab">邀合作</button>
-                <button id="cli-tab-learn" type="button" role="tab" aria-selected="false" aria-controls="cli-panel-learn" data-radar-tab="learn" data-ga-button="hero_radar_tab_learn" data-ga-label="自己學" data-ga-location="hero_cli" data-ga-action="switch_tab" tabindex="-1">自己學</button>
-                <button id="cli-tab-guided" type="button" role="tab" aria-selected="false" aria-controls="cli-panel-guided" data-radar-tab="guided" data-ga-button="hero_radar_tab_guided" data-ga-label="找人帶" data-ga-location="hero_cli" data-ga-action="switch_tab" tabindex="-1">找人帶</button>
-                <button id="cli-tab-free" type="button" role="tab" aria-selected="false" aria-controls="cli-panel-free" data-radar-tab="free" data-ga-button="hero_radar_tab_free" data-ga-label="找免費" data-ga-location="hero_cli" data-ga-action="switch_tab" tabindex="-1">找免費</button>
-              </div>
-              <div id="cli-panel-learn" class="cli-tab-panel" role="tabpanel" aria-labelledby="cli-tab-learn" data-radar-panel="learn" hidden>
-                <nav class="cli-options" aria-label="自己學">
-                  {LEARNING_ENTRY_LINKS.map((entry, index) => (
-                    <a href={entry.href} data-ga-button={`hero_cli_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="hero_cli" data-ga-action="navigate"><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
-                  ))}
-                </nav>
-              </div>
-              <div id="cli-panel-guided" class="cli-tab-panel" role="tabpanel" aria-labelledby="cli-tab-guided" data-radar-panel="guided" hidden>
-                <nav class="cli-options" aria-label="找人帶">
-                  {GUIDED_ENTRY_LINKS.map((entry, index) => (
-                    <a href={entry.href} data-ga-button={`hero_cli_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="hero_cli" data-ga-action="navigate"><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
-                  ))}
-                </nav>
-              </div>
-              <div id="cli-panel-collaborate" class="cli-tab-panel" role="tabpanel" aria-labelledby="cli-tab-collaborate" data-radar-panel="collaborate">
-                <nav class="cli-options" aria-label="邀合作">
-                  {COLLABORATION_ENTRY_LINKS.map((entry, index) => (
-                    <a href={entry.href} data-ga-button={`hero_cli_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="hero_cli" data-ga-action="navigate"><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
-                  ))}
-                </nav>
-              </div>
-              <div id="cli-panel-free" class="cli-tab-panel" role="tabpanel" aria-labelledby="cli-tab-free" data-radar-panel="free" hidden>
-                <nav class="cli-options" aria-label="找免費">
-                  {FREE_ENTRY_LINKS.map((entry, index) => (
-                    <a href={entry.href} data-ga-button={`hero_cli_${entry.analyticsKey}`} data-ga-label={entry.analyticsLabel} data-ga-location="hero_cli" data-ga-action="navigate"><span class="cli-option-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><span><strong>{entry.title}</strong><small>{entry.description}</small></span><span class="cli-option-arrow" aria-hidden="true">↗</span></a>
-                  ))}
-                </nav>
-              </div>
-            </div>
-          </div>
-          <div class="cli-search-area">
-            <div class="cli-search-results" id="cli-search-results" aria-live="polite" hidden></div>
-            <form class="cli-search-form" id="cli-search-form" role="search" data-ga-submit="hero_search_submit" data-ga-label="搜尋站內內容" data-ga-location="hero_cli" data-ga-action="search" data-ga-input="#cli-search-input">
-              <label class="sr-only" for="cli-search-input">搜尋站內文章、教學或工具</label>
-              <input id="cli-search-input" type="search" autocomplete="off" placeholder="搜尋文章、教學或工具…" />
-              <button type="submit" aria-label="送出搜尋" title="送出搜尋">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                  <path d="M12 19V5M6.5 10.5 12 5l5.5 5.5" />
-                </svg>
-              </button>
-            </form>
-          </div>
-        </div>
+        <figure class="hero-media hero-reveal" style="--d:0ms">
+          <img src="/images/blog/math-teacher-question-bank/import-review.jpg" alt="數學題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目" width="1400" height="875" fetchpriority="high" decoding="async" />
+          <figcaption>代表案例：補習班數學題庫系統</figcaption>
+        </figure>
     </section>
 
     <div class="home-shell">
@@ -217,69 +133,23 @@ const schema = [
           </figure>
         </article>
 
-        <div class="home-subhead reveal">
-          <p class="service-kicker">AI EDUCATION</p>
-          <h2>也提供 AI 教學</h2>
-        </div>
-
-        <article class="service-row reveal" id="free-resources">
-          <div class="service-copy">
-            <p class="service-kicker">先自己試試看</p>
-            <h2>免費資源</h2>
-            <p>這裡整理了免費教學文章、影片與開源工具。點選你需要的主題，就能查看內容。</p>
-            <ul>
-              <li>Codex 新手安裝教學</li>
-              <li>可直接交給 AI 安裝的 Skills</li>
-              <li>API 串接教學與開源工具</li>
-            </ul>
-            <a class="service-link" href="/resources/">查看免費資源 <span aria-hidden="true">→</span></a>
+        <section class="development-cost reveal" id="development-cost" aria-labelledby="cost-h">
+          <div class="development-cost-head">
+            <p class="service-kicker">費用怎麼算</p>
+            <h2 id="cost-h">先評估，再報價</h2>
+            <p>開發費依需要的功能報價，加 LINE 可以免費評估；確認範圍後才開始收費。</p>
           </div>
-          <figure class="service-media">
-            <Image src={freeResourcesHome} alt="教學影片、開源工具與實作指南組成的免費 AI 學習資源" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" />
-          </figure>
-        </article>
-
-        <article class="service-row service-row--reverse reveal">
-          <div class="service-copy">
-            <p class="service-kicker">實際學員與專案</p>
-            <h2>私人家教案例</h2>
-            <p>每堂課都用學員自己的電腦、帳號和需求實作。過去已帶學員完成 Agent 安裝、社群自動發文、Email 與行事曆整理，以及 OpenClaw 排錯救援。</p>
-            <ul>
-              <li>WordPress 串接 Threads 自動發文</li>
-              <li>Codex 搜尋 Threads 品牌輿情</li>
-              <li>Claude Code 整理 Email、行事曆與 LINE 提醒</li>
-            </ul>
-            <a class="service-link" href={`${SERVICE_SITE.url}/course/`}>查看完整案例與上課方式 <span aria-hidden="true">→</span></a>
+          <dl class="development-cost-list">
+            <div><dt>付款方式</dt><dd>分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。</dd></div>
+            <div><dt>開發時程</dt><dd>約兩個月，實際依功能範圍而定；開發過程中需求原則上可以隨時調整。</dd></div>
+            <div><dt>主機費用</dt><dd>主機建置依規格約新台幣 5,000 元（一次性），主機基本規格每月約新台幣 500 元。</dd></div>
+            <div><dt>AI 使用費</dt><dd>依實際用量計算，額度由我們協助申請、設定；以目前價格估算，一般每月約新台幣 20～150 元。</dd></div>
+          </dl>
+          <div class="development-cost-actions">
+            <a class="development-cost-primary" href={DEVELOPMENT_SERVICE.url} data-ga-button="home_cost_service" data-ga-label="看系統開發服務與合作細節" data-ga-location="home_development_cost" data-ga-action="navigate">看系統開發服務與合作細節 <span aria-hidden="true">→</span></a>
+            <a class="service-link" href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="home_cost_line" data-ga-label="加官方 LINE 免費評估" data-ga-location="home_development_cost" data-ga-action="external">加官方 LINE 免費評估 <span aria-hidden="true">↗</span></a>
           </div>
-          <ul class="case-mini-grid" aria-label="四個私人家教實際案例">
-            {TEACHING_CASES.map((item) => (
-              <li>
-                <Image src={item.image} alt={item.imageAlt} width={64} class="case-mini-icon" />
-                <div>
-                  <strong>{item.topic}</strong>
-                  <span>{item.student}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </article>
-
-        <article class="service-row reveal">
-          <div class="service-copy">
-            <p class="service-kicker">現場演示與實作</p>
-            <h2>演講紀錄</h2>
-            <p>曾於企業、AI 協會與地方社群分享 AI Agent、社群圖文與對話式拍片。內容不只講概念，會把真實工作流搬到現場演示。</p>
-            <ul>
-              <li>MixerBox：OpenClaw 雙機斷線救援</li>
-              <li>TAIA：只靠對話一條龍完成拍片</li>
-              <li>台中、雲林：AI 社群圖文實作</li>
-            </ul>
-            <a class="service-link" href={`${SERVICE_SITE.url}/services/speaking/`}>查看全部演講紀錄與邀約方式 <span aria-hidden="true">→</span></a>
-          </div>
-          <figure class="service-media">
-            <Image src={taichungTalk} alt="Alex 在台中場進行 AI 社群圖文演講" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" />
-          </figure>
-        </article>
+        </section>
 
         <section class="instructor-profile reveal" aria-labelledby="instructor-h">
           <figure class="instructor-photo">
@@ -291,7 +161,8 @@ const schema = [
             <p class="instructor-name"><span class="lat">Alex Wang</span>／王士麟</p>
             <p class="instructor-intro">接案工程師與資策會講師，也是從沒有技術背景開始，透過 AI 一步一步學會寫程式、做自動化與完成客戶專案，因此特別知道新手容易卡在哪裡。</p>
             <div class="instructor-actions">
-              <a class="service-link" href="/about/">了解講師經歷 <span aria-hidden="true">→</span></a>
+              <a class="service-link" href="/about/">了解 Alex 的經歷 <span aria-hidden="true">→</span></a>
+              <a class="service-link" href={`${SERVICE_SITE.url}/`} data-ga-button="home_about_services" data-ga-label="查看全部服務" data-ga-location="home_about" data-ga-action="navigate">查看全部服務（含 AI 教學與演講） <span aria-hidden="true">→</span></a>
               <nav class="instructor-socials" aria-label="講師社群連結">
                 <a href={LINKS.threads} target="_blank" rel="noreferrer" aria-label="Alex 的 Threads（開新分頁）">
                   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.734 7.847c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221Z" /></svg>
@@ -305,40 +176,17 @@ const schema = [
           <dl class="instructor-facts">
             <div><dt>角色</dt><dd>系統開發工程師<br />AI 應用講師</dd></div>
             <div><dt>專長</dt><dd>AI Agent<br />Vibe Coding<br />工作流自動化</dd></div>
-            <div><dt>教學</dt><dd>雙北實體<br />線上私人家教<br />企業與社群演講</dd></div>
+            <div><dt>服務</dt><dd>客製系統開發<br />AI 一對一教學<br />企業與社群演講</dd></div>
           </dl>
         </section>
 
-        {featuredPosts.length > 0 && (
-          <section class="featured-posts reveal" aria-labelledby="featured-h">
-            <div class="featured-head">
-              <div>
-                <p class="service-kicker">LATEST ARTICLES</p>
-                <h2 id="featured-h">精選文章</h2>
-              </div>
-              <a href="/blog/">查看全部文章 <span aria-hidden="true">→</span></a>
-            </div>
-            <ul class="featured-list">
-              {featuredPosts.map((post) => (
-                <li>
-                  <a href={`/blog/${post.id}/`}>
-                    <img src={blogBannerPath(post.id, '-thumb.webp')} alt="" width="640" height="336" loading="lazy" />
-                    <p class="featured-meta"><span>{post.data.tags[0] ?? 'AI 教學'}</span><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('zh-TW')}</time></p>
-                    <h3>{post.data.title}</h3>
-                    <span class="featured-go" aria-hidden="true">閱讀全文 →</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
       </section>
 
       <!-- 4／結尾 CTA -->
       <section class="closer" aria-labelledby="closer-h">
         <h2 class="q q--sec reveal" id="closer-h"><span class="nb">想把手上的工作做成一套系統<span class="qt">？</span></span></h2>
         <div class="reveal" style="--d:70ms">
-          <p class="closer-p">加官方 <span class="lat">LINE</span> 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。想學 AI 工具的話，也可以直接問。</p>
+          <p class="closer-p">加官方 <span class="lat">LINE</span> 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。</p>
           <div class="actions">
             <a class="btn btn-line" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="home_closer_line" data-ga-label="加官方 LINE 免費評估" data-ga-location="home_closer" data-ga-action="external">
               <span class="line-ic" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg></span>
@@ -722,11 +570,27 @@ const schema = [
     /* ---------- Hero：保留終端機語彙，但不模擬 AI 思考或等待 ----------
        60／30／10 配色以全頁計算：中性紙色是主要底色、深色終端機是次要區塊，
        酒紅只用於狀態與互動提示。每個選項都是原生連結，點擊後直接導頁。 */
+    .hero-media {
+      margin: 0;
+      align-self: center;
+    }
+    .hero-media img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--color-rule-2);
+      box-shadow: 0 18px 48px rgb(22 22 26 / 12%);
+    }
+    .hero-media figcaption {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--color-ink-3);
+    }
     .hero {
       display: grid;
       width: 100%;
       max-width: 72rem;
-      grid-template-columns: minmax(0, 0.82fr) minmax(560px, 1.18fr);
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
       align-items: start;
       gap: clamp(36px, 6vw, 88px);
       margin: 0 auto;
@@ -1272,6 +1136,81 @@ const schema = [
       color: var(--color-ink-3);
       font-size: 14px;
       line-height: 1.7;
+    }
+    .development-cost {
+      display: grid;
+      gap: 28px;
+      padding: clamp(48px, 7vw, 88px) 0;
+      border-top: 1px solid var(--color-rule);
+    }
+    .development-cost-head h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.1;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+    .development-cost-head > p:not(.service-kicker) {
+      max-width: 58ch;
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--color-ink-2);
+    }
+    .development-cost-list {
+      display: grid;
+      gap: 0;
+      border-top: 1px solid var(--color-rule);
+    }
+    .development-cost-list > div {
+      display: grid;
+      gap: 6px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--color-rule);
+    }
+    .development-cost-list dt {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--color-accent);
+    }
+    .development-cost-list dd {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--color-ink-2);
+    }
+    @media (min-width: 768px) {
+      .development-cost-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 40px;
+      }
+    }
+    .development-cost-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px 28px;
+    }
+    .development-cost-primary {
+      display: inline-flex;
+      min-height: 50px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px;
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .development-cost-primary:hover {
+      background: var(--color-accent-2, var(--color-accent));
+    }
+    @media (max-width: 767px) {
+      .development-cost-primary {
+        width: 100%;
+        justify-content: center;
+      }
     }
     .home-subhead {
       padding: clamp(40px, 6vw, 72px) 0 0;
