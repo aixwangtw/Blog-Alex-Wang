@@ -69,7 +69,7 @@ const DROPDOWN_NAV = [
         eyebrow: '學習路線',
         title: '免費資源總整理',
         description: 'Codex 安裝、可直接交給 AI 安裝的 Skills、Threads 與 Instagram API 教學影片，照順序學。',
-        image: blogBannerPath('free-resources'),
+        image: new URL(pageBannerUrl('resources')).pathname,
         cta: '查看免費資源',
       },
       {
@@ -89,7 +89,7 @@ const DROPDOWN_NAV = [
     key: 'services',
     label: '服務',
     href: `${SERVICE_SITE.url}/`,
-    subtitle: '系統開發、AI 教學與演講，先看你遇到的情況再選',
+    subtitle: '系統開發、AI 教學與演講',
     accent: true,
     external: true,
     previews: [
@@ -1445,6 +1445,8 @@ const jsonLd = {
         padding: 0 2px 10px;
       }
       .service-menu-head > span {
+        flex-shrink: 0;
+        white-space: nowrap;
         font-size: 13px;
         font-weight: 700;
         color: var(--color-ink);
@@ -1518,9 +1520,12 @@ const jsonLd = {
         display: block;
         grid-column: 1;
         grid-row: 1 / span 2;
+        /* 縮圖維持橫幅原比例（1200×630）並靠上對齊：原本 height:100% 會跟著右邊文字拉高，
+           object-fit:cover 把橫幅左右裁掉，手機上標題字被切一半 */
+        align-self: start;
         width: 104px;
-        height: 100%;
-        min-height: 55px;
+        height: auto;
+        aspect-ratio: 1200 / 630;
         border: 1px solid var(--color-rule);
         background: #fff;
         object-fit: cover;
@@ -1785,7 +1790,6 @@ const jsonLd = {
         }
         .service-preview img {
           width: 152px;
-          min-height: 80px;
         }
         .service-preview--icon img {
           padding: 8px;
