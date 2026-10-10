@@ -1,7 +1,9 @@
 // 全站共用的品牌與聯絡資訊：改這裡就能同步更新所有頁面與 JSON-LD
 export const SITE = {
-  title: 'AI新手教學',
-  titleEn: 'AI Beginner Blog',
+  title: 'Aix 系統開發',
+  titleEn: 'Aix System Development',
+  // 舊站名保留在結構化資料的 alternateName，讓搜尋引擎把新舊名稱認成同一個網站
+  formerNames: ['AI新手教學', 'AI Beginner Blog'],
   url: 'https://aixwang.dev',
   description:
     'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統；也是 AI 應用講師，教 AI Agent 工具、自動發文、AI 生圖模板與對話式拍片，提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。',
@@ -11,7 +13,7 @@ export const SITE = {
 // 服務內容獨立成子網域；主站專注文章與免費資源，
 // 課程、演講與預約轉換統一放在服務站。
 export const SERVICE_SITE = {
-  title: 'Alex AI 服務',
+  title: 'Aix 系統開發服務',
   url: 'https://service.aixwang.dev',
   description:
     '我和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統；也提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），並接受企業與社群的 AI 演講邀約。',

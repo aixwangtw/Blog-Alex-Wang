@@ -52,14 +52,14 @@ const schema = [
     '@type': 'WebPage',
     '@id': `${SERVICE_SITE.url}/#webpage`,
     url: `${SERVICE_SITE.url}/`,
-    name: 'Alex AI 服務｜系統開發、AI 教學與演講',
+    name: 'Aix 系統開發服務｜客製系統開發、AI 教學與演講',
     description: SERVICE_SITE.description,
     isPartOf: { '@id': `${SERVICE_SITE.url}/#website` },
     about: { '@id': PERSON_SCHEMA['@id'] },
   },
   {
     '@type': 'ItemList',
-    name: 'Alex AI 服務項目',
+    name: 'Aix 系統開發服務項目',
     itemListElement: [{ title: '客製系統開發', href: '/services/development/' }, ...serviceCards].map((item, index) => ({
       '@type': 'ListItem',
       position: index + 1,
@@ -71,11 +71,11 @@ const schema = [
 ---
 
 <ServiceBase
-  title="Alex AI 服務｜系統開發、AI 教學與演講"
+  title="Aix 系統開發服務｜客製系統開發、AI 教學與演講"
   description={SERVICE_SITE.description}
   canonicalPath="/"
   ogImage={pageBannerUrl('service-home')}
-  ogImageAlt="Alex AI 服務｜講師 Alex"
+  ogImageAlt="Aix 系統開發服務｜工程師 Alex"
   schema={schema}
 >
   <section class="service-hero">

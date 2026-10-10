@@ -83,9 +83,11 @@ const pages = [
   },
   {
     file: 'service-home',
-    badge: '課程與演講',
-    title: 'Alex AI 服務',
-    subtitle: '從新手實戰到團隊導入',
+    badgePrefix: '',
+    badge: '系統開發｜AI 教學與演講',
+    title: '系統開發服務',
+    subtitle: '把重複的工作，做成一套系統',
+    role: '工程師',
   },
 ];
 

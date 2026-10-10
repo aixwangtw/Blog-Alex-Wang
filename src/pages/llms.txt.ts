@@ -21,7 +21,7 @@ export const GET: APIRoute = async () => {
     )
     .join('\n');
 
-  const body = `# AI新手教學（AI Beginner Blog）
+  const body = `# Aix 系統開發（Aix System Development，舊名 AI新手教學）
 
 > Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發（代表案例：補習班數學題庫系統）；也是 AI 應用講師。教 AI Agent 工具使用（Claude Code、Codex）、做自動發文（Meta API）、AI 生圖模板（Tooka）、對話式拍片（HyperFrames）——把工作流程簡化成對話就能完成。提供付費一對一私人教學（台北／新北實體課或 Google Meet／Discord 線上課）與企業、學校、社群的 AI 主題演講。
 
