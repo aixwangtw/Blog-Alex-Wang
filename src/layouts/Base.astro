@@ -1809,17 +1809,19 @@ const jsonLd = {
         place-items: center;
         margin-left: auto;
         padding: 0;
-        border: 1px solid #4b4643;
+        border: 1px solid #06c755;
         border-radius: 50%;
-        background: #1d1b1a;
-        color: #f7f3ee;
-        box-shadow: 0 12px 32px rgb(22 18 17 / 24%);
+        background: #06c755;
+        color: #fff;
+        box-shadow: 0 8px 24px rgb(22 22 26 / 18%);
         cursor: pointer;
+        transition: background-color 0.18s var(--ease), transform 0.18s var(--ease);
       }
+      /* 外觀比照原本的 LINE 浮動鈕：LINE 綠圓形、白色圖示 */
       .search-chat-toggle-icon {
         width: 28px;
         height: 28px;
-        color: #f7f3ee;
+        color: #fff;
       }
       .search-chatbot.is-terminal-collapse {
         animation: terminal-collapse 650ms cubic-bezier(.2, .85, .25, 1) both;
@@ -2293,8 +2295,8 @@ const jsonLd = {
          ============================================================ */
       @media (hover: hover) and (pointer: fine) {
         .search-chat-toggle:hover {
-          border-color: #bc6472;
-          background: #292524;
+          border-color: #05b34c;
+          background: #05b34c;
           transform: translateY(-2px);
         }
         .hd-cue:hover {

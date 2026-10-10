@@ -7,6 +7,9 @@
 // 分隔符用 --rule-3（對紙底 3.35:1）而不是 --rule-2（1.61:1）——後者等於看不見。
 // 它是 aria-hidden 的裝飾字元，但仍要過非文字對比的 3:1。
 //
+// 一律單行：前面的層級不換行，最後一項（目前頁面，常是很長的文章標題）超出時以「…」截斷，
+// 完整標題放在 title 屬性與頁面 h1，不會因標題太長把麵包屑擠成兩行。
+//
 // 最後一項補 aria-current="page"：輔助技術才知道這是目前所在的頁面，
 // 而不是一個少了連結的項目。
 interface Crumb {
@@ -24,15 +27,15 @@ const { items, class: className = '' } = Astro.props;
 
 <nav
   aria-label="麵包屑"
-  class={`flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-2 ${className}`}
+  class={`flex min-w-0 flex-nowrap items-center gap-x-2 text-[13px] text-ink-2 ${className}`}
 >
   {items.map((crumb, i) => (
     <>
-      {i > 0 && <span aria-hidden="true" class="font-mono text-rule-3">/</span>}
+      {i > 0 && <span aria-hidden="true" class="shrink-0 font-mono text-rule-3">/</span>}
       {crumb.href ? (
-        <a href={crumb.href} class="transition-colors hover:text-accent">{crumb.name}</a>
+        <a href={crumb.href} class="shrink-0 whitespace-nowrap transition-colors hover:text-accent">{crumb.name}</a>
       ) : (
-        <span class="min-w-0 truncate text-ink-3" aria-current="page">{crumb.name}</span>
+        <span class="min-w-0 flex-1 truncate text-ink-3" aria-current="page" title={crumb.name}>{crumb.name}</span>
       )}
     </>
   ))}

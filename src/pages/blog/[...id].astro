@@ -118,23 +118,23 @@ const updatedText = updatedDate
           2. 藥丸標籤是舊語言的殘留（見 resources.astro 的註解：改版後卡片與
              藥丸標籤全站移除，分類靠字級與字距分出來）。
           <time datetime> 完全保留，時效訊號與結構化資料不受影響。 */}
-      <p class="mt-5 text-[13px] leading-7 text-ink-3">
-        <span>作者：<a href="/about/" class="text-ink-2 transition-colors hover:text-accent">{AUTHOR.name}</a></span>
-        <span class="px-1.5 text-rule-3" aria-hidden="true">・</span>
-        <span>發佈於 <time datetime={pubDate.toISOString()}>{dateText}</time></span>
-        {updatedText && (
-          <>
-            <span class="px-1.5 text-rule-3" aria-hidden="true">・</span>
-            <span>更新於 <time datetime={updatedDate!.toISOString()}>{updatedText}</time></span>
-          </>
+      {/* 中繼資料：作者與日期一組、標籤一組，分兩區顯示，不用「・」串成一行。
+          日期用固定寬度的標籤欄（發佈／更新）上下對齊，手機換行時也不會錯位；
+          標籤改成小型標籤塊，比照主流內容站的做法。<time datetime> 照舊保留。 */}
+      <div class="article-meta mt-5">
+        <dl class="article-meta-list">
+          <div><dt>作者</dt><dd><a href="/about/" class="text-ink-2 transition-colors hover:text-accent">{AUTHOR.name}</a></dd></div>
+          <div><dt>發佈</dt><dd><time datetime={pubDate.toISOString()}>{dateText}</time></dd></div>
+          {updatedText && (
+            <div><dt>更新</dt><dd><time datetime={updatedDate!.toISOString()}>{updatedText}</time></dd></div>
+          )}
+        </dl>
+        {post.data.tags.length > 0 && (
+          <ul class="article-tags" aria-label="文章標籤">
+            {post.data.tags.map((tag) => <li>{tag}</li>)}
+          </ul>
         )}
-        {post.data.tags.map((tag) => (
-          <>
-            <span class="px-1.5 text-rule-3" aria-hidden="true">・</span>
-            <span>{tag}</span>
-          </>
-        ))}
-      </p>
+      </div>
 
       <div class="mt-5">
         <ShareBar url={`${SITE.url}/blog/${post.id}/`} title={title} position="top" />
@@ -282,3 +282,59 @@ const updatedText = updatedDate
     })();
   </script>
 </Base>
+
+<style>
+  .article-meta {
+    display: grid;
+    gap: 14px;
+  }
+  .article-meta-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-ink-3);
+  }
+  .article-meta-list > div {
+    display: flex;
+    gap: 8px;
+  }
+  .article-meta-list dt {
+    color: var(--color-ink-3);
+  }
+  .article-meta-list dd {
+    margin: 0;
+    color: var(--color-ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .article-tags li {
+    padding: 3px 10px;
+    border: 1px solid var(--color-rule-2);
+    border-radius: 999px;
+    background: var(--color-paper-2);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--color-ink-2);
+  }
+  /* 手機：作者、發佈、更新各占一行，標籤欄固定寬度，日期上下對齊 */
+  @media (max-width: 639px) {
+    .article-meta-list {
+      display: grid;
+      gap: 2px;
+    }
+    .article-meta-list dt {
+      width: 2.5em;
+    }
+  }
+</style>
+
