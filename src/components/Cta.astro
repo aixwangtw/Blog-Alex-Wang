@@ -190,7 +190,10 @@ const isLineLink = /lin\.ee|line\.me/.test(href);
     background: #06c755;
     color: #fff;
   }
-  .cta-go-ic {
+  /* LineIcon 是子元件，Astro 的 scoped class 選擇器碰不到它渲染的 <svg>，
+     必須用 :global()；否則 svg 沒有寬高，會被撐成 150px 以上，把圓形按鈕拉成橢圓。 */
+  .cta-go :global(.cta-go-ic) {
+    display: block;
     flex-shrink: 0;
     width: 22px;
     height: 22px;
@@ -201,6 +204,7 @@ const isLineLink = /lin\.ee|line\.me/.test(href);
       gap: 2px;
       width: 168px;
       min-width: 168px;
+      height: 168px;
       min-height: 168px;
       border-radius: 50%;
       padding: 8px;
