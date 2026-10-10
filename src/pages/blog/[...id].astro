@@ -4,7 +4,7 @@ import { getCollection, render } from 'astro:content';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Cta from '../../components/Cta.astro';
 import FaqList from '../../components/FaqList.astro';
-import { AUTHOR, AUTHOR_INTROS, SITE, pickArticleCta, pickVariant } from '../../consts';
+import { AUTHOR, SITE, pickArticleCta, pickAuthorIntro } from '../../consts';
 import Base from '../../layouts/Base.astro';
 
 export async function getStaticPaths() {
@@ -189,7 +189,7 @@ const updatedText = updatedDate
     <section class="mt-14 border-t border-rule px-0.5 pt-7">
       <h2 class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">關於作者</h2>
       <p class="mt-3 leading-8 text-ink-2">
-        {AUTHOR.name}——{AUTHOR_INTROS[pickVariant(post.id, AUTHOR_INTROS.length)]}
+        {AUTHOR.name}——{pickAuthorIntro(post.id, post.data.tags)}
         <a href="/about/" class="text-accent underline underline-offset-4">完整介紹</a>
       </p>
     </section>

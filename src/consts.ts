@@ -48,6 +48,22 @@ export const AUTHOR_INTROS = [
   '接案工程師，平常幫客戶把重複的工作變成自動化流程，也在 21 萬人的 OpenClaw 中文社群當版主。部落格寫的都是自己每天在用的做法。',
 ];
 
+// 文章頁「關於作者」依文章性質（tags）選版本，比照 CTA_RULES：由上往下比對、第一條命中就用；
+// 沒命中的文章維持 AUTHOR_INTROS 雜湊輪替（教學類、講師類文章目前都沿用原本的輪替版本）。
+// 只影響文章頁；/about/、首頁、服務頁的介紹不走這裡。
+export const AUTHOR_INTRO_RULES: { tags: string[]; intro: string }[] = [
+  {
+    tags: ['題庫系統', '客製開發', 'AI 導入'],
+    intro:
+      '系統開發工程師，目前全職接案，有一群開發團隊，平常幫客戶把重複的工作變成自動化流程。官方 LINE 除了我本人，夥伴們也會協助回覆。',
+  },
+];
+
+export function pickAuthorIntro(slug: string, tags: readonly string[]): string {
+  const rule = AUTHOR_INTRO_RULES.find((candidate) => candidate.tags.some((tag) => tags.includes(tag)));
+  return rule ? rule.intro : AUTHOR_INTROS[pickVariant(slug, AUTHOR_INTROS.length)];
+}
+
 export const CTA_VARIANTS = [
   {
     title: '想更快上手？可以直接找我一對一',
