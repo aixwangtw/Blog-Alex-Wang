@@ -60,6 +60,6 @@ faqs:
 
 ## 想聊聊的話
 
-以上的經歷想跟大家分享。如果你對[用 AI 自學](/blog/how-to-start-learning-ai/)有卡關，或是也想自己接案，可以加 [LINE 跟我聊聊](https://line.me/ti/p/jejH4FkQn-)；想發案子給我也歡迎。
+以上的經歷想跟大家分享。如果你對[用 AI 自學](/blog/how-to-start-learning-ai/)有卡關，或是也想自己接案，可以加 [LINE 跟我聊聊](https://lin.ee/raoKSVR)；想發案子給我也歡迎。
 
 因為我自己就是無工程背景、一步一步透過問 AI 還有問工程師自學過來的，所以很能理解[自學的痛點](/blog/no-tech-background/)是什麼——這也是我做[一對一教學](/course/)的底氣。

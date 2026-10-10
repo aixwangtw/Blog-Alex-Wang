@@ -63,6 +63,17 @@ export const CTA_VARIANTS = [
   },
 ];
 
+// LINE 網址集中在這裡。全部是同一個官方帳號（@438efvtl），用 LINE 後台的追蹤連結區分加好友來源：
+// lin.ee/raoKSVR＝官網（本站）。另外兩條不給本站用：lin.ee/Ufu9moC 是 Threads 專用、
+// lin.ee/oQbiBje 是題庫 Demo 站專用。
+// blog＝全站共用入口（浮動按鈕、預設 CTA、學習入口）；questionBank＝題庫／客製開發類文章的頁尾 CTA。
+// 兩者目前同一條，分開保留是為了之後要再細分來源時只改這裡。
+// 文章內文（Directus）裡的連結不吃這個常數，要另外改。
+export const LINE_URLS = {
+  blog: 'https://lin.ee/raoKSVR',
+  questionBank: 'https://lin.ee/raoKSVR',
+} as const;
+
 // 依字串雜湊挑選輪替版本：同一個 key 永遠選到同一版
 export function pickVariant(key: string, length: number): number {
   let h = 0;
@@ -76,7 +87,7 @@ export const LINKS = {
   instagram: 'https://www.instagram.com/alex_wang.ai/',
   youtube: 'https://www.youtube.com/channel/UCQUY_h3ic_oPmuoRJrLvE3g',
   github: 'https://github.com/js0980420',
-  line: 'https://line.me/ti/p/jejH4FkQn-',
+  line: LINE_URLS.blog,
   email: 'mailto:js0980420@gmail.com',
 };
 

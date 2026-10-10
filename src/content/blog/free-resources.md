@@ -53,6 +53,6 @@ faqs:
 
 ## 有問題想問？
 
-- [LINE 免費諮詢](https://line.me/ti/p/jejH4FkQn-)
+- [LINE 免費諮詢](https://lin.ee/raoKSVR)
 - [Facebook 社團](https://www.facebook.com/groups/3238547836318385)
 - 想有人帶著走：[一對一教學](/course/)（雙北實體／線上）

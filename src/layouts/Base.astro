@@ -299,7 +299,9 @@ const jsonLd = {
           var a = e.target.closest && e.target.closest('a[href]');
           if (!a) return;
           var href = a.href || '';
-          if (href.indexOf('line.me') !== -1) {
+          // LINE 連結有兩種網域：line.me（加好友網址）與 lin.ee（LINE 後台的追蹤短網址）。
+          // 帶 data-ga-button 的按鈕點了 LINE 連結時，上面先送 button_click，這裡再補送 line_click。
+          if (href.indexOf('line.me') !== -1 || href.indexOf('lin.ee') !== -1) {
             window.gtag('event', 'line_click', { link_url: href, page_path: location.pathname });
           } else if (href.indexOf('/course') !== -1) {
             window.gtag('event', 'one_on_one_click', { link_url: href, page_path: location.pathname });
