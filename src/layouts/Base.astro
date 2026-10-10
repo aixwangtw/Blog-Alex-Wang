@@ -3,7 +3,6 @@ import { blogBannerPath } from '../lib/blog-banner';
 import ogBanner from '../assets/banner-v2.png';
 import githubLogo from '../assets/github-logo.svg';
 import lineBrandIcon from '../assets/line-brand-icon.png';
-import tookaLogo from '../assets/tooka-logo.svg';
 import {
   AUTHOR,
   COLLABORATION_ENTRY_LINKS,
@@ -11,7 +10,6 @@ import {
   GUIDED_ENTRY_LINKS,
   LEARNING_ENTRY_LINKS,
   LINKS,
-  NAV,
   PERSON_SCHEMA,
   SERVICE_SITE,
   SITE,
@@ -21,7 +19,7 @@ import {
 import '../styles/global.css';
 
 // 頁首導覽不放「首頁」：字標本身就是回首頁的連結，重複一次是浪費連結預算。
-// 頁尾的網站導覽仍然列出完整 NAV（含首頁）。
+// 頁尾導覽（FOOTER_NAV）依同一套分類分組，「首頁」放在「關於」組。
 const HEADER_NAV = [
   { href: '/about/', label: '關於' },
 ];
@@ -31,8 +29,17 @@ const DROPDOWN_NAV = [
     key: 'articles',
     label: '文章',
     href: '/blog/',
-    subtitle: '從新手入門、工具安裝到社群自動化',
+    subtitle: '系統開發案例、工具安裝到社群自動化',
     previews: [
+      {
+        href: '/blog/math-teacher-question-bank/',
+        eyebrow: '系統開發案例',
+        title: '數學題庫系統',
+        description: '補習班老師用的題庫系統：考卷匯入、AI 出題、AI 詳解，出卷直接匯出或貼進 Word。',
+        image: blogBannerPath('math-teacher-question-bank'),
+        cta: '閱讀案例介紹',
+        wide: true,
+      },
       {
         href: '/blog/codex-windows-wsl-install/',
         eyebrow: '工具安裝',
@@ -55,18 +62,15 @@ const DROPDOWN_NAV = [
     key: 'resources',
     label: '領取',
     href: '/resources/',
-    subtitle: '免費教學影片、開源工具與學習路線',
+    subtitle: '免費教學影片、Skills 與學習路線',
     previews: [
       {
-        href: '/blog/why-i-built-tooka/',
-        eyebrow: '我開發的工具',
-        title: 'Tooka 社群圖文',
-        description: '解決生圖常見的跑版、失真與文字亂碼，用對話生成 IG、Facebook 與 Threads 圖文。',
-        image: tookaLogo.src,
-        navIcon: tookaLogo.src,
-        tookaIcon: true,
-        cta: '領取',
-        repo: 'https://github.com/js0980420/tooka',
+        href: '/resources/',
+        eyebrow: '學習路線',
+        title: '免費資源總整理',
+        description: 'Codex 安裝、可直接交給 AI 安裝的 Skills、Threads 與 Instagram API 教學影片，照順序學。',
+        image: blogBannerPath('free-resources'),
+        cta: '查看免費資源',
       },
       {
         href: 'https://www.instagram.com/reel/DbwqIJkydIQ/',
@@ -117,6 +121,42 @@ const DROPDOWN_NAV = [
         cta: '查看演講服務',
         external: true,
       },
+    ],
+  },
+];
+
+// 頁尾導覽：分組與頂部導覽列同一套分類（文章／領取／服務／關於），每組列出常用的下一層連結
+const FOOTER_NAV = [
+  {
+    label: '文章',
+    links: [
+      { href: '/blog/', label: '全部文章' },
+      { href: '/blog/math-teacher-question-bank/', label: '題庫系統案例' },
+      { href: '/blog/codex-windows-wsl-install/', label: 'Codex 新手安裝' },
+      { href: '/blog/threads-api-tutorial/', label: 'Meta API 實戰' },
+      { href: '/faq/', label: '常見問題' },
+    ],
+  },
+  {
+    label: '領取',
+    links: [
+      { href: '/resources/', label: '免費資源' },
+    ],
+  },
+  {
+    label: '服務',
+    links: [
+      { href: `${SERVICE_SITE.url}/services/development/`, label: '客製系統開發' },
+      { href: `${SERVICE_SITE.url}/course/`, label: 'AI 一對一教學' },
+      { href: `${SERVICE_SITE.url}/services/speaking/`, label: 'AI 主題演講' },
+      { href: `${SERVICE_SITE.url}/`, label: '服務總覽' },
+    ],
+  },
+  {
+    label: '關於',
+    links: [
+      { href: '/about/', label: '關於 Alex' },
+      { href: '/', label: '首頁' },
     ],
   },
 ];
@@ -1089,14 +1129,18 @@ const jsonLd = {
             <p class="ft-mark">{SITE.title}</p>
             <p class="ft-desc">{SITE.description}</p>
           </div>
-          <div>
-            <p class="ft-h">網站導覽</p>
-            <ul class="ft-list">
-              {NAV.map((item) => (
-                <li><a href={item.href}>{item.label}</a></li>
-              ))}
-            </ul>
-          </div>
+          <nav class="ft-nav" aria-label="頁尾導覽">
+            {FOOTER_NAV.map((group) => (
+              <div>
+                <p class="ft-h">{group.label}</p>
+                <ul class="ft-list">
+                  {group.links.map((item) => (
+                    <li><a href={item.href}>{item.label}</a></li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
           <!-- 這一欄的後 5 條就是 PERSON_SCHEMA.sameAs 那一組，一律帶 rel="me"：
                它們是身分驗證與 E-E-A-T 訊號，砍掉會少一層可信度來源。 -->
           <div>
@@ -1373,6 +1417,21 @@ const jsonLd = {
       .service-nav-item--accent .service-nav-shell--split .service-nav summary {
         padding-inline: 10px 14px;
         background: transparent;
+      }
+      /* 手機選單：服務與其他項目同一條左緣、不加底色，只用強調色文字區分 */
+      @media (max-width: 1023px) {
+        .service-nav-item--accent .service-nav summary,
+        .service-nav-item--accent .service-nav-shell--split {
+          padding-inline-start: 2px;
+          background: transparent;
+        }
+        .mainnav .service-nav-item--accent .service-nav-direct,
+        .service-nav-item--accent .service-nav-shell--split .service-nav summary {
+          color: var(--color-accent);
+        }
+        .service-nav-item--accent .service-nav-shell--split .service-nav summary {
+          padding-inline: 12px 2px;
+        }
       }
       .service-menu {
         padding: 4px 0 16px;
@@ -2166,11 +2225,23 @@ const jsonLd = {
         display: grid;
         gap: 30px;
       }
-      @media (min-width: 1024px) {
+      @media (min-width: 1200px) {
         .ft-grid {
-          grid-template-columns: minmax(300px, 1fr) 190px 268px;
-          gap: 24px;
+          grid-template-columns: minmax(240px, 1fr) auto auto;
+          gap: 48px;
           align-items: start;
+        }
+      }
+      /* 手機兩欄、平板以上四欄，每組一個標題＋直排連結 */
+      .ft-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px 20px;
+      }
+      @media (min-width: 640px) {
+        .ft-nav {
+          grid-template-columns: repeat(4, max-content);
+          gap: 28px 44px;
         }
       }
       .ft-mark {
@@ -2192,23 +2263,12 @@ const jsonLd = {
         color: var(--color-ink-3);
       }
       .ft-list li + li {
-        margin-top: 8px;
+        margin-top: 10px;
       }
       .ft-list a {
         font-size: 13.5px;
         color: var(--color-ink-2);
         text-decoration: none;
-      }
-      @media (min-width: 1024px) {
-        .ft-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px 16px;
-          max-width: 190px;
-        }
-        .ft-list li + li {
-          margin-top: 0;
-        }
       }
       .ft-social {
         display: flex;
