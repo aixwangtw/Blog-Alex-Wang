@@ -1,5 +1,5 @@
 {
-  "_說明": "文章橫幅草稿文案（選填）。key 是 Directus slug；沒列在這裡的文章會自動從標題/描述/標籤推導。badge=徽章分類、title=橫幅主標（可用 \\n 指定斷行，優先兩行）、subtitle=藍底白字一句話。版型已無卡片，不再支援 steps。",
+  "_說明": "文章橫幅草稿文案（選填）。key 是 Directus slug；沒列在這裡的文章會自動從標題/描述/標籤推導。badge=徽章分類、badgePrefix=徽章前綴（預設新手學 AI，空字串則不顯示）、role=人物卡身分（預設講師）、title=橫幅主標（可用 \\n 指定斷行，優先兩行）、subtitle=藍底白字一句話。版型已無卡片，不再支援 steps。",
   "threads-api-tutorial": {
     "badge": "API 教學",
     "title": "Threads API\n申請教學",
@@ -26,8 +26,10 @@
     "subtitle": "省 Token＋手動重置"
   },
   "math-teacher-question-bank": {
-    "badge": "客製開發",
+    "badgePrefix": "",
+    "badge": "系統開發",
     "title": "數學題庫系統\n出題流程自動化",
-    "subtitle": "不用再挑題挑到青光眼"
+    "subtitle": "不用再挑題挑到青光眼",
+    "role": "工程師"
   }
 }

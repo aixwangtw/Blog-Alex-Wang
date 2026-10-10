@@ -141,7 +141,7 @@ function buildLayer(copy, fontData, logos) {
                           fontSize: 28,
                           color: ACCENT,
                         },
-                        children: `新手學 AI｜${copy.badge}`,
+                        children: copy.badgePrefix ? `${copy.badgePrefix}｜${copy.badge}` : copy.badge,
                       },
                     },
                     copy.platform
@@ -283,7 +283,7 @@ function buildLayer(copy, fontData, logos) {
               fontSize: 22,
               color: TITLE_ACCENT,
             },
-            children: '講師：Alex',
+            children: `${copy.role}：Alex`,
           },
         },
       ].filter(Boolean),
@@ -299,6 +299,10 @@ async function generate(article, fontData, background, instructor) {
     subtitle: copySpec.subtitle ?? deriveSubtitle(article.description),
     logos: copySpec.logos ?? [],
     platform: copySpec.platform ?? 'AI',
+    // 徽章前綴，預設「新手學 AI」；banner-copy.json 設 badgePrefix 為空字串可拿掉前綴
+    badgePrefix: copySpec.badgePrefix ?? '新手學 AI',
+    // 人物卡身分標籤，預設「講師」；banner-copy.json 可逐篇用 role 覆寫
+    role: copySpec.role ?? '講師',
   };
 
   const svg = await satori(buildLayer(copy, fontData, logoData), {
