@@ -99,56 +99,6 @@ const schema = [
       ))}
     </div>
 
-    <SectionHeading size="md" class="mt-14">代表作品：Tooka</SectionHeading>
-    {/* overflow-hidden 是舊圓角卡片用來裁切影片四角的，圓角歸零後沒有作用，移除。
-        內層原本的 p-6 也移除：Card 的內容要貼齊髮絲線的起點（px-0.5），
-        多一層 24px 內距會讓這一段比頁面上其他所有列都縮排，那條線就對不到任何東西。
-        三個賣點小卡（rounded-2xl ＋ bg-paper-2）改成髮絲線格，
-        gap 同樣只留水平。 */}
-    <Card padded={false} class="mt-6">
-      <video
-        src="/videos/tooka-workflow-demo.mp4"
-        controls
-        preload="metadata"
-        playsinline
-        class="w-full"
-      ></video>
-      <div class="px-0.5 pt-6">
-        <div class="grid gap-x-8 sm:grid-cols-3">
-          <div class="border-t border-rule py-4">
-            <p class="font-semibold text-ink">中文描述需求</p>
-            <p class="mt-1 text-sm leading-6 text-ink-2">AI Agent 生成整組 1080×1350 IG 輪播圖文</p>
-          </div>
-          <div class="border-t border-rule py-4">
-            <p class="font-semibold text-ink">不跑版、不失真</p>
-            <p class="mt-1 text-sm leading-6 text-ink-2">文字用程式渲染、版型用模板鎖定</p>
-          </div>
-          <div class="border-t border-rule py-4">
-            <p class="font-semibold text-ink">一鍵發佈</p>
-            <p class="mt-1 text-sm leading-6 text-ink-2">Facebook、Instagram、Threads 同步上稿</p>
-          </div>
-        </div>
-        <div class="mt-6 flex flex-wrap gap-4">
-          <a
-            href="https://tooka.js0980420.workers.dev/"
-            target="_blank"
-            rel="noreferrer"
-            class="rounded-[3px] bg-accent px-5 py-2.5 font-semibold text-white transition hover:bg-accent-2"
-          >
-            線上直接使用 Tooka →
-          </a>
-          <a
-            href="https://github.com/js0980420/tooka"
-            target="_blank"
-            rel="noreferrer"
-            class="rounded-[3px] border border-rule-3 bg-surface px-5 py-2.5 font-semibold text-accent transition hover:border-accent-line-2 hover:bg-paper-2"
-          >
-            查看 GitHub 原始碼 →
-          </a>
-        </div>
-      </div>
-    </Card>
-
     <SectionHeading size="md" class="mt-14">經歷與代表作品</SectionHeading>
     <ul class="mt-6 space-y-4">
       {EXPERIENCE.map((item) => <CheckItem>{item.text}</CheckItem>)}

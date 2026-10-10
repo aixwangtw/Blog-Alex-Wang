@@ -45,7 +45,6 @@ export const AUTHOR = {
     'Claude Code',
     'Codex',
     'AI 生圖模板',
-    'Tooka',
     'Meta API',
     '對話式拍片',
     'HyperFrames',

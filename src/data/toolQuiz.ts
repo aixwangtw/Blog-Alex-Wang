@@ -13,12 +13,6 @@ export const TOOL_QUIZ_RECOMMENDATIONS = {
     link: `${SITE.url}/blog/threads-api-tutorial/`,
     linkLabel: 'Meta 三大 API 申請教學',
   },
-  tooka: {
-    title: '你需要的是 Tooka',
-    description: '量產輪播圖文、知識卡，版型不會跑版。',
-    link: `${SITE.url}/blog/why-i-built-tooka/`,
-    linkLabel: 'Tooka 完整介紹',
-  },
   remotion: {
     title: '你需要的是 Remotion',
     description: '用程式化的方式做影片，適合需要固定版型、大量產出短影音的人。',

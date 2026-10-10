@@ -341,7 +341,7 @@ const jsonLd = {
           }
         }
 
-        // 自訂事件：追蹤按鈕與關鍵轉換點擊（LINE 諮詢 / Tooka / YouTube）
+        // 自訂事件：追蹤按鈕與關鍵轉換點擊（LINE 諮詢 / YouTube）
         document.addEventListener('click', function (e) {
           var control = e.target.closest && e.target.closest('[data-ga-button]');
           if (control) trackButton(control);
@@ -357,8 +357,6 @@ const jsonLd = {
             window.gtag('event', 'one_on_one_click', { link_url: href, page_path: location.pathname });
           } else if (href.indexOf('/services/speaking') !== -1) {
             window.gtag('event', 'speaking_click', { link_url: href, page_path: location.pathname });
-          } else if (href.indexOf('tooka') !== -1) {
-            window.gtag('event', 'tooka_click', { link_url: href, page_path: location.pathname });
           } else if (href.indexOf('youtube.com') !== -1 || href.indexOf('youtu.be') !== -1) {
             window.gtag('event', 'youtube_click', { link_url: href, page_path: location.pathname });
           }
@@ -486,7 +484,6 @@ const jsonLd = {
                           <div
                             class:list={['service-preview', {
                               'service-preview--icon': 'navIcon' in item,
-                              'service-preview--tooka': 'tookaIcon' in item,
                               'service-preview--wide': 'wide' in item,
                             }]}
                           >
@@ -1528,9 +1525,6 @@ const jsonLd = {
         padding: 5px;
         object-fit: contain;
       }
-      .service-preview--tooka img {
-        padding: 5px;
-      }
       .service-preview-copy {
         display: grid;
         grid-column: 2;
@@ -1790,9 +1784,6 @@ const jsonLd = {
           min-height: 80px;
         }
         .service-preview--icon img {
-          padding: 8px;
-        }
-        .service-preview--tooka img {
           padding: 8px;
         }
         .service-preview-copy strong {

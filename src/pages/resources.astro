@@ -29,8 +29,7 @@ import { RESOURCES_FAQS } from '../data/faqs';
 import { VIDEOS } from '../data/home';
 import Base from '../layouts/Base.astro';
 
-// 免費資源頁只直接呈現 YouTube 教學影片；Tooka 的示範與完整說明集中在文章，
-// 這裡只放文章入口，避免同一份工具內容在兩頁重複維護。
+// 免費資源頁只直接呈現 YouTube 教學影片。
 // 之後在 home.ts 加新的 YouTube 教學影片會自動落到「教學影片」，不用改這一頁。
 const tutorialVideos = VIDEOS.filter((video) => video.embedId);
 
@@ -58,7 +57,7 @@ const schema = [
 
 <Base
   title="免費資源｜Codex 安裝、AI Skills 與開源工具"
-  description="從 Codex 安裝開始，免費取得可直接交給 AI 安裝的 Skills，再學 Threads／Instagram API 與開源工具 Tooka。先自己動手做，卡關再來問。"
+  description="從 Codex 安裝開始，免費取得可直接交給 AI 安裝的 Skills，再學 Threads／Instagram API。先自己動手做，卡關再來問。"
   ogImage={pageBannerUrl('resources')}
   ogImageAlt="免費資源：Codex 安裝、AI Skills 與開源工具"
   schema={schema}
@@ -244,29 +243,6 @@ https://github.com/mattpocock/skills</code></pre>
       >。
     </p>
 
-    <!-- ---------- 選配：Tooka 文章入口 ---------- -->
-    <SectionHeading size="md" class="mt-16">想做社群圖文：Tooka</SectionHeading>
-    <a
-      href="/blog/why-i-built-tooka/"
-      class="group mt-6 grid items-center overflow-hidden border border-rule bg-white/40 no-underline sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
-    >
-      <img
-        src={blogBannerPath('why-i-built-tooka', '-thumb.webp')}
-        alt="我為什麼開發開源工具 Tooka 文章縮圖"
-        class="aspect-video w-full object-cover"
-        loading="lazy"
-        width="640"
-        height="360"
-      />
-      <span class="p-6 sm:p-8">
-        <span class="font-mono text-[11.5px] tracking-[0.12em] text-accent">開源工具</span>
-        <strong class="t-h3 mt-2 block font-semibold text-ink group-hover:text-accent">AI 圖文生成工具怎麼選？我為什麼自己開發 Tooka</strong>
-        <span class="mt-4 block leading-8 text-ink-2">從做這個工具的原因、實際功能到使用入口，都整理在完整文章裡。</span>
-        <span class="mt-5 block font-semibold text-accent">閱讀 Tooka 完整介紹 →</span>
-      </span>
-    </a>
-
-
     <!-- ---------- FAQ ---------- -->
     <!-- 這三題的 FAQPage schema 在上面的 frontmatter 輸出，理由見那裡的註解：
          原本的宣告來源（CMS 文章 free-resources）已下架，這裡是現在唯一的宣告。
@@ -278,7 +254,7 @@ https://github.com/mattpocock/skills</code></pre>
 
     <Cta
       title="有問題想問？"
-      text="先完成 Codex 安裝並試用 Skills；API 教學與 Tooka 有需求再看。卡住了再來找我，一對一教學（雙北實體／線上）會直接帶你走一遍。"
+      text="先完成 Codex 安裝並試用 Skills；API 教學有需求再看。卡住了再來找我，一對一教學（雙北實體／線上）會直接帶你走一遍。"
       links={[
         { href: LINKS.facebookGroup, label: 'Facebook 社團', external: true },
         { href: `${SERVICE_SITE.url}/course/`, label: '一對一教學', external: true },

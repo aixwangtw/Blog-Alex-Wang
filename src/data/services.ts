@@ -214,21 +214,17 @@ export const SPEAKING_ENGAGEMENTS: {
     host: '台中場講座',
     topic: '如何用 AI 製作不跑版、不失真的社群圖文',
     description:
-      '現場帶大家實作用 AI 做出社群圖文，解決跑版、失真、不會用設計工具的問題。因為發現現場大多數人都不會用 AI Agent，因此自行開發了開源的社群圖文模板工具 Tooka，讓不熟 Agent 的人也能直接套用。',
+      '現場帶大家實作用 AI 做出社群圖文，解決跑版、失真、不會用設計工具的問題。',
     image: taichungTalkImage,
     imageAlt: '台中場講座授課現場',
-    link: 'https://github.com/js0980420/tooka',
-    linkLabel: 'Tooka 開源專案 →',
   },
   {
     host: '雲林場講座',
     topic: '如何用 AI 製作不跑版、不失真的社群圖文',
     description:
-      '示範 AI 圖文常見的人物失真問題怎麼判斷與修復：小問題補照片重做、大問題直接重新生成，最後用 Canva 收尾排版。同樣因應現場學員多數不會用 AI Agent，改以自製的社群圖文模板工具 Tooka 帶大家完成。',
+      '示範 AI 圖文常見的人物失真問題怎麼判斷與修復：小問題補照片重做、大問題直接重新生成，最後用 Canva 收尾排版。',
     image: yunlinTalkImage,
     imageAlt: '雲林場講座授課現場',
-    link: 'https://github.com/js0980420/tooka',
-    linkLabel: 'Tooka 開源專案 →',
   },
 ];
 

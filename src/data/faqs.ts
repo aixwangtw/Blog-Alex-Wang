@@ -44,7 +44,7 @@ const claudeOrCodex: Faq = {
 const metaTokenDiff: Faq = {
   question: 'FB、IG、Threads 的 API Token 有什麼不同？',
   answer:
-    'FB 跟 IG 可以透過企業管理後台（Business Manager）新增資產管理，取得永久權限的 Token；Threads 沒有這條路，只能在開發者後台申請長期 Token，效期 60 天需要延期——我開源的 Tooka 已內建自動延期，第一次手動申請後就不用怕過期。',
+    'FB 跟 IG 可以透過企業管理後台（Business Manager）新增資產管理，取得永久權限的 Token；Threads 沒有這條路，只能在開發者後台申請長期 Token，效期 60 天需要延期，需要自己處理延期。',
 };
 
 const booking: Faq = {
@@ -73,8 +73,7 @@ export const HOME_FAQS: Faq[] = [
 export const ONE_ON_ONE_FAQS: Faq[] = [onlineClass, groupClass, prep, noTechBackground, booking];
 
 // 免費資源專區（/resources/）的 FAQ。前三題原本掛在 CMS 文章 free-resources，
-// 該篇改寫成常設頁面後搬到這裡；2026-08 再依頁面新順序補上 Codex、grill-me
-// 與 Tooka 導流說明。畫面與 FAQPage schema 都使用這一份資料，避免兩邊答案不同步。
+// 該篇改寫成常設頁面後搬到這裡；2026-08 再依頁面新順序補上 Codex、grill-me。畫面與 FAQPage schema 都使用這一份資料，避免兩邊答案不同步。
 export const RESOURCES_FAQS: Faq[] = [
   {
     question: 'Windows 新手應該先安裝哪一種 Codex？',
@@ -94,12 +93,7 @@ export const RESOURCES_FAQS: Faq[] = [
   {
     question: '只靠免費資源能學會 AI 自動化嗎？',
     answer:
-      '可以先完成 Codex 安裝並試用 Skills；想做社群自動化時再看 API 影片，想做社群圖文時再看 Tooka。差別在時間：自學卡關要自己試錯，私人家教則是有人直接陪你排錯。建議先用免費資源開始，真的卡住再考慮付費。',
-  },
-  {
-    question: 'Tooka 是免費的嗎？為什麼這頁沒有完整教學？',
-    answer:
-      'Tooka 是開源免費工具。免費資源頁只負責安排學習順序，完整功能、使用入口與開發原因統一整理在 Tooka 文章，避免同一份內容在兩個頁面重複維護。',
+      '可以先完成 Codex 安裝並試用 Skills；想做社群自動化時再看 API 影片。差別在時間：自學卡關要自己試錯，私人家教則是有人直接陪你排錯。建議先用免費資源開始，真的卡住再考慮付費。',
   },
   {
     question: '看影片有問題可以問你嗎？',

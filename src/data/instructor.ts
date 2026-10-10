@@ -10,10 +10,6 @@ export const EXPERIENCE: ExperienceItem[] = [
     featured: true,
   },
   {
-    text: '開源社群圖文模板框架 Tooka 作者：AI Agent 用程式渲染生成 1080×1350 的 IG 輪播圖文，不跑版、不失真，可一鍵發佈到 FB / IG / Threads。',
-    featured: true,
-  },
-  {
     text: '一鍵拍片開源專案 HyperFrames 協作者：從腳本、剪輯、字幕、真人配音、音樂、封面圖到多平台自動發佈，都能透過對話完成，大幅降低拍片的時間成本與技術門檻。',
     featured: true,
   },

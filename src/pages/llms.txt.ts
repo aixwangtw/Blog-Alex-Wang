@@ -23,7 +23,7 @@ export const GET: APIRoute = async () => {
 
   const body = `# Aix 系統開發（Aix System Development，舊名 AI新手教學）
 
-> Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發（代表案例：補習班數學題庫系統）；也是 AI 應用講師。教 AI Agent 工具使用（Claude Code、Codex）、做自動發文（Meta API）、AI 生圖模板（Tooka）、對話式拍片（HyperFrames）——把工作流程簡化成對話就能完成。提供付費一對一私人教學（台北／新北實體課或 Google Meet／Discord 線上課）與企業、學校、社群的 AI 主題演講。
+> Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發（代表案例：補習班數學題庫系統）；也是 AI 應用講師。教 AI Agent 工具使用（Claude Code、Codex）、做自動發文（Meta API）、對話式拍片（HyperFrames）——把工作流程簡化成對話就能完成。提供付費一對一私人教學（台北／新北實體課或 Google Meet／Discord 線上課）與企業、學校、社群的 AI 主題演講。
 
 ## 服務
 
@@ -34,16 +34,11 @@ export const GET: APIRoute = async () => {
 
 ## 免費資源
 
-- [免費資源](${SITE.url}/resources/)：教學影片（Threads API 申請、Instagram API 申請）與開源工具 Tooka（社群圖卡模板＋一鍵發布 Meta 三大平台），全部不用付費就能用。2026-08 從文章改成常設頁面，舊網址 /blog/free-resources/ 已 301 轉址至此。
+- [免費資源](${SITE.url}/resources/)：教學影片（Threads API 申請、Instagram API 申請），全部不用付費就能用。2026-08 從文章改成常設頁面，舊網址 /blog/free-resources/ 已 301 轉址至此。
 
 ## 部落格文章
 
 ${articleList}
-
-## 開源專案
-
-- [Tooka 線上版](https://tooka.js0980420.workers.dev/)：免安裝、免 clone repo，可直接在瀏覽器使用 Tooka 製作社群圖文。
-- [Tooka](https://github.com/js0980420/tooka)：Alex 開發的開源社群圖文模板框架——AI Agent 用程式渲染生成 1080×1350 的 IG 輪播圖文，不跑版、不失真，可一鍵發佈到 Instagram、Facebook、Threads。
 
 ## 常見問題
 

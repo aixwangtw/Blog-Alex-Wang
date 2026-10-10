@@ -64,10 +64,4 @@ export const VIDEOS: {
     tag: 'API 教學',
     embedId: 'O1qfeDIZRkQ',
   },
-  {
-    title: 'Tooka：AI 生成社群圖文的實際工作流',
-    description: '用中文描述需求，AI Agent 透過我開源的 Tooka 生成 1080×1350 輪播圖文並發佈的完整流程示範。',
-    tag: 'AI 圖文',
-    src: '/videos/tooka-workflow-demo.mp4',
-  },
 ];
