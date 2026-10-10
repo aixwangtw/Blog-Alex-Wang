@@ -1,4 +1,5 @@
 ---
+import { blogBannerPath } from '../lib/blog-banner';
 import ogBanner from '../assets/banner-v2.png';
 import githubLogo from '../assets/github-logo.svg';
 import lineBrandIcon from '../assets/line-brand-icon.png';
@@ -37,7 +38,7 @@ const DROPDOWN_NAV = [
         eyebrow: '工具安裝',
         title: 'Codex 新手安裝',
         description: '從 VS Code 插件開始，不用先學終端機操作。',
-        image: '/images/blog/codex-windows-wsl-install.png',
+        image: blogBannerPath('codex-windows-wsl-install'),
         cta: '閱讀安裝教學',
       },
       {
@@ -45,7 +46,7 @@ const DROPDOWN_NAV = [
         eyebrow: '社群自動化',
         title: 'Meta API 實戰',
         description: 'Threads、Instagram 申請與自動發文工作流。',
-        image: '/images/blog/threads-api-tutorial.png',
+        image: blogBannerPath('threads-api-tutorial'),
         cta: '閱讀 API 教學',
       },
     ],

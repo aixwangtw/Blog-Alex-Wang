@@ -1,4 +1,5 @@
 ---
+import { blogBannerPath } from '../lib/blog-banner';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -37,7 +38,7 @@ const updatedText = post.data.updatedDate ? formatDate(post.data.updatedDate) : 
     class="group grid items-start gap-x-8 gap-y-4 py-7 md:grid-cols-[13rem_1fr_auto] md:gap-y-2 md:py-9"
   >
     <img
-      src={`/images/blog/${post.id}-thumb.webp`}
+      src={blogBannerPath(post.id, '-thumb.webp')}
       alt={post.data.title}
       width="640"
       height="336"

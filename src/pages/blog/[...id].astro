@@ -6,6 +6,7 @@ import Cta from '../../components/Cta.astro';
 import FaqList from '../../components/FaqList.astro';
 import { AUTHOR, SITE, pickArticleCta, pickAuthorIntro } from '../../consts';
 import Base from '../../layouts/Base.astro';
+import { blogBannerPath } from '../../lib/blog-banner';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -25,13 +26,13 @@ const { title, description, pubDate, updatedDate, faqs } = post.data;
 
 const postUrl = `${SITE.url}/blog/${post.id}/`;
 // 每篇文章使用已定案的 1200×630 靜態橫幅，檔名與 Directus slug 相同。
-const postImage = new URL(`/images/blog/${post.id}.png`, SITE.url).href;
+const postImage = new URL(blogBannerPath(post.id), SITE.url).href;
 // 多長寬比 schema image（Google 文章富摘要建議的 16:9、4:3、1:1）與頁面用 WebP，
 // 皆由 tools/optimize-blog-banners.mjs 從 PNG 自動衍生
 const schemaImages = [
-  new URL(`/images/blog/${post.id}-16x9.webp`, SITE.url).href,
-  new URL(`/images/blog/${post.id}-4x3.webp`, SITE.url).href,
-  new URL(`/images/blog/${post.id}-1x1.webp`, SITE.url).href,
+  new URL(blogBannerPath(post.id, '-16x9.webp'), SITE.url).href,
+  new URL(blogBannerPath(post.id, '-4x3.webp'), SITE.url).href,
+  new URL(blogBannerPath(post.id, '-1x1.webp'), SITE.url).href,
 ];
 
 // 文章目錄：從已渲染的 HTML 抽出 h2 錨點（id 由 content.config.ts 的 marked renderer 產生）
@@ -161,7 +162,7 @@ const updatedText = updatedDate
       {/* 橫幅圖：拿掉圓角與陰影，只留 1px 邊框（同 PostCard 的縮圖與 about 的人像）。
           不套灰階——橫幅是文章的內容識別，不是裝飾。 */}
       <img
-        src={`/images/blog/${post.id}.webp`}
+        src={blogBannerPath(post.id, '.webp')}
         alt={title}
         width="1200"
         height="630"

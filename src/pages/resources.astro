@@ -1,4 +1,5 @@
 ---
+import { blogBannerPath } from '../lib/blog-banner';
 // ============================================================
 // /resources/ — 免費資源專區（2026-08 改版第三階段一併新建）
 // ------------------------------------------------------------
@@ -108,7 +109,7 @@ const schema = [
       <li class="overflow-hidden border border-rule bg-white/40">
         <a href="/blog/codex-windows-wsl-install/" class="group grid h-full items-center no-underline sm:grid-cols-2">
           <img
-            src="/images/blog/codex-windows-wsl-install-thumb.webp"
+            src={blogBannerPath('codex-windows-wsl-install', '-thumb.webp')}
             alt="Codex Windows 新手安裝教學縮圖"
             class="aspect-video w-full object-cover"
             loading="lazy"
@@ -250,7 +251,7 @@ https://github.com/mattpocock/skills</code></pre>
       class="group mt-6 grid items-center overflow-hidden border border-rule bg-white/40 no-underline sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]"
     >
       <img
-        src="/images/blog/why-i-built-tooka-thumb.webp"
+        src={blogBannerPath('why-i-built-tooka', '-thumb.webp')}
         alt="我為什麼開發開源工具 Tooka 文章縮圖"
         class="aspect-video w-full object-cover"
         loading="lazy"

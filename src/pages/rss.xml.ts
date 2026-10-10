@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import { statSync } from 'node:fs';
 import path from 'node:path';
 import { SITE } from '../consts';
+import { blogBannerPath } from '../lib/blog-banner';
 
 // RSS feed：加速 Google 發現新文章，enclosure 附上各篇橫幅
 export const prerender = true;
@@ -25,7 +26,7 @@ export const GET: APIRoute = async (context) => {
       pubDate: post.data.pubDate,
       link: `/blog/${post.id}/`,
       enclosure: {
-        url: `${SITE.url}/images/blog/${post.id}.png`,
+        url: `${SITE.url}${blogBannerPath(post.id)}`,
         length: statSync(path.resolve(`public/images/blog/${post.id}.png`)).size,
         type: 'image/png',
       },

@@ -1,4 +1,5 @@
 ---
+import { blogBannerPath } from '../lib/blog-banner';
 // ============================================================
 // 首頁（2026-08 改版第三階段）
 // ------------------------------------------------------------
@@ -276,7 +277,7 @@ const schema = [
               {featuredPosts.map((post) => (
                 <li>
                   <a href={`/blog/${post.id}/`}>
-                    <img src={`/images/blog/${post.id}-thumb.webp`} alt="" width="640" height="336" loading="lazy" />
+                    <img src={blogBannerPath(post.id, '-thumb.webp')} alt="" width="640" height="336" loading="lazy" />
                     <p class="featured-meta"><span>{post.data.tags[0] ?? 'AI 教學'}</span><time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString('zh-TW')}</time></p>
                     <h3>{post.data.title}</h3>
                     <span class="featured-go" aria-hidden="true">閱讀全文 →</span>
