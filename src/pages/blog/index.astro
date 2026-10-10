@@ -5,7 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Cta from '../../components/Cta.astro';
 import PostCard from '../../components/PostCard.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
+import { DEVELOPMENT_SERVICE, LINE_URLS, SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
 import Base from '../../layouts/Base.astro';
 
 const schema = [
@@ -13,7 +13,7 @@ const schema = [
   {
     '@type': 'CollectionPage',
     '@id': `${SITE.url}/blog/#webpage`,
-    name: 'AI 新手部落格',
+    name: '系統開發案例與 AI 實作部落格',
     url: `${SITE.url}/blog/`,
   },
 ];
@@ -23,6 +23,9 @@ const posts = (await getCollection('blog', ({ data }) => !data.unlisted)).sort(
     b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
     (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
 );
+// 置頂文章：系統開發代表案例，固定排在部落格最上方，不再重複出現在精選格線
+const PINNED_ID = 'math-teacher-question-bank';
+const pinned = posts.find((post) => post.id === PINNED_ID);
 // 精選文章的顯示順序
 const FEATURED_ORDER = [
   'how-to-start-learning-ai',
@@ -33,25 +36,41 @@ const FEATURED_ORDER = [
   'instagram-api-tutorial',
 ];
 const featured = posts
-  .filter((post) => post.data.featured)
+  .filter((post) => post.data.featured && post.id !== PINNED_ID)
   .sort((a, b) => FEATURED_ORDER.indexOf(a.id) - FEATURED_ORDER.indexOf(b.id));
-const rest = posts.filter((post) => !post.data.featured);
+const rest = posts.filter((post) => !post.data.featured && post.id !== PINNED_ID);
 ---
 
 <Base
-  title="部落格｜AI 新手常見問題全解答"
-  description="用問答形式解答新手學 AI 最常見的問題：Claude Code / Codex 怎麼選、Meta API 怎麼申請、自動發文怎麼做、Skill 是什麼。每篇文章聚焦解決一個新手最常遇到的問題。"
+  title="部落格｜系統開發案例與 AI 實作"
+  description="Alex 的系統開發案例與 AI 實作紀錄：置頂的數學題庫系統介紹考卷匯入、AI 出題、AI 詳解；其他文章整理 Claude Code／Codex、Meta API、自動發文與 Skill 工作流的實作做法。"
   ogImage={pageBannerUrl('blog')}
-  ogImageAlt="AI 新手部落格｜常見問題全解答"
+  ogImageAlt="Aix 部落格｜系統開發案例與 AI 實作"
   schema={schema}
 >
   <div class="mx-auto max-w-6xl px-6 py-12">
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '部落格' }]} class="mb-8" />
     <h1 class="t-h1 font-semibold text-ink">部落格</h1>
     <p class="mt-6 text-lg leading-8 text-ink-2">
-      每篇文章回答一個新手學 AI 時最常問的問題——從工具選擇、Meta API 申請到自動發文與
-      Skill 工作流。看完還有問題，歡迎<a href={`${SERVICE_SITE.url}/course/`} class="text-accent underline underline-offset-4">約一對一教學</a>。
+      這裡記錄我和開發夥伴做過的系統開發案例，以及每天在用的 AI 實作做法。想把手上重複的工作做成一套系統，可以先看<a href={DEVELOPMENT_SERVICE.url} class="text-accent underline underline-offset-4" data-ga-button="blog_intro_development" data-ga-label="系統開發服務" data-ga-location="blog_intro" data-ga-action="navigate">系統開發服務</a>。
     </p>
+    {pinned && (
+      <section class="mt-12 border-t border-rule pt-8" aria-labelledby="pinned-h">
+        <p class="font-mono text-[11.5px] tracking-[0.12em] text-accent">置頂｜系統開發代表案例</p>
+        <a href={`/blog/${pinned.id}/`} class="group mt-4 grid items-center gap-6 md:grid-cols-[1.1fr_1fr] md:gap-10" data-ga-button="blog_pinned_article" data-ga-label={pinned.data.title} data-ga-location="blog_pinned" data-ga-action="open_content">
+          <img src={blogBannerPath(pinned.id, '.webp')} alt={pinned.data.title} width="1200" height="630" class="w-full border border-rule" />
+          <div>
+            <h2 id="pinned-h" class="text-2xl font-semibold leading-snug text-ink transition-colors group-hover:text-accent sm:text-3xl">{pinned.data.title}</h2>
+            <p class="mt-4 leading-8 text-ink-2">{pinned.data.description}</p>
+            <span class="mt-5 inline-block font-mono text-[13px] text-accent" aria-hidden="true">閱讀全文 →</span>
+          </div>
+        </a>
+        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+          <a href={DEVELOPMENT_SERVICE.url} class="font-semibold text-accent no-underline" data-ga-button="blog_pinned_service" data-ga-label="看系統開發服務" data-ga-location="blog_pinned" data-ga-action="navigate">看系統開發服務 →</a>
+          <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="font-semibold text-accent no-underline" data-ga-button="blog_pinned_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="blog_pinned" data-ga-action="external">試用 Demo ↗</a>
+        </div>
+      </section>
+    )}
     {featured.length > 0 && (
       <>
         <SectionHeading size="md" class="mt-14">精選文章</SectionHeading>
@@ -101,6 +120,12 @@ const rest = posts.filter((post) => !post.data.featured);
     <div class="mt-6">
       {rest.map((post) => <PostCard post={post} />)}
     </div>
-    <Cta />
+    <Cta
+      title="想把手上的工作做成一套系統？"
+      text="加官方 LINE 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆；也可以先看系統開發服務的流程與費用。"
+      href={LINE_URLS.blog}
+      label={'加官方 LINE\n免費評估'}
+      links={[{ href: DEVELOPMENT_SERVICE.url, label: '看系統開發服務' }]}
+    />
   </div>
 </Base>
