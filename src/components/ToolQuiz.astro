@@ -6,6 +6,7 @@
 // ============================================================
 import SectionHeading from './SectionHeading.astro';
 import { LINKS, SITE } from '../consts';
+import LineIcon from './LineIcon.astro';
 ---
 
 <!-- ---------- 工具選擇測驗：共同先裝 Codex，再依需求推薦工具 ---------- -->
@@ -386,12 +387,12 @@ import { LINKS, SITE } from '../consts';
             href={LINKS.line}
             target="_blank"
             rel="noreferrer"
-            class="inline-flex min-h-11 items-center justify-center rounded-[3px] border border-accent bg-accent px-5 py-3 font-semibold text-white no-underline transition hover:border-accent-2 hover:bg-accent-2"
+            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-[3px] border border-[#06c755] bg-[#06c755] px-5 py-3 font-semibold text-white no-underline transition hover:border-[#05b34c] hover:bg-[#05b34c]"
             data-ga-button="quiz_result_line"
             data-ga-label="加 LINE 詢問"
             data-ga-location="tools_quiz_result"
             data-ga-action="contact"
-          >加 LINE 詢問 ↗</a>
+          ><LineIcon />加 LINE 詢問</a>
 
           <form class="grid gap-3" data-quiz-email-form novalidate>
             <label for="tool-quiz-email" class="sr-only">Email</label>

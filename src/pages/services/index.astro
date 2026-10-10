@@ -80,12 +80,13 @@ const schema = [
 >
   <section class="service-hero">
     <div class="service-hero-copy">
-      <p class="service-kicker">AI 自動化系統開發｜代表案例：數學題庫系統</p>
-      <h1>用 AI 自動化整理資料、產出內容，每一筆都能人工審核</h1>
-      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案，和開發夥伴一起把重複、瑣碎的工作改成 AI 自動化。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解。</p>
+      <p class="service-kicker">用 AI 自動化整理資料、產出內容，每一筆都能人工審核</p>
+      <h1>AI 自動化系統開發<span class="service-h1-sub">代表案例：數學題庫系統</span></h1>
+      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案，和開發夥伴一起把重複、瑣碎的工作改成 AI 自動化。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解，提供 <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" data-ga-button="service_home_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="service_home_hero" data-ga-action="external">Demo</a> 可以直接試用。</p>
       <div class="service-hero-actions">
         <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="查看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">查看系統開發服務</a>
-        <a href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="service_home_line" data-ga-label="加官方 LINE 免費評估" data-ga-location="service_home_hero" data-ga-action="external">加官方 LINE 免費評估</a>
+        <a class="is-line" href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="service_home_line" data-ga-label="加官方 LINE 詢問報價" data-ga-location="service_home_hero" data-ga-action="external"><svg class="line-btn-ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>加官方 LINE 詢問報價</a>
+        <a class="is-text" href={`${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`} data-ga-button="service_home_case" data-ga-label="看系統案例（含 Demo）" data-ga-location="service_home_hero" data-ga-action="navigate">看系統案例（含 Demo）</a>
       </div>
     </div>
     <figure class="service-hero-case">
@@ -263,6 +264,11 @@ const schema = [
     .service-hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:34px; }
     .service-hero-actions a { display:inline-flex; min-height:50px; align-items:center; justify-content:center; padding:0 24px; border:1px solid var(--color-accent); color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-hero-actions a:first-child { background:var(--color-accent); color:#fff; }
+    .service-hero-actions a.is-text { padding:0 4px; border:0; color:var(--color-ink-2); font-weight:500; text-decoration:underline; text-underline-offset:4px; }
+    .service-hero-actions a.is-line { gap:10px; border-color:#06c755; background:#06c755; color:#fff; }
+    .line-btn-ic { flex-shrink:0; width:20px; height:20px; }
+    .service-h1-sub { display:block; margin-top:.35em; font-size:.55em; line-height:1.35; letter-spacing:-.02em; }
+    .service-lead a { color:var(--color-accent); text-decoration:underline; text-underline-offset:4px; }
     .service-hero figure { position:relative; margin:0; }
     .service-hero figure img { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); filter:saturate(.86); }
     .service-hero figcaption { position:absolute; right:-18px; bottom:24px; display:grid; min-width:230px; padding:17px 20px; border:1px solid var(--color-accent-line-2); background:rgb(247 245 241 / 96%); box-shadow:0 12px 30px rgb(22 22 26 / 12%); }

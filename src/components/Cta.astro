@@ -12,6 +12,7 @@
 // 一個區塊裡放三顆同等分量的按鈕，等於沒有主要行動。次要選項改成純文字連結，
 // 讀者仍然找得到，但視線會先落在那顆圓上。
 import { LINKS, SERVICE_SITE } from '../consts';
+import LineIcon from './LineIcon.astro';
 
 interface SecondaryLink {
   href: string;
@@ -52,6 +53,8 @@ const {
 } = Astro.props;
 
 const labelLines = label.split('\n');
+// 連到 LINE 的主行動一律用 LINE 綠＋圖示
+const isLineLink = /lin\.ee|line\.me/.test(href);
 ---
 
 <aside class="cta">
@@ -87,11 +90,12 @@ const labelLines = label.split('\n');
       </a>
     ) : (
       <a
-        class="cta-go"
+        class:list={['cta-go', { 'cta-go--line': isLineLink }]}
         href={href}
         target={external ? '_blank' : undefined}
         rel={external ? 'noreferrer' : undefined}
       >
+        {isLineLink && <LineIcon class="cta-go-ic" />}
         {labelLines.map((line) => <span>{line}</span>)}
       </a>
     )}
@@ -181,6 +185,16 @@ const labelLines = label.split('\n');
       color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
       transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  .cta-go--line {
+    border-color: #06c755;
+    background: #06c755;
+    color: #fff;
+  }
+  .cta-go-ic {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+  }
   @media (min-width: 768px) {
     .cta-go {
       flex-direction: column;
@@ -197,6 +211,11 @@ const labelLines = label.split('\n');
     .cta-go:hover {
       background: transparent;
       color: var(--color-ink);
+    }
+    .cta-go--line:hover {
+      border-color: #05b34c;
+      background: #05b34c;
+      color: #fff;
     }
     /* 旋轉只在圓形狀態做。手機那顆是整寬膠囊，轉 −8° 會斜著頂到左右兩邊。
        hover 反白後外框留著（jisto 是連框一起消失）：框消失時這顆圓

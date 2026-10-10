@@ -1,4 +1,5 @@
 ---
+import LineIcon from '../../components/LineIcon.astro';
 import { Image } from 'astro:assets';
 import Card from '../../components/Card.astro';
 import CheckItem from '../../components/CheckItem.astro';
@@ -83,7 +84,7 @@ const pageToc = [
           AI Agent 如何完成真實任務。曾受 MixerBox、TAIA 台灣人工智慧協會等單位邀請演講。
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
-          <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center bg-[#06c755] px-6 font-semibold text-white no-underline">加 LINE 洽談邀約</a>
+          <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center gap-2.5 bg-[#06c755] px-6 font-semibold text-white no-underline"><LineIcon />加 LINE 洽談邀約</a>
           <a href={LINKS.email} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline">Email 聯絡</a>
         </div>
       </div>

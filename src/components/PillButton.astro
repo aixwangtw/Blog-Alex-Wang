@@ -1,13 +1,13 @@
 ---
-// 全站共用膠囊按鈕連結：line = 主要行動按鈕（酒紅），ghost = 描邊次要按鈕
+import LineIcon from './LineIcon.astro';
+// 全站共用膠囊按鈕連結：line = LINE 聯絡按鈕（LINE 綠＋圖示），ghost = 描邊次要按鈕
 //
 // 2026-08-06 改成 3px：膠囊原本被當成圓角規則的合法例外保留，但全站改完之後，
 // 實心酒紅膠囊變成髮絲線版面裡視覺最吵的東西，而首頁自己的主要按鈕（.btn）是 3px。
 // 現在膠囊只留給頁首那顆展開的導覽列；圓形只留給 Cta 的 168px 主行動與頁首圖示鈕。
 //
-// line 這個 variant 名稱沿用（7 個頁面在呼叫），但底色不是 LINE 品牌綠 #06c755：
-// 那個綠在暖紙底＋酒紅的配色裡是異物，而且白字配它只有 2.26:1、過不了 WCAG AA。
-// 辨識改由按鈕文案與 LINE 圖示承擔，配色統一到站台自己的重點色。
+// line variant 只用在 LINE 聯絡按鈕：2026-10-11 依站長要求改回 LINE 品牌綠 #06c755＋LINE 圖示，
+// 全站 LINE 按鈕一致（白字配這個綠對比約 2.3:1，低於 WCAG AA，已知取捨）。
 //
 // 2026-08 改版第二階段的兩個修正：
 // 1. 改成 inline-flex。原本是預設的 inline <a>，行內元素的垂直 padding 雖然會畫出來，
@@ -41,6 +41,7 @@ const sizeClasses = {
     sizeClasses[size],
   ]}
 >
+  {variant === 'line' && <LineIcon class="h-[18px] w-[18px] shrink-0" />}
   <slot />
 </a>
 
@@ -58,9 +59,9 @@ const sizeClasses = {
     text-decoration: none;
   }
   .pill--line {
-    border: 1px solid var(--color-accent);
-    background: var(--color-accent);
-    color: var(--color-surface);
+    border: 1px solid #06c755;
+    background: #06c755;
+    color: #fff;
   }
   .pill--ghost {
     border: 1px solid var(--color-rule-3);
@@ -69,8 +70,8 @@ const sizeClasses = {
   }
   @media (hover: hover) and (pointer: fine) {
     .pill--line:hover {
-      border-color: var(--color-accent-2);
-      background: var(--color-accent-2);
+      border-color: #05b34c;
+      background: #05b34c;
     }
     .pill--ghost:hover {
       border-color: var(--color-accent);

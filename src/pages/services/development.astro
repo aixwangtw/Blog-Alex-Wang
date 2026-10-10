@@ -65,15 +65,15 @@ const schema = [
 
     <section class="grid items-center gap-9 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14">
       <div>
-        <p class="text-sm font-semibold text-accent">AI 自動化系統開發｜代表案例：數學題庫系統</p>
-        <h1 class="t-h1 mt-3 font-semibold text-ink">用 AI 自動化整理資料、產出內容，每一筆都能人工審核</h1>
+        <p class="text-sm font-semibold text-accent">用 AI 自動化整理資料、產出內容，每一筆都能人工審核</p>
+        <h1 class="t-h1 mt-3 font-semibold text-ink">AI 自動化系統開發<span class="mt-2 block text-[0.55em] leading-snug">代表案例：數學題庫系統</span></h1>
         <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
           我是 <a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，目前全職接案，和開發夥伴承接
-          <strong class="text-accent">客製系統開發</strong>。先聊你手上的工作怎麼進行，再把重複、瑣碎的部分改成 AI 自動化。
+          <strong class="text-accent">客製系統開發</strong>。先聊你手上的工作怎麼進行，再把重複、瑣碎的部分改成 AI 自動化。題庫系統有 <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="text-accent underline underline-offset-4" data-ga-button="development_hero_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="development_hero" data-ga-action="external">Demo</a> 可以直接試用。
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
-          <a href={LINE_URLS.blog} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center bg-[#06c755] px-6 font-semibold text-white no-underline" data-ga-button="development_hero_line" data-ga-label="加官方 LINE 免費評估" data-ga-location="development_hero" data-ga-action="external">加官方 LINE 免費評估</a>
-          <a href={caseArticleUrl} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_case" data-ga-label="看題庫系統案例" data-ga-location="development_hero" data-ga-action="navigate">看題庫系統案例</a>
+          <a href={LINE_URLS.blog} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center gap-2.5 bg-[#06c755] px-6 font-semibold text-white no-underline" data-ga-button="development_hero_line" data-ga-label="加官方 LINE 詢問報價" data-ga-location="development_hero" data-ga-action="external"><svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>加官方 LINE 詢問報價</a>
+          <a href={caseArticleUrl} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_case" data-ga-label="看系統案例（含 Demo）" data-ga-location="development_hero" data-ga-action="navigate">看系統案例（含 Demo）</a>
         </div>
       </div>
       <video
@@ -143,7 +143,7 @@ const schema = [
       title="想把手上的工作改成 AI 自動化？"
       text="加官方 LINE 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。"
       href={LINE_URLS.blog}
-      label={'加官方 LINE\n免費評估'}
+      label={'加官方 LINE\n詢問報價'}
       links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
     />
   </div>
