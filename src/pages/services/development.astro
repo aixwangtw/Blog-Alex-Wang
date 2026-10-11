@@ -28,6 +28,9 @@ const caseFeatures = [
   'AI 出相似題、AI 產生詳解，老師確認後才收進題庫',
 ];
 
+// 首屏下方三個合作重點（原本在服務站首頁）；時程與付款細節見下方「時程與費用」，同取自 DEVELOPMENT_SERVICE。
+const developmentHighlights = ['和開發夥伴一起開發', '開發時程約兩個月', '分三期付款'];
+
 const pageToc = [
   { id: 'development-scope', label: '可以做什麼' },
   { id: 'development-case', label: '代表案例' },
@@ -65,15 +68,14 @@ const schema = [
 
     <section class="grid items-center gap-9 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14">
       <div>
-        <p class="text-sm font-semibold text-accent">用 AI 自動化整理資料、產出內容，每一筆都能人工審核</p>
+        <p class="text-sm font-semibold text-accent">客製系統開發｜題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程</p>
         <h1 class="t-h1 mt-3 font-semibold text-ink">AI 自動化系統開發<span class="mt-2 block text-[0.55em] leading-snug">代表案例：數學題庫系統</span></h1>
         <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
-          我是 <a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，目前全職接案，和開發夥伴承接
-          <strong class="text-accent">客製系統開發</strong>。先聊你手上的工作怎麼進行，再把重複、瑣碎的部分改成 AI 自動化。題庫系統有 <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="text-accent underline underline-offset-4" data-ga-button="development_hero_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="development_hero" data-ga-action="external">Demo</a> 可以直接試用。
+          補習班數學老師上傳 PDF、Word 或考卷照片，AI 拆成一題一題，老師對照原卷確認後才收進題庫；出卷時勾選、排序，就能匯出 PNG 或貼進 Word。你手上如果也有每天重複整理的資料，可以先試 Demo，再加 LINE 跟我們聊。
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a href={LINE_URLS.blog} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center gap-2.5 bg-[#06c755] px-6 font-semibold text-white no-underline" data-ga-button="development_hero_line" data-ga-label="加官方 LINE 詢問報價" data-ga-location="development_hero" data-ga-action="external"><svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>加官方 LINE 詢問報價</a>
-          <a href={caseArticleUrl} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_case" data-ga-label="看系統案例（含 Demo）" data-ga-location="development_hero" data-ga-action="navigate">看系統案例（含 Demo）</a>
+          <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_demo" data-ga-label="試用 Demo" data-ga-location="development_hero" data-ga-action="external">試用 Demo</a>
         </div>
       </div>
       <video
@@ -89,7 +91,15 @@ const schema = [
       ></video>
     </section>
 
-    <nav aria-label="系統開發服務目錄" class="mt-10 overflow-x-auto border-y border-rule">
+    <ul class="mt-10 grid border-y border-rule sm:grid-cols-3" aria-label="系統開發合作重點">
+      {developmentHighlights.map((item) => (
+        <li class="border-rule px-4 py-5 text-center [&+&]:border-t sm:[&+&]:border-l sm:[&+&]:border-t-0">
+          <strong class="block font-semibold text-accent">{item}</strong>
+        </li>
+      ))}
+    </ul>
+
+    <nav aria-label="系統開發服務目錄" class="mt-8 overflow-x-auto border-y border-rule">
       <ul class="flex min-w-max sm:grid sm:min-w-0 sm:grid-cols-4">
         {pageToc.map((item) => (
           <li class="min-w-28 flex-1"><a href={`#${item.id}`} class="block px-3 py-4 text-center font-semibold text-ink transition hover:bg-paper-2 hover:text-accent">{item.label}</a></li>

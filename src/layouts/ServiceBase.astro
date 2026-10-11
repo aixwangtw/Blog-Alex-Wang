@@ -1,4 +1,5 @@
 ---
+import LineIcon from '../components/LineIcon.astro';
 import { DEVELOPMENT_SERVICE, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
 import FloatingLine from '../components/FloatingLine.astro';
 import '../styles/global.css';
@@ -235,7 +236,7 @@ const jsonLd = {
             </div>
           </details>
           <a href={developmentCaseHref} data-ga-button="service_header_case" data-ga-label="開發案例" data-ga-location="service_header" data-ga-action="navigate">開發案例</a>
-          <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="service_header_book" data-ga-label="立即預約" data-ga-location="service_header" data-ga-action="external">立即預約</a>
+          <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="service_header_book" data-ga-label="聊聊需求" data-ga-location="service_header" data-ga-action="external"><LineIcon class="service-book-icon" />聊聊需求</a>
         </nav>
       </div>
     </header>
@@ -359,9 +360,11 @@ const jsonLd = {
       .service-mega summary::-webkit-details-marker { display:none; }
       .service-mega-cue { color:var(--color-accent); font-size:15px; transition:transform .2s ease; }
       .service-mega[open] .service-mega-cue { transform:rotate(180deg); }
-      /* 頁首預約鈕比照 Dean 服務站（service.deanlife.blog）：文字「立即預約」、透明底＋1px 深色外框、
-         小圓角、不放 LINE 圖示；仍連官方 LINE。手機版選單不放這顆，改由右下 FloatingLine 承接。 */
-      .service-book { display:inline-flex; align-items:center; justify-content:center; padding:13px 22px; border:1px solid var(--color-ink); border-radius:4px; background:transparent; transition:background-color .18s ease, color .18s ease; }
+      /* 頁首按鈕：LINE 綠底白字＋LINE 圖示，連官方 LINE，邀請系統開發諮詢。
+         LineIcon 是子元件，svg 不吃本檔 scoped 樣式，所以這段放在 is:global 並固定寬高，避免圖示被 flex 壓扁變形。
+         手機版選單不放這顆，改由右下 FloatingLine 承接。 */
+      .service-mainnav > a.service-book { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 18px; border:1px solid #06c755; border-radius:6px; background:#06c755; color:#fff; transition:background-color .18s ease, border-color .18s ease; }
+      .service-book .service-book-icon { display:block; flex:none; width:18px; height:18px; }
       .service-menu-toggle { display:none; width:44px; height:44px; border:1px solid var(--color-rule-3); border-radius:6px; background:var(--color-ink); place-items:center; position:relative; }
       .service-menu-toggle i { position:absolute; width:16px; height:1.5px; background:var(--color-paper); transition:transform .2s ease, top .2s ease; }
       .service-menu-toggle i:first-child { top:17px; }
@@ -388,7 +391,7 @@ const jsonLd = {
       .service-footer > p { width:min(1120px, 100%); margin:38px auto 0; padding-top:18px; border-top:1px solid #3b3939; color:#8f8b86; font:11px/1.4 ui-monospace, monospace; }
       @media (hover:hover) and (pointer:fine) {
         .service-mainnav > a:not(.service-book):hover, .service-mega summary:hover { color:var(--color-accent); }
-        .service-book:hover { background:var(--color-ink); color:var(--color-paper) !important; }
+        .service-mainnav > a.service-book:hover { border-color:#05b34c; background:#05b34c; color:#fff; }
         .service-mega-grid > a:hover { border-color:var(--color-accent-line-2); background:var(--color-accent-tint); }
       }
       @media (max-width:899px) {
@@ -400,7 +403,7 @@ const jsonLd = {
         .service-nav-js .service-mainnav { display:none; }
         .service-nav-js .service-header[data-open='true'] .service-mainnav { display:grid; }
         .service-mainnav > a, .service-mega summary { display:flex; min-height:52px; align-items:center; justify-content:space-between; border-top:1px solid var(--color-rule); font-size:16px; }
-        .service-mainnav > .service-book { display:none; }
+        .service-mainnav > a.service-book { display:none; }
         .service-mega-panel { position:static; display:block; width:100%; padding:0 0 10px; border:0; box-shadow:none; transform:none; }
         .service-mega-intro { display:none; }
         .service-mega-grid { grid-template-columns:1fr; }

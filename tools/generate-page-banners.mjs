@@ -45,7 +45,7 @@ const pages = [
     badgePrefix: '',
     badge: '系統開發｜AI 教學',
     title: '系統開發',
-    subtitle: '用 AI 自動化整理資料、產出內容',
+    subtitle: '接案做系統，也教 AI 工具',
     role: '工程師',
   },
   {
@@ -86,7 +86,7 @@ const pages = [
     badgePrefix: '',
     badge: '系統開發｜AI 教學與演講',
     title: '系統開發服務',
-    subtitle: '用 AI 自動化整理資料、產出內容',
+    subtitle: '客製系統開發，也教 AI、接演講',
     role: '工程師',
   },
 ];

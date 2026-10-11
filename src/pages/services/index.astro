@@ -1,7 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import freeResourcesHome from '../../assets/free-resources-home-v2.png';
+import teachingOneOnOne from '../../assets/teaching-one-on-one.jpg';
 import Cta from '../../components/Cta.astro';
+import LineIcon from '../../components/LineIcon.astro';
 import {
   AUTHOR,
   COLLABORATION_ENTRY_LINKS,
@@ -16,7 +18,7 @@ import {
   pageBannerUrl,
 } from '../../consts';
 import { SPEAKING_ENGAGEMENTS, TEACHING_CASES } from '../../data/services';
-import { DEVELOPMENT_SERVICE, LINE_URLS } from '../../consts';
+import { LINE_URLS } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
 const serviceCards = [
@@ -35,6 +37,37 @@ const serviceCards = [
     description: '以真實任務現場演示 AI Agent、社群自動化與對話式拍片，主題可依聽眾背景調整。',
     href: '/services/speaking/',
     action: '查看演講服務',
+  },
+];
+
+// 首屏三張服務卡：圖片與描述都取自站上既有事實（題庫系統截圖、TEACHING_CASES、SPEAKING_ENGAGEMENTS 現場照）。
+const heroServiceCards = [
+  {
+    key: 'development',
+    href: '/services/development/',
+    title: '系統開發',
+    description: '題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程。',
+    action: '看系統開發',
+    image: `${SITE.url}/images/blog/math-teacher-question-bank/import-review.jpg`,
+    imageAlt: '題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目',
+  },
+  {
+    key: 'course',
+    href: '/course/',
+    title: 'AI 一對一教學',
+    description: '用你自己的電腦和帳號，帶你裝好 Claude Code、Codex、Hermes 或 OpenClaw，做出自動發文、整理 Email 這類流程。',
+    action: '看教學內容',
+    image: teachingOneOnOne,
+    imageAlt: 'Alex 與學員進行一對一 AI 實體教學',
+  },
+  {
+    key: 'speaking',
+    href: '/services/speaking/',
+    title: '演講邀約',
+    description: `企業、學校與社群的 AI 演講，講過 ${SPEAKING_ENGAGEMENTS.slice(0, 2).map((item) => item.host).join('、')}等場次。`,
+    action: '看演講紀錄',
+    image: SPEAKING_ENGAGEMENTS[0].image,
+    imageAlt: SPEAKING_ENGAGEMENTS[0].imageAlt,
   },
 ];
 
@@ -80,61 +113,31 @@ const schema = [
 >
   <section class="service-hero">
     <div class="service-hero-copy">
-      <p class="service-kicker">用 AI 自動化整理資料、產出內容，每一筆都能人工審核</p>
-      <h1>AI 自動化系統開發<span class="service-h1-sub">代表案例：數學題庫系統</span></h1>
-      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案，和開發夥伴一起把重複、瑣碎的工作改成 AI 自動化。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解，提供 <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" data-ga-button="service_home_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="service_home_hero" data-ga-action="external">Demo</a> 可以直接試用。</p>
+      <p class="service-kicker">{SERVICE_SITE.title}</p>
+      <h1><span class="nb">客製系統開發，</span><span class="nb">也教 AI、接演講</span></h1>
+      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。主要和開發夥伴承接客製系統開發；也提供一對一 AI 教學（雙北咖啡廳實體或線上），並接受企業、學校與社群的演講邀約。先看你需要哪一種，再加 LINE 聊細節。</p>
       <div class="service-hero-actions">
-        <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="查看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">查看系統開發服務</a>
-        <a class="is-line" href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="service_home_line" data-ga-label="加官方 LINE 詢問報價" data-ga-location="service_home_hero" data-ga-action="external"><svg class="line-btn-ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>加官方 LINE 詢問報價</a>
-        <a class="is-text" href={`${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`} data-ga-button="service_home_case" data-ga-label="看系統案例（含 Demo）" data-ga-location="service_home_hero" data-ga-action="navigate">看系統案例（含 Demo）</a>
+        <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
+        <a class="is-line" href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="service_home_line" data-ga-label="加官方 LINE 詢問" data-ga-location="service_home_hero" data-ga-action="external"><LineIcon class="line-btn-ic" />加官方 LINE 詢問</a>
       </div>
     </div>
-    <figure class="service-hero-case">
-      <video
-        src={`${SITE.url}/videos/math-question-bank-reel.mp4`}
-        poster={`${SITE.url}/images/math-question-bank-reel-poster.webp`}
-        width="720"
-        height="1280"
-        controls
-        preload="metadata"
-        playsinline
-        aria-label="數學題庫系統介紹短影音：AI 辨識紙本考卷、AI 出題、AI 解析答案"
-      ></video>
-    </figure>
+    <nav class="service-hero-cards" aria-label="三種服務">
+      {heroServiceCards.map((card) => (
+        <a href={card.href} data-ga-button={`service_home_card_${card.key}`} data-ga-label={card.title} data-ga-location="service_home_hero_cards" data-ga-action="navigate">
+          {typeof card.image === 'string'
+            ? <img src={card.image} alt={card.imageAlt} width="1400" height="875" loading="eager" decoding="async" />
+            : <Image src={card.image} alt={card.imageAlt} class={`is-${card.key}`} widths={[420, 640]} sizes="(min-width: 1024px) 360px, 100vw" />}
+          <span class="service-hero-card-copy">
+            <strong>{card.title}</strong>
+            <span>{card.description}</span>
+            <b>{card.action} <span aria-hidden="true">→</span></b>
+          </span>
+        </a>
+      ))}
+    </nav>
   </section>
 
-  <section class="service-proof" aria-label="系統開發合作重點">
-    <p><strong>和開發夥伴一起開發</strong></p>
-    <p><strong>開發時程約兩個月</strong></p>
-    <p><strong>分三期付款</strong></p>
-  </section>
-
-  <section class="service-dev" id="development" aria-labelledby="dev-h">
-    <div class="service-dev-copy">
-      <p class="service-kicker">代表案例</p>
-      <h2 id="dev-h">數學題庫系統</h2>
-      <p class="service-section-lead">幫補習班數學老師把瑣碎的出題流程自動化：上傳考卷由 AI 拆成一題一題，老師對照原卷確認後收進題庫；出卷時勾選、排序，就能匯出圖片或貼進 Word。</p>
-      <ul>
-        <li>考卷匯入、AI 辨識與審核</li>
-        <li>AI 出相似題、AI 產生詳解</li>
-        <li>出卷與匯出（PNG、Word、MathType）</li>
-      </ul>
-      <div class="service-dev-links">
-        <a href={`${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`} data-ga-button="service_home_case_article" data-ga-label="看題庫系統完整介紹" data-ga-location="service_home_development" data-ga-action="navigate">看完整介紹 →</a>
-        <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" data-ga-button="service_home_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="service_home_development" data-ga-action="external">試用 Demo ↗</a>
-      </div>
-    </div>
-    <div class="service-dev-cost">
-      <p class="service-kicker">費用怎麼算</p>
-      <dl>
-        <div><dt>開發費</dt><dd>依需要的功能報價，加 LINE 可以免費評估。</dd></div>
-        <div><dt>付款方式</dt><dd>簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。</dd></div>
-        <div><dt>主機費用</dt><dd>建置依規格約新台幣 5,000 元（一次性），基本規格每月約新台幣 500 元。</dd></div>
-        <div><dt>AI 使用費</dt><dd>依實際用量計算，一般每月約新台幣 20～150 元。</dd></div>
-      </dl>
-      <a class="service-dev-primary" href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用細節" data-ga-location="service_home_development" data-ga-action="navigate">看合作流程與費用細節 →</a>
-    </div>
-  </section>
+  <p class="service-dev-more"><a href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_hero" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a></p>
 
   <section class="service-options" id="services">
     <header>
@@ -258,26 +261,37 @@ const schema = [
 
   <style>
     .service-kicker { color:var(--color-accent); font-size:13px; font-weight:700; letter-spacing:.08em; }
-    .service-hero { display:grid; grid-template-columns:minmax(0, 1fr) 340px; gap:64px; align-items:center; width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:80px 0 70px; }
-    .service-hero h1 { max-width:16ch; margin-top:22px; font-family:var(--font-serif, serif); font-size:clamp(40px, 4.6vw, 60px); font-weight:600; line-height:1.12; letter-spacing:-.055em; }
+    .service-hero { display:grid; gap:44px; width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:72px 0 0; }
+    .service-hero-copy { max-width:760px; }
+    .service-hero h1 { max-width:18ch; margin-top:22px; font-family:var(--font-serif, serif); font-size:clamp(40px, 4.6vw, 60px); font-weight:600; line-height:1.12; letter-spacing:-.055em; }
     .service-lead { max-width:620px; margin-top:28px; color:var(--color-ink-2); font-size:18px; line-height:1.9; }
     .service-hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:34px; }
     .service-hero-actions a { display:inline-flex; min-height:50px; align-items:center; justify-content:center; padding:0 24px; border:1px solid var(--color-accent); color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-hero-actions a:first-child { background:var(--color-accent); color:#fff; }
     .service-hero-actions a.is-text { padding:0 4px; border:0; color:var(--color-ink-2); font-weight:500; text-decoration:underline; text-underline-offset:4px; }
     .service-hero-actions a.is-line { gap:10px; border-color:#06c755; background:#06c755; color:#fff; }
-    .line-btn-ic { flex-shrink:0; width:20px; height:20px; }
+    .service-hero-actions :global(.line-btn-ic) { display:block; flex:none; width:20px; height:20px; }
+    .service-hero h1 .nb { white-space:nowrap; }
+    .service-hero-cards { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:18px; }
+    .service-hero-cards > a { display:grid; grid-template-rows:auto 1fr; overflow:hidden; border:1px solid var(--color-rule-2); background:var(--color-paper-2); color:var(--color-ink); text-decoration:none; transition:border-color .18s ease; }
+    .service-hero-cards img { display:block; width:100%; height:auto; aspect-ratio:16 / 10; object-fit:cover; object-position:center 35%; border-bottom:1px solid var(--color-rule-2); }
+    .service-hero-cards img.is-course { object-position:center 62%; }
+    .service-hero-card-copy { display:grid; align-content:start; gap:8px; padding:20px 22px 22px; }
+    .service-hero-card-copy strong { font-size:20px; line-height:1.4; }
+    .service-hero-card-copy > span { color:var(--color-ink-3); line-height:1.75; }
+    .service-hero-card-copy b { margin-top:6px; color:var(--color-accent); font-weight:700; }
+    .service-dev-more { width:min(1120px, calc(100% - 48px)); margin:28px auto 0; }
+    .service-dev-more a { color:var(--color-accent); font-weight:700; text-decoration:none; }
+    @media (hover:hover) and (pointer:fine) {
+      .service-hero-cards > a:hover { border-color:var(--color-accent); }
+    }
+    @media (max-width:1023px) {
+      .service-hero-cards { grid-template-columns:1fr; }
+      .service-hero-cards > a { grid-template-columns:minmax(0, 220px) minmax(0, 1fr); grid-template-rows:none; }
+      .service-hero-cards img { height:auto; aspect-ratio:4 / 3; align-self:start; border-right:1px solid var(--color-rule-2); border-bottom:0; }
+    }
     .service-h1-sub { display:block; margin-top:.35em; font-size:.55em; line-height:1.35; letter-spacing:-.02em; }
     .service-lead a { color:var(--color-accent); text-decoration:underline; text-underline-offset:4px; }
-    .service-hero figure { position:relative; margin:0; }
-    .service-hero figure img { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); filter:saturate(.86); }
-    .service-hero figcaption { position:absolute; right:-18px; bottom:24px; display:grid; min-width:230px; padding:17px 20px; border:1px solid var(--color-accent-line-2); background:rgb(247 245 241 / 96%); box-shadow:0 12px 30px rgb(22 22 26 / 12%); }
-    .service-hero figcaption span, .service-hero figcaption small { color:var(--color-ink-3); font-size:11px; }
-    .service-hero figcaption strong { margin:5px 0; font-size:20px; }
-    .service-proof { display:grid; grid-template-columns:repeat(3, 1fr); width:min(1120px, calc(100% - 48px)); margin:auto; border-block:1px solid var(--color-rule); }
-    .service-proof p { display:grid; place-items:center; min-height:82px; margin:0; padding:20px; text-align:center; }
-    .service-proof p + p { border-left:1px solid var(--color-rule); }
-    .service-proof strong { max-width:24ch; color:var(--color-accent); font-size:16px; line-height:1.55; }
     .service-options, .service-experience { width:min(1120px, calc(100% - 48px)); margin:110px auto 0; }
     .service-options > header, .service-experience > header { max-width:700px; }
     .service-options h2, .service-experience h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
@@ -303,20 +317,6 @@ const schema = [
     .service-experience article p { margin-top:9px; color:var(--color-ink-3); line-height:1.75; }
     .service-text-link { display:inline-block; margin-top:24px; color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-home-cta { width:min(1120px, calc(100% - 48px)); margin:80px auto 0; }
-    .service-hero-case { position:relative; margin:0; }
-    .service-hero-case { justify-self:center; width:min(100%, calc((100svh - 160px) * 9 / 16)); }
-    .service-hero-case video { display:block; width:100%; height:auto; aspect-ratio:9 / 16; border:1px solid var(--color-rule-2); background:var(--color-ink); box-shadow:0 18px 48px rgb(22 22 26 / 12%); }
-    .service-dev { display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, .95fr); gap:56px; width:min(1120px, calc(100% - 48px)); margin:96px auto 0; align-items:start; }
-    .service-dev h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
-    .service-dev-copy ul { display:grid; gap:8px; margin-top:18px; padding:0; list-style:none; color:var(--color-ink-3); }
-    .service-dev-links { display:flex; flex-wrap:wrap; gap:12px 24px; margin-top:22px; }
-    .service-dev-links a { color:var(--color-accent); font-weight:700; text-decoration:none; }
-    .service-dev-cost { padding:28px; background:var(--color-ink); color:#fff; }
-    .service-dev-cost dl { display:grid; margin-top:14px; }
-    .service-dev-cost dl > div { padding:14px 0; border-bottom:1px solid rgb(255 255 255 / 14%); }
-    .service-dev-cost dt { color:#e7b8c0; font-size:13px; font-weight:700; letter-spacing:.06em; }
-    .service-dev-cost dd { margin:4px 0 0; color:#e9e5df; line-height:1.75; }
-    .service-dev-primary { display:inline-flex; min-height:48px; align-items:center; margin-top:22px; padding:0 22px; background:var(--color-accent); color:#fff; font-weight:700; text-decoration:none; }
     .service-section-lead { max-width:62ch; margin-top:16px; color:var(--color-ink-2); line-height:1.85; }
     .service-case-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; margin:34px 0 0; padding:0; list-style:none; }
     .service-case-grid li { display:grid; grid-template-columns:44px minmax(0, 1fr); gap:14px; align-items:center; padding:18px; border:1px solid var(--color-rule-2); background:var(--color-paper-2); }
@@ -327,29 +327,25 @@ const schema = [
     .service-free-copy ul { display:grid; gap:8px; margin-top:18px; padding:0; list-style:none; color:var(--color-ink-3); }
     .service-free-media { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
     @media (max-width:767px) {
-      .service-hero { grid-template-columns:1fr; gap:40px; width:min(100% - 40px, 620px); padding:54px 0 50px; }
+      .service-hero { gap:32px; width:calc(100% - 40px); padding:48px 0 0; }
+      .service-hero-cards > a { grid-template-columns:1fr; }
+      .service-hero-cards img { height:auto; min-height:0; aspect-ratio:16 / 10; border-right:0; border-bottom:1px solid var(--color-rule-2); }
+      .service-hero-card-copy { padding:16px 18px 18px; }
+      .service-dev-more { width:calc(100% - 40px); }
       .service-hero h1 { font-size:clamp(32px, 9vw, 44px); line-height:1.18; }
-      .service-hero .service-hero-case { width:min(78%, 300px); }
       .service-lead { font-size:16px; line-height:1.8; }
       .service-hero-actions { display:grid; grid-template-columns:1fr; }
       .service-hero-actions a { width:100%; }
-      .service-hero figure { width:calc(100% - 14px); }
-      .service-hero figcaption { right:-14px; bottom:18px; min-width:min(230px, calc(100% - 24px)); }
-      .service-proof { grid-template-columns:1fr; width:calc(100% - 40px); }
-      .service-proof p + p { border-top:1px solid var(--color-rule); border-left:0; }
       .service-options, .service-experience, .service-home-cta { width:calc(100% - 40px); margin-top:76px; }
       .service-option-grid { grid-template-columns:1fr; }
       .service-option-grid article { min-height:0; padding:28px 24px 72px; }
       .service-option-grid article > a { left:24px; }
       .service-experience-grid { grid-template-columns:1fr; }
       .service-case-grid { grid-template-columns:1fr; }
-      .service-dev { grid-template-columns:1fr; gap:32px; width:calc(100% - 40px); margin-top:72px; }
-      .service-dev-cost { padding:22px; }
-      .service-dev-primary { width:100%; justify-content:center; }
       .service-free { grid-template-columns:1fr; gap:28px; }
     }
     @media (max-width:340px) {
-      .service-hero, .service-proof, .service-options, .service-experience, .service-home-cta { width:calc(100% - 32px); }
+      .service-hero, .service-dev-more, .service-options, .service-experience, .service-home-cta { width:calc(100% - 32px); }
       .service-hero h1 { font-size:38px; }
     }
     .service-entry { width:min(1120px, calc(100% - 48px)); margin:110px auto 0; }
