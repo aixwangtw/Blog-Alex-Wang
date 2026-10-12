@@ -23,13 +23,13 @@ export const GET: APIRoute = async () => {
 
   const body = `# Aix 系統開發（Aix System Development，舊名 AI新手教學）
 
-> Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發（代表案例：補習班數學題庫系統）；也是 AI 應用講師。教 AI Agent 工具使用（Claude Code、Codex）、做自動發文（Meta API）、對話式拍片（HyperFrames）——把工作流程簡化成對話就能完成。提供付費一對一私人教學（台北／新北實體課或 Google Meet／Discord 線上課）與企業、學校、社群的 AI 主題演講。
+> Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發（代表案例：補習班數學題庫系統）；也是 AI 應用講師，教對話式拍片（HyperFrames）——把工作流程簡化成對話就能完成。提供付費一對一私人教學（台北／新北實體課或 Google Meet／Discord 線上課）與企業、學校、社群的 AI 主題演講。
 
 ## 服務
 
 - [客製系統開發](${SERVICE_SITE.url}/services/development/)：Alex 和開發夥伴承接客製系統開發，用 AI 自動化整理資料、產出內容；代表案例是補習班數學老師用的題庫系統（考卷匯入、AI 出題、AI 詳解），案例介紹見 ${SITE.url}/blog/math-teacher-question-bank/。
-- [AI 一對一私人教學](${SERVICE_SITE.url}/course/)：手把手帶零基礎學員完成桌面版 AI Agent 安裝、Meta API 串接與自動發文系統，雙北實體或線上皆可。
-- [AI 演講與企業內訓](${SERVICE_SITE.url}/services/speaking/)：AI Agent 入門、社群自動化、AI 一鍵拍片、AI 工作流設計等主題，曾受 MixerBox、TAIA 台灣人工智慧協會邀請演講。
+- [AI 一對一私人教學](${SERVICE_SITE.url}/course/)：主題是「跟 AI 對話就能拍片」，從腳本、剪輯、字幕、配音到多平台發佈，雙北實體或線上皆可。
+- [AI 演講與企業內訓](${SERVICE_SITE.url}/services/speaking/)：AI 一鍵拍片（跟 AI 對話就能完成影片），曾受 TAIA 台灣人工智慧協會邀請演講。
 - [關於 Alex](${SITE.url}/about/)：系統開發工程師、21 萬人 OpenClaw 中文社群版主、HyperFrames 開源專案協作者。
 
 ## 免費資源

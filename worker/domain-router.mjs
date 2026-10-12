@@ -13,9 +13,16 @@ const serviceRedirects = new Map([
   ['/services/development/', `${SERVICE_ORIGIN}/services/development/`],
 ]);
 
+// 工具測驗已於 2026-10 下架：舊網址一律 301 回服務總覽（兩個網域、有無尾斜線都接）。
+const removedQuizPaths = new Set(['/quiz', '/quiz/', '/services/tool-quiz', '/services/tool-quiz/']);
+
 export default {
   async fetch(request, env, context) {
     const url = new URL(request.url);
+
+    if (removedQuizPaths.has(url.pathname) || url.pathname.startsWith('/quiz/') || url.pathname.startsWith('/services/tool-quiz/')) {
+      return Response.redirect(`${SERVICE_ORIGIN}/`, 301);
+    }
 
     if (url.hostname === 'service.aixwang.dev') {
       if (url.pathname === '/robots.txt' || url.pathname === '/sitemap.xml') {
@@ -28,14 +35,6 @@ export default {
       if (url.pathname === '/') {
         const assetUrl = new URL(request.url);
         assetUrl.pathname = '/services/';
-        return env.ASSETS.fetch(new Request(assetUrl, request));
-      }
-
-      // /quiz 曝露 build 內的 /services/tool-quiz/（實際檔案在
-      // src/pages/services/tool-quiz.astro），瀏覽器網址保留在 /quiz/。
-      if (url.pathname === '/quiz' || url.pathname === '/quiz/') {
-        const assetUrl = new URL(request.url);
-        assetUrl.pathname = '/services/tool-quiz/';
         return env.ASSETS.fetch(new Request(assetUrl, request));
       }
 

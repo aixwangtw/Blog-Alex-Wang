@@ -8,7 +8,7 @@ import SectionHeading from '../components/SectionHeading.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { AUTHOR, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { EXPERIENCE } from '../data/instructor';
-import { SPEAKING_ENGAGEMENTS, TEACHING_CASES } from '../data/services';
+import { SPEAKING_ENGAGEMENTS } from '../data/services';
 import Base from '../layouts/Base.astro';
 
 const schema = [
@@ -46,7 +46,7 @@ const schema = [
     </figure>
 
     <p class="mt-8 text-lg leading-9 text-ink">
-      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，用 AI 自動化整理資料、產出內容，代表案例是補習班數學老師用的題庫系統。我也是 AI 應用講師與 21 萬人 OpenClaw 中文社群的版主，教 AI Agent 工具使用、自動發文、AI 生圖模板、對話式拍片，提供<strong class="text-accent">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-accent">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
+      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，用 AI 自動化整理資料、產出內容，代表案例是補習班數學老師用的題庫系統。我也是 AI 應用講師，教「跟 AI 對話就能拍片」，提供<strong class="text-accent">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-accent">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
     </p>
     <a
       href="/blog/from-part-time-to-freelance/"
@@ -60,24 +60,9 @@ const schema = [
       href={`${SERVICE_SITE.url}/course/`}
       class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
     >
-      查看完整教學案例與收費方式 →
+      查看教學內容與收費方式 →
     </a>
-    <p class="mt-4 leading-8 text-ink-2">帶過的學員從工程師到完全非技術背景都有，雙北實體與線上教學皆可預約。</p>
-    <!-- gap 只留水平：垂直間隔由 Card 自己的 py-7 提供。再加 row-gap 的話，
-         線與線之間會多出一段跟內容無關的空白，那條線看起來就不像在分隔兩列。
-         （理由與 TeachingTools.astro 相同。）
-         原本傳的 p-5 是舊卡片盒的內距，Card 現在一律用 px-0.5 py-7，傳了也不生效，直接移除。 -->
-    <div class="mt-6 grid gap-x-8 sm:grid-cols-2">
-      {TEACHING_CASES.map((item) => (
-        <Card>
-          <div class="flex items-center gap-3">
-            <Image src={item.image} alt={item.imageAlt} width={96} class="h-10 w-10 shrink-0 object-contain" />
-            <h3 class="font-semibold leading-snug text-ink">{item.topic}</h3>
-          </div>
-          <p class="mt-3 text-sm text-accent">學員背景：{item.student}</p>
-        </Card>
-      ))}
-    </div>
+    <p class="mt-4 leading-8 text-ink-2">一對一教學的主題是「跟 AI 對話就能拍片」，雙北實體與線上教學皆可預約。</p>
 
     <SectionHeading size="md" class="mt-14">公眾演講經歷</SectionHeading>
     <a
@@ -86,7 +71,7 @@ const schema = [
     >
       查看演講紀錄與邀約方式 →
     </a>
-    <p class="mt-4 leading-8 text-ink-2">全部現場實機演示、帶聽眾動手做；企業、學校與社群的演講或工作坊都可規劃。</p>
+    <p class="mt-4 leading-8 text-ink-2">現場實機演示、帶聽眾動手做；企業、學校與社群的演講或工作坊都可規劃。</p>
     <div class="mt-6 grid gap-x-8 sm:grid-cols-2">
       {SPEAKING_ENGAGEMENTS.map((item) => (
         <Card>

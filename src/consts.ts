@@ -6,7 +6,7 @@ export const SITE = {
   formerNames: ['AI新手教學', 'AI Beginner Blog'],
   url: 'https://aixwang.dev',
   description:
-    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統；也是 AI 應用講師，教 AI Agent 工具、自動發文、AI 生圖模板與對話式拍片，提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。',
+    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統；也是 AI 應用講師，教「跟 AI 對話就能拍片」，提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。',
   locale: 'zh-TW',
 };
 
@@ -16,7 +16,7 @@ export const SERVICE_SITE = {
   title: 'Aix 系統開發服務',
   url: 'https://service.aixwang.dev',
   description:
-    '我和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統；也提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），並接受企業與社群的 AI 演講邀約。',
+    '我和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統；也提供付費一對一 AI 私人教學（主題：跟 AI 對話就能拍片；雙北咖啡廳實體課或 Google Meet／Discord 線上課），並接受企業與社群的 AI 演講邀約。',
 };
 
 // 系統開發服務頁與首頁共用的事實（流程、時程、付款），內容需與題庫文章 FAQ 第 1 題一致，不得寫開發費金額。
@@ -37,15 +37,10 @@ export const AUTHOR = {
   alternateName: ['王士麟', 'Alex Wang', '艾克斯王', 'aixwang'],
   jobTitle: '系統開發工程師 / AI 應用講師',
   description:
-    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，用 AI 自動化整理資料、產出內容；也是 21 萬人 OpenClaw 中文社群版主，教 AI Agent 工具使用、自動發文、AI 生圖模板與對話式拍片。',
+    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，用 AI 自動化整理資料、產出內容；也教「跟 AI 對話就能拍片」。',
   knowsAbout: [
     '客製系統開發',
     '後台管理系統',
-    'AI Agent 工具',
-    'Claude Code',
-    'Codex',
-    'AI 生圖模板',
-    'Meta API',
     '對話式拍片',
     'HyperFrames',
   ],
@@ -57,8 +52,8 @@ export const AUTHOR = {
 // 雜湊固定選版：同一篇永遠同一版（對讀者與搜尋引擎穩定），不同篇之間輪替。
 // 內容都是同一組真實事實的不同說法，不得加入新的宣稱。
 export const AUTHOR_INTROS = [
-  '全職接案工程師、21 萬人 OpenClaw 中文社群版主。教 AI Agent 工具、自動發文、AI 生圖模板與對話式拍片，目標是把工作流程簡化成用說的就能完成。',
-  '接案工程師，也是 21 萬人 OpenClaw 中文社群的版主。我教的重點只有一個：第一次把工具裝好、串好，之後用說的就能把發文、生圖、剪片做完。',
+  '全職接案工程師，承接客製系統開發，也教「跟 AI 對話就能拍片」，目標是把工作流程簡化成用說的就能完成。',
+  '接案工程師。我教的重點只有一個：跟 AI 對話就能把影片拍出來，從腳本、剪輯到發佈都用說的完成。',
   '接案工程師，平常幫客戶把重複的工作變成自動化流程，也在 21 萬人的 OpenClaw 中文社群當版主。部落格寫的都是自己每天在用的做法。',
 ];
 
@@ -183,16 +178,9 @@ export const LINKS = {
 // 首屏與右下角快速入口共用同一組路徑，避免兩處文案與目的頁漂移。
 export const LEARNING_ENTRY_LINKS = [
   {
-    href: '/blog/how-to-start-learning-ai/',
-    title: 'AI 新手／零基礎',
-    description: '第一次學 AI，先從這篇開始。',
-    analyticsKey: 'newbie',
-    analyticsLabel: 'AI 新手零基礎入門文章',
-  },
-  {
     href: '/blog/',
-    title: '找 AI 實作主題文章',
-    description: '查看所有 AI 教學文章。',
+    title: '看全部文章',
+    description: '數學題庫系統的開發紀錄與其他實作文章。',
     analyticsKey: 'articles',
     analyticsLabel: 'AI 實作主題文章',
   },
@@ -201,8 +189,8 @@ export const LEARNING_ENTRY_LINKS = [
 export const GUIDED_ENTRY_LINKS = [
   {
     href: `${SERVICE_SITE.url}/course/`,
-    title: '找 AI 家教',
-    description: '查看一對一教學內容與上課方式。',
+    title: '學對話拍片',
+    description: '一對一教學：跟 AI 對話就能拍片，看內容與上課方式。',
     analyticsKey: 'tutor',
     analyticsLabel: 'AI 一對一家教',
   },

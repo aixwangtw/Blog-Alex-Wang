@@ -11,18 +11,14 @@
 // 所以砍到五個單元 —— 頁首／Hero（含三張服務卡）／信任證明／結尾 CTA／頁尾。
 //
 // 被移除的區塊都另有去處，沒有內容因此消失：
-//   TEACHING_CASES      → /course/、/about/
 //   SPEAKING_ENGAGEMENTS→ /services/speaking/、/about/
 //   TEACHING_CONTENT    → /course/
 //   HOME_FAQS           → /faq/
 //   精選文章             → /blog/
 //   VIDEOS              → /resources/（本階段一併新建；VIDEOS 原本只有首頁在用）
 //
-// schema 的兩個處理，方向相反，不可弄錯：
-//   Course  保留。它的 teaches 來自 SYLLABUS，而 SYLLABUS 本來就不 render 成畫面、
-//           只餵 schema，因此區塊移除不影響它，資料與 schema 都留著。
-//   FAQPage 移除。/faq/ 已經有 2 份 FAQPage（HOME_FAQS ＋ 各文章 FAQ），
-//           首頁那份從一開始就是重複的。
+// 2026-10：Course 結構化資料已移除（它的內容是 Agent 安裝與自動發文課程，站上不再提供）；
+// FAQPage 仍不在首頁，/faq/ 已經有了。
 // ============================================================
 import {
   AUTHOR,
@@ -31,37 +27,22 @@ import {
   SITE,
   pageBannerUrl,
 } from '../consts';
-import { SYLLABUS } from '../data/home';
 import Base from '../layouts/Base.astro';
 
-const schema = [
-  {
-    '@type': 'Course',
-    '@id': `${SITE.url}/#course`,
-    name: 'Claude Code/Codex 手把手教學：從 0 到 1 完成第一個作品',
-    description:
-      '手把手使用 Claude Code 或 Codex，從 0 到 1 完成第一個作品，包含 AI Agent 安裝、實作、測試與除錯。提供雙北實體與線上私人家教。',
-    provider: { '@id': AUTHOR.id },
-    inLanguage: 'zh-TW',
-    courseMode: ['onsite', 'online'],
-    teaches: SYLLABUS.map((s) => s.title),
-  },
-];
 ---
 
 <Base
-  title="客製化系統開發／AI 自動化｜代表案例：數學題庫系統"
-  description="客製化系統開發與 AI 自動化。代表案例是補習班數學題庫系統：考卷匯入與 AI 辨識審核、AI 出相似題與詳解、出卷與匯出；本站整理這套系統的開發紀錄與案例文章。"
+  title="客製化系統開發｜代表案例：數學題庫系統"
+  description="客製化系統開發。代表案例是補習班數學題庫系統：考卷匯入與 AI 辨識審核、AI 出相似題與詳解、出卷與匯出；本站整理這套系統的開發紀錄與案例文章。"
   ogImage={pageBannerUrl('home')}
-  ogImageAlt="客製化系統開發／AI 自動化｜代表案例：數學題庫系統"
-  schema={schema}
+  ogImageAlt="客製化系統開發｜代表案例：數學題庫系統"
 >
   <div class="home" id="home-root">
     <!-- 1／Hero：終端機式快速入口；每個選項直接前往目的頁，不加入模擬思考或中繼回答。 -->
     <section class="hero" aria-labelledby="hero-h">
         <div class="hero-copy hero-reveal" style="--d:0ms">
           <p class="hero-kicker">代表案例：數學題庫系統</p>
-          <h1 id="hero-h"><span class="nb">客製化系統開發</span> <span class="nb">/AI自動化</span></h1>
+          <h1 id="hero-h"><span class="nb">客製化系統開發</span></h1>
           <p class="hero-summary">本站整理補習班數學題庫系統的開發紀錄與案例文章：考卷匯入與 AI 辨識審核、AI 出相似題與詳解、出卷與匯出（PNG、Word、MathType），也附可實際操作的 Demo。</p>
           <div class="hero-actions">
             <a

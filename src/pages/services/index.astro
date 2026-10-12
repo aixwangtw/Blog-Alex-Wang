@@ -15,24 +15,24 @@ import {
   SITE,
   pageBannerUrl,
 } from '../../consts';
-import { SPEAKING_ENGAGEMENTS, TEACHING_CASES } from '../../data/services';
+import { SPEAKING_ENGAGEMENTS } from '../../data/services';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
-// 三種服務：系統開發為主，其餘兩項只列成次要細線列表。描述取自站上既有事實（TEACHING_CASES、SPEAKING_ENGAGEMENTS）。
+// 三種服務：系統開發為主，其餘兩項只列成次要細線列表。描述取自站上既有事實（SPEAKING_ENGAGEMENTS）。
 const heroServiceCards = [
   { key: 'development', href: '/services/development/', title: '系統開發' },
   {
     key: 'course',
     href: '/course/',
     title: 'AI 一對一教學',
-    description: '不需要程式背景，3 小時用你自己的電腦和帳號，從裝好 Claude Code、Codex、Hermes 或 OpenClaw，做到第一個能用的專案，像自動發文、整理 Email。',
+    description: '不需要程式背景，3 小時用你自己的電腦，學會跟 AI 對話就能拍片：從腳本、剪輯、字幕、配音到發佈，都用說的完成。',
     action: '看教學內容',
   },
   {
     key: 'speaking',
     href: '/services/speaking/',
     title: '演講邀約',
-    description: `企業、學校與社群的 AI 演講，主題可依聽眾背景調整，講過 ${SPEAKING_ENGAGEMENTS.slice(0, 2).map((item) => item.host).join('、')}等場次。`,
+    description: `企業、學校與社群的 AI 演講，主題是「跟 AI 對話就能拍片」，講過 ${SPEAKING_ENGAGEMENTS[0].host}等場次。`,
     action: '看演講紀錄',
   },
 ];
@@ -169,33 +169,13 @@ const schema = [
   </section>
 
 
-  <section class="service-experience" id="teaching-cases">
-    <header>
-      <p class="service-kicker">AI 一對一教學</p>
-      <h2>私人家教案例</h2>
-      <p class="service-section-lead">每堂課都用學員自己的電腦、帳號和需求實作，過去已帶學員完成 Agent 安裝、社群自動發文、Email 與行事曆整理，以及 OpenClaw 排錯救援。</p>
-    </header>
-    <ul class="service-case-list">
-      {TEACHING_CASES.map((item) => (
-        <li>
-          <Image src={item.image} alt={item.imageAlt} width={64} class="service-case-icon" />
-          <div>
-            <strong>{item.topic}</strong>
-            <span>{item.student}</span>
-          </div>
-        </li>
-      ))}
-    </ul>
-    <a class="service-text-link" href="/course/" data-ga-button="service_home_course_cases" data-ga-label="查看完整教學案例與上課方式" data-ga-location="service_home_teaching" data-ga-action="navigate">查看完整案例與上課方式 →</a>
-  </section>
-
   <section class="service-experience" id="speaking-cases">
     <header>
       <p class="service-kicker">演講邀約</p>
       <h2>過往演講紀錄</h2>
     </header>
     <ul class="service-speaking-list">
-      {SPEAKING_ENGAGEMENTS.slice(0, 3).map((item, index) => (
+      {SPEAKING_ENGAGEMENTS.map((item, index) => (
         <li>
           <Image src={item.image} alt={item.imageAlt} widths={[160, 320]} sizes="(min-width: 768px) 160px, 96px" loading="lazy" />
           <div>
@@ -214,12 +194,7 @@ const schema = [
       <p class="service-kicker">先自己試試看</p>
       <h2>免費資源</h2>
       <p class="service-section-lead">整理了免費教學文章、影片與開源工具，點選你需要的主題就能查看。</p>
-      <ul>
-        <li>Codex 新手安裝教學</li>
-        <li>可直接交給 AI 安裝的 Skills</li>
-        <li>API 串接教學與開源工具</li>
-      </ul>
-      <a class="service-text-link" href={`${SITE.url}/resources/`} data-ga-button="service_home_free_resources" data-ga-label="查看免費資源" data-ga-location="service_home_free" data-ga-action="navigate">查看免費資源 →</a>
+<a class="service-text-link" href={`${SITE.url}/resources/`} data-ga-button="service_home_free_resources" data-ga-label="查看免費資源" data-ga-location="service_home_free" data-ga-action="navigate">查看免費資源 →</a>
     </div>
     <Image src={freeResourcesHome} alt="教學影片、開源工具與實作指南組成的免費 AI 學習資源" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" class="service-free-media" />
   </section>
@@ -265,11 +240,6 @@ const schema = [
     .service-text-link { display:inline-block; margin-top:24px; color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-home-cta { width:min(1120px, calc(100% - 48px)); margin:80px auto 0; }
     .service-section-lead { max-width:62ch; margin-top:16px; color:var(--color-ink-2); line-height:1.85; }
-    .service-case-list { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); column-gap:40px; margin:34px 0 0; padding:0; list-style:none; }
-    .service-case-list li { display:grid; grid-template-columns:44px minmax(0, 1fr); gap:14px; align-items:center; padding:18px 2px; border-top:1px solid var(--color-rule); }
-    .service-case-icon { width:44px; height:44px; object-fit:contain; }
-    .service-case-list strong { display:block; color:var(--color-ink); line-height:1.5; }
-    .service-case-list span { display:block; margin-top:4px; color:var(--color-ink-3); font-size:13px; }
     .service-speaking-list { margin:34px 0 0; padding:0; list-style:none; }
     .service-speaking-list li { display:grid; grid-template-columns:160px minmax(0, 1fr); gap:28px; align-items:start; padding:24px 2px; border-top:1px solid var(--color-rule); }
     .service-speaking-list li > img { display:block; width:160px; height:auto; aspect-ratio:4 / 3; object-fit:cover; border:1px solid var(--color-rule-2); }
@@ -278,8 +248,7 @@ const schema = [
     .service-speaking-list h3 { margin-top:8px; font-size:20px; line-height:1.45; }
     .service-speaking-list p { margin-top:8px; color:var(--color-ink-3); line-height:1.75; }
     .service-free { display:grid; grid-template-columns:minmax(0, 1fr) minmax(280px, .9fr); gap:48px; align-items:center; }
-    .service-free-copy ul { display:grid; gap:8px; margin-top:18px; padding:0; list-style:none; color:var(--color-ink-3); }
-    .service-free-media { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
+        .service-free-media { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
     .service-entry { width:min(1120px, calc(100% - 48px)); margin:64px auto 0; }
     .service-entry h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
     .service-entry-tabs { display:flex; flex-wrap:wrap; gap:6px 28px; margin-top:28px; }
@@ -304,8 +273,7 @@ const schema = [
       .service-shot-row { grid-template-columns:1fr; gap:16px; }
       .service-others li { grid-template-columns:1fr; gap:10px; }
       .service-experience, .service-home-cta { margin-top:76px; }
-      .service-case-list { grid-template-columns:1fr; }
-      .service-speaking-list li { grid-template-columns:96px minmax(0, 1fr); gap:16px; }
+        .service-speaking-list li { grid-template-columns:96px minmax(0, 1fr); gap:16px; }
       .service-speaking-list li > img { width:96px; }
       .service-free { grid-template-columns:1fr; gap:28px; }
       .service-entry { margin-top:40px; }

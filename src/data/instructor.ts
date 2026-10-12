@@ -13,10 +13,6 @@ export const EXPERIENCE: ExperienceItem[] = [
     text: '一鍵拍片開源專案 HyperFrames 協作者：從腳本、剪輯、字幕、真人配音、音樂、封面圖到多平台自動發佈，都能透過對話完成，大幅降低拍片的時間成本與技術門檻。',
     featured: true,
   },
-  {
-    text: '提供 OpenClaw、Hermes 的救援服務。',
-    featured: true,
-  },
   { text: '21 萬人 OpenClaw 中文社群版主。' },
   { text: 'MixerBox 等單位講座授課經驗。' },
 ];
