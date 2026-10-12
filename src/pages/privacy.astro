@@ -1,6 +1,5 @@
 ---
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import PillButton from '../components/PillButton.astro';
 import { AUTHOR, LINKS, SITE, breadcrumbSchema } from '../consts';
 import Base from '../layouts/Base.astro';
 
@@ -59,9 +58,6 @@ const schema = [
           href={LINKS.email}>{AUTHOR.email}</a
         >。
       </p>
-      <div class="not-prose mt-6 flex flex-wrap gap-3">
-        <PillButton href={LINKS.email}>Email 聯絡</PillButton>
-      </div>
     </div>
   </div>
 </Base>

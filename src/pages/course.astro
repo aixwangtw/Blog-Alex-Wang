@@ -5,7 +5,7 @@ import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { AUTHOR, LINKS, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { AUTHOR, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { ONE_ON_ONE_FAQS } from '../data/faqs';
 import { CLASS_FORMATS, TEACHING_CONTENT } from '../data/services';
 import ServiceBase from '../layouts/ServiceBase.astro';
@@ -175,10 +175,9 @@ const courseBannerPath = new URL(courseBanner).pathname;
 
     <Cta
       title="想預約或先問問題？"
-      text="用 Email 告訴我你的目標和目前程度，我會建議適合的上課方式與堂數。"
-      href={LINKS.email}
-      label={'Email\n詢問'}
-      external={false}
+      text="告訴我你的目標和目前程度，我會建議適合的上課方式與堂數。"
+      hint="有問題點右下角官方 LINE 直接問我"
+      href={null}
       links={[]}
     />
   </div>

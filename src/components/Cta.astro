@@ -23,7 +23,9 @@ interface Props {
   title?: string;
   text?: string;
   /** 主要行動（實心圓）。預設是系統開發服務頁——全站不再放 LINE 按鈕（LINE 只留右下角與服務站頁首） */
-  href?: string;
+  href?: string | null;
+  /** 不放按鈕、改成引導文字：指向右下角的官方 LINE（全站 LINE 入口只留右下角與服務站頁首） */
+  hint?: string;
   /** 圓內文字，用 \n 手動斷行；圓的直徑固定 168px，不要塞超過兩行 */
   label?: string;
   external?: boolean;
@@ -37,6 +39,7 @@ const {
   href = DEVELOPMENT_SERVICE.url,
   label = '了解系統\n開發服務',
   external = false,
+  hint,
   links = [
     { href: `${SERVICE_SITE.url}/course/`, label: '了解一對一教學', external: true },
     { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講邀約', external: true },
@@ -51,6 +54,7 @@ const labelLines = label.split('\n');
     <div>
       <h2 class="cta-h">{title}</h2>
       <p class="cta-p">{text}</p>
+      {hint && <p class="cta-hint">{hint}<span aria-hidden="true"> ↘</span></p>}
       {links.length > 0 && (
         <ul class="cta-links">
           {links.map((link) => (
@@ -68,14 +72,16 @@ const labelLines = label.split('\n');
       )}
     </div>
 
-    <a
-      class="cta-go"
-      href={href}
-      target={external ? '_blank' : undefined}
-      rel={external ? 'noreferrer' : undefined}
-    >
-      {labelLines.map((line) => <span>{line}</span>)}
-    </a>
+    {href !== null && (
+      <a
+        class="cta-go"
+        href={href}
+        target={external ? '_blank' : undefined}
+        rel={external ? 'noreferrer' : undefined}
+      >
+        {labelLines.map((line) => <span>{line}</span>)}
+      </a>
+    )}
   </div>
 </aside>
 
@@ -124,6 +130,12 @@ const labelLines = label.split('\n');
     color: var(--color-ink-2);
   }
 
+  .cta-hint {
+    margin-top: 18px;
+    color: var(--color-accent);
+    font-weight: 700;
+    line-height: 1.7;
+  }
   .cta-links {
     margin-top: 20px;
     display: flex;

@@ -8,7 +8,7 @@ import Card from '../../components/Card.astro';
 import CheckItem from '../../components/CheckItem.astro';
 import Cta from '../../components/Cta.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, SERVICE_SITE, SITE, breadcrumbSchema } from '../../consts';
+import { AUTHOR, DEVELOPMENT_SERVICE, SERVICE_SITE, SITE, breadcrumbSchema } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 import { blogBannerPath } from '../../lib/blog-banner';
 
@@ -71,7 +71,7 @@ const schema = [
         <p class="text-sm font-semibold text-accent">客製系統開發｜題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程</p>
         <h1 class="t-h1 mt-3 font-semibold text-ink">AI 自動化系統開發<span class="mt-2 block text-[0.55em] leading-snug">代表案例：數學題庫系統</span></h1>
         <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
-          補習班數學老師上傳 PDF、Word 或考卷照片，AI 拆成一題一題，老師對照原卷確認後才收進題庫；出卷時勾選、排序，就能匯出 PNG 或貼進 Word。你手上如果也有每天重複整理的資料，可以先試 Demo，再用 Email 跟我們聊。
+          補習班數學老師上傳 PDF、Word 或考卷照片，AI 拆成一題一題，老師對照原卷確認後才收進題庫；出卷時勾選、排序，就能匯出 PNG 或貼進 Word。你手上如果也有每天重複整理的資料，可以先試 Demo，再點右下角官方 LINE 跟我們聊。
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_demo" data-ga-label="試用 Demo" data-ga-location="development_hero" data-ga-action="external">試用 Demo</a>
@@ -149,12 +149,13 @@ const schema = [
     </ul>
 
     <Cta
-      title="想把手上的工作改成 AI 自動化？"
-      text="先試用題庫系統 Demo，確認方向後，再用 Email 告訴我你的需求，我跟夥伴都會一一看過再回覆。"
+      title="對系統有疑問嗎？"
+      text="先試用題庫系統 Demo，確認方向。需求內容很長也沒關係，我跟夥伴都會一一看過再回覆。"
+      hint="有問題點右下角官方 LINE 直接問我"
       href={DEVELOPMENT_SERVICE.demoUrl}
       label={'試用\n題庫 Demo'}
       external
-      links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
+      links={[]}
     />
   </div>
 </ServiceBase>

@@ -124,8 +124,8 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
   {
     tags: ['客製開發', 'AI 導入'],
     cta: {
-      title: '想把手上的工作改成 AI 自動化？',
-      text: '看系統開發服務的合作流程與費用怎麼算，也可以先看題庫系統的完整介紹。',
+      title: '對系統有疑問嗎？',
+      text: '看系統開發服務的合作流程與費用怎麼算，也可以先看題庫系統的完整介紹；有問題點右下角官方 LINE 直接問我。',
       href: DEVELOPMENT_SERVICE.url,
       label: '了解系統\n開發服務',
       links: [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],

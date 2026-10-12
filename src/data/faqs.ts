@@ -32,13 +32,13 @@ const groupClass: Faq = {
 const booking: Faq = {
   question: '怎麼預約或詢問費用？',
   answer:
-    '直接加 LINE 免費諮詢，說明你的目標（例如想學 AI 拍片），我會建議適合的堂數與報價。',
+    '請點右下角官方 LINE 直接問我，說明你的目標（例如想學 AI 拍片），我會建議適合的堂數與報價。',
 };
 
 const speakingOrDevelopment: Faq = {
   question: '可以邀請講課或委託開發嗎？',
   answer:
-    '可以。公開演講、企業內訓、社群講座或 AI 自動化開發需求，請寄 Email 到 js0980420@gmail.com，並簡單說明主題、日期、地點或預計開發的功能。私人家教與一般課程問題則可以直接加 LINE 免費諮詢。',
+    '可以。公開演講、企業內訓、社群講座或 AI 自動化開發需求，請點右下角官方 LINE，並簡單說明主題、日期、地點或預計開發的功能。私人家教與一般課程問題也可以直接問。',
 };
 
 export const HOME_FAQS: Faq[] = [
@@ -76,6 +76,6 @@ export const RESOURCES_FAQS: Faq[] = [
   },
   {
     question: '看影片有問題可以問你嗎？',
-    answer: '可以，歡迎加 LINE 免費諮詢，或到我的 Facebook 社團發問。',
+    answer: '可以，歡迎點右下角官方 LINE 直接問我，或到我的 Facebook 社團發問。',
   },
 ];

@@ -1,6 +1,5 @@
 ---
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import PillButton from '../components/PillButton.astro';
 import { AUTHOR, LINKS, SITE, breadcrumbSchema } from '../consts';
 import Base from '../layouts/Base.astro';
 
@@ -49,9 +48,6 @@ const schema = [
         對本聲明或任何內容有疑問、發現文章資訊已過時，歡迎來信告知：
         <a href={LINKS.email}>{AUTHOR.email}</a>，我會盡快確認與更新。
       </p>
-      <div class="not-prose mt-6 flex flex-wrap gap-3">
-        <PillButton href={LINKS.email}>Email 聯絡</PillButton>
-      </div>
     </div>
   </div>
 </Base>
