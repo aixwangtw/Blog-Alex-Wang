@@ -11,8 +11,7 @@
 // API 從「actions slot 放一排 PillButton」改成「一顆主要行動 ＋ 一排次要文字連結」：
 // 一個區塊裡放三顆同等分量的按鈕，等於沒有主要行動。次要選項改成純文字連結，
 // 讀者仍然找得到，但視線會先落在那顆圓上。
-import { LINKS, SERVICE_SITE } from '../consts';
-import LineIcon from './LineIcon.astro';
+import { DEVELOPMENT_SERVICE, SERVICE_SITE } from '../consts';
 
 interface SecondaryLink {
   href: string;
@@ -23,38 +22,28 @@ interface SecondaryLink {
 interface Props {
   title?: string;
   text?: string;
-  /** 主要行動（實心圓）。預設是 LINE 免費諮詢——5 個使用頁的共同轉換路徑 */
+  /** 主要行動（實心圓）。預設是系統開發服務頁——全站不再放 LINE 按鈕（LINE 只留右下角與服務站頁首） */
   href?: string;
   /** 圓內文字，用 \n 手動斷行；圓的直徑固定 168px，不要塞超過兩行 */
   label?: string;
   external?: boolean;
   /** 次要行動：純文字連結，不做成第二顆按鈕 */
   links?: SecondaryLink[];
-  /**
-   * line：主要行動改用 LINE 官方「加入好友」按鈕圖，也就是 LINE 官方帳號管理後台
-   * （Home > Gain Friends > "Add friend" tools > Create a button）產生的 HTML 所引用的圖檔，
-   * 只指定高度、不改圖。出處：https://developers.line.biz/en/docs/messaging-api/sharing-bot/
-   * 只給依 CTA_RULES 命中的文章用；其他頁面維持預設酒紅圓形。
-   */
-  tone?: 'default' | 'line';
 }
 
 const {
   title = '想更快上手？可以直接找我一對一',
   text = '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），也接受企業與社群的 AI 演講邀約。',
-  href = LINKS.line,
-  label = '加 LINE\n免費諮詢',
-  external = true,
+  href = DEVELOPMENT_SERVICE.url,
+  label = '了解系統\n開發服務',
+  external = false,
   links = [
     { href: `${SERVICE_SITE.url}/course/`, label: '了解一對一教學', external: true },
     { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講邀約', external: true },
   ],
-  tone = 'default',
 } = Astro.props;
 
 const labelLines = label.split('\n');
-// 連到 LINE 的主行動一律用 LINE 綠＋圖示
-const isLineLink = /lin\.ee|line\.me/.test(href);
 ---
 
 <aside class="cta">
@@ -79,26 +68,14 @@ const isLineLink = /lin\.ee|line\.me/.test(href);
       )}
     </div>
 
-    {tone === 'line' ? (
-      <a class="cta-line-add" href={href} target="_blank" rel="noreferrer">
-        <img
-          src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png"
-          alt={label}
-          height="44"
-          width="142"
-        />
-      </a>
-    ) : (
-      <a
-        class:list={['cta-go', { 'cta-go--line': isLineLink }]}
-        href={href}
-        target={external ? '_blank' : undefined}
-        rel={external ? 'noreferrer' : undefined}
-      >
-        {isLineLink && <LineIcon class="cta-go-ic" />}
-        {labelLines.map((line) => <span>{line}</span>)}
-      </a>
-    )}
+    <a
+      class="cta-go"
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noreferrer' : undefined}
+    >
+      {labelLines.map((line) => <span>{line}</span>)}
+    </a>
   </div>
 </aside>
 
@@ -185,19 +162,6 @@ const isLineLink = /lin\.ee|line\.me/.test(href);
       color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
       transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .cta-go--line {
-    border-color: #06c755;
-    background: #06c755;
-    color: #fff;
-  }
-  /* LineIcon 是子元件，Astro 的 scoped class 選擇器碰不到它渲染的 <svg>，
-     必須用 :global()；否則 svg 沒有寬高，會被撐成 150px 以上，把圓形按鈕拉成橢圓。 */
-  .cta-go :global(.cta-go-ic) {
-    display: block;
-    flex-shrink: 0;
-    width: 22px;
-    height: 22px;
-  }
   @media (min-width: 768px) {
     .cta-go {
       flex-direction: column;
@@ -216,11 +180,6 @@ const isLineLink = /lin\.ee|line\.me/.test(href);
       background: transparent;
       color: var(--color-ink);
     }
-    .cta-go--line:hover {
-      border-color: #05b34c;
-      background: #05b34c;
-      color: #fff;
-    }
     /* 旋轉只在圓形狀態做。手機那顆是整寬膠囊，轉 −8° 會斜著頂到左右兩邊。
        hover 反白後外框留著（jisto 是連框一起消失）：框消失時這顆圓
        就只剩浮在紙上的兩行字，既失去「這是一個按鈕」的形狀線索，
@@ -230,19 +189,6 @@ const isLineLink = /lin\.ee|line\.me/.test(href);
         transform: rotate(-8deg) scale(1.03);
       }
     }
-  }
-
-  /* LINE 官方加入好友按鈕：直接放官方圖檔（232×72，顯示高 44px 等比縮放），
-     不另外畫底色、不墊白底，外觀和一般網站常見的 LINE 加好友按鈕一致。 */
-  .cta-line-add {
-    display: inline-block;
-    justify-self: start;
-    line-height: 0;
-  }
-  .cta-line-add img {
-    display: block;
-    width: auto;
-    height: 44px;
   }
 
   @media (prefers-reduced-motion: reduce) {

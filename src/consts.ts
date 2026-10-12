@@ -88,8 +88,8 @@ export const CTA_VARIANTS = [
     text: '一對一教學可以約雙北咖啡廳實體或線上（Google Meet／Discord），從安裝到做出第一個成品帶你走一遍。企業與社群的演講邀約也接。',
   },
   {
-    title: '有問題想先問問看？',
-    text: '先加 LINE 免費聊聊你想自動化什麼，覺得適合再約一對一（雙北實體或線上都可以）。也歡迎企業與社群邀約演講。',
+    title: '想先看看能怎麼自動化？',
+    text: '想自動化的工作可以先看題庫系統的案例；覺得適合再約一對一（雙北實體或線上都可以）。也歡迎企業與社群邀約演講。',
   },
 ];
 
@@ -112,7 +112,6 @@ export interface ArticleCta {
   text: string;
   href?: string;
   label?: string;
-  tone?: 'default' | 'line';
   links?: { href: string; label: string; external?: boolean }[];
 }
 
@@ -121,22 +120,20 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
     tags: ['題庫系統'],
     cta: {
       title: '想做一套自己的題庫？',
-      text: '加官方 LINE 詢問題庫細節、費用。直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。',
-      href: LINE_URLS.questionBank,
-      label: '加入好友',
-      tone: 'line',
-      links: [],
+      text: '看系統開發服務的合作流程與費用怎麼算，也可以先試用題庫系統的 Demo。',
+      href: DEVELOPMENT_SERVICE.url,
+      label: '了解系統\n開發服務',
+      links: [{ href: DEVELOPMENT_SERVICE.demoUrl, label: '試用題庫系統 Demo', external: true }],
     },
   },
   {
     tags: ['客製開發', 'AI 導入'],
     cta: {
       title: '想把手上的工作改成 AI 自動化？',
-      text: '加官方 LINE 詢問客製開發細節、費用。直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。',
-      href: LINE_URLS.questionBank,
-      label: '加入好友',
-      tone: 'line',
-      links: [],
+      text: '看系統開發服務的合作流程與費用怎麼算，也可以先看題庫系統的完整介紹。',
+      href: DEVELOPMENT_SERVICE.url,
+      label: '了解系統\n開發服務',
+      links: [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],
     },
   },
   {
@@ -146,7 +143,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
       text: '接受企業、學校與社群的 AI 演講邀約，可以先看過去的演講主題與邀約方式。',
       href: `${SERVICE_SITE.url}/services/speaking/`,
       label: '找講師',
-      links: [{ href: LINE_URLS.blog, label: '加 LINE 免費諮詢', external: true }],
+      links: [],
     },
   },
   {
@@ -156,7 +153,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
       text: '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），從安裝到做出第一個成品帶你走一遍。',
       href: `${SERVICE_SITE.url}/course/`,
       label: '找教學',
-      links: [{ href: LINE_URLS.blog, label: '加 LINE 免費諮詢', external: true }],
+      links: [],
     },
   },
 ];

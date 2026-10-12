@@ -1,5 +1,4 @@
 ---
-import LineIcon from '../components/LineIcon.astro';
 import { Image } from 'astro:assets';
 import teachingOneOnOne from '../assets/teaching-one-on-one.jpg';
 import Cta from '../components/Cta.astro';
@@ -104,7 +103,6 @@ const courseBannerPath = new URL(courseBanner).pathname;
           <li class="flex gap-3 border-t border-rule pt-3"><span class="font-mono text-accent" aria-hidden="true">02</span><span>一次 3 小時，依目標安排</span></li>
         </ul>
         <div class="mt-8 grid gap-3 sm:flex sm:flex-wrap">
-          <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-13 items-center justify-center gap-2.5 bg-[#06c755] px-7 font-semibold text-white no-underline transition hover:bg-[#05b34c]"><LineIcon />LINE 免費諮詢</a>
           <a href="#course-cases" class="inline-flex min-h-13 items-center justify-center border border-rule-3 px-7 font-semibold text-ink no-underline transition hover:bg-paper-2">先看實際案例</a>
         </div>
       </div>
@@ -232,7 +230,6 @@ const courseBannerPath = new URL(courseBanner).pathname;
           <p class="mt-2 text-2xl font-semibold">NT$1,000／小時起</p>
           <p class="mt-2 text-sm leading-6 text-[#c9c5c0]">可安排一對多；第二位起每位 NT$800／小時。</p>
         </div>
-        <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-13 items-center justify-center gap-2.5 bg-[#06c755] px-7 font-semibold text-white no-underline transition hover:bg-[#05b34c]"><LineIcon />詢問適合堂數</a>
       </div>
     </section>
 
@@ -243,8 +240,11 @@ const courseBannerPath = new URL(courseBanner).pathname;
 
     <Cta
       title="想預約或先問問題？"
-      text="加 LINE 告訴我你的目標和目前程度，我會建議適合的上課方式與堂數。"
-      links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
+      text="用 Email 告訴我你的目標和目前程度，我會建議適合的上課方式與堂數。"
+      href={LINKS.email}
+      label={'Email\n詢問'}
+      external={false}
+      links={[]}
     />
   </div>
 </ServiceBase>

@@ -5,7 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Cta from '../../components/Cta.astro';
 import PostCard from '../../components/PostCard.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { DEVELOPMENT_SERVICE, LINE_URLS, SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
+import { DEVELOPMENT_SERVICE, SITE, breadcrumbSchema, pageBannerUrl } from '../../consts';
 import Base from '../../layouts/Base.astro';
 
 const schema = [
@@ -121,10 +121,10 @@ const rest = posts.filter((post) => !post.data.featured && post.id !== PINNED_ID
     </div>
     <Cta
       title="想把手上的工作改成 AI 自動化？"
-      text="加官方 LINE 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆；也可以先看系統開發服務的流程與費用。"
-      href={LINE_URLS.blog}
-      label={'加官方 LINE\n詢問報價'}
-      links={[{ href: DEVELOPMENT_SERVICE.url, label: '看系統開發服務' }]}
+      text="先看數學題庫系統的完整介紹，再看系統開發服務的流程與費用。"
+      href={DEVELOPMENT_SERVICE.url}
+      label={'了解系統\n開發服務'}
+      links={[{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }]}
     />
   </div>
 </Base>

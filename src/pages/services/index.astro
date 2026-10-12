@@ -3,7 +3,6 @@ import { Image } from 'astro:assets';
 import freeResourcesHome from '../../assets/free-resources-home-v2.png';
 import teachingOneOnOne from '../../assets/teaching-one-on-one.jpg';
 import Cta from '../../components/Cta.astro';
-import LineIcon from '../../components/LineIcon.astro';
 import {
   AUTHOR,
   COLLABORATION_ENTRY_LINKS,
@@ -18,7 +17,6 @@ import {
   pageBannerUrl,
 } from '../../consts';
 import { SPEAKING_ENGAGEMENTS, TEACHING_CASES } from '../../data/services';
-import { LINE_URLS } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
 // 首屏三張服務卡：圖片與描述都取自站上既有事實（題庫系統截圖、TEACHING_CASES、SPEAKING_ENGAGEMENTS 現場照）。
@@ -136,7 +134,6 @@ const schema = [
       <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。主要和開發夥伴承接客製系統開發；也提供一對一 AI 教學（雙北咖啡廳實體或線上），並接受企業、學校與社群的演講邀約。先看你需要哪一種，再加 LINE 聊細節。</p>
       <div class="service-hero-actions">
         <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
-        <a class="is-line" href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="service_home_line" data-ga-label="加官方 LINE 詢問" data-ga-location="service_home_hero" data-ga-action="external"><LineIcon class="line-btn-ic" />加官方 LINE 詢問</a>
       </div>
     </div>
     <nav class="service-hero-cards" aria-label="三種服務，系統開發為主">
@@ -217,7 +214,8 @@ const schema = [
     <Cta
       title={CTA_VARIANTS[2].title}
       text={CTA_VARIANTS[2].text}
-      label={'詢問適合的\n合作方式'}
+      label={'了解系統\n開發服務'}
+      external={false}
       links={[{ href: LINKS.email, label: 'Email 聯絡' }]}
     />
   </div>
@@ -232,8 +230,6 @@ const schema = [
     .service-hero-actions a { display:inline-flex; min-height:50px; align-items:center; justify-content:center; padding:0 24px; border:1px solid var(--color-accent); color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-hero-actions a:first-child { background:var(--color-accent); color:#fff; }
     .service-hero-actions a.is-text { padding:0 4px; border:0; color:var(--color-ink-2); font-weight:500; text-decoration:underline; text-underline-offset:4px; }
-    .service-hero-actions a.is-line { gap:10px; border-color:#06c755; background:#06c755; color:#fff; }
-    .service-hero-actions :global(.line-btn-ic) { display:block; flex:none; width:20px; height:20px; }
     .service-hero h1 .nb { white-space:nowrap; }
     .service-hero-cards { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:18px; }
     .service-hero-cards > a.is-primary { grid-column:1 / -1; grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows:none; border-color:var(--color-accent); border-width:2px; }

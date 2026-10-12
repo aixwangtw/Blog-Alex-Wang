@@ -27,8 +27,6 @@
 import {
   AUTHOR,
   DEVELOPMENT_SERVICE,
-  LINE_URLS,
-  LINKS,
   SERVICE_SITE,
   SITE,
   pageBannerUrl,
@@ -171,7 +169,6 @@ const schema = [
           </dl>
           <div class="development-cost-actions">
             <a class="development-cost-primary" href={DEVELOPMENT_SERVICE.url} data-ga-button="home_cost_service" data-ga-label="看系統開發服務與合作細節" data-ga-location="home_development_cost" data-ga-action="navigate">看系統開發服務與合作細節 <span aria-hidden="true">→</span></a>
-            <a class="line-btn" href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="home_cost_line" data-ga-label="加官方 LINE 詢問報價" data-ga-location="home_development_cost" data-ga-action="external"><svg class="line-btn-ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>加官方 LINE 詢問報價</a>
           </div>
         </section>
 
@@ -201,12 +198,9 @@ const schema = [
       <section class="closer" aria-labelledby="closer-h">
         <h2 class="q q--sec reveal" id="closer-h"><span class="nb">想把手上的工作改成 AI 自動化<span class="qt">？</span></span></h2>
         <div class="reveal" style="--d:70ms">
-          <p class="closer-p">加官方 <span class="lat">LINE</span> 直接列出你的需求，內容很長也沒關係，我跟夥伴都會一一看過再回覆。</p>
+          <p class="closer-p">先看數學題庫系統怎麼把出題流程自動化，再看系統開發的合作流程與費用。</p>
           <div class="actions">
-            <a class="btn btn-line" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="home_closer_line" data-ga-label="加官方 LINE 詢問報價" data-ga-location="home_closer" data-ga-action="external">
-              <span class="line-ic" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg></span>
-              <span class="btn-l">加官方 <span class="lat">LINE</span> 詢問報價</span>
-            </a>
+            <a class="btn btn-contact" href={DEVELOPMENT_SERVICE.url} data-ga-button="home_closer_service" data-ga-label="了解系統開發服務" data-ga-location="home_closer" data-ga-action="navigate"><span class="btn-l">了解系統開發服務</span></a>
           </div>
         </div>
       </section>
@@ -646,24 +640,6 @@ const schema = [
       text-decoration: underline;
       text-underline-offset: 4px;
     }
-    .line-btn-ic {
-      flex-shrink: 0;
-      width: 20px;
-      height: 20px;
-    }
-    .line-btn {
-      display: inline-flex;
-      min-height: 46px;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 10px 18px;
-      border-radius: 6px;
-      background: #06c755;
-      color: #fff;
-      font: 600 14px/1.5 var(--font-display);
-      text-decoration: none;
-    }
     .hero-summary {
       max-width: 470px;
       margin: 24px 0 0;
@@ -676,21 +652,6 @@ const schema = [
       align-items: center;
       gap: 10px 18px;
       margin-top: 30px;
-    }
-    .hero-primary {
-      display: inline-flex;
-      min-height: 48px;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 12px 20px;
-      border: 1px solid #06c755;
-      border-radius: 6px;
-      background: #06c755;
-      color: #fff;
-      font: 600 14px/1.5 var(--font-display);
-      text-decoration: none;
-      transition: background-color 0.18s var(--ease), transform 0.18s var(--ease);
     }
     .hero-ghost {
       display: inline-flex;
@@ -1019,8 +980,7 @@ const schema = [
       .hero-copy h1 { font-size: clamp(34px, 10vw, 46px); line-height: 1.18; }
       .hero-summary { margin-top: 12px; font-size: 15px; line-height: 1.7; }
       .hero-actions { display: grid; gap: 8px; margin-top: 16px; }
-      .hero-primary { width: 100%; justify-content: center; }
-      .hero-ghost { width: 100%; }
+        .hero-ghost { width: 100%; }
       .hero-secondary { justify-content: center; }
       .cli { border-radius: 10px; }
       .cli-brand {
@@ -1137,11 +1097,6 @@ const schema = [
         color 0.18s var(--ease),
         transform 0.18s var(--ease);
     }
-    .btn-line {
-      background: #06c755;
-      color: #fff;
-      border: 1px solid #06c755;
-    }
     .btn-contact {
       border: 1px solid var(--color-rule-3);
       background: rgb(255 255 255 / 34%);
@@ -1169,21 +1124,10 @@ const schema = [
         padding: 8px 5px;
         font-size: 11px;
       }
-      .hero-contact-actions .line-ic,
-      .hero-contact-actions .line-ic svg,
       .hero-contact-actions .btn-contact > svg {
         width: 16px;
         height: 16px;
       }
-    }
-    .line-ic,
-    .line-ic svg {
-      display: block;
-      width: 20px;
-      height: 20px;
-    }
-    .line-ic svg {
-      fill: currentColor;
     }
     /* 按鈕文字必須是「一個」flex 子項。若讓文字節點直接當子項，
        包裹拉丁字段用的 .lat 會被 blockify 成 flex item，gap:8px 就會
@@ -1497,30 +1441,6 @@ const schema = [
     .instructor-actions .service-link {
       margin-top: 0;
     }
-    .instructor-socials {
-      display: flex;
-      gap: 8px;
-    }
-    .instructor-socials a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      min-height: 44px;
-      padding: 0;
-      border: 1px solid var(--color-rule-3);
-      border-radius: 999px;
-      color: var(--color-ink-2);
-      text-decoration: none;
-      transition:
-        color 0.18s var(--ease),
-        border-color 0.18s var(--ease),
-        background-color 0.18s var(--ease);
-    }
-    .instructor-socials svg {
-      width: 17px;
-      height: 17px;
-    }
     .instructor-facts {
       margin: 0;
       border-top: 1px solid var(--color-rule-2);
@@ -1749,21 +1669,11 @@ const schema = [
         border-color: var(--color-accent);
         background: var(--color-accent-tint);
       }
-      .btn-line:hover {
-        background: #05b34c;
-        border-color: #05b34c;
-        transform: translateY(-1px);
-      }
       .btn-contact:hover {
         color: var(--color-accent);
         border-color: var(--color-accent);
         background: rgb(255 255 255 / 64%);
         transform: translateY(-1px);
-      }
-      .instructor-socials a:hover {
-        color: var(--color-accent);
-        border-color: var(--color-accent);
-        background: rgb(255 255 255 / 60%);
       }
       .featured-list a:hover h3 {
         color: var(--color-accent);
@@ -1789,7 +1699,6 @@ const schema = [
     }
 
     /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
-    .instructor-socials a:focus-visible,
     .featured-list a:focus-visible,
     .cli-options a:focus-visible,
     .cli-tabs button:focus-visible,
