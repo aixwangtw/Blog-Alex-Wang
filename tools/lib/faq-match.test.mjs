@@ -6,7 +6,7 @@ import { buildFaqIndex, matchFaq, normalize, tokenize } from '../../public/faq-m
 const BANK_TOPIC = '數學題庫系統介紹：考卷匯入、AI 出題、AI 詳解 客製開發 AI 導入 題庫系統';
 const FIXTURE = [
   { q: '開發怎麼進行？費用怎麼算？', a: '先聊需求、試用 Demo，確認功能後報價，開發時程約兩個月。每月費用：主機每月約 500 元。', k: BANK_TOPIC, b: 1 },
-  { q: 'AI 的使用費用怎麼算？', a: '系統使用 Google 的 Gemini AI，費用依實際用量計算，正式上線後一般每月大約 20～150 元。', k: BANK_TOPIC, b: 1 },
+  { q: 'AI 的使用費用怎麼算？', a: '系統使用 Google 的 Gemini AI，費用依實際用量計算：辨識一份考卷不到 1 元，AI 出一題、寫一題詳解大約 0.1 元，每月多少會依老師的用量估算。', k: BANK_TOPIC, b: 1 },
   { q: '可以先用免費額度嗎？大概能做幾題？', a: 'Google 的免費方案限制每天可以使用 AI 的次數。', k: BANK_TOPIC, b: 1 },
   { q: '匯入的題目會有版權問題嗎？', a: '要看題目從哪裡來，依著作權法第 9 條。', k: BANK_TOPIC, b: 1 },
   { q: '一次可以上傳幾份考卷？檔案有大小限制嗎？', a: '目前一次上傳一個檔案，上限 20MB。', k: BANK_TOPIC, b: 1 },
