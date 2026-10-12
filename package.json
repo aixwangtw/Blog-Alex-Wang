@@ -56,6 +56,6 @@
     "pagefind": "^1.5.2",
     "satori": "^0.28.2",
     "typescript": "^5.9.3",
-    "wrangler": "^4.113.0"
+    "wrangler": "^4.149.0"
   }
 }
