@@ -3,12 +3,14 @@ import { blogBannerPath } from '../lib/blog-banner';
 import ogBanner from '../assets/banner-v2.png';
 import githubLogo from '../assets/github-logo.svg';
 import lineBrandIcon from '../assets/line-brand-icon.png';
+import LineIcon from '../components/LineIcon.astro';
 import {
   AUTHOR,
   COLLABORATION_ENTRY_LINKS,
   FREE_ENTRY_LINKS,
   GUIDED_ENTRY_LINKS,
   LEARNING_ENTRY_LINKS,
+  LINE_URLS,
   LINKS,
   PERSON_SCHEMA,
   SERVICE_SITE,
@@ -341,6 +343,41 @@ const jsonLd = {
           }
         }
 
+        // 文章內文（.prose-blog）的連結點擊：送 article_link_click；Demo 站另送 demo_click。
+        // 回傳共用參數，讓 line_click 等既有事件也能帶上「文章內文第幾個連結」。
+        function trackArticleBodyLink(a) {
+          var body = a.closest && a.closest('.prose-blog');
+          if (!body) return null;
+          var links = Array.prototype.slice.call(body.querySelectorAll('a[href]'));
+          var heading = '';
+          var headings = body.querySelectorAll('h2, h3');
+          for (var i = 0; i < headings.length; i += 1) {
+            // DOCUMENT_POSITION_FOLLOWING：連結在這個標題之後，標題就是目前所在章節
+            if (headings[i].compareDocumentPosition(a) & 4) heading = headings[i].textContent || '';
+          }
+          var text = (a.textContent || '').replace(/\s+/g, ' ').trim();
+          if (!text) {
+            var image = a.querySelector('img');
+            text = image ? '[圖片] ' + (image.getAttribute('alt') || '') : '';
+          }
+          var host = '';
+          try { host = new URL(a.href, location.href).hostname; } catch (error) {}
+          var parameters = {
+            link_url: a.href || '',
+            link_domain: host,
+            link_text: text.slice(0, 100),
+            link_index: links.indexOf(a) + 1,
+            link_location: 'article_body',
+            section_heading: heading.replace(/\s+/g, ' ').trim().slice(0, 100),
+            page_path: location.pathname,
+          };
+          window.gtag('event', 'article_link_click', parameters);
+          if (host === 'demo-question.aixwang.dev') {
+            window.gtag('event', 'demo_click', parameters);
+          }
+          return parameters;
+        }
+
         // 自訂事件：追蹤按鈕與關鍵轉換點擊（LINE 諮詢 / YouTube）
         document.addEventListener('click', function (e) {
           var control = e.target.closest && e.target.closest('[data-ga-button]');
@@ -349,10 +386,17 @@ const jsonLd = {
           var a = e.target.closest && e.target.closest('a[href]');
           if (!a) return;
           var href = a.href || '';
+          // 文章內文連結（CMS markdown 渲染，無法逐顆加 data-ga-button）：一律送 article_link_click，
+          // 帶目標網域、連結文字、第幾個連結、所在章節，才分得出是哪一顆被點。
+          var bodyLink = trackArticleBodyLink(a);
           // LINE 連結有兩種網域：line.me（加好友網址）與 lin.ee（LINE 後台的追蹤短網址）。
           // 帶 data-ga-button 的按鈕點了 LINE 連結時，上面先送 button_click，這裡再補送 line_click。
+          // 文章內文的 LINE 連結另帶 link_location／link_index／section_heading，跟頁首、文末 CTA 的分開。
           if (href.indexOf('line.me') !== -1 || href.indexOf('lin.ee') !== -1) {
-            window.gtag('event', 'line_click', { link_url: href, page_path: location.pathname });
+            window.gtag('event', 'line_click', Object.assign(
+              { link_url: href, page_path: location.pathname, link_location: control ? control.getAttribute('data-ga-location') || 'button' : 'other' },
+              bodyLink || {}
+            ));
           } else if (href.indexOf('/course') !== -1) {
             window.gtag('event', 'one_on_one_click', { link_url: href, page_path: location.pathname });
           } else if (href.indexOf('/services/speaking') !== -1) {
@@ -534,6 +578,17 @@ const jsonLd = {
         </nav>
 
         <div class="hd-tools">
+          <a
+            class="hd-line"
+            href={LINE_URLS.blog}
+            target="_blank"
+            rel="noopener"
+            aria-label="加 LINE 詢問（另開新頁籤）"
+            data-ga-button="header_line"
+            data-ga-label="加 LINE 詢問"
+            data-ga-location="header"
+            data-ga-action="external"
+          ><LineIcon class="hd-line-icon" /><span>加 LINE 詢問</span></a>
           <button
             class="hd-cue"
             id="nav-cue"
@@ -1361,6 +1416,49 @@ const jsonLd = {
         align-items: center;
         gap: 6px;
         margin-inline-end: 0;
+      }
+
+      /* ---------- 頁首 LINE 按鈕 ----------
+         手機與桌機都常駐在 .hd-tools（漢堡鈕左邊），不收進下拉選單：主站導覽項目少，
+         360px 寬也放得下，常駐比藏進選單多一步更容易被點到。
+         LineIcon 是子元件的 svg，這裡是 is:global 樣式，直接固定寬高避免被 flex 壓扁。 */
+      .hd-line {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 40px;
+        padding: 0 14px;
+        border: 1px solid #06c755;
+        border-radius: 999px;
+        background: #06c755;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+        transition:
+          background-color 0.18s var(--ease),
+          border-color 0.18s var(--ease);
+      }
+      .hd-line .hd-line-icon {
+        display: block;
+        flex: none;
+        width: 18px;
+        height: 18px;
+      }
+      .hd-line:hover,
+      .hd-line:focus-visible {
+        border-color: #05b34c;
+        background: #05b34c;
+        color: #fff;
+      }
+      @media (min-width: 1024px) {
+        .hd-line {
+          min-height: 44px;
+          padding: 0 18px;
+          font-size: 15px;
+        }
       }
 
       /* ---------- 收合選單開關 ---------- */

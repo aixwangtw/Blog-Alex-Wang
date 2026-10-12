@@ -63,6 +63,21 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
+// 文章內文的連結一律另開新分頁：讀者常從 Threads／IG 內建瀏覽器進來，同分頁點出去
+// （例如進 Demo 站）就回不到文章。站內文章、服務站、Demo、外部網站都適用；
+// 頁內錨點（#…）、mailto:、tel: 維持原行為。頁首、頁尾、麵包屑等網站框架不在這裡渲染，不受影響。
+// 用 HTML 後處理而不是 marked 的 link renderer，是因為文章裡也有直接寫在 markdown 的
+// 原始 <a>（例如 LINE 官方「加入好友」圖片按鈕），link renderer 抓不到。已自帶 target 的不覆寫。
+function openBodyLinksInNewTab(html: string): string {
+  return html.replace(/<a\b([^>]*)>/gi, (tag, attributes: string) => {
+    const href = attributes.match(/\bhref\s*=\s*["']([^"']*)["']/i)?.[1]?.trim() ?? '';
+    if (!href || /^(#|mailto:|tel:)/i.test(href)) return tag;
+    if (/\btarget\s*=/i.test(attributes)) return tag;
+    const rel = /\brel\s*=/i.test(attributes) ? '' : ' rel="noopener"';
+    return `<a${attributes} target="_blank"${rel}>`;
+  });
+}
+
 marked.use({
   renderer: {
     heading({ tokens, depth }) {
@@ -144,7 +159,7 @@ const blog = defineCollection({
         store.set({
           id: a.slug,
           data: entry,
-          rendered: { html: marked.parse(a.body ?? '', { async: false }) },
+          rendered: { html: openBodyLinksInNewTab(marked.parse(a.body ?? '', { async: false })) },
           digest: generateDigest(a),
         });
       }
