@@ -1,0 +1,13 @@
+--- orig
++++ new
+@@ -170,9 +170,5 @@
+ <p><img src="/images/blog/codex-windows-wsl-install/01-wsl-environment.png" alt="WSL2、VS Code、Node 與 npm 版本的實際終端紀錄"></p>
+ <p>這一段留給排錯時核對用，新手不需要先理解每個名稱。版本會持續更新，也不必要求你的數字與本文完全相同；只要指令能正常顯示版本即可。</p>
+ <h2 id="裝好之後可以做什麼">裝好之後可以做什麼</h2>
+-<p>到這裡你已經有完整的 Codex 環境：VS Code 裡用插件、終端機裡用 CLI，之後要接自動發文、排程腳本都是在這個基礎上疊加。下一步推薦：</p>
+-<ul>
+-<li><a href="/blog/codex-usage-limit-reset/">Codex 額度燒完怎麼辦？</a>——省 Token 與手動重置</li>
+-<li><a href="/blog/free-resources/">免費資源總整理</a>——照著影片做就能跑通</li>
+-</ul>
++<p>到這裡你已經有完整的 Codex 環境：VS Code 裡用插件、終端機裡用 CLI，之後要接自動發文、排程腳本都是在這個基礎上疊加。</p>
+ <p>WSL2 或 CLI 安裝噴錯了？加 LINE 把畫面截圖傳給我，簡單問題<strong>免費</strong>幫你排。</p>

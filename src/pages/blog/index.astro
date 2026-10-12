@@ -28,11 +28,8 @@ const PINNED_ID = 'math-teacher-question-bank';
 const pinned = posts.find((post) => post.id === PINNED_ID);
 // 精選文章的顯示順序
 const FEATURED_ORDER = [
-  'how-to-start-learning-ai',
   'free-resources',
   'from-part-time-to-freelance',
-  'threads-api-tutorial',
-  'instagram-api-tutorial',
 ];
 const featured = posts
   .filter((post) => post.data.featured && post.id !== PINNED_ID)

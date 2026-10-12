@@ -1,0 +1,62 @@
+{
+  "data": {
+    "id": 18,
+    "status": "published",
+    "slug": "instagram-api-tutorial",
+    "title": "Instagram API 申請教學：建立應用程式到自動發文，可透過企業管理後台取得永久 Token",
+    "description": "Instagram API 申請流程：FB 帳號登入 Meta 開發者後台建立應用程式（用例選內容管理）、IG 切換專業帳號，再到企業管理後台連結資產取得永久權限 Token——不像 Threads 要 60 天延期。附教學影片與逐步截圖。",
+    "body": "<p>Instagram API 的申請共 5 個步驟：建立 Meta App → 加入 IG 測試人員 → 取得 User ID 和 Token → 開啟必要權限 → 用 Agent 自動完成環境配置與發佈腳本。 而且 IG 還能透過企業管理後台取得永久權限的 Token（Threads 做不到），做一次就一勞永逸。完整操作有影片＋截圖＋可直接貼給 AI 的指令。</p>\n<div style=\"aspect-ratio:16/9;\"><iframe style=\"width:100%;height:100%;border-radius:1rem;\" src=\"https://www.youtube-nocookie.com/embed/O1qfeDIZRkQ\" title=\"Instagram API 申請教學\" loading=\"lazy\" allowfullscreen></iframe></div><p>這支教學最初發布在 Threads——下面的 FAQ 有一部分就是從留言區的真實提問整理出來的。</p>\n<blockquote class=\"text-post-media\" data-no-copy data-text-post-permalink=\"https://www.threads.com/@alex_wang.ai/post/DYpIU-RD3kr\" data-text-post-version=\"0\" id=\"ig-tp-DYpIU-RD3kr\" style=\"background:#FFF; border-width:1px; border-style:solid; border-color:#00000026; border-radius:16px; max-width:650px; margin:1px auto; min-width:270px; padding:0; width:calc(100% - 2px);\">\n<a href=\"https://www.threads.com/@alex_wang.ai/post/DYpIU-RD3kr\" style=\"background:#FFFFFF; line-height:0; padding:0; text-align:center; text-decoration:none; width:100%; font-family:-apple-system,BlinkMacSystemFont,sans-serif;\" target=\"_blank\">\n<div style=\"padding:40px; display:flex; flex-direction:column; align-items:center;\"><div style=\"display:block; height:32px; width:32px; padding-bottom:20px;\"><svg aria-label=\"Threads\" height=\"32px\" role=\"img\" viewBox=\"0 0 192 192\" width=\"32px\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.788C154.894 45.8136 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 27.974C147.036 9.60668 125.202 0.195148 97.0695 0H96.9569C68.8816 0.19447 47.2921 9.6418 32.7883 28.0793C19.8819 44.4864 13.2244 67.3157 13.0007 95.9325L13 96L13.0007 96.0675C13.2244 124.684 19.8819 147.514 32.7883 163.921C47.2921 182.358 68.8816 191.806 96.9569 192H97.0695C122.03 191.827 139.624 185.292 154.118 170.811C173.081 151.866 172.51 128.119 166.26 113.541C161.776 103.087 153.227 94.5962 141.537 88.9883ZM98.4405 129.507C88.0005 130.095 77.1544 125.409 76.6196 115.372C76.2232 107.93 81.9158 99.626 99.0812 98.6368C101.047 98.5234 102.976 98.468 104.871 98.468C111.106 98.468 116.939 99.0737 122.242 100.233C120.264 124.935 108.662 128.946 98.4405 129.507Z\"/></svg></div>\n<div style=\"font-size:15px; line-height:21px; color:#000000; font-weight:600;\">在 Threads 查看</div></div></a></blockquote>\n<script async src=\"https://www.threads.com/embed.js\"></script><p class=\"social-quote-note\">上方卡片的讚數、留言、轉發、分享由 Threads 即時提供；另外這則貼文的瀏覽數在 2026-07-30 擷取時為 18,200 次（瀏覽數不在官方卡片顯示範圍內）。</p><h2 id=\"開始前先準備好\">開始前先準備好</h2>\n<ol>\n<li><strong>FB 帳號</strong>：登入 Meta 開發者後台用</li>\n<li><strong>IG 帳號</strong>：需要先切換成專業帳號（設定裡免費切換）</li>\n</ol>\n<h2 id=\"step-1建立-meta-應用程式\">Step 1：建立 Meta 應用程式</h2>\n<p>來到 <a href=\"https://developers.facebook.com/\">Meta 開發者後台</a>，點右上角綠色的「建立應用程式」。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/b192387e-a18f-41fc-a7e5-bbe2e7740490\" alt=\"Meta 開發者後台的應用程式列表\"></p>\n<p>填入「應用程式名稱」和「電子郵件地址」，點右下角「繼續」——名稱隨便取（發文時不會顯示），Email 要確實填寫。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/4a24e04c-7f15-4530-99c9-69ff1118e5a1\" alt=\"填寫應用程式名稱與電子郵件\"></p>\n<p>使用案例：左側點「<strong>內容管理</strong>」，右側勾選「管理 Instagram 的訊息和內容」，按繼續。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/063e870a-317d-419d-8833-def22f2f55cc\" alt=\"使用案例選擇內容管理並勾選管理 Instagram\"></p>\n<p>商家連結頁：勾選「我還不想連結商家資產管理組合」，按繼續。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/78cce17f-564b-402f-a33b-caff29cec9c4\" alt=\"商家連結頁選擇暫不連結\"></p>\n<p>要求頁直接點「下一步」，不用做任何事。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/7950b103-5022-40a0-8ac4-4c3919d378fb\" alt=\"要求頁直接下一步\"></p>\n<p>總覽確認沒問題，點右下角綠色「前往主控板」。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/b649ed3a-b2dc-40aa-8cb8-25ef648df5f4\" alt=\"總覽頁確認後前往主控板\"></p>\n<p>跳出 FB 密碼確認，輸入後點「提交」，應用程式就建立好了！</p>\n<p><img src=\"https://cms.aixwang.dev/assets/719fef6f-9170-49d4-a708-242abf9c4224\" alt=\"輸入 FB 密碼確認建立\"></p>\n<h2 id=\"step-2加入-ig-測試人員\">Step 2：加入 IG 測試人員</h2>\n<p>側邊欄點「角色」，右上角點「新增角色」。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/daba1587-e04a-402e-bfa7-e5658fc972af\" alt=\"應用程式角色頁點新增角色\"></p>\n<p>切換到 Instagram 測試人員，點「新增 Instagram 測試人員」輸入你的 IG 帳號。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/7c0742d5-59d3-4720-96a1-971572e59a3b\" alt=\"新增 Instagram 測試人員並輸入帳號\"></p>\n<p>邀請送出後，IG 帳號會顯示「待確認」狀態。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/c52f9fda-24d0-456c-bf97-928a259eec5e\" alt=\"邀請送出後顯示待確認狀態\"></p>\n<p>登入 IG 帳號接受邀請：點網站權限連結會跳轉到 IG 後台，從「<strong>網站權限 &gt; 應用程式和網站 &gt; 測試員邀請</strong>」按接受——很多人卡在這裡，以為送出邀請就好。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/1c7b63a0-8844-41bd-8c86-54b9f78af7c5\" alt=\"IG 後台測試員邀請按接受\"></p>\n<p>回到開發者後台，「待確認」消除，IG 帳號與 App 綁定成功。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/ca9d6bc9-fe54-48aa-82c9-c956beaec023\" alt=\"待確認消除代表綁定成功\"></p>\n<h2 id=\"step-3取得-user-id-和-token\">Step 3：取得 User ID 和 Token</h2>\n<p>先開使用案例選單，進到主選項找到 IG 自訂案例。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/724515bf-b7d7-4248-ab15-6883054d02d1\" alt=\"使用案例選單找到 IG 自訂案例\"></p>\n<p>進到 IG 自訂案例後，先把頭像旁那串 User ID 複製起來，再點「產生權杖」。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/2adef1ce-87d1-4994-907a-7d1858664600\" alt=\"複製 User ID 後點產生權杖\"></p>\n<p>跳出 IG 登入畫面，輸入帳號密碼完成登入。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/4a5be196-b9d1-4f71-aaa4-7d17c824dc83\" alt=\"IG 登入畫面\"></p>\n<p>五個授權選項<strong>都要允許</strong>，後面的 token 才能正常使用。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/4ba5ac52-fd77-4ac3-a56a-421ca4120f66\" alt=\"五個授權選項全部允許\"></p>\n<p>Access Token 產生完成，複製後先存好（只會顯示這一次）。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/15b6c092-463f-4200-b64f-c503f7a400d4\" alt=\"Access Token 產生完成複製保存\"></p>\n<h2 id=\"step-4開啟必要權限圖形-api-測試工具\">Step 4：開啟必要權限（圖形 API 測試工具）</h2>\n<p>先開啟「圖形 API 測試工具」（上方工具選單裡）。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/284b1831-5724-47d3-b6f5-ea61bbb0ab1c\" alt=\"工具選單開啟圖形 API 測試工具\"></p>\n<p>先選 <strong>Facebook</strong> 這條授權流程（不是 Instagram——很多人卡在這）。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/fd0475a8-352e-4f14-8000-b8a532dd1e5c\" alt=\"授權流程選 Facebook\"></p>\n<p>選擇你剛剛建立好的 Meta App。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/fb48f987-dbc5-408e-b17b-8c4eee22a602\" alt=\"選擇剛建立的 Meta App\"></p>\n<p>點「新增權限」，進入權限勾選。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/c9e52cda-e254-4123-b48c-c41c0717caeb\" alt=\"點新增權限\"></p>\n<p>12 項權限非強制全勾——全勾較方便，也可以只勾你要開通的權限。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/820d25d6-3a0f-4eb1-9618-c497a5410e2a\" alt=\"12 項權限勾選\"></p>\n<p>點選「產生暫時權杖」，會跳出 FB 登入視窗，按繼續。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/d06af393-757d-42dc-b8d0-fb998eb01709\" alt=\"產生暫時權杖\"></p>\n<p>選擇要綁定授權的 Instagram 帳號。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/fd3704be-68cf-4da5-ace0-0f687f66488a\" alt=\"選擇要綁定的 Instagram 帳號\"></p>\n<p>看到提醒不用緊張——不影響申請 API，直接點繼續。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/75914653-afa6-4b8d-9048-70087cb8b086\" alt=\"提醒視窗直接繼續\"></p>\n<p>最後把要求的使用權限全部允許，完成圖形 API 測試工具的授權流程。</p>\n<p><img src=\"https://cms.aixwang.dev/assets/5dfbdfac-a913-4b73-b5d6-b6e21944efba\" alt=\"使用權限全部允許完成授權\"></p>\n<h2 id=\"進階企業管理後台取得永久-token\">進階：企業管理後台取得永久 Token</h2>\n<p>不想跑 60 天續期的話，IG（和 FB）還有一條 Threads 沒有的路：透過企業管理後台把帳號連結為資產，取得永久權限的 Token。</p>\n<ol>\n<li>打開企業管理後台的 Instagram 帳號設定：<a href=\"https://business.facebook.com/latest/settings/instagram_account\">business.facebook.com/latest/settings/instagram_account</a></li>\n<li>點「連結資產」，把你的 IG 專業帳號連進商業資產組合</li>\n<li>連結完成後，由系統使用者產生永久權限的 Token，填進 <code>.env</code> 一勞永逸</li>\n</ol>\n<h2 id=\"自動發文的圖片要先放到公開網址\">自動發文的圖片要先放到公開網址</h2>\n<p>IG API 設計上要求 Meta 用 <code>image_url</code> 抓圖——也就是說，要自動發文的話，貼文的圖片必須先放在一個公開可存取的網址上。怎麼做？</p>\n<ol>\n<li>到 <a href=\"https://api.imgbb.com/\">api.imgbb.com</a> 免費申請一組 API Key</li>\n<li>把匯出的圖上傳到 Imgbb 取得公開網址，再用這個網址發佈</li>\n</ol>\n<p>細節可以<a href=\"https://lin.ee/raoKSVR\">私訊我</a>詢問。</p>\n<h2 id=\"三大平台-token-差別速記\">三大平台 Token 差別速記</h2>\n<table>\n<thead>\n<tr>\n<th></th>\n<th>Instagram / Facebook</th>\n<th>Threads</th>\n</tr>\n</thead>\n<tbody><tr>\n<td>Token</td>\n<td>企業管理後台連結資產 → <strong>永久權限</strong></td>\n<td>長期 Token 60 天需延期（<a href=\"/blog/threads-api-tutorial/\">延期做法</a>）</td>\n</tr>\n</tbody></table>\n<h2 id=\"拿到-api-之後\">拿到 API 之後</h2>\n<ul>\n<li>自動發文與權限設定：頻率像真人、權限只拿需要的</li>\n</ul>\n<p>照著做卡關了，加 <a href=\"https://lin.ee/raoKSVR\">LINE 免費諮詢</a>，或約<a href=\"/services/ai-tutor/\">一對一教學</a>一次跑通。</p>\n",
+    "pub_date": "2026-07-22",
+    "updated_date": "2026-10-11",
+    "tags": [
+      "Instagram API",
+      "自動發文",
+      "API 教學",
+      "新手入門"
+    ],
+    "faqs": [
+      {
+        "question": "Instagram API 申請是免費的嗎？",
+        "answer": "免費。需要一個可用的 FB 帳號登入 Meta 開發者後台，以及一個切換成專業帳號的 Instagram 帳號。"
+      },
+      {
+        "question": "一般 IG 帳號可以用 API 嗎？",
+        "answer": "要先切換成專業帳號（創作者或商業帳號皆可，設定裡免費切換），才能被 API 存取。"
+      },
+      {
+        "question": "Instagram API 的 Token 會過期嗎？",
+        "answer": "透過企業管理後台把 IG 帳號連結為資產、由系統使用者產生的 Token 是永久權限，不會過期——這是 IG / FB 相對於 Threads（60 天需延期）的最大優勢。"
+      },
+      {
+        "question": "「新增權限」的下拉選單沒有東西可以選？",
+        "answer": "三個常見原因：左上角的下拉選單要選 Facebook（不是 Instagram）；上方的 Generate Access Token 要先點過並登入 FB；選項清單要點「other」才會展開。另外使用案例裡的發送權限預設全是關的，要進去手動逐一開啟。"
+      },
+      {
+        "question": "權限都開了還是不行？",
+        "answer": "檢查兩件事：IG 測試人員的網站權限是否已通過（測試人員頁面的「待確認」要消失），以及 IG 的使用案例是否已新增。這兩步沒完成，後面怎麼試都會卡權限錯誤。"
+      },
+      {
+        "question": "可以用 API 幫 IG 貼文加音樂或存草稿嗎？",
+        "answer": "加音樂因為版權問題無法透過 API 做，比較接近的可行方式是發佈前用 ffmpeg 把原始音訊合成進影片（要注意 IG 有沒有授權）。存草稿 API 也不支援，可以配合第三方軟體，發佈前人工同意後再發佈。"
+      },
+      {
+        "question": "FB 高級權限一直申請失敗怎麼辦？",
+        "answer": "一般權限照流程按一按就有，但部分高級權限會卡在「商業驗證」——需要公司行號的證明文件才能通過。如果你反覆被拒，先確認是不是缺這份文件。"
+      },
+      {
+        "question": "自動發文前 AI 要求要先把圖片放到公開網址？要怎麼做？",
+        "answer": "因為 IG API 設計上要求 Meta 用 image_url 抓圖，圖片必須放在公開可存取的網址上。做法：到 api.imgbb.com 免費申請一組 API Key，把匯出的圖上傳到 Imgbb 取得公開網址，再用這個網址發佈，細節可以私訊我詢問。"
+      },
+      {
+        "question": "建立應用程式時的「隱私權政策網址」要填什麼？",
+        "answer": "可留空不用填。"
+      }
+    ],
+    "featured": true,
+    "sort": null,
+    "views": 36,
+    "views_30d": 19,
+    "views_synced_at": "2026-10-12T16:17:07.744Z",
+    "avg_engagement_seconds_30d": 48
+  }
+}

@@ -14,7 +14,6 @@ import { blogBannerPath } from '../lib/blog-banner';
 // 撈法會在下架當天讓這一頁沒有內容。頁面之後由站主直接改這個檔維護。
 //
 // 資料仍然集中在 src/data/：
-//   影片 → src/data/home.ts 的 VIDEOS（不在這裡複製一份標題與 embedId）
 //   FAQ  → src/data/faqs.ts 的 RESOURCES_FAQS
 //
 // ⚠ 已知的中間狀態：/resources/ 與 /blog/free-resources/ 會同時存在、內容重複。
@@ -26,12 +25,7 @@ import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import { LINKS, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { RESOURCES_FAQS } from '../data/faqs';
-import { VIDEOS } from '../data/home';
 import Base from '../layouts/Base.astro';
-
-// 免費資源頁只直接呈現 YouTube 教學影片。
-// 之後在 home.ts 加新的 YouTube 教學影片會自動落到「教學影片」，不用改這一頁。
-const tutorialVideos = VIDEOS.filter((video) => video.embedId);
 
 // 這裡原本有一段 HyperFrames（站主是該開源專案的協作者）。2026-08-06 移除，
 // 理由：這是「免費資源」頁，每一項都應該點得進去用。而站上沒有 HyperFrames 的
@@ -57,7 +51,7 @@ const schema = [
 
 <Base
   title="免費資源｜Codex 安裝、AI Skills 與開源工具"
-  description="從 Codex 安裝開始，免費取得可直接交給 AI 安裝的 Skills，再學 Threads／Instagram API。先自己動手做，卡關再來問。"
+  description="從 Codex 安裝開始，免費取得可直接交給 AI 安裝的 Skills。先自己動手做，卡關再來問。"
   ogImage={pageBannerUrl('resources')}
   ogImageAlt="免費資源：Codex 安裝、AI Skills 與開源工具"
   schema={schema}
@@ -67,21 +61,11 @@ const schema = [
 
     <h1 class="t-h1 mt-8 font-semibold text-ink">免費資源</h1>
     <p class="mt-6 text-lg leading-8 text-ink-2">
-      不用急著付費。先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用；想做社群自動化，下面還有 API 教學和開源工具可以跟著操作。自己跑過一次還是卡關，再來<a
+      不用急著付費。先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用。自己跑過一次還是卡關，再來<a
         href={`${SERVICE_SITE.url}/course/`}
         class="text-accent underline underline-offset-4">找我一對一</a
       >，把時間花在刀口上。
     </p>
-
-    <aside class="mt-8 border-y border-rule py-5" aria-label="AI 新手學習路線">
-      <p class="font-mono text-[11.5px] tracking-[0.12em] text-accent">第一次來這裡？</p>
-      <p class="mt-2 leading-7 text-ink-2">
-        還不確定該先學什麼，可以先讀<a
-          href="/blog/how-to-start-learning-ai/"
-          class="font-semibold text-accent underline underline-offset-4">零基礎新手的 AI 四步學習路線</a
-        >，再回來依照自己的需求挑資源，不必一次全部學完。
-      </p>
-    </aside>
 
     <!-- ---------- 第一步：Codex 安裝 ---------- -->
     <SectionHeading size="md" class="mt-14">第一步：先安裝 Codex</SectionHeading>
@@ -185,48 +169,6 @@ https://github.com/mattpocock/skills</code></pre>
       </div>
     </div>
 
-    <!-- ---------- 延伸資源：只有對應需求才需要看 ---------- -->
-    <section class="mt-16 border-t border-rule pt-10" aria-labelledby="optional-resources-heading">
-      <p class="font-mono text-[11.5px] tracking-[0.12em] text-accent">延伸資源</p>
-      <SectionHeading id="optional-resources-heading" size="md" class="mt-2">有相關需求再往下看</SectionHeading>
-      <p class="mt-4 leading-8 text-ink-2">前兩步完成後就能開始使用 AI。下面兩項不是必做，也不用照順序；想做社群自動化或社群圖文時再看即可。</p>
-    </section>
-
-    <!-- ---------- 選配：API 教學影片 ---------- -->
-    <SectionHeading size="md" class="mt-12">想做社群自動化：API 串接</SectionHeading>
-    <ul class="mt-6">
-      {tutorialVideos.map((video) => (
-        <li class="grid gap-5 border-t border-rule px-0.5 py-7 sm:grid-cols-2 sm:gap-8">
-          <div class="aspect-video w-full bg-ink">
-            <iframe
-              class="h-full w-full"
-              src={`https://www.youtube-nocookie.com/embed/${video.embedId}`}
-              title={video.title}
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen
-            />
-          </div>
-          <div>
-            <!-- 標籤用等寬小標（同 Base 頁尾的 .ft-h 那一階），不做成藥丸標籤：
-                 改版後卡片與藥丸標籤全站移除，分類靠字級與字距分出來就夠了。 -->
-            <p class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">{video.tag}</p>
-            <h3 class="t-h3 mt-2 font-semibold text-ink">{video.title}</h3>
-            <p class="mt-3 leading-8 text-ink-2">{video.description}</p>
-          </div>
-        </li>
-      ))}
-    </ul>
-    <p class="mt-6 text-sm leading-7 text-ink-2">
-      搭配文章：<a href="/blog/threads-api-tutorial/" class="text-accent underline underline-offset-4">Meta 三大 API 申請教學</a>。更多影片在我的<a
-        href={LINKS.youtube}
-        target="_blank"
-        rel="noreferrer"
-        class="text-accent underline underline-offset-4">YouTube 頻道</a
-      >。
-    </p>
-
     <!-- ---------- FAQ ---------- -->
     <!-- 這三題的 FAQPage schema 在上面的 frontmatter 輸出，理由見那裡的註解：
          原本的宣告來源（CMS 文章 free-resources）已下架，這裡是現在唯一的宣告。
@@ -238,7 +180,7 @@ https://github.com/mattpocock/skills</code></pre>
 
     <Cta
       title="有問題想問？"
-      text="先完成 Codex 安裝並試用 Skills；API 教學有需求再看。卡住了再來找我，一對一教學（雙北實體／線上）會直接帶你走一遍。"
+      text="先完成 Codex 安裝並試用 Skills。卡住了再來找我，一對一教學（雙北實體／線上）會直接帶你走一遍。"
       links={[
         { href: LINKS.facebookGroup, label: 'Facebook 社團', external: true },
         { href: `${SERVICE_SITE.url}/course/`, label: '一對一教學', external: true },

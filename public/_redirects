@@ -9,8 +9,7 @@
 # 免費資源：從文章改成常設頁面（2026-08-06）
 # 原本是 /blog/free-resources/（Directus id=4），內容改寫進 src/pages/resources.astro，
 # 文章在 CMS 下架。備份見 docs/code-fence-backup/free-resources-article-backup.json。
-# 仍有 2 篇已發布文章的內文連向舊網址（threads-api-tutorial、codex-cli-wsl2-windows），
-# 靠這兩條接住，那兩篇的內文不動。
+# 舊文章與外部連結仍可能連向舊網址，靠這兩條接住。
 /blog/free-resources/   /resources/   301
 /blog/free-resources    /resources/   301
 
@@ -25,3 +24,16 @@
 # 備份見 blog-posts/fixes-tooka-20261011/16_why-i-built-tooka.orig.md。
 /blog/why-i-built-tooka/   /blog/   301
 /blog/why-i-built-tooka    /blog/   301
+
+# 文章下架（2026-10-13）
+# 5 篇文章在 CMS 改為 draft，網站不再提及；備份見 blog-posts/unpublish-20261013/。
+/blog/codex-usage-limit-reset/   /blog/   301
+/blog/codex-usage-limit-reset    /blog/   301
+/blog/instagram-api-tutorial/   /blog/   301
+/blog/instagram-api-tutorial    /blog/   301
+/blog/ig-carousel-size/   /blog/   301
+/blog/ig-carousel-size    /blog/   301
+/blog/threads-api-tutorial/   /blog/   301
+/blog/threads-api-tutorial    /blog/   301
+/blog/how-to-start-learning-ai/   /blog/   301
+/blog/how-to-start-learning-ai    /blog/   301
