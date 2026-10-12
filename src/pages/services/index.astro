@@ -5,7 +5,6 @@ import Cta from '../../components/Cta.astro';
 import {
   AUTHOR,
   COLLABORATION_ENTRY_LINKS,
-  CTA_VARIANTS,
   FREE_ENTRY_LINKS,
   GUIDED_ENTRY_LINKS,
   LEARNING_ENTRY_LINKS,
@@ -79,7 +78,7 @@ const schema = [
 ---
 
 <ServiceBase
-  title="Aix 系統開發服務｜AI 自動化系統開發、數學題庫系統案例"
+  title="Aix 系統開發服務｜客製化系統開發、數學題庫系統案例"
   description={SERVICE_SITE.description}
   canonicalPath="/"
   ogImage={pageBannerUrl('service-home')}
@@ -200,8 +199,8 @@ const schema = [
 
   <div class="service-home-cta">
     <Cta
-      title={CTA_VARIANTS[2].title}
-      text={CTA_VARIANTS[2].text}
+      title="對系統有疑問嗎？"
+      text="先看題庫系統的案例，或試用 Demo 看看適不適合你的需求。"
       label={'了解系統\n開發服務'}
       external={false}
       hint="有問題點右下角官方 LINE 直接問我"
