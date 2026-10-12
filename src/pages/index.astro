@@ -24,8 +24,6 @@
 //   FAQPage 移除。/faq/ 已經有 2 份 FAQPage（HOME_FAQS ＋ 各文章 FAQ），
 //           首頁那份從一開始就是重複的。
 // ============================================================
-import { Image } from 'astro:assets';
-import instructorShirt from '../assets/instructor-shirt.jpg';
 import {
   AUTHOR,
   DEVELOPMENT_SERVICE,
@@ -41,7 +39,7 @@ import Base from '../layouts/Base.astro';
 // 首屏下方的四張入口卡；服務站網址由 consts 組出，不寫死網域。
 const homeEntryCards = [
   { key: 'newbie', href: '/blog/how-to-start-learning-ai/', title: 'AI 新手入門', description: '第一次學 AI，先從這篇開始。' },
-  { key: 'articles', href: '/blog/', title: '實作文章', description: 'AI Agent 安裝、自動發文、生圖、拍片的實作紀錄。' },
+  { key: 'articles', href: '/blog/', title: '題庫系統文章', description: '數學題庫系統的開發紀錄與案例文章。' },
   { key: 'resources', href: '/resources/', title: '免費資源', description: '教學影片、Skills 與開源工具，直接拿去用。' },
   { key: 'services', href: `${SERVICE_SITE.url}/`, title: '系統開發與教學', description: '找我們做系統，或約一對一 AI 教學、演講。' },
 ];
@@ -62,38 +60,28 @@ const schema = [
 ---
 
 <Base
-  title="Alex｜AI 自動化系統開發與 AI 工具教學｜數學題庫系統案例"
-  description="系統開發工程師 Alex 目前全職接案，和開發夥伴承接 AI 自動化系統開發，代表案例是補習班數學題庫系統；也是 21 萬人 OpenClaw 中文社群版主，分享 AI Agent 安裝、自動發文、AI 生圖與對話式拍片的實作文章。"
+  title="客製化系統開發／AI 自動化｜代表案例：數學題庫系統"
+  description="客製化系統開發與 AI 自動化。代表案例是補習班數學題庫系統：考卷匯入與 AI 辨識審核、AI 出相似題與詳解、出卷與匯出；本站整理這套系統的開發紀錄與案例文章。"
   ogImage={pageBannerUrl('home')}
-  ogImageAlt="Alex｜接案做系統，也教 AI 工具"
+  ogImageAlt="客製化系統開發／AI 自動化｜代表案例：數學題庫系統"
   schema={schema}
 >
   <div class="home" id="home-root">
     <!-- 1／Hero：終端機式快速入口；每個選項直接前往目的頁，不加入模擬思考或中繼回答。 -->
     <section class="hero" aria-labelledby="hero-h">
         <div class="hero-copy hero-reveal" style="--d:0ms">
-          <p class="hero-kicker">系統開發工程師 {AUTHOR.name} 的部落格</p>
-          <h1 id="hero-h"><span class="nb">我是 {AUTHOR.name}，</span><span class="nb">接案做系統，</span><span class="nb">也教 AI 工具</span></h1>
-          <p class="hero-summary">目前全職接案，和開發夥伴承接客製系統開發；也在 21 萬人的 OpenClaw 中文社群當版主。這裡寫的都是我自己每天在用的做法：AI Agent 安裝、自動發文、AI 生圖、對話式拍片。</p>
+          <p class="hero-kicker">代表案例：數學題庫系統</p>
+          <h1 id="hero-h"><span class="nb">客製化系統開發</span> <span class="nb">/AI自動化</span></h1>
+          <p class="hero-summary">本站整理補習班數學題庫系統的開發紀錄與案例文章：考卷匯入與 AI 辨識審核、AI 出相似題與詳解、出卷與匯出（PNG、Word、MathType），也附可實際操作的 Demo。</p>
           <div class="hero-actions">
-            <a
-              class="hero-primary"
-              href={LINE_URLS.blog}
-              target="_blank"
-              rel="noreferrer"
-              data-ga-button="hero_development_line"
-              data-ga-label="加官方 LINE 詢問報價"
-              data-ga-location="hero_intro"
-              data-ga-action="external"
-            ><svg class="line-btn-ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>加官方 LINE 詢問報價</a>
             <a
               class="hero-ghost"
               href="/blog/"
               data-ga-button="hero_blog"
-              data-ga-label="看文章"
+              data-ga-label="看題庫文章"
               data-ga-location="hero_intro"
               data-ga-action="navigate"
-            >看文章</a>
+            >看題庫文章</a>
             <a
               class="hero-secondary"
               href={`${SERVICE_SITE.url}/`}
@@ -187,32 +175,23 @@ const schema = [
           </div>
         </section>
 
-        <section class="instructor-profile reveal" aria-labelledby="instructor-h">
+        <section class="instructor-profile qb-articles reveal" aria-labelledby="instructor-h">
           <figure class="instructor-photo">
-            <Image src={instructorShirt} alt="系統開發工程師 Alex" widths={[420, 700]} sizes="(min-width: 768px) 34vw, 100vw" />
+            <img src="/images/blog/math-teacher-question-bank/exam-export.jpg" alt="題庫系統的出卷頁：勾選題目、排序後直接匯出考卷" width="1400" height="972" loading="lazy" decoding="async" />
           </figure>
           <div class="instructor-main">
-            <p class="service-kicker">從非科班到系統開發工程師</p>
-            <h2 id="instructor-h">關於 Alex</h2>
-            <p class="instructor-name"><span class="lat">Alex Wang</span>／王士麟</p>
-            <p class="instructor-intro">接案工程師與資策會講師，也是從沒有技術背景開始，透過 AI 一步一步學會寫程式、做自動化與完成客戶專案，因此特別知道新手容易卡在哪裡。</p>
+            <p class="service-kicker">題庫系統文章</p>
+            <h2 id="instructor-h">數學題庫系統開發紀錄</h2>
+            <p class="instructor-intro">本站以數學題庫系統的案例文章為主：從補習班老師的出題痛點出發，記錄考卷怎麼匯入、AI 怎麼辨識與出題、出卷後怎麼匯出，並附 Demo 可以自己操作。</p>
             <div class="instructor-actions">
-              <a class="service-link" href="/about/">了解 Alex 的經歷 <span aria-hidden="true">→</span></a>
-              <a class="service-link" href={`${SERVICE_SITE.url}/`} data-ga-button="home_about_services" data-ga-label="查看全部服務" data-ga-location="home_about" data-ga-action="navigate">查看全部服務（含 AI 教學與演講） <span aria-hidden="true">→</span></a>
-              <nav class="instructor-socials" aria-label="講師社群連結">
-                <a href={LINKS.threads} target="_blank" rel="noreferrer" aria-label="Alex 的 Threads（開新分頁）">
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32L7.734 7.847c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221Z" /></svg>
-                </a>
-                <a href={LINKS.youtube} target="_blank" rel="noreferrer" aria-label="Alex 的 YouTube（開新分頁）">
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.003 3.003 0 0 0-2.112-2.123C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.386.563A3.003 3.003 0 0 0 .502 6.186 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .502 5.814 3.003 3.003 0 0 0 2.112 2.123C4.495 20.5 12 20.5 12 20.5s7.505 0 9.386-.563a3.003 3.003 0 0 0 2.112-2.123A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z" /></svg>
-                </a>
-              </nav>
+              <a class="service-link" href={DEVELOPMENT_SERVICE.caseArticle} data-ga-button="home_qb_article" data-ga-label="看題庫系統完整介紹" data-ga-location="home_qb_articles" data-ga-action="navigate">閱讀題庫系統完整介紹 <span aria-hidden="true">→</span></a>
+              <a class="service-link" href="/blog/" data-ga-button="home_qb_blog" data-ga-label="看全部文章" data-ga-location="home_qb_articles" data-ga-action="navigate">看全部文章 <span aria-hidden="true">→</span></a>
             </div>
           </div>
           <dl class="instructor-facts">
-            <div><dt>角色</dt><dd>系統開發工程師<br />AI 應用講師</dd></div>
-            <div><dt>專長</dt><dd>AI Agent<br />Vibe Coding<br />工作流自動化</dd></div>
-            <div><dt>服務</dt><dd>客製系統開發<br />AI 一對一教學<br />企業與社群演講</dd></div>
+            <div><dt>匯入</dt><dd>考卷匯入<br />AI 辨識與審核</dd></div>
+            <div><dt>出題</dt><dd>AI 出相似題<br />AI 產生詳解</dd></div>
+            <div><dt>出卷</dt><dd>勾選與排序<br />匯出 PNG、Word、MathType</dd></div>
           </dl>
         </section>
 

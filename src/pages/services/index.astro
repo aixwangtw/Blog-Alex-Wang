@@ -92,34 +92,6 @@ const schema = [
   ogImageAlt="Aix 系統開發服務｜工程師 Alex"
   schema={schema}
 >
-  <section class="service-hero">
-    <div class="service-hero-copy">
-      <p class="service-kicker">{SERVICE_SITE.title}</p>
-      <h1><span class="nb">客製系統開發，</span><span class="nb">也教 AI、接演講</span></h1>
-      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。主要和開發夥伴承接客製系統開發；也提供一對一 AI 教學（雙北咖啡廳實體或線上），並接受企業、學校與社群的演講邀約。先看你需要哪一種，再加 LINE 聊細節。</p>
-      <div class="service-hero-actions">
-        <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
-        <a class="is-line" href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="service_home_line" data-ga-label="加官方 LINE 詢問" data-ga-location="service_home_hero" data-ga-action="external"><LineIcon class="line-btn-ic" />加官方 LINE 詢問</a>
-      </div>
-    </div>
-    <nav class="service-hero-cards" aria-label="三種服務">
-      {heroServiceCards.map((card) => (
-        <a href={card.href} data-ga-button={`service_home_card_${card.key}`} data-ga-label={card.title} data-ga-location="service_home_hero_cards" data-ga-action="navigate">
-          {typeof card.image === 'string'
-            ? <img src={card.image} alt={card.imageAlt} width="1400" height="875" loading="eager" decoding="async" />
-            : <Image src={card.image} alt={card.imageAlt} class={`is-${card.key}`} widths={[420, 640]} sizes="(min-width: 1024px) 360px, 100vw" />}
-          <span class="service-hero-card-copy">
-            <strong>{card.title}</strong>
-            <span>{card.description}</span>
-            <b>{card.action} <span aria-hidden="true">→</span></b>
-          </span>
-        </a>
-      ))}
-    </nav>
-  </section>
-
-  <p class="service-dev-more"><a href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_hero" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a></p>
-
   <section class="service-entry" id="quick-entry" aria-labelledby="quick-entry-h">
     <header>
       <p class="service-kicker">快速入口</p>
@@ -156,6 +128,35 @@ const schema = [
       </div>
     ))}
   </section>
+
+  <section class="service-hero">
+    <div class="service-hero-copy">
+      <p class="service-kicker">{SERVICE_SITE.title}</p>
+      <h1><span class="nb">客製系統開發，</span><span class="nb">也教 AI、接演講</span></h1>
+      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。主要和開發夥伴承接客製系統開發；也提供一對一 AI 教學（雙北咖啡廳實體或線上），並接受企業、學校與社群的演講邀約。先看你需要哪一種，再加 LINE 聊細節。</p>
+      <div class="service-hero-actions">
+        <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
+        <a class="is-line" href={LINE_URLS.blog} target="_blank" rel="noreferrer" data-ga-button="service_home_line" data-ga-label="加官方 LINE 詢問" data-ga-location="service_home_hero" data-ga-action="external"><LineIcon class="line-btn-ic" />加官方 LINE 詢問</a>
+      </div>
+    </div>
+    <nav class="service-hero-cards" aria-label="三種服務，系統開發為主">
+      {heroServiceCards.map((card) => (
+        <a class={card.key === 'development' ? 'is-primary' : 'is-secondary'} href={card.href} data-ga-button={`service_home_card_${card.key}`} data-ga-label={card.title} data-ga-location="service_home_hero_cards" data-ga-action="navigate">
+          {typeof card.image === 'string'
+            ? <img src={card.image} alt={card.imageAlt} width="1400" height="875" loading="eager" decoding="async" />
+            : <Image src={card.image} alt={card.imageAlt} class={`is-${card.key}`} widths={[420, 640]} sizes="(min-width: 1024px) 360px, 100vw" />}
+          <span class="service-hero-card-copy">
+            <strong>{card.title}</strong>
+            <span>{card.description}</span>
+            <b>{card.action} <span aria-hidden="true">→</span></b>
+          </span>
+        </a>
+      ))}
+    </nav>
+  </section>
+
+  <p class="service-dev-more"><a href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_hero" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a></p>
+
 
   <section class="service-experience" id="teaching-cases">
     <header>
@@ -223,7 +224,7 @@ const schema = [
 
   <style>
     .service-kicker { color:var(--color-accent); font-size:13px; font-weight:700; letter-spacing:.08em; }
-    .service-hero { display:grid; gap:44px; width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:72px 0 0; }
+    .service-hero { display:grid; gap:44px; width:min(1120px, calc(100% - 48px)); margin:0 auto; padding:88px 0 0; }
     .service-hero-copy { max-width:760px; }
     .service-hero h1 { max-width:18ch; margin-top:22px; font-family:var(--font-serif, serif); font-size:clamp(40px, 4.6vw, 60px); font-weight:600; line-height:1.12; letter-spacing:-.055em; }
     .service-lead { max-width:620px; margin-top:28px; color:var(--color-ink-2); font-size:18px; line-height:1.9; }
@@ -234,7 +235,15 @@ const schema = [
     .service-hero-actions a.is-line { gap:10px; border-color:#06c755; background:#06c755; color:#fff; }
     .service-hero-actions :global(.line-btn-ic) { display:block; flex:none; width:20px; height:20px; }
     .service-hero h1 .nb { white-space:nowrap; }
-    .service-hero-cards { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:18px; }
+    .service-hero-cards { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:18px; }
+    .service-hero-cards > a.is-primary { grid-column:1 / -1; grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows:none; border-color:var(--color-accent); border-width:2px; }
+    .service-hero-cards > a.is-primary img { height:100%; aspect-ratio:auto; min-height:300px; border-bottom:0; border-right:1px solid var(--color-rule-2); }
+    .service-hero-cards > a.is-primary .service-hero-card-copy { align-content:center; gap:14px; padding:36px 40px; }
+    .service-hero-cards > a.is-primary strong { font-size:clamp(28px, 3vw, 38px); font-family:var(--font-serif, serif); }
+    .service-hero-cards > a.is-primary .service-hero-card-copy > span { font-size:17px; }
+    .service-hero-cards > a.is-primary b { display:inline-flex; width:fit-content; padding:12px 22px; background:var(--color-accent); color:#fff; }
+    .service-hero-cards > a.is-secondary strong { font-size:17px; }
+    .service-hero-cards > a.is-secondary .service-hero-card-copy > span { font-size:14px; line-height:1.7; }
     .service-hero-cards > a { display:grid; grid-template-rows:auto 1fr; overflow:hidden; border:1px solid var(--color-rule-2); background:var(--color-paper-2); color:var(--color-ink); text-decoration:none; transition:border-color .18s ease; }
     .service-hero-cards img { display:block; width:100%; height:auto; aspect-ratio:16 / 10; object-fit:cover; object-position:center 35%; border-bottom:1px solid var(--color-rule-2); }
     .service-hero-cards img.is-course { object-position:center 62%; }
@@ -249,8 +258,11 @@ const schema = [
     }
     @media (max-width:1023px) {
       .service-hero-cards { grid-template-columns:1fr; }
-      .service-hero-cards > a { grid-template-columns:minmax(0, 220px) minmax(0, 1fr); grid-template-rows:none; }
-      .service-hero-cards img { height:auto; aspect-ratio:4 / 3; align-self:start; border-right:1px solid var(--color-rule-2); border-bottom:0; }
+      .service-hero-cards > a.is-primary { grid-template-columns:1fr; }
+      .service-hero-cards > a.is-primary img { height:auto; min-height:0; aspect-ratio:16 / 10; border-right:0; border-bottom:1px solid var(--color-rule-2); }
+      .service-hero-cards > a.is-primary .service-hero-card-copy { padding:22px 20px 24px; }
+      .service-hero-cards > a.is-secondary { grid-template-columns:minmax(0, 150px) minmax(0, 1fr); grid-template-rows:none; }
+      .service-hero-cards > a.is-secondary img { height:100%; aspect-ratio:auto; align-self:stretch; border-right:1px solid var(--color-rule-2); border-bottom:0; }
     }
     .service-h1-sub { display:block; margin-top:.35em; font-size:.55em; line-height:1.35; letter-spacing:-.02em; }
     .service-lead a { color:var(--color-accent); text-decoration:underline; text-underline-offset:4px; }
@@ -280,8 +292,7 @@ const schema = [
     .service-free-media { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
     @media (max-width:767px) {
       .service-hero { gap:32px; width:calc(100% - 40px); padding:48px 0 0; }
-      .service-hero-cards > a { grid-template-columns:1fr; }
-      .service-hero-cards img { height:auto; min-height:0; aspect-ratio:16 / 10; border-right:0; border-bottom:1px solid var(--color-rule-2); }
+      .service-hero-cards > a.is-secondary { grid-template-columns:minmax(0, 96px) minmax(0, 1fr); }
       .service-hero-card-copy { padding:16px 18px 18px; }
       .service-dev-more { width:calc(100% - 40px); }
       .service-hero h1 { font-size:clamp(32px, 9vw, 44px); line-height:1.18; }
@@ -297,7 +308,7 @@ const schema = [
       .service-hero, .service-dev-more, .service-experience, .service-home-cta { width:calc(100% - 32px); }
       .service-hero h1 { font-size:38px; }
     }
-    .service-entry { width:min(1120px, calc(100% - 48px)); margin:110px auto 0; }
+    .service-entry { width:min(1120px, calc(100% - 48px)); margin:64px auto 0; }
     .service-entry h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
     .service-entry-tabs { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; margin-top:32px; padding:6px; border:1px solid var(--color-rule-2); background:var(--color-paper-2); }
     .service-entry-tabs button { min-height:46px; border:0; background:transparent; color:var(--color-ink-2); font-weight:700; cursor:pointer; }
@@ -311,7 +322,7 @@ const schema = [
     .service-entry-options strong { display:block; }
     .service-entry-options small { display:block; margin-top:4px; color:var(--color-ink-3); font-size:13px; }
     @media (max-width:767px) {
-      .service-entry { width:calc(100% - 40px); margin-top:76px; }
+      .service-entry { width:calc(100% - 40px); margin-top:40px; }
       .service-entry-tabs { grid-template-columns:repeat(2, minmax(0, 1fr)); }
     }
   </style>

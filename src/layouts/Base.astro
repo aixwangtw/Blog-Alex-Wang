@@ -3,14 +3,12 @@ import { blogBannerPath } from '../lib/blog-banner';
 import ogBanner from '../assets/banner-v2.png';
 import githubLogo from '../assets/github-logo.svg';
 import lineBrandIcon from '../assets/line-brand-icon.png';
-import LineIcon from '../components/LineIcon.astro';
 import {
   AUTHOR,
   COLLABORATION_ENTRY_LINKS,
   FREE_ENTRY_LINKS,
   GUIDED_ENTRY_LINKS,
   LEARNING_ENTRY_LINKS,
-  LINE_URLS,
   LINKS,
   PERSON_SCHEMA,
   SERVICE_SITE,
@@ -578,17 +576,6 @@ const jsonLd = {
         </nav>
 
         <div class="hd-tools">
-          <a
-            class="hd-line"
-            href={LINE_URLS.blog}
-            target="_blank"
-            rel="noopener"
-            aria-label="加 LINE 詢問（另開新頁籤）"
-            data-ga-button="header_line"
-            data-ga-label="加 LINE 詢問"
-            data-ga-location="header"
-            data-ga-action="external"
-          ><LineIcon class="hd-line-icon" /><span>加 LINE 詢問</span></a>
           <button
             class="hd-cue"
             id="nav-cue"
