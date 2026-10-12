@@ -1,7 +1,6 @@
 ---
 import { Image } from 'astro:assets';
 import freeResourcesHome from '../../assets/free-resources-home-v2.png';
-import teachingOneOnOne from '../../assets/teaching-one-on-one.jpg';
 import Cta from '../../components/Cta.astro';
 import {
   AUTHOR,
@@ -19,25 +18,15 @@ import {
 import { SPEAKING_ENGAGEMENTS, TEACHING_CASES } from '../../data/services';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
-// 首屏三張服務卡：圖片與描述都取自站上既有事實（題庫系統截圖、TEACHING_CASES、SPEAKING_ENGAGEMENTS 現場照）。
+// 三種服務：系統開發為主，其餘兩項只列成次要細線列表。描述取自站上既有事實（TEACHING_CASES、SPEAKING_ENGAGEMENTS）。
 const heroServiceCards = [
-  {
-    key: 'development',
-    href: '/services/development/',
-    title: '系統開發',
-    description: '題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程。',
-    action: '看系統開發',
-    image: `${SITE.url}/images/blog/math-teacher-question-bank/import-review.jpg`,
-    imageAlt: '題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目',
-  },
+  { key: 'development', href: '/services/development/', title: '系統開發' },
   {
     key: 'course',
     href: '/course/',
     title: 'AI 一對一教學',
     description: '不需要程式背景，3 小時用你自己的電腦和帳號，從裝好 Claude Code、Codex、Hermes 或 OpenClaw，做到第一個能用的專案，像自動發文、整理 Email。',
     action: '看教學內容',
-    image: teachingOneOnOne,
-    imageAlt: 'Alex 與學員進行一對一 AI 實體教學',
   },
   {
     key: 'speaking',
@@ -45,10 +34,18 @@ const heroServiceCards = [
     title: '演講邀約',
     description: `企業、學校與社群的 AI 演講，主題可依聽眾背景調整，講過 ${SPEAKING_ENGAGEMENTS.slice(0, 2).map((item) => item.host).join('、')}等場次。`,
     action: '看演講紀錄',
-    image: SPEAKING_ENGAGEMENTS[0].image,
-    imageAlt: SPEAKING_ENGAGEMENTS[0].imageAlt,
   },
 ];
+const secondaryServices = heroServiceCards.filter((card) => card.key !== 'development');
+
+// 系統開發區的三張真實截圖：主圖放大，另兩張當輔助。
+const devShots = {
+  main: { src: '/images/blog/math-teacher-question-bank/import-review.jpg', width: 1400, height: 875, alt: '題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目' },
+  extras: [
+    { src: '/images/blog/math-teacher-question-bank/ai-similar-triangle.jpg', width: 1400, height: 875, alt: '題庫系統的 AI 出相似題：依一題三角形題目產生相似題與詳解' },
+    { src: '/images/blog/math-teacher-question-bank/exam-export.jpg', width: 1400, height: 972, alt: '題庫系統的出卷頁：勾選題目、排序後直接匯出考卷' },
+  ],
+};
 
 // 快速入口（原本在主站首屏）：主站相對路徑要補上主站網域，服務站上才連得到。
 const absolute = (href: string) => (href.startsWith('/') ? `${SITE.url}${href}` : href);
@@ -136,23 +133,40 @@ const schema = [
         <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
       </div>
     </div>
-    <nav class="service-hero-cards" aria-label="三種服務，系統開發為主">
-      {heroServiceCards.map((card) => (
-        <a class={card.key === 'development' ? 'is-primary' : 'is-secondary'} href={card.href} data-ga-button={`service_home_card_${card.key}`} data-ga-label={card.title} data-ga-location="service_home_hero_cards" data-ga-action="navigate">
-          {typeof card.image === 'string'
-            ? <img src={card.image} alt={card.imageAlt} width="1400" height="875" loading="eager" decoding="async" />
-            : <Image src={card.image} alt={card.imageAlt} class={`is-${card.key}`} widths={[420, 640]} sizes="(min-width: 1024px) 360px, 100vw" />}
-          <span class="service-hero-card-copy">
-            <strong>{card.title}</strong>
-            <span>{card.description}</span>
-            <b>{card.action} <span aria-hidden="true">→</span></b>
-          </span>
-        </a>
-      ))}
-    </nav>
   </section>
 
-  <p class="service-dev-more"><a href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_hero" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a></p>
+  <section class="service-dev" id="system-development" aria-labelledby="service-dev-h">
+    <p class="service-kicker">系統開發</p>
+    <h2 id="service-dev-h">數學題庫系統</h2>
+    <p class="service-section-lead">題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程。代表案例是補習班數學題庫：考卷匯入、AI 辨識審核、AI 出相似題與詳解、出卷與匯出。</p>
+    <figure class="service-shot service-shot--main">
+      <img src={devShots.main.src} alt={devShots.main.alt} width={devShots.main.width} height={devShots.main.height} loading="lazy" decoding="async" />
+    </figure>
+    <div class="service-shot-row">
+      {devShots.extras.map((shot) => (
+        <figure class="service-shot">
+          <img src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} loading="lazy" decoding="async" />
+        </figure>
+      ))}
+    </div>
+    <p class="service-dev-links">
+      <a href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_dev" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a>
+    </p>
+  </section>
+
+  <section class="service-others" aria-label="其他服務">
+    <ul>
+      {secondaryServices.map((card) => (
+        <li>
+          <div>
+            <strong>{card.title}</strong>
+            <span>{card.description}</span>
+          </div>
+          <a href={card.href} data-ga-button={`service_home_card_${card.key}`} data-ga-label={card.title} data-ga-location="service_home_others" data-ga-action="navigate">{card.action} <span aria-hidden="true">→</span></a>
+        </li>
+      ))}
+    </ul>
+  </section>
 
 
   <section class="service-experience" id="teaching-cases">
@@ -161,7 +175,7 @@ const schema = [
       <h2>私人家教案例</h2>
       <p class="service-section-lead">每堂課都用學員自己的電腦、帳號和需求實作，過去已帶學員完成 Agent 安裝、社群自動發文、Email 與行事曆整理，以及 OpenClaw 排錯救援。</p>
     </header>
-    <ul class="service-case-grid">
+    <ul class="service-case-list">
       {TEACHING_CASES.map((item) => (
         <li>
           <Image src={item.image} alt={item.imageAlt} width={64} class="service-case-icon" />
@@ -180,18 +194,18 @@ const schema = [
       <p class="service-kicker">演講邀約</p>
       <h2>過往演講紀錄</h2>
     </header>
-    <div class="service-experience-grid">
+    <ul class="service-speaking-list">
       {SPEAKING_ENGAGEMENTS.slice(0, 3).map((item, index) => (
-        <article>
-          <Image src={item.image} alt={item.imageAlt} widths={[420, 640, 840]} sizes="(min-width: 768px) 33vw, 100vw" />
-          <div class="service-experience-copy">
-            <div><small>{item.host}</small><span>CASE 0{index + 1}</span></div>
+        <li>
+          <Image src={item.image} alt={item.imageAlt} widths={[160, 320]} sizes="(min-width: 768px) 160px, 96px" loading="lazy" />
+          <div>
+            <small>{item.host}<span>CASE 0{index + 1}</span></small>
             <h3>{item.topic}</h3>
             <p>{item.description}</p>
           </div>
-        </article>
+        </li>
       ))}
-    </div>
+    </ul>
     <a class="service-text-link" href="/services/speaking/">查看全部演講案例 →</a>
   </section>
 
@@ -227,99 +241,78 @@ const schema = [
     .service-hero h1 { max-width:18ch; margin-top:22px; font-family:var(--font-serif, serif); font-size:clamp(40px, 4.6vw, 60px); font-weight:600; line-height:1.12; letter-spacing:-.055em; }
     .service-lead { max-width:620px; margin-top:28px; color:var(--color-ink-2); font-size:18px; line-height:1.9; }
     .service-hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:34px; }
-    .service-hero-actions a { display:inline-flex; min-height:50px; align-items:center; justify-content:center; padding:0 24px; border:1px solid var(--color-accent); color:var(--color-accent); font-weight:700; text-decoration:none; }
-    .service-hero-actions a:first-child { background:var(--color-accent); color:#fff; }
-    .service-hero-actions a.is-text { padding:0 4px; border:0; color:var(--color-ink-2); font-weight:500; text-decoration:underline; text-underline-offset:4px; }
+    .service-hero-actions a { display:inline-flex; min-height:50px; align-items:center; justify-content:center; padding:0 24px; border:1px solid var(--color-accent); background:var(--color-accent); color:#fff; font-weight:700; text-decoration:none; }
     .service-hero h1 .nb { white-space:nowrap; }
-    .service-hero-cards { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:18px; }
-    .service-hero-cards > a.is-primary { grid-column:1 / -1; grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows:none; border-color:var(--color-accent); border-width:2px; }
-    .service-hero-cards > a.is-primary img { height:100%; aspect-ratio:auto; min-height:300px; border-bottom:0; border-right:1px solid var(--color-rule-2); }
-    .service-hero-cards > a.is-primary .service-hero-card-copy { align-content:center; gap:14px; padding:36px 40px; }
-    .service-hero-cards > a.is-primary strong { font-size:clamp(28px, 3vw, 38px); font-family:var(--font-serif, serif); }
-    .service-hero-cards > a.is-primary .service-hero-card-copy > span { font-size:17px; }
-    .service-hero-cards > a.is-primary b { display:inline-flex; width:fit-content; padding:12px 22px; background:var(--color-accent); color:#fff; }
-    .service-hero-cards > a.is-secondary strong { font-size:17px; }
-    .service-hero-cards > a.is-secondary .service-hero-card-copy > span { font-size:14px; line-height:1.7; }
-    .service-hero-cards > a { display:grid; grid-template-rows:auto 1fr; overflow:hidden; border:1px solid var(--color-rule-2); background:var(--color-paper-2); color:var(--color-ink); text-decoration:none; transition:border-color .18s ease; }
-    .service-hero-cards img { display:block; width:100%; height:auto; aspect-ratio:16 / 10; object-fit:cover; object-position:center 35%; border-bottom:1px solid var(--color-rule-2); }
-    .service-hero-cards img.is-course { object-position:center 62%; }
-    .service-hero-card-copy { display:grid; align-content:start; gap:8px; padding:20px 22px 22px; }
-    .service-hero-card-copy strong { font-size:20px; line-height:1.4; }
-    .service-hero-card-copy > span { color:var(--color-ink-3); line-height:1.75; }
-    .service-hero-card-copy b { margin-top:6px; color:var(--color-accent); font-weight:700; }
-    .service-dev-more { width:min(1120px, calc(100% - 48px)); margin:28px auto 0; }
-    .service-dev-more a { color:var(--color-accent); font-weight:700; text-decoration:none; }
-    @media (hover:hover) and (pointer:fine) {
-      .service-hero-cards > a:hover { border-color:var(--color-accent); }
-    }
-    @media (max-width:1023px) {
-      .service-hero-cards { grid-template-columns:1fr; }
-      .service-hero-cards > a.is-primary { grid-template-columns:1fr; }
-      .service-hero-cards > a.is-primary img { height:auto; min-height:0; aspect-ratio:16 / 10; border-right:0; border-bottom:1px solid var(--color-rule-2); }
-      .service-hero-cards > a.is-primary .service-hero-card-copy { padding:22px 20px 24px; }
-      .service-hero-cards > a.is-secondary { grid-template-columns:minmax(0, 150px) minmax(0, 1fr); grid-template-rows:none; }
-      .service-hero-cards > a.is-secondary img { height:100%; aspect-ratio:auto; align-self:stretch; border-right:1px solid var(--color-rule-2); border-bottom:0; }
-    }
-    .service-h1-sub { display:block; margin-top:.35em; font-size:.55em; line-height:1.35; letter-spacing:-.02em; }
     .service-lead a { color:var(--color-accent); text-decoration:underline; text-underline-offset:4px; }
+    .service-dev { width:min(1120px, calc(100% - 48px)); margin:96px auto 0; padding-top:56px; border-top:1px solid var(--color-rule); }
+    .service-dev h2 { margin-top:14px; font:600 clamp(36px, 4.6vw, 60px)/1.15 var(--font-serif, serif); letter-spacing:-.04em; }
+    .service-shot { margin:0; }
+    .service-shot img { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
+    .service-shot--main { margin-top:36px; }
+    .service-shot-row { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:24px; margin-top:24px; }
+    .service-dev-links { margin-top:28px; }
+    .service-dev-links a, .service-others a { color:var(--color-accent); font-weight:700; text-decoration:none; }
+    .service-others { width:min(1120px, calc(100% - 48px)); margin:64px auto 0; }
+    .service-others ul { margin:0; padding:0; list-style:none; }
+    .service-others li { display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:24px; align-items:center; padding:22px 2px; border-top:1px solid var(--color-rule); }
+    .service-others li:last-child { border-bottom:1px solid var(--color-rule); }
+    .service-others strong { display:block; font-size:17px; line-height:1.4; }
+    .service-others li span { display:block; margin-top:6px; max-width:62ch; color:var(--color-ink-3); font-size:14px; line-height:1.75; }
+    .service-others a { white-space:nowrap; }
     .service-experience { width:min(1120px, calc(100% - 48px)); margin:110px auto 0; }
     .service-experience > header { max-width:700px; }
     .service-experience h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
-    
-    .service-experience-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:18px; margin-top:38px; }
-    .service-experience article { overflow:hidden; border:1px solid var(--color-rule-2); background:var(--color-paper-2); }
-    .service-experience article > img { display:block; width:100%; aspect-ratio:4 / 3; object-fit:cover; }
-    .service-experience-copy { padding:22px; }
-    .service-experience-copy > div { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--color-rule); }
-    .service-experience-copy span { color:var(--color-ink-3); font:700 10px/1.4 ui-monospace, monospace; white-space:nowrap; }
-    .service-experience small { color:var(--color-accent); font-weight:700; }
-    .service-experience h3 { margin-top:16px; font-size:20px; line-height:1.45; }
-    .service-experience article p { margin-top:9px; color:var(--color-ink-3); line-height:1.75; }
     .service-text-link { display:inline-block; margin-top:24px; color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-home-cta { width:min(1120px, calc(100% - 48px)); margin:80px auto 0; }
     .service-section-lead { max-width:62ch; margin-top:16px; color:var(--color-ink-2); line-height:1.85; }
-    .service-case-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; margin:34px 0 0; padding:0; list-style:none; }
-    .service-case-grid li { display:grid; grid-template-columns:44px minmax(0, 1fr); gap:14px; align-items:center; padding:18px; border:1px solid var(--color-rule-2); background:var(--color-paper-2); }
+    .service-case-list { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); column-gap:40px; margin:34px 0 0; padding:0; list-style:none; }
+    .service-case-list li { display:grid; grid-template-columns:44px minmax(0, 1fr); gap:14px; align-items:center; padding:18px 2px; border-top:1px solid var(--color-rule); }
     .service-case-icon { width:44px; height:44px; object-fit:contain; }
-    .service-case-grid strong { display:block; color:var(--color-ink); line-height:1.5; }
-    .service-case-grid span { display:block; margin-top:4px; color:var(--color-ink-3); font-size:13px; }
+    .service-case-list strong { display:block; color:var(--color-ink); line-height:1.5; }
+    .service-case-list span { display:block; margin-top:4px; color:var(--color-ink-3); font-size:13px; }
+    .service-speaking-list { margin:34px 0 0; padding:0; list-style:none; }
+    .service-speaking-list li { display:grid; grid-template-columns:160px minmax(0, 1fr); gap:28px; align-items:start; padding:24px 2px; border-top:1px solid var(--color-rule); }
+    .service-speaking-list li > img { display:block; width:160px; height:auto; aspect-ratio:4 / 3; object-fit:cover; border:1px solid var(--color-rule-2); }
+    .service-speaking-list small { display:flex; gap:12px; color:var(--color-accent); font-weight:700; }
+    .service-speaking-list small span { color:var(--color-ink-3); font:700 10px/1.8 ui-monospace, monospace; }
+    .service-speaking-list h3 { margin-top:8px; font-size:20px; line-height:1.45; }
+    .service-speaking-list p { margin-top:8px; color:var(--color-ink-3); line-height:1.75; }
     .service-free { display:grid; grid-template-columns:minmax(0, 1fr) minmax(280px, .9fr); gap:48px; align-items:center; }
     .service-free-copy ul { display:grid; gap:8px; margin-top:18px; padding:0; list-style:none; color:var(--color-ink-3); }
     .service-free-media { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
-    @media (max-width:767px) {
-      .service-hero { gap:32px; width:calc(100% - 40px); padding:48px 0 0; }
-      .service-hero-cards > a.is-secondary { grid-template-columns:minmax(0, 96px) minmax(0, 1fr); }
-      .service-hero-card-copy { padding:16px 18px 18px; }
-      .service-dev-more { width:calc(100% - 40px); }
-      .service-hero h1 { font-size:clamp(32px, 9vw, 44px); line-height:1.18; }
-      .service-lead { font-size:16px; line-height:1.8; }
-      .service-hero-actions { display:grid; grid-template-columns:1fr; }
-      .service-hero-actions a { width:100%; }
-      .service-experience, .service-home-cta { width:calc(100% - 40px); margin-top:76px; }
-      .service-experience-grid { grid-template-columns:1fr; }
-      .service-case-grid { grid-template-columns:1fr; }
-      .service-free { grid-template-columns:1fr; gap:28px; }
-    }
-    @media (max-width:340px) {
-      .service-hero, .service-dev-more, .service-experience, .service-home-cta { width:calc(100% - 32px); }
-      .service-hero h1 { font-size:38px; }
-    }
     .service-entry { width:min(1120px, calc(100% - 48px)); margin:64px auto 0; }
     .service-entry h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
-    .service-entry-tabs { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; margin-top:32px; padding:6px; border:1px solid var(--color-rule-2); background:var(--color-paper-2); }
-    .service-entry-tabs button { min-height:46px; border:0; background:transparent; color:var(--color-ink-2); font-weight:700; cursor:pointer; }
-    .service-entry-tabs button[aria-selected='true'] { background:var(--color-accent); color:#fff; }
+    .service-entry-tabs { display:flex; flex-wrap:wrap; gap:6px 28px; margin-top:28px; }
+    .service-entry-tabs button { min-height:44px; padding:0; border:0; border-bottom:2px solid transparent; background:transparent; color:var(--color-ink-3); font-size:16px; font-weight:700; cursor:pointer; }
+    .service-entry-tabs button[aria-selected='true'] { border-bottom-color:var(--color-accent); color:var(--color-ink); }
     .service-entry-tabs button:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }
     .service-entry-panel[hidden] { display:none; }
-    .service-entry-options { display:grid; gap:10px; margin-top:14px; }
-    .service-entry-options a { display:grid; grid-template-columns:40px minmax(0, 1fr) auto; gap:12px; align-items:center; padding:18px 20px; border:1px solid var(--color-rule-2); color:var(--color-ink); text-decoration:none; transition:border-color .15s; }
-    .service-entry-options a:hover { border-color:var(--color-accent); }
+    .service-entry-options { display:grid; margin-top:8px; }
+    .service-entry-options a { display:grid; grid-template-columns:40px minmax(0, 1fr) auto; gap:12px; align-items:center; padding:18px 2px; border-top:1px solid var(--color-rule); color:var(--color-ink); text-decoration:none; }
+    .service-entry-options a:hover strong { color:var(--color-accent); }
     .service-entry-index { color:var(--color-accent); font:700 12px/1 ui-monospace, monospace; }
     .service-entry-options strong { display:block; }
     .service-entry-options small { display:block; margin-top:4px; color:var(--color-ink-3); font-size:13px; }
     @media (max-width:767px) {
-      .service-entry { width:calc(100% - 40px); margin-top:40px; }
-      .service-entry-tabs { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+      .service-hero { gap:32px; width:calc(100% - 40px); padding:48px 0 0; }
+      .service-hero h1 { font-size:clamp(32px, 9vw, 44px); line-height:1.18; }
+      .service-lead { font-size:16px; line-height:1.8; }
+      .service-hero-actions { display:grid; grid-template-columns:1fr; }
+      .service-hero-actions a { width:100%; }
+      .service-dev, .service-others, .service-experience, .service-home-cta, .service-entry { width:calc(100% - 40px); }
+      .service-dev { margin-top:64px; padding-top:40px; }
+      .service-shot-row { grid-template-columns:1fr; gap:16px; }
+      .service-others li { grid-template-columns:1fr; gap:10px; }
+      .service-experience, .service-home-cta { margin-top:76px; }
+      .service-case-list { grid-template-columns:1fr; }
+      .service-speaking-list li { grid-template-columns:96px minmax(0, 1fr); gap:16px; }
+      .service-speaking-list li > img { width:96px; }
+      .service-free { grid-template-columns:1fr; gap:28px; }
+      .service-entry { margin-top:40px; }
+    }
+    @media (max-width:340px) {
+      .service-hero, .service-dev, .service-others, .service-experience, .service-home-cta, .service-entry { width:calc(100% - 32px); }
+      .service-hero h1 { font-size:38px; }
     }
   </style>
   <script is:inline>

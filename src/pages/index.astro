@@ -34,14 +34,6 @@ import {
 import { SYLLABUS } from '../data/home';
 import Base from '../layouts/Base.astro';
 
-// 首屏下方的四張入口卡；服務站網址由 consts 組出，不寫死網域。
-const homeEntryCards = [
-  { key: 'newbie', href: '/blog/how-to-start-learning-ai/', title: 'AI 新手入門', description: '第一次學 AI，先從這篇開始。' },
-  { key: 'articles', href: '/blog/', title: '題庫系統文章', description: '數學題庫系統的開發紀錄與案例文章。' },
-  { key: 'resources', href: '/resources/', title: '免費資源', description: '教學影片、Skills 與開源工具，直接拿去用。' },
-  { key: 'services', href: `${SERVICE_SITE.url}/`, title: '系統開發與教學', description: '找我們做系統，或約一對一 AI 教學、演講。' },
-];
-
 const schema = [
   {
     '@type': 'Course',
@@ -73,14 +65,6 @@ const schema = [
           <p class="hero-summary">本站整理補習班數學題庫系統的開發紀錄與案例文章：考卷匯入與 AI 辨識審核、AI 出相似題與詳解、出卷與匯出（PNG、Word、MathType），也附可實際操作的 Demo。</p>
           <div class="hero-actions">
             <a
-              class="hero-ghost"
-              href="/blog/"
-              data-ga-button="hero_blog"
-              data-ga-label="看題庫文章"
-              data-ga-location="hero_intro"
-              data-ga-action="navigate"
-            >看題庫文章</a>
-            <a
               class="hero-secondary"
               href={`${SERVICE_SITE.url}/`}
               data-ga-button="hero_service_home"
@@ -88,6 +72,14 @@ const schema = [
               data-ga-location="hero_intro"
               data-ga-action="navigate"
             >找我做系統 <span aria-hidden="true">→</span></a>
+            <a
+              class="hero-ghost"
+              href="/blog/"
+              data-ga-button="hero_blog"
+              data-ga-label="看題庫文章"
+              data-ga-location="hero_intro"
+              data-ga-action="navigate"
+            >看題庫文章</a>
           </div>
         </div>
         <figure class="hero-media hero-reveal" style="--d:0ms">
@@ -106,17 +98,6 @@ const schema = [
     </section>
 
     <div class="home-shell">
-      <!-- 首屏下方入口卡：依讀者目的分流（新手、找文章、免費資源、找人開發或教學） -->
-      <nav class="home-entries" aria-label="依需求選擇入口">
-        {homeEntryCards.map((card) => (
-          <a href={card.href} data-ga-button={`home_entry_${card.key}`} data-ga-label={card.title} data-ga-location="home_entry_cards" data-ga-action="navigate">
-            <strong>{card.title}</strong>
-            <span>{card.description}</span>
-            <b aria-hidden="true">→</b>
-          </a>
-        ))}
-      </nav>
-
       <!-- 2／服務詳細介紹：服務入口的下一層資訊 -->
       <section class="service-details" aria-label="服務詳細介紹">
         <article class="service-row reveal" id="development-case">
@@ -595,7 +576,6 @@ const schema = [
       aspect-ratio: 9 / 16;
       background: var(--color-ink);
       border: 1px solid var(--color-rule-2);
-      box-shadow: 0 18px 48px rgb(22 22 26 / 12%);
     }
     .hero-media figcaption {
       margin-top: 12px;
@@ -666,56 +646,18 @@ const schema = [
       text-decoration: none;
       transition: background-color 0.18s var(--ease), color 0.18s var(--ease);
     }
-    .home-entries {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      padding-bottom: clamp(32px, 5vw, 56px);
-    }
-    .home-entries a {
-      position: relative;
-      display: grid;
-      align-content: start;
-      gap: 8px;
-      min-height: 132px;
-      padding: 22px 44px 22px 22px;
-      border: 1px solid var(--color-rule-2);
-      border-radius: 8px;
-      background: var(--color-paper-2);
-      color: var(--color-ink);
-      text-decoration: none;
-      transition: border-color 0.18s var(--ease), background-color 0.18s var(--ease);
-    }
-    .home-entries strong {
-      font: 650 18px/1.4 var(--font-display);
-    }
-    .home-entries span {
-      color: var(--color-ink-3);
-      font: 400 14px/1.7 var(--font-display);
-    }
-    .home-entries b {
-      position: absolute;
-      top: 22px;
-      right: 20px;
-      color: var(--color-accent);
-      font-weight: 400;
-    }
-    @media (max-width: 1023px) {
-      .home-entries { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 767px) {
-      .home-entries { grid-template-columns: 1fr; gap: 10px; }
-      .home-entries a { min-height: 0; padding: 16px 40px 16px 16px; }
-      .home-entries b { top: 16px; right: 16px; }
-    }
     .hero-secondary {
       display: inline-flex;
       min-height: 44px;
       align-items: center;
-      color: var(--color-ink-2);
-      font: 500 13px/1.5 var(--font-display);
-      text-decoration: underline;
-      text-underline-offset: 4px;
+      justify-content: center;
+      padding: 12px 22px;
+      border: 1px solid var(--color-accent);
+      border-radius: 6px;
+      background: var(--color-accent);
+      color: #fff;
+      font: 600 14px/1.5 var(--font-display);
+      text-decoration: none;
     }
     .cli {
       display: flex;
@@ -981,7 +923,7 @@ const schema = [
       .hero-summary { margin-top: 12px; font-size: 15px; line-height: 1.7; }
       .hero-actions { display: grid; gap: 8px; margin-top: 16px; }
         .hero-ghost { width: 100%; }
-      .hero-secondary { justify-content: center; }
+      .hero-secondary { width: 100%; }
       .cli { border-radius: 10px; }
       .cli-brand {
         height: 32px;
@@ -1334,8 +1276,6 @@ const schema = [
     .service-media {
       margin: 0;
       overflow: hidden;
-      border: 1px solid var(--color-rule-2);
-      background: var(--color-surface);
       aspect-ratio: 4 / 3;
     }
     .service-media img {
@@ -1343,6 +1283,7 @@ const schema = [
       width: 100%;
       height: 100%;
       object-fit: cover;
+      border: 1px solid var(--color-rule-2);
     }
     .service-media--portrait img {
       object-position: center 28%;
@@ -1399,12 +1340,11 @@ const schema = [
     .instructor-photo {
       margin: 0;
       overflow: hidden;
-      border: 1px solid var(--color-rule-2);
       aspect-ratio: 4 / 5;
-      background: var(--color-surface);
     }
     .instructor-photo img {
       display: block;
+      border: 1px solid var(--color-rule-2);
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -1664,10 +1604,6 @@ const schema = [
       .hero-ghost:hover {
         background: var(--color-ink);
         color: var(--color-paper);
-      }
-      .home-entries a:hover {
-        border-color: var(--color-accent);
-        background: var(--color-accent-tint);
       }
       .btn-contact:hover {
         color: var(--color-accent);
