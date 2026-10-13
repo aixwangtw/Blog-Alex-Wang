@@ -7,6 +7,8 @@ export const SITE = {
   url: 'https://aixwang.dev',
   description:
     'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統。另提供 AI 教學與演講。',
+  // 頁尾顯示用：不帶「另提供 AI 教學與演講」，結構化資料仍用上面的 description
+  footerDescription: 'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統。',
   locale: 'zh-TW',
 };
 
@@ -37,7 +39,7 @@ export const AUTHOR = {
   alternateName: ['王士麟', 'Alex Wang', '艾克斯王', 'aixwang'],
   jobTitle: '系統開發工程師',
   description:
-    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，用 AI 自動化整理資料、產出內容，代表案例是補習班數學題庫系統。另外也教「跟 AI 對話就能拍片」。',
+    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，用 AI 自動化整理資料、產出內容，代表案例是補習班數學題庫系統。',
   // 技能以站上已有的事實為準：題庫系統、CRM／後台、Line LIFF、AI 客服見 instructor.ts 與轉職文，
   // Laravel 見轉職文 FAQ（技術棧）與題庫系統本身；對話式拍片、HyperFrames 是教學主題，放最後。
   knowsAbout: [
@@ -60,8 +62,8 @@ export const AUTHOR = {
 // 雜湊固定選版：同一篇永遠同一版（對讀者與搜尋引擎穩定），不同篇之間輪替。
 // 內容都是同一組真實事實的不同說法，不得加入新的宣稱。
 export const AUTHOR_INTROS = [
-  '全職接案工程師，承接客製系統開發，也教「跟 AI 對話就能拍片」，目標是把工作流程簡化成用說的就能完成。',
-  '接案工程師。我教的重點只有一個：跟 AI 對話就能把影片拍出來，從腳本、剪輯到發佈都用說的完成。',
+  '全職接案工程師，承接客製系統開發，目標是把工作流程簡化成用說的就能完成。',
+  '接案工程師，和開發夥伴承接客製系統開發，重點是把繁瑣的流程變成用說的就能完成。',
   '接案工程師，平常幫客戶把重複的工作變成自動化流程，也在 21 萬人的 OpenClaw 中文社群當版主。部落格寫的都是自己每天在用的做法。',
 ];
 
@@ -85,16 +87,16 @@ export function pickAuthorIntro(slug: string, tags: readonly string[]): string {
 
 export const CTA_VARIANTS = [
   {
-    title: '想更快上手？可以直接找我一對一',
-    text: '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），也接受企業與社群的 AI 演講邀約。',
+    title: '想把重複的工作交給系統？',
+    text: '我和開發夥伴承接客製系統開發，可以先看題庫系統的案例；有問題點右下角官方 LINE 直接問我。',
   },
   {
-    title: '想找人帶你安裝、串接？',
-    text: '一對一教學可以約雙北咖啡廳實體或線上（Google Meet／Discord），從安裝到做出第一個成品帶你走一遍。企業與社群的演講邀約也接。',
+    title: '想找人幫你安裝、串接？',
+    text: '安裝、串接這類事可以交給我和開發夥伴，從需求到上線一起處理；先看題庫系統的案例，有問題點右下角官方 LINE 直接問我。',
   },
   {
     title: '想先看看能怎麼自動化？',
-    text: '想自動化的工作可以先看題庫系統的案例；覺得適合再約一對一（雙北實體或線上都可以）。也歡迎企業與社群邀約演講。',
+    text: '想自動化的工作可以先看題庫系統的案例；覺得適合，點右下角官方 LINE 跟我聊聊你手上的資料與需求。',
   },
 ];
 
@@ -150,10 +152,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
       text: '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；有問題點右下角官方 LINE 直接問我。',
       href: DEVELOPMENT_SERVICE.url,
       label: '了解系統\n開發服務',
-      links: [
-        { href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' },
-        { href: `${SERVICE_SITE.url}/services/speaking/`, label: '找講師', external: true },
-      ],
+      links: [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],
     },
   },
   {
@@ -163,10 +162,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
       text: '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；有問題點右下角官方 LINE 直接問我。',
       href: DEVELOPMENT_SERVICE.url,
       label: '了解系統\n開發服務',
-      links: [
-        { href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' },
-        { href: `${SERVICE_SITE.url}/course/`, label: '找教學', external: true },
-      ],
+      links: [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],
     },
   },
 ];
@@ -207,10 +203,10 @@ export const LEARNING_ENTRY_LINKS = [
 export const GUIDED_ENTRY_LINKS = [
   {
     href: `${SERVICE_SITE.url}/course/`,
-    title: '學對話拍片',
-    description: '一對一教學：跟 AI 對話就能拍片，看內容與上課方式。',
+    title: '手把手帶你實戰',
+    description: '一對一教學：用 Claude Opus 5.5 對話，做出動畫影片，看內容與上課方式。',
     analyticsKey: 'tutor',
-    analyticsLabel: 'AI 一對一家教',
+    analyticsLabel: '手把手帶你實戰（一對一教學）',
   },
 ] as const;
 
@@ -240,17 +236,6 @@ export const FREE_ENTRY_LINKS = [
     analyticsLabel: '免費工具與學習資源',
   },
 ] as const;
-
-export const NAV = [
-  { href: '/', label: '首頁' },
-  { href: '/blog/', label: '文章' },
-  { href: '/resources/', label: '免費' },
-  { href: `${SERVICE_SITE.url}/services/development/`, label: '系統開發' },
-  { href: `${SERVICE_SITE.url}/course/`, label: '課程' },
-  { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講' },
-  { href: '/faq/', label: '問題' },
-  { href: '/about/', label: '關於' },
-];
 
 import BANNER_VERSION from './data/banner-version.json';
 

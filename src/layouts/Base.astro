@@ -1,5 +1,6 @@
 ---
 import { blogBannerPath } from '../lib/blog-banner';
+import FloatingLine from '../components/FloatingLine.astro';
 import ogBanner from '../assets/banner-v2.png';
 import githubLogo from '../assets/github-logo.svg';
 import lineBrandIcon from '../assets/line-brand-icon.png';
@@ -14,7 +15,6 @@ import {
   SERVICE_SITE,
   SITE,
   pageBannerUrl,
-  speakingBannerUrl,
 } from '../consts';
 import '../styles/global.css';
 
@@ -24,6 +24,12 @@ const HEADER_NAV = [
   { href: '/about/', label: '關於' },
 ];
 const CLAIM_INSTALL_HINT = '貼給你的 AI Agent，說「幫我安裝」';
+// 服務只剩系統開發一項，不需要下拉，頁首直接放一顆強調色連結
+const SERVICE_NAV_LINK = {
+  key: 'services',
+  label: '服務',
+  href: `${SERVICE_SITE.url}/services/development/`,
+};
 const DROPDOWN_NAV = [
   {
     key: 'articles',
@@ -69,44 +75,6 @@ const DROPDOWN_NAV = [
       },
     ],
   },
-  {
-    key: 'services',
-    label: '服務',
-    href: `${SERVICE_SITE.url}/`,
-    subtitle: '系統開發、對話拍片教學與演講',
-    accent: true,
-    external: true,
-    previews: [
-      {
-        href: `${SERVICE_SITE.url}/services/development/`,
-        eyebrow: '系統開發',
-        title: '客製系統開發',
-        description: '用 AI 自動化整理資料、產出內容。代表案例：補習班數學題庫系統，考卷匯入、AI 出題、AI 詳解。',
-        image: blogBannerPath('math-teacher-question-bank'),
-        cta: '查看系統開發服務',
-        external: true,
-        wide: true,
-      },
-      {
-        href: `${SERVICE_SITE.url}/course/`,
-        eyebrow: '一對一教學',
-        title: 'AI 一對一私人教學',
-        description: '跟 AI 對話就能拍片：我陪你在自己的電腦上，從腳本、剪輯到發佈實際跑通一次。',
-        image: new URL(pageBannerUrl('one-on-one')).pathname,
-        cta: '查看上課方式',
-        external: true,
-      },
-      {
-        href: `${SERVICE_SITE.url}/services/speaking/`,
-        eyebrow: '演講與實作',
-        title: 'AI 主題演講',
-        description: '想讓團隊看懂怎麼跟 AI 對話就把影片拍出來，可依受眾與目標設計演講、內訓或實作。',
-        image: new URL(speakingBannerUrl()).pathname,
-        cta: '查看演講服務',
-        external: true,
-      },
-    ],
-  },
 ];
 
 // 頁尾導覽：分組與頂部導覽列同一套分類（文章／領取／服務／關於），每組列出常用的下一層連結
@@ -129,9 +97,9 @@ const FOOTER_NAV = [
     label: '服務',
     links: [
       { href: `${SERVICE_SITE.url}/services/development/`, label: '客製系統開發' },
-      { href: `${SERVICE_SITE.url}/course/`, label: 'AI 一對一教學' },
-      { href: `${SERVICE_SITE.url}/services/speaking/`, label: 'AI 主題演講' },
       { href: `${SERVICE_SITE.url}/`, label: '服務總覽' },
+      { href: `${SERVICE_SITE.url}/course/`, label: '一對一教學' },
+      { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講邀約' },
     ],
   },
   {
@@ -554,6 +522,21 @@ const jsonLd = {
                 </div>
               </li>
             ))}
+            <li class="service-nav-item service-nav-item--accent service-nav-item--link">
+              <div class="service-nav-shell">
+                <a
+                  class="service-nav-direct"
+                  href={SERVICE_NAV_LINK.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${SERVICE_NAV_LINK.label}：系統開發（另開新頁籤）`}
+                  data-ga-button={`header_${SERVICE_NAV_LINK.key}`}
+                  data-ga-label={SERVICE_NAV_LINK.label}
+                  data-ga-location="header_nav"
+                  data-ga-action="navigate"
+                >{SERVICE_NAV_LINK.label}</a>
+              </div>
+            </li>
           </ul>
         </nav>
 
@@ -576,22 +559,24 @@ const jsonLd = {
       </div>
     </header>
 
+    <FloatingLine />
+
     <div class="search-chatbot" id="search-chatbot">
       <button
         class="search-chat-toggle"
         id="search-chat-toggle"
         type="button"
-        aria-label="開啟客服"
+        aria-label="開啟客服與站內搜尋"
         aria-expanded="false"
         aria-controls="search-chat-panel"
         data-ga-button="search_chat_toggle"
-        data-ga-label="客服"
+        data-ga-label="客服與站內搜尋"
         data-ga-location="floating_actions"
         data-ga-action="toggle_chat"
       >
-        <!-- 外觀與原本的 LINE 浮動鈕一模一樣：LINE 綠圓形＋白色 LINE 標誌（同 FloatingLine.astro 的圖示） -->
-        <svg class="search-chat-toggle-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-          <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+        <svg class="search-chat-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="m16 16 4.5 4.5" />
         </svg>
       </button>
 
@@ -995,7 +980,7 @@ const jsonLd = {
           document.body.classList.remove('search-chat-open');
           if (toggle) {
             toggle.setAttribute('aria-expanded', 'false');
-            toggle.setAttribute('aria-label', '開啟客服');
+            toggle.setAttribute('aria-label', '開啟客服與站內搜尋');
           }
         }
         function loadFallback() {
@@ -1242,7 +1227,7 @@ const jsonLd = {
         <div class="ft-grid">
           <div class="ft-brand">
             <p class="ft-mark">{SITE.title}</p>
-            <p class="ft-desc">{SITE.description}</p>
+            <p class="ft-desc">{SITE.footerDescription}</p>
           </div>
           <nav class="ft-nav" aria-label="頁尾導覽">
             {FOOTER_NAV.map((group) => (
@@ -1270,7 +1255,7 @@ const jsonLd = {
           </div>
         </div>
         <div class="ft-bottom">
-          <span class="ft-copy">© {new Date().getFullYear()} {SITE.title} — 客製系統開發、AI 一對一教學與公開演講</span>
+          <span class="ft-copy">© {new Date().getFullYear()} {SITE.title} — 客製系統開發</span>
           <span class="ft-legal">
             <a href="/editorial-policy/">編輯政策</a>
             <a href="/privacy/">隱私權政策</a>
@@ -1549,6 +1534,13 @@ const jsonLd = {
         .service-nav-item--accent .service-nav-shell--split .service-nav summary {
           padding-inline: 12px 2px;
         }
+      }
+      .service-nav-item--link .service-nav-shell {
+        display: block;
+      }
+      .service-nav-item--link .service-nav-direct {
+        color: var(--color-accent);
+        font-weight: 700;
       }
       .service-menu {
         padding: 4px 0 16px;
@@ -1866,6 +1858,15 @@ const jsonLd = {
           padding-inline-start: 18px;
           border-radius: 4px;
         }
+        .service-nav-item--link .service-nav-shell {
+          padding-inline: 18px;
+          border-radius: 4px;
+          background: var(--color-accent);
+        }
+        .nav-js .mainnav .service-nav-item--link .service-nav-direct {
+          padding-right: 0;
+          color: #fff;
+        }
         .nav-js .mainnav .service-nav-item--accent .service-nav-direct {
           padding-right: 5px;
         }
@@ -1980,10 +1981,11 @@ const jsonLd = {
       }
 
       /* ---------- 右下角站內搜尋 ---------- */
+      /* 搜尋鈕疊在 LINE 浮動鈕（52px，bottom 18px）上方，中間留 10px */
       .search-chatbot {
         position: fixed;
         right: max(18px, env(safe-area-inset-right));
-        bottom: max(18px, env(safe-area-inset-bottom));
+        bottom: calc(max(18px, env(safe-area-inset-bottom)) + 62px);
         z-index: 80;
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         transition:
@@ -2003,24 +2005,28 @@ const jsonLd = {
       }
       .search-chat-toggle {
         display: grid;
-        width: 52px;
-        height: 52px;
+        width: 40px;
+        height: 40px;
         place-items: center;
+        /* 52px 的 LINE 鈕與 40px 的搜尋鈕中心對齊 */
+        margin-right: 6px;
         margin-left: auto;
         padding: 0;
-        border: 1px solid #06c755;
-        border-radius: 50%;
-        background: #06c755;
-        color: #fff;
-        box-shadow: 0 8px 24px rgb(22 22 26 / 18%);
+        border: 1px solid var(--color-ink);
+        border-radius: 8px;
+        background: var(--color-paper);
+        color: var(--color-ink);
+        box-shadow: 0 6px 18px rgb(22 22 26 / 16%);
         cursor: pointer;
-        transition: background-color 0.18s var(--ease), transform 0.18s var(--ease);
+        transition: background-color 0.18s var(--ease), color 0.18s var(--ease), transform 0.18s var(--ease);
       }
-      /* 外觀比照原本的 LINE 浮動鈕：LINE 綠圓形、白色圖示 */
       .search-chat-toggle-icon {
-        width: 23px;
-        height: 23px;
-        color: #fff;
+        width: 20px;
+        height: 20px;
+      }
+      /* 內容站頁面被服務子網域打開時，客服與 LINE 鈕都不顯示 */
+      .service-subdomain .floating-line {
+        display: none;
       }
       .search-chatbot.is-terminal-collapse {
         animation: terminal-collapse 650ms cubic-bezier(.2, .85, .25, 1) both;
@@ -2389,14 +2395,15 @@ const jsonLd = {
       @media (max-width: 767px) {
         .search-chatbot {
           right: max(12px, env(safe-area-inset-right));
-          bottom: max(12px, env(safe-area-inset-bottom));
+          bottom: calc(max(12px, env(safe-area-inset-bottom)) + 56px);
         }
         .search-chat-toggle {
-          width: 46px;
-          height: 46px;
+          width: 38px;
+          height: 38px;
+          margin-right: 4px;
         }
         .search-chat-panel {
-          bottom: 64px;
+          bottom: 50px;
           max-height: calc(100svh - 88px - env(safe-area-inset-bottom));
         }
         .search-chat-screen { padding: 14px 12px; }
@@ -2577,8 +2584,8 @@ const jsonLd = {
          ============================================================ */
       @media (hover: hover) and (pointer: fine) {
         .search-chat-toggle:hover {
-          border-color: #05b34c;
-          background: #05b34c;
+          background: var(--color-ink);
+          color: var(--color-paper);
           transform: translateY(-2px);
         }
         .hd-cue:hover {
