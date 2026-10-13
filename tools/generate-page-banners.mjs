@@ -66,10 +66,12 @@ const pages = [
   },
   {
     file: 'one-on-one',
-    badge: '實戰課程',
-    title: 'AI 新手實戰課',
-    subtitle: '手把手帶你從 0 到 1 完成第一個專案',
-    subtitleSize: 23,
+    badgePrefix: '',
+    badge: '一對一教學',
+    title: '手把手帶你實戰',
+    subtitle: '用 Claude Opus 5.5 對話做動畫影片',
+    subtitleSize: 26,
+    role: '講師',
   },
   {
     file: 'faq',

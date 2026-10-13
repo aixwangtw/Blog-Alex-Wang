@@ -14,15 +14,14 @@ export const CLASS_FORMATS = [
   },
 ];
 
-// 教學內容：目前一對一教學只提供「跟 AI 對話就能拍片」這一項
+// 教學內容：目前一對一教學只提供「用 Claude Opus 5.5 對話做動畫影片」這一項
 export const TEACHING_CONTENT: {
   category: string;
   detail: string;
 }[] = [
   {
-    category: '跟 AI 對話就能拍片',
-    detail:
-      '用開源工具 HyperFrames，從腳本、剪輯、字幕、配音、封面圖到多平台發佈，只靠對話一條龍完成拍片。',
+    category: '用 Claude Opus 5.5 對話，做出動畫影片',
+    detail: '學員要學的是用 Claude Opus 5.5 對話，做出動畫影片；使用的工具是開源的 HyperFrames。',
   },
 ];
 

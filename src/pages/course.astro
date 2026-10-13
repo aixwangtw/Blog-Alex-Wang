@@ -13,15 +13,15 @@ import ServiceBase from '../layouts/ServiceBase.astro';
 const schema = [
   breadcrumbSchema([
     { name: '服務首頁', item: `${SERVICE_SITE.url}/` },
-    { name: 'AI 一對一私人教學' },
+    { name: '手把手帶你實戰' },
   ]),
   {
     '@type': 'Service',
     '@id': `${SERVICE_SITE.url}/course/#service`,
-    name: 'AI 一對一私人教學',
+    name: '手把手帶你實戰',
     serviceType: 'AI 教學 / 一對一家教',
     description:
-      '付費一對一 AI 私人教學，主題是「跟 AI 對話就能拍片」：用開源工具 HyperFrames，從腳本、剪輯、字幕、配音、封面圖到多平台發佈，只靠對話完成。雙北咖啡廳實體課或 Google Meet / Discord 線上課。',
+      '付費一對一教學：用 Claude Opus 5.5 對話，做出動畫影片，使用開源工具 HyperFrames。講師 Alex 手把手帶你在自己的電腦上完成；雙北咖啡廳實體課或 Google Meet / Discord 線上課。',
     provider: { '@id': AUTHOR.id },
     areaServed: ['台北市', '新北市', '線上（台灣與海外皆可）'],
     availableChannel: [
@@ -50,23 +50,23 @@ const courseBannerPath = new URL(courseBanner).pathname;
 ---
 
 <ServiceBase
-  title="AI 一對一私人教學｜雙北實體、線上皆可的付費 AI 家教"
-  description="付費一對一 AI 私人教學，主題是「跟 AI 對話就能拍片」：用開源工具 HyperFrames，從腳本、剪輯、字幕、配音、封面圖到多平台發佈，只靠對話完成。雙北咖啡廳實體課或 Google Meet / Discord 線上課。"
+  title="AI 動畫影片製作一對一教學｜手把手帶你實戰"
+  description="付費一對一教學：用 Claude Opus 5.5 對話，做出動畫影片，使用開源工具 HyperFrames。講師 Alex 手把手帶你在自己的電腦上完成；雙北咖啡廳實體課或 Google Meet / Discord 線上課。"
   ogImage={courseBanner}
-  ogImageAlt="AI 一對一私人教學｜講師 Alex"
+  ogImageAlt="AI 動畫影片製作一對一教學｜手把手帶你實戰"
   schema={schema}
 >
   <div class="mx-auto w-full max-w-6xl px-5 py-8 sm:px-6 sm:py-12">
-    <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: 'AI 一對一私人教學' }]} class="mb-7 sm:mb-10" />
+    <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: '手把手帶你實戰' }]} class="mb-7 sm:mb-10" />
 
     <section class="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-start lg:gap-16">
       <div class="pt-2 lg:pt-6">
-        <p class="font-mono text-xs font-medium tracking-[0.12em] text-accent">付費一對一 AI 私人教學</p>
-        <h1 class="mt-5 max-w-[11ch] font-serif text-[clamp(2.5rem,6.5vw,4.5rem)] font-semibold leading-[1.12] tracking-[-0.045em] text-ink">
-          AI 一對一私人教學
+        <p class="font-mono text-xs font-medium tracking-[0.12em] text-accent">手把手帶你實戰｜付費一對一教學</p>
+        <h1 class="mt-5 max-w-[14ch] font-serif text-[clamp(2.5rem,6.5vw,4.5rem)] font-semibold leading-[1.12] tracking-[-0.045em] text-ink">
+          手把手帶你實戰
         </h1>
         <p class="mt-6 max-w-[38rem] text-base leading-8 text-ink-2 sm:text-lg sm:leading-9">
-          這是付費的一對一 AI 私人教學服務：由我（<a href={`${SITE.url}/about/`} target="_blank" rel="noreferrer" class="font-semibold text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="font-semibold text-ink">你自己的電腦</strong>上，學會<strong class="font-semibold text-ink">跟 AI 對話就能拍片</strong>——從腳本、剪輯、字幕、配音、封面圖到多平台發佈，都用說的完成。
+          這是付費的一對一教學服務：由我（<a href={`${SITE.url}/about/`} target="_blank" rel="noreferrer" class="font-semibold text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="font-semibold text-ink">你自己的電腦</strong>上，學會<strong class="font-semibold text-ink">用 Claude Opus 5.5 對話，做出動畫影片</strong>，工具是開源的 HyperFrames。
         </p>
         <ul class="mt-7 grid gap-3 text-[15px] leading-7 text-ink sm:grid-cols-2">
           <li class="flex gap-3 border-t border-rule pt-3"><span class="font-mono text-accent" aria-hidden="true">01</span><span>雙北實體或線上教學</span></li>
@@ -78,7 +78,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
       </div>
 
       <aside class="border border-rule-2 bg-paper-2" aria-label="課程預約摘要">
-        <img src={courseBannerPath} alt="AI 一對一私人教學｜講師 Alex" width="1200" height="630" fetchpriority="high" class="h-auto w-full border-b border-rule-2" />
+        <img src={courseBannerPath} alt="AI 動畫影片製作一對一教學｜手把手帶你實戰" width="1200" height="630" fetchpriority="high" class="h-auto w-full border-b border-rule-2" />
         <div class="p-5 sm:p-6">
           <p class="font-mono text-[11px] tracking-[0.12em] text-accent">預約摘要</p>
           <dl class="mt-4 divide-y divide-rule border-y border-rule">
