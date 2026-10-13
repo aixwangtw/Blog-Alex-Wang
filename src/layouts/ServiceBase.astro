@@ -33,18 +33,6 @@ const serviceLinks = [
     title: '客製系統開發',
     description: '用 AI 自動化整理資料、產出內容，代表案例：補習班數學題庫系統。',
   },
-  {
-    href: '/course/',
-    eyebrow: '一對一教學',
-    title: 'AI 一對一私人教學',
-    description: '跟 AI 對話就能拍片：從腳本、剪輯、字幕、配音到多平台發佈，手把手帶你完成。',
-  },
-  {
-    href: '/services/speaking/',
-    eyebrow: '企業／社群／學校',
-    title: 'AI 演講與內訓',
-    description: 'AI 一鍵拍片：跟 AI 對話就能完成影片，現場實機演示。',
-  },
 ];
 
 const jsonLd = {
@@ -329,13 +317,13 @@ const jsonLd = {
         <section>
           <h2>服務項目</h2>
           <a href="/services/development/">客製系統開發</a>
-          <a href="/course/">AI 一對一私人教學</a>
-          <a href="/services/speaking/">AI 演講與內訓</a>
         </section>
         <section>
           <h2>站內導覽</h2>
           <a href={serviceHomeHref}>服務首頁</a>
           <a href={developmentCaseHref} data-ga-button="service_footer_case" data-ga-label="開發案例" data-ga-location="service_footer" data-ga-action="navigate">開發案例</a>
+          <a class="service-footer-minor" href="/course/" data-ga-button="service_footer_course" data-ga-label="一對一教學" data-ga-location="service_footer" data-ga-action="navigate">一對一教學</a>
+          <a class="service-footer-minor" href="/services/speaking/" data-ga-button="service_footer_speaking" data-ga-label="演講邀約" data-ga-location="service_footer" data-ga-action="navigate">演講邀約</a>
         </section>
       </div>
       <p>© {new Date().getFullYear()} {SERVICE_SITE.title}</p>
@@ -388,6 +376,7 @@ const jsonLd = {
       .service-footer section > p { max-width:45ch; margin-top:16px; color:#bdb9b3; font-size:13px; line-height:1.8; }
       .service-footer h2 { margin-bottom:14px; color:#bdb9b3; font-size:11px; letter-spacing:.14em; }
       .service-footer section > a:not(.service-brand) { display:block; margin-top:9px; color:#fff; font-size:14px; text-decoration:none; }
+      .service-footer section > a.service-footer-minor { color:#bdb9b3; font-size:12px; }
       .service-footer > p { width:min(1120px, 100%); margin:38px auto 0; padding-top:18px; border-top:1px solid #3b3939; color:#8f8b86; font:11px/1.4 ui-monospace, monospace; }
       @media (hover:hover) and (pointer:fine) {
         .service-mainnav > a:not(.service-book):hover, .service-mega summary:hover { color:var(--color-accent); }

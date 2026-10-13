@@ -1,14 +1,12 @@
 ---
 import { Image } from 'astro:assets';
 import instructorPortrait from '../assets/instructor-shirt.jpg';
-import Card from '../components/Card.astro';
 import CheckItem from '../components/CheckItem.astro';
 import Cta from '../components/Cta.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { AUTHOR, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { AUTHOR, DEVELOPMENT_SERVICE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { EXPERIENCE } from '../data/instructor';
-import { SPEAKING_ENGAGEMENTS } from '../data/services';
 import Base from '../layouts/Base.astro';
 
 const schema = [
@@ -46,7 +44,7 @@ const schema = [
     </figure>
 
     <p class="mt-8 text-lg leading-9 text-ink">
-      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，用 AI 自動化整理資料、產出內容，代表案例是補習班數學老師用的題庫系統。另外我也教「跟 AI 對話就能拍片」，提供<strong class="text-accent">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-accent">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
+      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，用 AI 自動化整理資料、產出內容，代表案例是補習班數學老師用的題庫系統。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
     </p>
     <a
       href="/blog/from-part-time-to-freelance/"
@@ -69,35 +67,14 @@ const schema = [
       ))}
     </ul>
 
-    <SectionHeading size="md" class="mt-14">另外也教 AI：一對一教學</SectionHeading>
-    <a
-      href={`${SERVICE_SITE.url}/course/`}
-      class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
-    >
-      查看教學內容與收費方式 →
-    </a>
-    <p class="mt-4 leading-8 text-ink-2">一對一教學的主題是「跟 AI 對話就能拍片」，雙北實體與線上教學皆可預約。</p>
 
-    <SectionHeading size="md" class="mt-14">另外也接演講</SectionHeading>
-    <a
-      href={`${SERVICE_SITE.url}/services/speaking/`}
-      class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
-    >
-      查看演講紀錄與邀約方式 →
-    </a>
-    <p class="mt-4 leading-8 text-ink-2">現場實機演示、帶聽眾動手做；企業、學校與社群的演講或工作坊都可規劃。</p>
-    <div class="mt-6 grid gap-x-8 sm:grid-cols-2">
-      {SPEAKING_ENGAGEMENTS.map((item) => (
-        <Card>
-          {/* 主辦單位標籤改用全站的等寬小標（同 resources.astro 的 video.tag、
-              Base 頁尾的 .ft-h）：原本的 tracking-[0.26em] 是舊卡片上的裝飾字距，
-              在標題旁邊會把「MixerBox」拉得比標題還寬。 */}
-          <p class="font-mono text-[11.5px] tracking-[0.12em] text-ink-3">{item.host}</p>
-          <h3 class="mt-2 font-semibold leading-snug text-ink">{item.topic}</h3>
-        </Card>
-      ))}
-    </div>
-
-    <Cta />
+    <Cta
+      title="對系統有疑問嗎？"
+      text="看系統開發服務的合作流程與費用怎麼算，也可以先看題庫系統的完整介紹。"
+      hint="有問題點右下角官方 LINE 直接問我"
+      href={DEVELOPMENT_SERVICE.url}
+      label={'了解系統\n開發服務'}
+      links={[{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }]}
+    />
   </div>
 </Base>

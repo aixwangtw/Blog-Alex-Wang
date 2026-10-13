@@ -4,8 +4,8 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import { SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
-import { HOME_FAQS, RESOURCES_FAQS } from '../data/faqs';
+import { DEVELOPMENT_SERVICE, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { RESOURCES_FAQS } from '../data/faqs';
 import Base from '../layouts/Base.astro';
 
 // 系統開發 FAQ：來自題庫系統文章（系統開發的代表案例），排在最前面。
@@ -16,9 +16,9 @@ if (!developmentPost || developmentPost.data.faqs.length === 0) {
 }
 const developmentFaqs = developmentPost.data.faqs;
 
-// 教學題放後面：課程與服務、免費資源都從各自頁面的同一份資料來源組合，
-// 避免其中一頁改版後，總整理仍停留在舊內容。
-const allFaqs = [...developmentFaqs, ...HOME_FAQS, ...RESOURCES_FAQS];
+// 免費資源題放後面，從資源頁的同一份資料來源組合，避免其中一頁改版後，總整理仍停留在舊內容。
+// 一對一教學的題目只留在 /course/，不收進這頁與 FAQPage 結構化資料。
+const allFaqs = [...developmentFaqs, ...RESOURCES_FAQS];
 
 const schema = [
   breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '常見問題' }]),
@@ -38,7 +38,7 @@ const schema = [
 
 <Base
   title={`常見問題總整理｜${SITE.title}`}
-  description="客製系統開發與數學題庫系統的常見問題：開發費用怎麼算、合作流程、AI 使用成本與 Demo 試用；AI 教學的問題另列在後面。"
+  description="客製系統開發與數學題庫系統的常見問題：開發費用怎麼算、合作流程、AI 使用成本與 Demo 試用；免費資源的問題另列在後面。"
   ogImage={pageBannerUrl('faq')}
   ogImageAlt="常見問題總整理｜客製系統開發"
   schema={schema}
@@ -48,21 +48,17 @@ const schema = [
 
     <h1 class="t-h1 mt-8 font-semibold text-ink">常見問題總整理</h1>
     <p class="mt-6 text-lg leading-8 text-ink-2">
-      這裡整理客製系統開發與數學題庫系統最常被問的問題，AI 教學與免費資源的問題放在後面（內容怎麼產出見<a href="/editorial-policy/" class="text-accent underline underline-offset-4">編輯政策</a>）。找不到答案可以加 LINE 免費問；開發或講課邀約也可以直接寄 Email。
+      這裡整理客製系統開發與數學題庫系統最常被問的問題，免費資源的問題放在後面（內容怎麼產出見<a href="/editorial-policy/" class="text-accent underline underline-offset-4">編輯政策</a>）。找不到答案可以加 LINE 免費問；開發需求也可以直接寄 Email。
     </p>
 
     <SectionHeading size="md" class="mt-12">我提供什麼服務？</SectionHeading>
     <ul class="mt-6">
-      <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2">
+      <li class="border-t border-rule border-b px-0.5 py-5 leading-8 text-ink-2">
         <strong class="text-ink">客製系統開發</strong>——和開發夥伴承接題庫與教學系統、後台管理、LINE 相關網頁與 AI 自動化流程，代表案例是補習班數學題庫系統。
-      </li>
-      <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2 last:border-b">
-        <strong class="text-ink">AI 教學與演講</strong>——另提供一對一 AI 拍片教學與企業、學校、社群的演講邀約。
       </li>
     </ul>
     <p class="mt-5 flex flex-wrap gap-x-6 gap-y-2 px-0.5 text-sm">
       <a href={`${SERVICE_SITE.url}/services/development/`} class="text-accent underline underline-offset-4">看系統開發服務的流程與費用 →</a>
-      <a href={`${SERVICE_SITE.url}/course/`} class="text-accent underline underline-offset-4">看一對一教學的說明 →</a>
     </p>
 
     <SectionHeading size="md" class="mt-14">客製系統開發與題庫系統</SectionHeading>
@@ -73,11 +69,6 @@ const schema = [
       <FaqList faqs={developmentFaqs} />
     </div>
 
-    <SectionHeading size="md" class="mt-14">AI 教學與演講</SectionHeading>
-    <div class="mt-6">
-      <FaqList faqs={HOME_FAQS} />
-    </div>
-
     <SectionHeading size="md" class="mt-14">免費資源</SectionHeading>
     <p class="mt-5 leading-8 text-ink-2">
       Codex 安裝、Skills 的問題，與<a href="/resources/" class="text-accent underline underline-offset-4">免費資源頁</a>同步更新；各篇教學文章的問題請看文章頁。
@@ -86,6 +77,13 @@ const schema = [
       <FaqList faqs={RESOURCES_FAQS} />
     </div>
 
-    <Cta />
+    <Cta
+      title="對系統有疑問嗎？"
+      text="先看數學題庫系統的完整介紹，再看系統開發服務的流程與費用。"
+      hint="有問題點右下角官方 LINE 直接問我"
+      href={DEVELOPMENT_SERVICE.url}
+      label={'了解系統\n開發服務'}
+      links={[{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }]}
+    />
   </div>
 </Base>

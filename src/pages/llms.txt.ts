@@ -29,7 +29,7 @@ export const GET: APIRoute = async () => {
 ## 服務
 
 - [客製系統開發](${SERVICE_SITE.url}/services/development/)：Alex 和開發夥伴承接客製系統開發，用 AI 自動化整理資料、產出內容；代表案例是補習班數學老師用的題庫系統（考卷匯入、AI 出題、AI 詳解），案例介紹見 ${SITE.url}/blog/math-teacher-question-bank/。
-- [AI 一對一私人教學（次要服務）](${SERVICE_SITE.url}/course/)：主題是「跟 AI 對話就能拍片」，從腳本、剪輯、字幕、配音到多平台發佈，雙北實體或線上皆可。
+- [手把手帶你實戰：AI 動畫影片製作一對一教學（次要服務）](${SERVICE_SITE.url}/course/)：用 Claude Opus 5.5 對話，做出動畫影片，工具是 HyperFrames，雙北實體或線上皆可。
 - [AI 演講與企業內訓（次要服務）](${SERVICE_SITE.url}/services/speaking/)：AI 一鍵拍片（跟 AI 對話就能完成影片），曾受 TAIA 台灣人工智慧協會邀請演講。
 - [關於 Alex](${SITE.url}/about/)：系統開發工程師、21 萬人 OpenClaw 中文社群版主、HyperFrames 開源專案協作者。
 
@@ -48,7 +48,7 @@ ${secondaryArticleList}
 ## 常見問題
 
 - 客製系統開發常見問題：${SERVICE_SITE.url}/services/development/#development-faq（開發流程、費用、AI 使用成本、Demo；題目與答案取自題庫系統文章）
-- 常見問題總整理：${SITE.url}/faq/（系統開發與題庫系統的問題排最前面，AI 教學與免費資源的問題在後面）
+- 常見問題總整理：${SITE.url}/faq/（系統開發與題庫系統的問題排最前面，免費資源的問題在後面）
 - 題庫系統文章內的完整 FAQ：${SITE.url}/blog/math-teacher-question-bank/#faq
 
 ## 政策頁面

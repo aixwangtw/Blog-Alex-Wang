@@ -67,21 +67,23 @@ export async function GET() {
     k: '免費資源 Codex Skills grill-me 自學',
   }));
 
-  add(HOME_FAQS, (faq) => ({
-    q: faq.question,
-    a: faq.answer,
-    u: `/faq/#${textFragment(faq.question)}`,
-    p: '常見問題總整理',
-    k: 'AI 一對一 私人家教 教學 課程 演講 開發',
-  }));
-
-  // 一對一教學頁在服務子網域，與首頁重複的題目已由上面的 /faq/ 收錄
+  // /faq/ 不再收錄教學與演講題（2026-10-13），HOME_FAQS 與一對一教學頁重複的題目要指向 /course/#faq，
+  // 所以一對一教學先加、HOME_FAQS 後加（去重時先到先得）。服務子網域的 /course/ 是這些題目唯一的頁面。
   add(ONE_ON_ONE_FAQS, (faq) => ({
     q: faq.question,
     a: faq.answer,
     u: `${SERVICE_SITE.url}/course/#faq${textFragment(faq.question)}`,
-    p: '一對一 AI 私人教學',
-    k: 'AI 一對一 私人家教 教學 課程 上課',
+    p: '手把手帶你實戰（一對一教學）',
+    k: 'AI 一對一 私人家教 教學 課程 上課 手把手帶你實戰 動畫影片',
+  }));
+
+  // HOME_FAQS 剩下與課程頁不重複的題目（邀請講課或委託開發）：指向演講邀約頁
+  add(HOME_FAQS, (faq) => ({
+    q: faq.question,
+    a: faq.answer,
+    u: `${SERVICE_SITE.url}/services/speaking/`,
+    p: '演講邀約',
+    k: '演講 邀約 講課 內訓 委託 開發',
   }));
 
   return new Response(JSON.stringify(items), {

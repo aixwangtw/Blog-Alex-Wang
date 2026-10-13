@@ -11,7 +11,7 @@
 // API 從「actions slot 放一排 PillButton」改成「一顆主要行動 ＋ 一排次要文字連結」：
 // 一個區塊裡放三顆同等分量的按鈕，等於沒有主要行動。次要選項改成純文字連結，
 // 讀者仍然找得到，但視線會先落在那顆圓上。
-import { DEVELOPMENT_SERVICE, SERVICE_SITE } from '../consts';
+import { DEVELOPMENT_SERVICE } from '../consts';
 
 interface SecondaryLink {
   href: string;
@@ -34,16 +34,13 @@ interface Props {
 }
 
 const {
-  title = '想更快上手？可以直接找我一對一',
-  text = '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），也接受企業與社群的 AI 演講邀約。',
+  title = '想把重複的工作交給系統？',
+  text = '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；有問題點右下角官方 LINE 直接問我。',
   href = DEVELOPMENT_SERVICE.url,
   label = '了解系統\n開發服務',
   external = false,
   hint,
-  links = [
-    { href: `${SERVICE_SITE.url}/course/`, label: '了解一對一教學', external: true },
-    { href: `${SERVICE_SITE.url}/services/speaking/`, label: '演講邀約', external: true },
-  ],
+  links = [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],
 } = Astro.props;
 
 const labelLines = label.split('\n');

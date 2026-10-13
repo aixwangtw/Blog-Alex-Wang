@@ -14,28 +14,10 @@ import {
   SITE,
   pageBannerUrl,
 } from '../../consts';
-import { SPEAKING_ENGAGEMENTS } from '../../data/services';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
-// 三種服務：系統開發為主，其餘兩項只列成次要細線列表。描述取自站上既有事實（SPEAKING_ENGAGEMENTS）。
-const heroServiceCards = [
-  { key: 'development', href: '/services/development/', title: '系統開發' },
-  {
-    key: 'course',
-    href: '/course/',
-    title: 'AI 一對一教學',
-    description: '不需要程式背景，3 小時用你自己的電腦，學會跟 AI 對話就能拍片：從腳本、剪輯、字幕、配音到發佈，都用說的完成。',
-    action: '看教學內容',
-  },
-  {
-    key: 'speaking',
-    href: '/services/speaking/',
-    title: '演講邀約',
-    description: `企業、學校與社群的 AI 演講，主題是「跟 AI 對話就能拍片」，講過 ${SPEAKING_ENGAGEMENTS[0].host}等場次。`,
-    action: '看演講紀錄',
-  },
-];
-const secondaryServices = heroServiceCards.filter((card) => card.key !== 'development');
+// 服務項目結構化資料只列系統開發；教學與演講是次要服務，入口只留快速入口、頁尾與各自頁面。
+const heroServiceCards = [{ key: 'development', href: '/services/development/', title: '系統開發' }];
 
 // 系統開發區的三張真實截圖：主圖放大，另兩張當輔助。
 const devShots = {
@@ -131,7 +113,7 @@ const schema = [
     <div class="service-hero-copy">
       <p class="service-kicker">{SERVICE_SITE.title}</p>
       <h1><span class="nb">客製系統開發</span></h1>
-      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。主要和開發夥伴承接客製系統開發；也提供一對一 AI 教學（雙北咖啡廳實體或線上），並接受企業、學校與社群的演講邀約。先看你需要哪一種，再加 LINE 聊細節。</p>
+      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統。先看案例與合作流程，再加 LINE 聊你的需求。</p>
       <div class="service-hero-actions">
         <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
       </div>
@@ -155,41 +137,6 @@ const schema = [
     <p class="service-dev-links">
       <a href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_dev" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a>
     </p>
-  </section>
-
-  <section class="service-others" aria-label="其他服務">
-    <ul>
-      {secondaryServices.map((card) => (
-        <li>
-          <div>
-            <strong>{card.title}</strong>
-            <span>{card.description}</span>
-          </div>
-          <a href={card.href} data-ga-button={`service_home_card_${card.key}`} data-ga-label={card.title} data-ga-location="service_home_others" data-ga-action="navigate">{card.action} <span aria-hidden="true">→</span></a>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-
-  <section class="service-experience" id="speaking-cases">
-    <header>
-      <p class="service-kicker">演講邀約</p>
-      <h2>過往演講紀錄</h2>
-    </header>
-    <ul class="service-speaking-list">
-      {SPEAKING_ENGAGEMENTS.map((item, index) => (
-        <li>
-          <Image src={item.image} alt={item.imageAlt} widths={[160, 320]} sizes="(min-width: 768px) 160px, 96px" loading="lazy" />
-          <div>
-            <small>{item.host}<span>CASE 0{index + 1}</span></small>
-            <h3>{item.topic}</h3>
-            <p>{item.description}</p>
-          </div>
-        </li>
-      ))}
-    </ul>
-    <a class="service-text-link" href="/services/speaking/">查看全部演講案例 →</a>
   </section>
 
   <section class="service-experience service-free" id="free-resources">
@@ -230,27 +177,13 @@ const schema = [
     .service-shot--main { margin-top:36px; }
     .service-shot-row { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:24px; margin-top:24px; }
     .service-dev-links { margin-top:28px; }
-    .service-dev-links a, .service-others a { color:var(--color-accent); font-weight:700; text-decoration:none; }
-    .service-others { width:min(1120px, calc(100% - 48px)); margin:64px auto 0; }
-    .service-others ul { margin:0; padding:0; list-style:none; }
-    .service-others li { display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:24px; align-items:center; padding:22px 2px; border-top:1px solid var(--color-rule); }
-    .service-others li:last-child { border-bottom:1px solid var(--color-rule); }
-    .service-others strong { display:block; font-size:17px; line-height:1.4; }
-    .service-others li span { display:block; margin-top:6px; max-width:62ch; color:var(--color-ink-3); font-size:14px; line-height:1.75; }
-    .service-others a { white-space:nowrap; }
+    .service-dev-links a { color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-experience { width:min(1120px, calc(100% - 48px)); margin:110px auto 0; }
     .service-experience > header { max-width:700px; }
     .service-experience h2 { margin-top:14px; font:600 clamp(34px, 4vw, 52px)/1.25 var(--font-serif, serif); letter-spacing:-.035em; }
     .service-text-link { display:inline-block; margin-top:24px; color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-home-cta { width:min(1120px, calc(100% - 48px)); margin:80px auto 0; }
     .service-section-lead { max-width:62ch; margin-top:16px; color:var(--color-ink-2); line-height:1.85; }
-    .service-speaking-list { margin:34px 0 0; padding:0; list-style:none; }
-    .service-speaking-list li { display:grid; grid-template-columns:160px minmax(0, 1fr); gap:28px; align-items:start; padding:24px 2px; border-top:1px solid var(--color-rule); }
-    .service-speaking-list li > img { display:block; width:160px; height:auto; aspect-ratio:4 / 3; object-fit:cover; border:1px solid var(--color-rule-2); }
-    .service-speaking-list small { display:flex; gap:12px; color:var(--color-accent); font-weight:700; }
-    .service-speaking-list small span { color:var(--color-ink-3); font:700 10px/1.8 ui-monospace, monospace; }
-    .service-speaking-list h3 { margin-top:8px; font-size:20px; line-height:1.45; }
-    .service-speaking-list p { margin-top:8px; color:var(--color-ink-3); line-height:1.75; }
     .service-free { display:grid; grid-template-columns:minmax(0, 1fr) minmax(280px, .9fr); gap:48px; align-items:center; }
         .service-free-media { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
     .service-entry { width:min(1120px, calc(100% - 48px)); margin:64px auto 0; }
@@ -272,18 +205,15 @@ const schema = [
       .service-lead { font-size:16px; line-height:1.8; }
       .service-hero-actions { display:grid; grid-template-columns:1fr; }
       .service-hero-actions a { width:100%; }
-      .service-dev, .service-others, .service-experience, .service-home-cta, .service-entry { width:calc(100% - 40px); }
+      .service-dev, .service-experience, .service-home-cta, .service-entry { width:calc(100% - 40px); }
       .service-dev { margin-top:64px; padding-top:40px; }
       .service-shot-row { grid-template-columns:1fr; gap:16px; }
-      .service-others li { grid-template-columns:1fr; gap:10px; }
       .service-experience, .service-home-cta { margin-top:76px; }
-        .service-speaking-list li { grid-template-columns:96px minmax(0, 1fr); gap:16px; }
-      .service-speaking-list li > img { width:96px; }
       .service-free { grid-template-columns:1fr; gap:28px; }
       .service-entry { margin-top:40px; }
     }
     @media (max-width:340px) {
-      .service-hero, .service-dev, .service-others, .service-experience, .service-home-cta, .service-entry { width:calc(100% - 32px); }
+      .service-hero, .service-dev, .service-experience, .service-home-cta, .service-entry { width:calc(100% - 32px); }
       .service-hero h1 { font-size:38px; }
     }
   </style>
