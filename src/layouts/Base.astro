@@ -1100,19 +1100,34 @@ const jsonLd = {
             item.classList.toggle('is-active', index === activeResult);
           });
         }
-        // 服務站頁面（課程、演講、系統開發）不在 Pagefind 索引裡，由 search-index.json 裡標 s 的項目補上，
-        // 排在文章結果前面。比對：搜尋字出現在標題／描述／關鍵字，或某個關鍵字出現在搜尋字裡（例如「我想找一對一課程」）。
+        // search-index.json 的比對與排序（文章與服務站頁面一起）。
+        // Pagefind 對中文詞（例如「題庫」）切詞不準，會漏掉標題明明有這個詞的文章，所以這裡用子字串補上，
+        // 排在 Pagefind 結果前面。服務站頁面不在 Pagefind 裡，只能靠這裡找到。
+        // 分數：標題含搜尋字、或服務頁的主要關鍵字命中＝100；次要關鍵字或文章標籤命中＝60；描述命中＝40。
+        // 同分時服務頁在前、文章依索引順序（新到舊）。「某個關鍵字出現在搜尋字裡」也算命中（例如「我想找一對一課程」）。
+        function scoreItem(item, q) {
+          var title = item.t.toLowerCase();
+          var primary = (item.s ? item.g : '').toLowerCase().split(' ').filter(function (w) { return w.length > 1; });
+          var secondary = ((item.s ? item.g2 || '' : item.g) || '').toLowerCase().split(' ').filter(function (w) { return w.length > 1; });
+          function hits(words) {
+            return words.some(function (w) { return w.indexOf(q) !== -1 || q.indexOf(w) !== -1; });
+          }
+          if (title.indexOf(q) !== -1 || hits(primary)) return 100;
+          if (hits(secondary)) return 60;
+          if (item.d.toLowerCase().indexOf(q) !== -1) return 40;
+          return 0;
+        }
         function findPages(query) {
           var q = query.toLowerCase();
           return loadFallback().then(function (items) {
-            return items.filter(function (item) {
-              if (!item.s) return false;
-              if ((item.t + item.d + item.g).toLowerCase().indexOf(q) !== -1) return true;
-              return item.g.toLowerCase().split(' ').some(function (word) {
-                return word.length > 1 && q.indexOf(word) !== -1;
-              });
-            }).map(function (item) {
-              return { u: item.u, t: item.t, d: escapeHtml(item.d) };
+            return items.map(function (item, index) {
+              return { item: item, score: scoreItem(item, q), index: index };
+            }).filter(function (entry) {
+              return entry.score > 0;
+            }).sort(function (a, b) {
+              return b.score - a.score || (b.item.s ? 1 : 0) - (a.item.s ? 1 : 0) || a.index - b.index;
+            }).map(function (entry) {
+              return { u: entry.item.u, t: entry.item.t, d: escapeHtml(entry.item.d) };
             });
           }).catch(function () { return []; });
         }
