@@ -210,13 +210,6 @@ import Base from '../layouts/Base.astro';
 
       function setCliVisible(visible) {
         document.body.classList.toggle('home-cli-visible', visible);
-        var chatbot = document.getElementById('search-chatbot');
-        if (wasVisible && !visible && chatbot && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          chatbot.classList.remove('is-terminal-collapse');
-          void chatbot.offsetWidth;
-          chatbot.classList.add('is-terminal-collapse');
-          window.setTimeout(function () { chatbot.classList.remove('is-terminal-collapse'); }, 650);
-        }
         wasVisible = visible;
       }
 

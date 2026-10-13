@@ -522,6 +522,20 @@ const jsonLd = {
                 </div>
               </li>
             ))}
+            <li class="nav-search-item">
+              <button
+              class="nav-search nav-search--inline"
+              type="button"
+              aria-label="搜尋與客服"
+              aria-expanded="false"
+              aria-controls="search-chat-panel"
+              data-search-chat-toggle
+              data-ga-button="search_chat_toggle"
+              data-ga-label="搜尋與客服"
+              data-ga-location="header_nav"
+              data-ga-action="toggle_chat"
+            ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg></button>
+            </li>
             <li class="service-nav-item service-nav-item--accent service-nav-item--link">
               <div class="service-nav-shell">
                 <a
@@ -541,6 +555,19 @@ const jsonLd = {
         </nav>
 
         <div class="hd-tools">
+          <button
+              id="search-chat-toggle"
+              class="nav-search nav-search--bar"
+              type="button"
+              aria-label="搜尋與客服"
+              aria-expanded="false"
+              aria-controls="search-chat-panel"
+              data-search-chat-toggle
+              data-ga-button="search_chat_toggle"
+              data-ga-label="搜尋與客服"
+              data-ga-location="header_nav"
+              data-ga-action="toggle_chat"
+            ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg></button>
           <button
             class="hd-cue"
             id="nav-cue"
@@ -562,24 +589,6 @@ const jsonLd = {
     <FloatingLine />
 
     <div class="search-chatbot" id="search-chatbot">
-      <button
-        class="search-chat-toggle"
-        id="search-chat-toggle"
-        type="button"
-        aria-label="開啟客服與站內搜尋"
-        aria-expanded="false"
-        aria-controls="search-chat-panel"
-        data-ga-button="search_chat_toggle"
-        data-ga-label="客服與站內搜尋"
-        data-ga-location="floating_actions"
-        data-ga-action="toggle_chat"
-      >
-        <svg class="search-chat-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <circle cx="11" cy="11" r="6.5" />
-          <path d="m16 16 4.5 4.5" />
-        </svg>
-      </button>
-
       <section class="search-chat-panel" id="search-chat-panel" role="dialog" aria-label="客服：加 LINE 詢問、學習入口與站內搜尋" hidden>
         <div class="search-chat-bar">
           <span class="search-chat-dots" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -923,7 +932,11 @@ const jsonLd = {
           if (container) container.remove();
           return;
         }
-        var toggle = document.getElementById('search-chat-toggle');
+        var toggles = Array.from(document.querySelectorAll('[data-search-chat-toggle]'));
+        var lastToggle = null;
+        function visibleToggle() {
+          return lastToggle && lastToggle.offsetParent !== null ? lastToggle : toggles.find(function (t) { return t.offsetParent !== null; }) || null;
+        }
         var panel = document.getElementById('search-chat-panel');
         var closeButton = document.getElementById('search-chat-close');
         var form = document.getElementById('search-chat-form');
@@ -969,19 +982,16 @@ const jsonLd = {
           if (!panel) return;
           panel.hidden = false;
           document.body.classList.add('search-chat-open');
-          if (toggle) {
-            toggle.setAttribute('aria-expanded', 'true');
-            toggle.setAttribute('aria-label', '關閉客服');
-          }
+          toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'true'); });
+          // 手機導覽選單若開著，先收起來，免得面板疊在選單上
+          var navCue = document.getElementById('nav-cue');
+          if (navCue && navCue.getAttribute('aria-expanded') === 'true') navCue.click();
           window.setTimeout(function () { input && input.focus(); }, 0);
         }
         function closeSearch() {
           if (panel) panel.hidden = true;
           document.body.classList.remove('search-chat-open');
-          if (toggle) {
-            toggle.setAttribute('aria-expanded', 'false');
-            toggle.setAttribute('aria-label', '開啟客服與站內搜尋');
-          }
+          toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
         }
         function loadFallback() {
           if (fallbackIndex) return Promise.resolve(fallbackIndex);
@@ -1152,17 +1162,22 @@ const jsonLd = {
           }
           executeSearch(q, reveal);
         }
-        if (toggle) {
-          toggle.addEventListener('click', function () {
-            var open = toggle.getAttribute('aria-expanded') === 'true';
+        function closeAndRestoreFocus() {
+          closeSearch();
+          var target = visibleToggle();
+          if (target) target.focus();
+        }
+        toggles.forEach(function (t) {
+          t.addEventListener('click', function () {
+            lastToggle = t;
+            var open = t.getAttribute('aria-expanded') === 'true';
             if (open) closeSearch();
             else openSearch();
           });
-        }
+        });
         if (closeButton) {
           closeButton.addEventListener('click', function () {
-            closeSearch();
-            if (toggle) toggle.focus();
+            closeAndRestoreFocus();
           });
         }
         if (input && box && form) {
@@ -1175,8 +1190,7 @@ const jsonLd = {
           });
           input.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-              closeSearch();
-              if (toggle) toggle.focus();
+              closeAndRestoreFocus();
               return;
             }
             var results = box.querySelectorAll('.search-chat-result');
@@ -1204,9 +1218,15 @@ const jsonLd = {
             if (input.value.trim()) searchFor(input.value, true);
           });
           document.addEventListener('click', function (e) {
-            if (panel && !panel.hidden && container && !container.contains(e.target)) closeSearch();
+            if (!panel || panel.hidden || !container) return;
+            if (container.contains(e.target) || (e.target.closest && e.target.closest('[data-search-chat-toggle]'))) return;
+            closeSearch();
           });
           document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && panel && !panel.hidden) {
+              closeAndRestoreFocus();
+              return;
+            }
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
               e.preventDefault();
               openSearch();
@@ -1980,81 +2000,59 @@ const jsonLd = {
         }
       }
 
-      /* ---------- 右下角站內搜尋 ---------- */
-      /* 搜尋鈕疊在 LINE 浮動鈕（52px，bottom 18px）上方，中間留 10px */
+      /* ---------- 站內搜尋與客服：入口在頁首的放大鏡，面板從頁首下方展開 ---------- */
       .search-chatbot {
-        position: fixed;
-        right: max(18px, env(safe-area-inset-right));
-        bottom: calc(max(18px, env(safe-area-inset-bottom)) + 62px);
-        z-index: 80;
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        transition:
-          opacity 0.18s var(--ease),
-          transform 0.18s var(--ease),
-          visibility 0.18s var(--ease);
-        transform-origin: right bottom;
       }
-      .service-subdomain .search-chatbot {
+      .service-subdomain .search-chatbot,
+      .service-subdomain .nav-search,
+      .service-subdomain .nav-search-item {
         display: none;
       }
-      body.home-cli-visible:not(.search-chat-open) .search-chatbot {
-        visibility: hidden;
-        opacity: 0;
-        pointer-events: none;
-        transform: translateY(12px) scale(0.72);
-      }
-      .search-chat-toggle {
-        display: grid;
-        width: 40px;
-        height: 40px;
-        place-items: center;
-        /* 52px 的 LINE 鈕與 40px 的搜尋鈕中心對齊 */
-        margin-right: 6px;
-        margin-left: auto;
-        padding: 0;
-        border: 1px solid var(--color-ink);
-        border-radius: 8px;
-        background: var(--color-paper);
-        color: var(--color-ink);
-        box-shadow: 0 6px 18px rgb(22 22 26 / 16%);
-        cursor: pointer;
-        transition: background-color 0.18s var(--ease), color 0.18s var(--ease), transform 0.18s var(--ease);
-      }
-      .search-chat-toggle-icon {
-        width: 20px;
-        height: 20px;
-      }
-      /* 內容站頁面被服務子網域打開時，客服與 LINE 鈕都不顯示 */
+      /* 內容站頁面被服務子網域打開時，LINE 鈕也不顯示 */
       .service-subdomain .floating-line {
         display: none;
       }
-      .search-chatbot.is-terminal-collapse {
-        animation: terminal-collapse 650ms cubic-bezier(.2, .85, .25, 1) both;
+      .nav-search {
+        display: grid;
+        flex: none;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--color-ink);
+        cursor: pointer;
+        transition: color 0.18s var(--ease), background-color 0.18s var(--ease);
       }
-      @keyframes terminal-collapse {
-        0% {
-          opacity: 0;
-          transform: translate(-32vw, -42vh) scale(2.35);
-          filter: blur(2px);
+      .nav-search svg {
+        width: 21px;
+        height: 21px;
+      }
+      .nav-search[aria-expanded='true'] {
+        color: var(--color-accent);
+        background: var(--color-accent-tint);
+      }
+      .nav-search-item {
+        display: none;
+      }
+      @media (min-width: 1024px) {
+        .nav-js .nav-search--bar {
+          display: none;
         }
-        58% {
-          opacity: 1;
-          transform: translate(-5vw, -7vh) scale(1.12);
-          filter: blur(0);
-          box-shadow: 0 0 0 12px rgb(168 91 103 / 14%);
-        }
-        100% {
-          opacity: 1;
-          transform: translate(0, 0) scale(1);
-          box-shadow: 0 0 0 0 rgb(168 91 103 / 0%);
+        .nav-js .nav-search-item {
+          display: block;
         }
       }
       .search-chat-panel {
-        position: absolute;
-        right: 0;
-        bottom: 72px;
+        position: fixed;
+        z-index: 90;
+        top: 92px;
+        right: max(20px, calc((100vw - 72rem) / 2 + 40px));
         width: min(400px, calc(100vw - 24px));
-        max-height: min(640px, calc(100svh - 104px));
+        max-height: calc(100svh - 108px);
         flex-direction: column;
         overflow: hidden;
         border: 1px solid var(--color-rule-2);
@@ -2393,41 +2391,23 @@ const jsonLd = {
         stroke-linejoin: round;
       }
       @media (max-width: 767px) {
-        .search-chatbot {
-          right: max(12px, env(safe-area-inset-right));
-          bottom: calc(max(12px, env(safe-area-inset-bottom)) + 56px);
-        }
-        .search-chat-toggle {
-          width: 38px;
-          height: 38px;
-          margin-right: 4px;
+        .nav-search {
+          width: 44px;
+          height: 44px;
+          border: 1px solid var(--color-ink);
+          border-radius: 6px;
         }
         .search-chat-panel {
-          bottom: 50px;
-          max-height: calc(100svh - 88px - env(safe-area-inset-bottom));
+          top: 92px;
+          right: 12px;
+          left: 12px;
+          width: auto;
+          max-height: calc(100svh - 104px);
         }
         .search-chat-screen { padding: 14px 12px; }
         .search-chat-dialog p { font-size: 15px; }
         .search-chat-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .search-chat-entries { margin-left: 0; }
-        @keyframes terminal-collapse {
-          0% {
-            opacity: 0;
-            transform: translate(-14vw, -48vh) scale(1.85);
-            filter: blur(2px);
-          }
-          58% {
-            opacity: 1;
-            transform: translate(-3vw, -8vh) scale(1.1);
-            filter: blur(0);
-            box-shadow: 0 0 0 10px rgb(168 91 103 / 14%);
-          }
-          100% {
-            opacity: 1;
-            transform: translate(0, 0) scale(1);
-            box-shadow: 0 0 0 0 rgb(168 91 103 / 0%);
-          }
-        }
       }
 
       /* ---------- 頁尾 ---------- */
@@ -2583,10 +2563,9 @@ const jsonLd = {
          :focus-visible 另外寫一份、不設任何條件（見 global.css）。
          ============================================================ */
       @media (hover: hover) and (pointer: fine) {
-        .search-chat-toggle:hover {
-          background: var(--color-ink);
-          color: var(--color-paper);
-          transform: translateY(-2px);
+        .nav-search:hover {
+          color: var(--color-accent);
+          background: var(--color-accent-tint);
         }
         .hd-cue:hover {
           border-color: var(--color-ink);
@@ -2633,7 +2612,7 @@ const jsonLd = {
       }
 
       /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
-      .search-chat-toggle:focus-visible,
+      .nav-search:focus-visible,
       .search-chat-bar button:focus-visible,
       .search-chat-tabs button:focus-visible,
       .search-chat-entries a:focus-visible,
@@ -2662,16 +2641,12 @@ const jsonLd = {
           scroll-behavior: auto;
         }
         .site-header,
-        .search-chat-toggle,
-        .search-chatbot,
+        .nav-search,
         .hd-cue,
         .hd-cue-b i,
         .mainnav,
         .hd-mark-t {
           transition: none !important;
-        }
-        .search-chatbot.is-terminal-collapse {
-          animation: none !important;
         }
         .service-nav-mark {
           transition: none !important;
