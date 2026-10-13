@@ -1,6 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-import teachingOneOnOne from '../assets/teaching-one-on-one.jpg';
 import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
@@ -116,19 +114,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
     </nav>
 
     <section id="course-content" class="scroll-mt-24 pt-16 lg:pt-24">
-      <div class="grid gap-8 lg:grid-cols-[minmax(280px,0.78fr)_minmax(0,1.22fr)] lg:items-start lg:gap-12">
-        <figure>
-          <Image
-            src={teachingOneOnOne}
-            alt="Alex 與學員進行一對一 AI 實體教學"
-            widths={[480, 720, 960]}
-            sizes="(min-width: 1024px) 38vw, 100vw"
-            class="aspect-[4/5] w-full border border-rule-2 object-cover object-[center_62%]"
-          />
-          <figcaption class="px-0.5 pt-3 text-sm leading-6 text-ink-3">
-            一對一實體上課紀錄；課程會直接使用學員自己的電腦完成設定。學員影像已做隱私處理。
-          </figcaption>
-        </figure>
+      <div class="max-w-3xl">
         <div>
           <p class="font-mono text-xs tracking-[0.12em] text-accent">教學內容</p>
           <SectionHeading size="md" class="mt-3">可以一起完成的內容</SectionHeading>

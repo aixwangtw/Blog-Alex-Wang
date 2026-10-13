@@ -32,7 +32,7 @@ const groupClass: Faq = {
 const booking: Faq = {
   question: '怎麼預約或詢問費用？',
   answer:
-    '請點右下角官方 LINE 直接問我，說明你的目標（例如想學 AI 拍片），我會建議適合的堂數與報價。',
+    '請點右下角官方 LINE 直接問我，說明你的目標（例如想用 AI 做動畫影片），我會建議適合的堂數與報價。',
 };
 
 const speakingOrDevelopment: Faq = {
