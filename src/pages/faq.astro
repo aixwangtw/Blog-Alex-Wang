@@ -8,25 +8,24 @@ import { SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { HOME_FAQS, RESOURCES_FAQS } from '../data/faqs';
 import Base from '../layouts/Base.astro';
 
-// 文章 FAQ：依文章分組，只列有 FAQ 的文章（來源同各文章頁的 FAQPage）
-const posts = (await getCollection('blog', ({ data }) => !data.unlisted))
-  .filter((post) => post.data.faqs.length > 0)
-  .sort(
-    (a, b) =>
-      b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
-      (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
-  );
+// 系統開發 FAQ：來自題庫系統文章（系統開發的代表案例），排在最前面。
+// Codex 安裝、轉職文的 FAQ 不再匯集到這頁，只留在各自文章頁的 FAQPage。
+const developmentPost = (await getCollection('blog')).find((post) => post.id === 'math-teacher-question-bank');
+if (!developmentPost || developmentPost.data.faqs.length === 0) {
+  throw new Error('找不到題庫系統文章或它的 FAQ，/faq/ 的系統開發題會是空的');
+}
+const developmentFaqs = developmentPost.data.faqs;
 
-// 首頁服務 FAQ、免費資源 FAQ 與文章 FAQ 都從各自頁面的同一份資料來源組合，
+// 教學題放後面：課程與服務、免費資源都從各自頁面的同一份資料來源組合，
 // 避免其中一頁改版後，總整理仍停留在舊內容。
-const allFaqs = [...HOME_FAQS, ...RESOURCES_FAQS, ...posts.flatMap((post) => post.data.faqs)];
+const allFaqs = [...developmentFaqs, ...HOME_FAQS, ...RESOURCES_FAQS];
 
 const schema = [
   breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '常見問題' }]),
   {
     '@type': 'FAQPage',
     '@id': `${SITE.url}/faq/#webpage`,
-    name: 'AI 新手常見問題總整理',
+    name: '客製系統開發常見問題',
     url: `${SITE.url}/faq/`,
     mainEntity: allFaqs.map((f) => ({
       '@type': 'Question',
@@ -39,9 +38,9 @@ const schema = [
 
 <Base
   title={`常見問題總整理｜${SITE.title}`}
-  description="新手學 AI 最常問的問題總整理：私人家教、AI 拍片、免費 Codex 與 Skills 資源。"
+  description="客製系統開發與數學題庫系統的常見問題：開發費用怎麼算、合作流程、AI 使用成本與 Demo 試用；AI 教學的問題另列在後面。"
   ogImage={pageBannerUrl('faq')}
-  ogImageAlt="AI 新手常見問題總整理"
+  ogImageAlt="常見問題總整理｜客製系統開發"
   schema={schema}
 >
   <div class="mx-auto max-w-3xl px-6 py-12">
@@ -49,53 +48,42 @@ const schema = [
 
     <h1 class="t-h1 mt-8 font-semibold text-ink">常見問題總整理</h1>
     <p class="mt-6 text-lg leading-8 text-ink-2">
-      這裡的問題大多來自真實社群的提問——主要是 Threads 貼文底下的留言，也有 YouTube
-      留言和一對一教學學員問過的問題（見<a href="/editorial-policy/" class="text-accent underline underline-offset-4">編輯政策</a>）。找不到答案可以加 LINE 免費問；講課或開發邀約也可以直接寄 Email。
+      這裡整理客製系統開發與數學題庫系統最常被問的問題，AI 教學與免費資源的問題放在後面（內容怎麼產出見<a href="/editorial-policy/" class="text-accent underline underline-offset-4">編輯政策</a>）。找不到答案可以加 LINE 免費問；開發或講課邀約也可以直接寄 Email。
     </p>
 
-    <SectionHeading size="md" class="mt-12">我提供什麼教學？</SectionHeading>
-    <!-- 改版前這是一個 rounded-[1.75rem] ＋ bg-surface ＋ shadow 的卡片盒。
-         它包著的本來就是一份三項清單，所以不是把盒子換成別的盒子，而是把盒子拆掉、
-         讓清單自己用髮絲線分項（同 resources.astro 的 <ol> 與 CheckItem 的做法）。
-         最後一項補 last:border-b 收尾：後面緊接著一個「→」連結，
-         沒有收尾線時那個連結會讀起來像清單的第四項。 -->
+    <SectionHeading size="md" class="mt-12">我提供什麼服務？</SectionHeading>
     <ul class="mt-6">
+      <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2">
+        <strong class="text-ink">客製系統開發</strong>——和開發夥伴承接題庫與教學系統、後台管理、LINE 相關網頁與 AI 自動化流程，代表案例是補習班數學題庫系統。
+      </li>
       <li class="border-t border-rule px-0.5 py-5 leading-8 text-ink-2 last:border-b">
-        <strong class="text-ink">AI 拍片</strong>——依照自己的題材建立從腳本、配音、剪輯到發布的工作流，不需要每支影片都從頭手動製作。
+        <strong class="text-ink">AI 教學與演講</strong>——另提供一對一 AI 拍片教學與企業、學校、社群的演講邀約。
       </li>
     </ul>
-    <p class="mt-5 px-0.5 text-sm">
-      <a href={`${SERVICE_SITE.url}/course/`} class="text-accent underline underline-offset-4">看一對一教學的完整說明與上課形式 →</a>
+    <p class="mt-5 flex flex-wrap gap-x-6 gap-y-2 px-0.5 text-sm">
+      <a href={`${SERVICE_SITE.url}/services/development/`} class="text-accent underline underline-offset-4">看系統開發服務的流程與費用 →</a>
+      <a href={`${SERVICE_SITE.url}/course/`} class="text-accent underline underline-offset-4">看一對一教學的說明 →</a>
     </p>
 
-    <SectionHeading size="md" class="mt-14">課程與服務</SectionHeading>
+    <SectionHeading size="md" class="mt-14">客製系統開發與題庫系統</SectionHeading>
+    <p class="mt-5 leading-8 text-ink-2">
+      以下整理自<a href="/blog/math-teacher-question-bank/" class="text-accent underline underline-offset-4">數學題庫系統介紹</a>，涵蓋開發費用、流程、AI 使用成本與 Demo。
+    </p>
+    <div class="mt-6">
+      <FaqList faqs={developmentFaqs} />
+    </div>
+
+    <SectionHeading size="md" class="mt-14">AI 教學與演講</SectionHeading>
     <div class="mt-6">
       <FaqList faqs={HOME_FAQS} />
     </div>
 
     <SectionHeading size="md" class="mt-14">免費資源</SectionHeading>
     <p class="mt-5 leading-8 text-ink-2">
-      從 Codex 安裝、Skills 到 API 串接與開源工具，以下內容會與<a href="/resources/" class="text-accent underline underline-offset-4">免費資源頁</a>同步更新。
+      Codex 安裝、Skills 的問題，與<a href="/resources/" class="text-accent underline underline-offset-4">免費資源頁</a>同步更新；各篇教學文章的問題請看文章頁。
     </p>
     <div class="mt-6">
       <FaqList faqs={RESOURCES_FAQS} />
-    </div>
-
-    <SectionHeading size="md" class="mt-14">依主題整理的文章 FAQ</SectionHeading>
-    <div class="mt-6 space-y-10">
-      {posts.map((post) => (
-        <section>
-          <h3 class="text-lg font-semibold text-ink">
-            <a href={`/blog/${post.id}/`} class="hover:text-accent">{post.data.title}</a>
-          </h3>
-          <div class="mt-4">
-            <FaqList faqs={post.data.faqs} />
-          </div>
-          <p class="mt-3 text-sm">
-            <a href={`/blog/${post.id}/`} class="text-accent underline underline-offset-4 hover:text-accent-2">閱讀完整教學 →</a>
-          </p>
-        </section>
-      ))}
     </div>
 
     <Cta />

@@ -2,11 +2,11 @@
 export const SITE = {
   title: 'Aix 系統開發',
   titleEn: 'Aix System Development',
-  // 舊站名保留在結構化資料的 alternateName，讓搜尋引擎把新舊名稱認成同一個網站
+  // 舊站名只留在 llms.txt 的說明；結構化資料的 alternateName 不再帶舊名，免得訊號停在「AI 教學」
   formerNames: ['AI新手教學', 'AI Beginner Blog'],
   url: 'https://aixwang.dev',
   description:
-    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統；也是 AI 應用講師，教「跟 AI 對話就能拍片」，提供付費一對一私人教學（雙北實體／線上）與企業、社群公開演講。',
+    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統。另提供 AI 教學與演講。',
   locale: 'zh-TW',
 };
 
@@ -16,7 +16,7 @@ export const SERVICE_SITE = {
   title: 'Aix 系統開發服務',
   url: 'https://service.aixwang.dev',
   description:
-    '我和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統；也提供付費一對一 AI 私人教學（主題：跟 AI 對話就能拍片；雙北咖啡廳實體課或 Google Meet／Discord 線上課），並接受企業與社群的 AI 演講邀約。',
+    '我和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統。另提供 AI 教學與演講。',
 };
 
 // 系統開發服務頁與首頁共用的事實（流程、時程、付款），內容需與題庫文章 FAQ 第 1 題一致，不得寫開發費金額。
@@ -35,12 +35,20 @@ export const AUTHOR = {
   name: 'Alex',
   // 別名：讓 Google 知識圖譜與 AI 搜尋把不同稱呼認成同一個人
   alternateName: ['王士麟', 'Alex Wang', '艾克斯王', 'aixwang'],
-  jobTitle: '系統開發工程師 / AI 應用講師',
+  jobTitle: '系統開發工程師',
   description:
-    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，用 AI 自動化整理資料、產出內容；也教「跟 AI 對話就能拍片」。',
+    '系統開發工程師，目前全職接案，有一群開發團隊，承接客製系統開發，用 AI 自動化整理資料、產出內容，代表案例是補習班數學題庫系統。另外也教「跟 AI 對話就能拍片」。',
+  // 技能以站上已有的事實為準：題庫系統、CRM／後台、Line LIFF、AI 客服見 instructor.ts 與轉職文，
+  // Laravel 見轉職文 FAQ（技術棧）與題庫系統本身；對話式拍片、HyperFrames 是教學主題，放最後。
   knowsAbout: [
     '客製系統開發',
     '後台管理系統',
+    'Laravel',
+    'LINE LIFF 網頁',
+    'AI 自動化',
+    '題庫系統',
+    'CRM 客戶管理系統',
+    'AI 客服',
     '對話式拍片',
     'HyperFrames',
   ],
@@ -58,11 +66,13 @@ export const AUTHOR_INTROS = [
 ];
 
 // 文章頁「關於作者」依文章性質（tags）選版本，比照 CTA_RULES：由上往下比對、第一條命中就用；
-// 沒命中的文章維持 AUTHOR_INTROS 雜湊輪替（教學類、講師類文章目前都沿用原本的輪替版本）。
+// 沒命中的文章維持 AUTHOR_INTROS 雜湊輪替。
+// 2026-10-13 網站重心改為客製系統開發：安裝教學、講師故事（轉職文）也改用系統開發版介紹，
+// 目前只有 Codex 安裝教學上下篇與轉職文命中這兩個 tag。
 // 只影響文章頁；/about/、首頁、服務頁的介紹不走這裡。
 export const AUTHOR_INTRO_RULES: { tags: string[]; intro: string }[] = [
   {
-    tags: ['題庫系統', '客製開發', 'AI 導入'],
+    tags: ['題庫系統', '客製開發', 'AI 導入', '安裝教學', '講師故事'],
     intro:
       '系統開發工程師，目前全職接案，有一群開發團隊，平常幫客戶把重複的工作變成自動化流程。官方 LINE 除了我本人，夥伴們也會協助回覆。',
   },
@@ -131,24 +141,32 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
       links: [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],
     },
   },
+  // 2026-10-13 重心改為系統開發：講師故事（轉職文）與安裝教學的文末主要行動改導向系統開發頁，
+  // 找講師、找教學降成次要連結。兩條規則的 tag 目前只有轉職文、Codex 安裝教學上下篇命中。
   {
     tags: ['講師故事', '演講'],
     cta: {
-      title: '想邀請 Alex 演講或內訓？',
-      text: '接受企業、學校與社群的 AI 演講邀約，可以先看過去的演講主題與邀約方式。',
-      href: `${SERVICE_SITE.url}/services/speaking/`,
-      label: '找講師',
-      links: [],
+      title: '想把重複的工作交給系統？',
+      text: '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；有問題點右下角官方 LINE 直接問我。',
+      href: DEVELOPMENT_SERVICE.url,
+      label: '了解系統\n開發服務',
+      links: [
+        { href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' },
+        { href: `${SERVICE_SITE.url}/services/speaking/`, label: '找講師', external: true },
+      ],
     },
   },
   {
     tags: ['新手入門', '安裝教學', 'API 教學', 'AI 入門'],
     cta: {
-      title: '想更快上手？可以直接找我一對一',
-      text: '我提供付費一對一 AI 私人教學（雙北咖啡廳實體課或 Google Meet／Discord 線上課），從安裝到做出第一個成品帶你走一遍。',
-      href: `${SERVICE_SITE.url}/course/`,
-      label: '找教學',
-      links: [],
+      title: '想把重複的工作交給系統？',
+      text: '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；有問題點右下角官方 LINE 直接問我。',
+      href: DEVELOPMENT_SERVICE.url,
+      label: '了解系統\n開發服務',
+      links: [
+        { href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' },
+        { href: `${SERVICE_SITE.url}/course/`, label: '找教學', external: true },
+      ],
     },
   },
 ];
@@ -239,7 +257,8 @@ import BANNER_VERSION from './data/banner-version.json';
 // 頁面分享圖網址（含版本號）：版本來源是 src/data/banner-version.json，
 // 升版改那裡的數字並重跑生成器即可，頁面引用自動跟上
 export function pageBannerUrl(name: string): string {
-  return `${SITE.url}/images/pages/${name}-v${BANNER_VERSION.pages}.png`;
+  const pinned = (BANNER_VERSION.pinned as Record<string, number>)[name];
+  return `${SITE.url}/images/pages/${name}-v${pinned ?? BANNER_VERSION.pages}.png`;
 }
 
 export function speakingBannerUrl(): string {
@@ -258,6 +277,20 @@ export function breadcrumbSchema(items: { name: string; item?: string }[]) {
     })),
   };
 }
+
+// 服務站的 ProfessionalService：只寫站上已有的事實（名稱、服務內容、地區台灣），
+// provider 指向全站 Person，讓「這個接案服務是誰在做」連回同一個實體。
+export const PROFESSIONAL_SERVICE_SCHEMA = {
+  '@type': 'ProfessionalService',
+  '@id': `${SERVICE_SITE.url}/#professionalservice`,
+  name: SITE.title,
+  url: `${SERVICE_SITE.url}/`,
+  description: '客製系統開發：題庫與教學系統、後台管理系統、LINE 相關網頁與 AI 自動化流程；代表案例是補習班數學題庫系統。',
+  image: `${SITE.url}/aixwang-icon.png`,
+  address: { '@type': 'PostalAddress', addressCountry: 'TW' },
+  areaServed: { '@type': 'Country', name: '台灣' },
+  provider: { '@id': AUTHOR.id },
+};
 
 // 全站 Person 實體：所有頁面的 JSON-LD 都引用同一個 @id，讓 AI 把內容歸到同一個人身上
 export const PERSON_SCHEMA = {

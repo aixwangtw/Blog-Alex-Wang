@@ -24,7 +24,7 @@ const schema = [
 ---
 
 <Base
-  title={`關於 ${AUTHOR.name}｜系統開發工程師、AI 教學與演講`}
+  title={`關於 ${AUTHOR.name}｜系統開發工程師`}
   description={AUTHOR.description}
   ogType="profile"
   ogImage={pageBannerUrl('about')}
@@ -46,7 +46,7 @@ const schema = [
     </figure>
 
     <p class="mt-8 text-lg leading-9 text-ink">
-      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，用 AI 自動化整理資料、產出內容，代表案例是補習班數學老師用的題庫系統。我也是 AI 應用講師，教「跟 AI 對話就能拍片」，提供<strong class="text-accent">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-accent">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
+      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，用 AI 自動化整理資料、產出內容，代表案例是補習班數學老師用的題庫系統。另外我也教「跟 AI 對話就能拍片」，提供<strong class="text-accent">付費一對一私人教學</strong>（雙北實體或線上）與<strong class="text-accent">企業、學校、社群的公開演講</strong>。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
     </p>
     <a
       href="/blog/from-part-time-to-freelance/"
@@ -55,7 +55,21 @@ const schema = [
       閱讀我的轉職故事 →
     </a>
 
-    <SectionHeading size="md" class="mt-14">一對一教學經歷</SectionHeading>
+    <SectionHeading size="md" class="mt-14">經歷與代表作品</SectionHeading>
+    <ul class="mt-6 space-y-4">
+      {EXPERIENCE.map((item) => <CheckItem>{item.text}</CheckItem>)}
+    </ul>
+
+    <SectionHeading size="md" class="mt-14">專長領域</SectionHeading>
+    {/* 專長領域（同 PERSON_SCHEMA.knowsAbout）：改版前每一項是 rounded-2xl ＋ bg-surface ＋ shadow 的小卡。
+        現在是髮絲線格；項目短、密度高，py 收到 3.5（14px）而不是 Card 的 py-7。 */}
+    <ul class="mt-6 grid gap-x-8 sm:grid-cols-2">
+      {AUTHOR.knowsAbout.map((topic) => (
+        <li class="border-t border-rule px-0.5 py-3.5 leading-7 text-ink-2">{topic}</li>
+      ))}
+    </ul>
+
+    <SectionHeading size="md" class="mt-14">另外也教 AI：一對一教學</SectionHeading>
     <a
       href={`${SERVICE_SITE.url}/course/`}
       class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
@@ -64,7 +78,7 @@ const schema = [
     </a>
     <p class="mt-4 leading-8 text-ink-2">一對一教學的主題是「跟 AI 對話就能拍片」，雙北實體與線上教學皆可預約。</p>
 
-    <SectionHeading size="md" class="mt-14">公眾演講經歷</SectionHeading>
+    <SectionHeading size="md" class="mt-14">另外也接演講</SectionHeading>
     <a
       href={`${SERVICE_SITE.url}/services/speaking/`}
       class="mt-4 inline-block rounded-[3px] bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-2"
@@ -83,20 +97,6 @@ const schema = [
         </Card>
       ))}
     </div>
-
-    <SectionHeading size="md" class="mt-14">經歷與代表作品</SectionHeading>
-    <ul class="mt-6 space-y-4">
-      {EXPERIENCE.map((item) => <CheckItem>{item.text}</CheckItem>)}
-    </ul>
-
-    <SectionHeading size="md" class="mt-14">教學主題</SectionHeading>
-    {/* 教學主題：改版前每一項是 rounded-2xl ＋ bg-surface ＋ shadow 的小卡。
-        現在是髮絲線格；項目短、密度高，py 收到 3.5（14px）而不是 Card 的 py-7。 */}
-    <ul class="mt-6 grid gap-x-8 sm:grid-cols-2">
-      {AUTHOR.knowsAbout.map((topic) => (
-        <li class="border-t border-rule px-0.5 py-3.5 leading-7 text-ink-2">{topic}</li>
-      ))}
-    </ul>
 
     <Cta />
   </div>

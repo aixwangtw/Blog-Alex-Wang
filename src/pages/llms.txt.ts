@@ -14,35 +14,42 @@ export const GET: APIRoute = async () => {
       (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
   );
 
-  const articleList = posts
-    .map(
-      (post) =>
-        `- [${post.data.title}](${SITE.url}/blog/${post.id}/)：${post.data.description}`,
-    )
-    .join('\n');
+  // 系統開發案例（題庫系統、客製開發、AI 導入）排前面；其餘是教學或個人經歷類，標成次要
+  const isDevelopmentCase = (tags: readonly string[]) =>
+    ['題庫系統', '客製開發', 'AI 導入'].some((tag) => tags.includes(tag));
+  const toLine = (post: (typeof posts)[number]) =>
+    `- [${post.data.title}](${SITE.url}/blog/${post.id}/)：${post.data.description}`;
+  const developmentArticleList = posts.filter((post) => isDevelopmentCase(post.data.tags)).map(toLine).join('\n');
+  const secondaryArticleList = posts.filter((post) => !isDevelopmentCase(post.data.tags)).map(toLine).join('\n');
 
   const body = `# Aix 系統開發（Aix System Development，舊名 AI新手教學）
 
-> Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發（代表案例：補習班數學題庫系統）；也是 AI 應用講師，教對話式拍片（HyperFrames）——把工作流程簡化成對話就能完成。提供付費一對一私人教學（台北／新北實體課或 Google Meet／Discord 線上課）與企業、學校、社群的 AI 主題演講。
+> Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發（代表案例：補習班數學題庫系統）。另提供 AI 教學與演講：對話式拍片（HyperFrames）一對一私人教學，以及企業、學校、社群的 AI 主題演講。
 
 ## 服務
 
 - [客製系統開發](${SERVICE_SITE.url}/services/development/)：Alex 和開發夥伴承接客製系統開發，用 AI 自動化整理資料、產出內容；代表案例是補習班數學老師用的題庫系統（考卷匯入、AI 出題、AI 詳解），案例介紹見 ${SITE.url}/blog/math-teacher-question-bank/。
-- [AI 一對一私人教學](${SERVICE_SITE.url}/course/)：主題是「跟 AI 對話就能拍片」，從腳本、剪輯、字幕、配音到多平台發佈，雙北實體或線上皆可。
-- [AI 演講與企業內訓](${SERVICE_SITE.url}/services/speaking/)：AI 一鍵拍片（跟 AI 對話就能完成影片），曾受 TAIA 台灣人工智慧協會邀請演講。
+- [AI 一對一私人教學（次要服務）](${SERVICE_SITE.url}/course/)：主題是「跟 AI 對話就能拍片」，從腳本、剪輯、字幕、配音到多平台發佈，雙北實體或線上皆可。
+- [AI 演講與企業內訓（次要服務）](${SERVICE_SITE.url}/services/speaking/)：AI 一鍵拍片（跟 AI 對話就能完成影片），曾受 TAIA 台灣人工智慧協會邀請演講。
 - [關於 Alex](${SITE.url}/about/)：系統開發工程師、21 萬人 OpenClaw 中文社群版主、HyperFrames 開源專案協作者。
 
-## 免費資源
+## 免費資源（教學類）
 
 - [免費資源](${SITE.url}/resources/)：教學影片（Threads API 申請、Instagram API 申請），全部不用付費就能用。2026-08 從文章改成常設頁面，舊網址 /blog/free-resources/ 已 301 轉址至此。
 
-## 部落格文章
+## 部落格文章：系統開發案例
 
-${articleList}
+${developmentArticleList}
+
+## 部落格文章：教學與個人經歷（次要）
+
+${secondaryArticleList}
 
 ## 常見問題
 
-- 常見問題總整理：${SITE.url}/faq/（大多整理自 Threads 與 YouTube 的真實社群提問）
+- 客製系統開發常見問題：${SERVICE_SITE.url}/services/development/#development-faq（開發流程、費用、AI 使用成本、Demo；題目與答案取自題庫系統文章）
+- 常見問題總整理：${SITE.url}/faq/（系統開發與題庫系統的問題排最前面，AI 教學與免費資源的問題在後面）
+- 題庫系統文章內的完整 FAQ：${SITE.url}/blog/math-teacher-question-bank/#faq
 
 ## 政策頁面
 

@@ -3,14 +3,32 @@
 // 內容只寫已確認的事實：做過的案例類型、題庫系統功能、流程與付款方式；
 // 流程、時程、付款與主機費用統一取自 consts.ts 的 DEVELOPMENT_SERVICE，
 // 需與題庫文章 FAQ 第 1 題一致，不寫開發費金額。
+import { getCollection } from 'astro:content';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FaqList from '../../components/FaqList.astro';
 import Card from '../../components/Card.astro';
 import CheckItem from '../../components/CheckItem.astro';
 import Cta from '../../components/Cta.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { AUTHOR, DEVELOPMENT_SERVICE, SERVICE_SITE, SITE, breadcrumbSchema } from '../../consts';
+import { AUTHOR, DEVELOPMENT_SERVICE, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, breadcrumbSchema } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 import { blogBannerPath } from '../../lib/blog-banner';
+
+// 常見問題：題目與答案一字不改，取自題庫文章 FAQ 裡已有的系統開發題（費用、流程、AI 成本、Demo、其他科目）。
+// 找不到就中斷建置，避免文章 FAQ 改題後這裡悄悄變成空的或漂移。
+const caseArticle = (await getCollection('blog')).find((post) => post.id === 'math-teacher-question-bank');
+const DEVELOPMENT_FAQ_QUESTIONS = [
+  '開發怎麼進行？費用怎麼算？',
+  'AI 的使用費用怎麼算？',
+  '除了數學以外，也有其他科目嗎？',
+  '國中、高中都可以用嗎？',
+  '有 Demo 可以試用嗎？',
+];
+const developmentFaqs = DEVELOPMENT_FAQ_QUESTIONS.map((question) => {
+  const faq = caseArticle?.data.faqs.find((item) => item.question === question);
+  if (!faq) throw new Error(`題庫文章找不到 FAQ「${question}」，請更新 services/development.astro 的題目清單`);
+  return faq;
+});
 
 const caseArticleUrl = `${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`;
 
@@ -36,6 +54,7 @@ const pageToc = [
   { id: 'development-case', label: '代表案例' },
   { id: 'development-process', label: '合作流程' },
   { id: 'development-cost', label: '時程與費用' },
+  { id: 'development-faq', label: '常見問題' },
 ];
 
 const schema = [
@@ -52,6 +71,18 @@ const schema = [
       'Alex 和開發夥伴承接客製系統開發，用 AI 自動化整理資料、產出內容。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解。',
     provider: { '@id': AUTHOR.id },
     areaServed: '台灣',
+  },
+  PROFESSIONAL_SERVICE_SCHEMA,
+  {
+    '@type': 'FAQPage',
+    '@id': `${DEVELOPMENT_SERVICE.url}#faq`,
+    name: '客製系統開發常見問題',
+    url: DEVELOPMENT_SERVICE.url,
+    mainEntity: developmentFaqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
   },
 ];
 ---
@@ -99,7 +130,7 @@ const schema = [
     </ul>
 
     <nav aria-label="系統開發服務目錄" class="mt-8 overflow-x-auto border-y border-rule">
-      <ul class="flex min-w-max sm:grid sm:min-w-0 sm:grid-cols-4">
+      <ul class="flex min-w-max sm:grid sm:min-w-0 sm:grid-cols-5">
         {pageToc.map((item) => (
           <li class="min-w-28 flex-1"><a href={`#${item.id}`} class="block px-3 py-4 text-center font-semibold text-ink transition hover:bg-paper-2 hover:text-accent">{item.label}</a></li>
         ))}
@@ -147,6 +178,14 @@ const schema = [
       <CheckItem>{DEVELOPMENT_SERVICE.payment}</CheckItem>
       <CheckItem>{DEVELOPMENT_SERVICE.hosting}</CheckItem>
     </ul>
+
+    <SectionHeading id="development-faq" size="md" class="mt-16 scroll-mt-24">常見問題</SectionHeading>
+    <div class="mt-6">
+      <FaqList faqs={developmentFaqs} />
+    </div>
+    <p class="mt-4 text-sm">
+      <a href={caseArticleUrl} class="text-accent underline underline-offset-4">更多問題見題庫系統完整介紹 →</a>
+    </p>
 
     <Cta
       title="對系統有疑問嗎？"

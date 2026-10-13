@@ -9,6 +9,7 @@ import {
   GUIDED_ENTRY_LINKS,
   LEARNING_ENTRY_LINKS,
   PERSON_SCHEMA,
+  PROFESSIONAL_SERVICE_SCHEMA,
   SERVICE_SITE,
   SITE,
   pageBannerUrl,
@@ -54,16 +55,20 @@ const entryTabs = [
   { key: 'free', label: '找免費', links: FREE_ENTRY_LINKS },
 ].map((tab) => ({ ...tab, links: tab.links.map((entry) => ({ ...entry, href: absolute(entry.href) })) }));
 
+// <title>、og:title 與 WebPage.name 共用同一個字串，避免兩處漂移
+const pageTitle = 'Aix 系統開發服務｜客製化系統開發、數學題庫系統案例';
+
 const schema = [
   {
     '@type': 'WebPage',
     '@id': `${SERVICE_SITE.url}/#webpage`,
     url: `${SERVICE_SITE.url}/`,
-    name: 'Aix 系統開發服務｜客製系統開發、AI 教學與演講',
+    name: pageTitle,
     description: SERVICE_SITE.description,
     isPartOf: { '@id': `${SERVICE_SITE.url}/#website` },
     about: { '@id': PERSON_SCHEMA['@id'] },
   },
+  PROFESSIONAL_SERVICE_SCHEMA,
   {
     '@type': 'ItemList',
     name: 'Aix 系統開發服務項目',
@@ -78,7 +83,7 @@ const schema = [
 ---
 
 <ServiceBase
-  title="Aix 系統開發服務｜客製化系統開發、數學題庫系統案例"
+  title={pageTitle}
   description={SERVICE_SITE.description}
   canonicalPath="/"
   ogImage={pageBannerUrl('service-home')}
@@ -125,7 +130,7 @@ const schema = [
   <section class="service-hero">
     <div class="service-hero-copy">
       <p class="service-kicker">{SERVICE_SITE.title}</p>
-      <h1><span class="nb">客製系統開發，</span><span class="nb">也教 AI、接演講</span></h1>
+      <h1><span class="nb">客製系統開發</span></h1>
       <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。主要和開發夥伴承接客製系統開發；也提供一對一 AI 教學（雙北咖啡廳實體或線上），並接受企業、學校與社群的演講邀約。先看你需要哪一種，再加 LINE 聊細節。</p>
       <div class="service-hero-actions">
         <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
