@@ -24,7 +24,9 @@
       "/services/tool-quiz/*",
       "/api/button-click",
       "/robots.txt",
-      "/sitemap.xml"
+      "/sitemap.xml",
+      "/sitemap-index.xml",
+      "/sitemap-0.xml"
     ]
   },
   "observability": {

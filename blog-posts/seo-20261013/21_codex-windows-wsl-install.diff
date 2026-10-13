@@ -1,0 +1,7 @@
+--- 21_codex-windows-wsl-install.orig.md	2026-10-13 12:18:54.114758179 +0800
++++ 21_codex-windows-wsl-install.new.md	2026-10-13 12:18:54.114758179 +0800
+@@ -85,3 +85,4 @@
+ <p>符合任何一條，就往下集走：</p>
+ <p>👉 <a href="/blog/codex-cli-wsl2-windows/">Codex 安裝教學（下）：Windows 版 Codex CLI 與 WSL2 進階安裝</a></p>
+ <p>安裝過程卡住了？加 LINE 把錯誤訊息貼給我，簡單問題免費幫你看。</p>
++<p>我平常的工作是全職接案做客製系統開發，代表案例是<a href="/blog/math-teacher-question-bank/">補習班數學題庫系統</a>；想把手上重複的工作做成系統，可以看<a href="https://service.aixwang.dev/services/development/">客製系統開發服務</a>。</p>

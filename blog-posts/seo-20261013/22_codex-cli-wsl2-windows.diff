@@ -1,0 +1,7 @@
+--- 22_codex-cli-wsl2-windows.orig.md	2026-10-13 12:18:54.118634310 +0800
++++ 22_codex-cli-wsl2-windows.new.md	2026-10-13 12:18:54.118634310 +0800
+@@ -172,3 +172,4 @@
+ <h2 id="裝好之後可以做什麼">裝好之後可以做什麼</h2>
+ <p>到這裡你已經有完整的 Codex 環境：VS Code 裡用插件、終端機裡用 CLI，之後要接自動發文、排程腳本都是在這個基礎上疊加。</p>
+ <p>WSL2 或 CLI 安裝噴錯了？加 LINE 把畫面截圖傳給我，簡單問題<strong>免費</strong>幫你排。</p>
++<p>我平常的工作是全職接案做客製系統開發，代表案例是<a href="/blog/math-teacher-question-bank/">補習班數學題庫系統</a>；想把手上重複的工作做成系統，可以看<a href="https://service.aixwang.dev/services/development/">客製系統開發服務</a>。</p>

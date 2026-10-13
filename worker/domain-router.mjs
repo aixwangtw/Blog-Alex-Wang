@@ -24,6 +24,15 @@ export default {
       return Response.redirect(`${SERVICE_ORIGIN}/`, 301);
     }
 
+    // sitemap-index.xml／sitemap-0.xml 是主站 Astro 產生的檔案；服務子網域不該回傳主站的網址清單，
+    // 一律 301 到服務站自己的 /sitemap.xml。主站則直接取靜態檔。
+    if (url.pathname === '/sitemap-index.xml' || url.pathname === '/sitemap-0.xml') {
+      if (url.hostname === 'service.aixwang.dev') {
+        return Response.redirect(`${SERVICE_ORIGIN}/sitemap.xml`, 301);
+      }
+      return env.ASSETS.fetch(request);
+    }
+
     if (url.hostname === 'service.aixwang.dev') {
       if (url.pathname === '/robots.txt' || url.pathname === '/sitemap.xml') {
         const assetUrl = new URL(request.url);

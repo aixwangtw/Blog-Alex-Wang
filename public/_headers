@@ -1,0 +1,3 @@
+# 設計原型頁（public/_preview/）不給搜尋引擎索引
+/_preview/*
+  X-Robots-Tag: noindex, nofollow
