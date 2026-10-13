@@ -5,7 +5,7 @@ import CheckItem from '../components/CheckItem.astro';
 import Cta from '../components/Cta.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { AUTHOR, DEVELOPMENT_SERVICE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { ABOUT_SKILLS, AUTHOR, DEVELOPMENT_SERVICE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { EXPERIENCE } from '../data/instructor';
 import Base from '../layouts/Base.astro';
 
@@ -59,11 +59,14 @@ const schema = [
     </ul>
 
     <SectionHeading size="md" class="mt-14">專長領域</SectionHeading>
-    {/* 專長領域（同 PERSON_SCHEMA.knowsAbout）：改版前每一項是 rounded-2xl ＋ bg-surface ＋ shadow 的小卡。
+    {/* 專長領域（ABOUT_SKILLS，系統開發合併成一條）：改版前每一項是 rounded-2xl ＋ bg-surface ＋ shadow 的小卡。
         現在是髮絲線格；項目短、密度高，py 收到 3.5（14px）而不是 Card 的 py-7。 */}
     <ul class="mt-6 grid gap-x-8 sm:grid-cols-2">
-      {AUTHOR.knowsAbout.map((topic) => (
-        <li class="border-t border-rule px-0.5 py-3.5 leading-7 text-ink-2">{topic}</li>
+      {ABOUT_SKILLS.map((skill) => (
+        <li class="border-t border-rule px-0.5 py-3.5 leading-7 text-ink-2">
+          <strong class="block text-ink">{skill.title}</strong>
+          {skill.text}
+        </li>
       ))}
     </ul>
 

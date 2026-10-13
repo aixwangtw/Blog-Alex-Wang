@@ -57,6 +57,18 @@ export const AUTHOR = {
   email: 'js0980420@gmail.com',
 };
 
+// 關於頁「專長領域」顯示用：系統開發相關專長合併成一條（結構化資料 knowsAbout 仍分開列給搜尋引擎）
+export const ABOUT_SKILLS: { title: string; text: string }[] = [
+  {
+    title: '客製系統開發',
+    text: '後台管理系統、LINE LIFF 網頁、CRM 客戶管理系統、題庫系統、AI 客服與 AI 自動化。',
+  },
+  {
+    title: 'AI 動畫',
+    text: '跟 AI 對話，從腳本、剪輯、字幕、配音到封面圖，做出動畫影片。',
+  },
+];
+
 // 「關於作者」與文末 CTA 文案輪替：8 篇文章結尾一字不差的同一段模板，
 // 連讀兩篇就會有「機器複製感」（2026-07-28 稽核結論）。改成依文章 slug
 // 雜湊固定選版：同一篇永遠同一版（對讀者與搜尋引擎穩定），不同篇之間輪替。
