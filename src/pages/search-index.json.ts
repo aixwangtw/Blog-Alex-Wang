@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { SERVICE_SITE } from '../consts';
 
 // 全站搜尋索引：header 搜尋框用（標題/描述/標籤）
 export async function GET() {
@@ -9,7 +10,32 @@ export async function GET() {
     g: (p.data.tags ?? []).join(' '),
     u: `/blog/${p.id}/`,
   }));
-  return new Response(JSON.stringify(items), {
+  // 服務站頁面不在 Pagefind 索引裡（Pagefind 只收主站 main），這裡補上；s=1 表示服務站頁面，
+  // 客服搜尋會把它們排在文章前面。g 是關鍵字，也當同義詞用。
+  const servicePages = [
+    {
+      t: '手把手帶你實戰：AI 動畫影片製作一對一教學',
+      d: '用 Claude Opus 5.5 對話，做出動畫影片，工具是 HyperFrames。雙北實體或線上一對一教學。',
+      g: '課程 教學 一對一 上課 家教 預約 手把手 實戰 動畫 影片 HyperFrames',
+      u: `${SERVICE_SITE.url}/course/`,
+      s: 1,
+    },
+    {
+      t: 'AI 演講與企業內訓',
+      d: '企業、學校與社群的 AI 主題演講、內訓與工作坊邀約。',
+      g: '演講 講座 內訓 講師 邀約 工作坊 企業 學校 社群',
+      u: `${SERVICE_SITE.url}/services/speaking/`,
+      s: 1,
+    },
+    {
+      t: '客製系統開發服務',
+      d: '題庫與教學系統、後台管理、LINE 相關網頁與 AI 自動化流程，看合作流程與費用。',
+      g: '系統開發 客製 開發 接案 題庫 後台 報價 費用 流程 LINE',
+      u: `${SERVICE_SITE.url}/services/development/`,
+      s: 1,
+    },
+  ];
+  return new Response(JSON.stringify([...servicePages, ...items]), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
   });
 }
