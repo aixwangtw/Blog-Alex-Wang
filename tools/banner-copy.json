@@ -10,14 +10,24 @@
     "platform": "",
     "title": "Codex 安裝教學（上）\nVS Code＋插件版",
     "subtitle": "10 分鐘開始用",
-    "logos": ["vscode", "codex"]
+    "logos": [
+      "vscode",
+      "codex"
+    ],
+    "badgePrefix": "系統開發",
+    "role": "工程師"
   },
   "codex-cli-wsl2-windows": {
     "badge": "Windows 進階",
     "platform": "",
     "title": "Codex 安裝教學（下）\nCodex CLI＋WSL2",
     "subtitle": "終端機與自動化的進階安裝",
-    "logos": ["windows", "codex"]
+    "logos": [
+      "windows",
+      "codex"
+    ],
+    "badgePrefix": "系統開發",
+    "role": "工程師"
   },
   "codex-usage-limit-reset": {
     "badge": "省額度教學",
@@ -36,5 +46,12 @@
     "badge": "IG 圖文",
     "title": "IG 輪播貼文\n尺寸是多少？",
     "subtitle": "1080×1350 一次講清楚"
+  },
+  "from-part-time-to-freelance": {
+    "badge": "轉職心得",
+    "badgePrefix": "系統開發",
+    "role": "工程師",
+    "title": "我如何從打工仔轉職成\n全職接案工程師：沒進\n過軟體業的自學路",
+    "subtitle": "做過 CRM、LINE LIFF 網頁"
   }
 }

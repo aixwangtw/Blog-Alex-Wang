@@ -1,17 +1,18 @@
 import { access, readFile } from 'node:fs/promises';
 
 // 確認目前版本號的頁面分享圖都已生成，避免升版後忘記重跑生成器就部署（og 圖會 404）
-const { pages: VERSION } = JSON.parse(
+const { pages: VERSION, pinned = {} } = JSON.parse(
   await readFile(new URL('../src/data/banner-version.json', import.meta.url), 'utf8'),
 );
 const names = ['home', 'about', 'blog', 'one-on-one', 'faq', 'resources', 'service-home'];
 const missing = [];
 
 for (const name of names) {
+  const version = pinned[name] ?? VERSION;
   try {
-    await access(new URL(`../public/images/pages/${name}-v${VERSION}.png`, import.meta.url));
+    await access(new URL(`../public/images/pages/${name}-v${version}.png`, import.meta.url));
   } catch {
-    missing.push(`public/images/pages/${name}-v${VERSION}.png`);
+    missing.push(`public/images/pages/${name}-v${version}.png`);
   }
 }
 

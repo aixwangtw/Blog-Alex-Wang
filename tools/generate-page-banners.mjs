@@ -43,9 +43,9 @@ const pages = [
   {
     file: 'home',
     badgePrefix: '',
-    badge: '系統開發｜AI 教學',
+    badge: '全職接案工程師',
     title: '系統開發',
-    subtitle: '接案做系統，也教 AI 工具',
+    subtitle: '題庫、後台、LINE 網頁、AI 自動化',
     role: '工程師',
   },
   {
@@ -59,8 +59,10 @@ const pages = [
   {
     file: 'blog',
     badge: '文章總覽',
-    title: 'AI 新手部落格',
+    badgePrefix: '系統開發',
+    title: '系統開發案例與 AI 實作',
     subtitle: '每篇文章，解決一個真實問題',
+    role: '工程師',
   },
   {
     file: 'one-on-one',
@@ -72,21 +74,25 @@ const pages = [
   {
     file: 'faq',
     badge: '問題總整理',
+    badgePrefix: '系統開發',
     title: '常見問題總整理',
-    subtitle: '從真實社群提問找到答案',
+    subtitle: '費用、流程、AI 成本一次看',
+    role: '工程師',
   },
   {
     file: 'resources',
     badge: '免費資源',
+    badgePrefix: '系統開發',
     title: '免費資源',
     subtitle: '免費的 AI 學習資源',
+    role: '工程師',
   },
   {
     file: 'service-home',
     badgePrefix: '',
-    badge: '系統開發｜AI 教學與演講',
+    badge: '客製系統開發',
     title: '系統開發服務',
-    subtitle: '客製系統開發，也教 AI、接演講',
+    subtitle: '客製系統開發，代表案例數學題庫',
     role: '工程師',
   },
 ];
@@ -225,7 +231,7 @@ function buildLayer(page) {
   };
 }
 
-const { pages: VERSION } = JSON.parse(
+const { pages: VERSION, pinned = {} } = JSON.parse(
   await readFile(new URL('../src/data/banner-version.json', import.meta.url), 'utf8'),
 );
 const outputDir = fileURLToPath(new URL('../public/images/pages/', import.meta.url));
@@ -249,6 +255,8 @@ const instructor = await sharp(
 // 檔名帶版本（-v<N>，N 讀自 src/data/banner-version.json）：改版時把版本號 +1 再重跑，
 // 不需要去各平台的偵錯工具手動重新抓取；舊檔保留給已分享的連結。
 for (const page of pages) {
+  // pinned：固定舊版本的頁面（about、one-on-one）不重生，避免被升版的版本號蓋掉
+  if (pinned[page.file] !== undefined) continue;
   const svg = await satori(buildLayer(page), {
     width: WIDTH,
     height: HEIGHT,

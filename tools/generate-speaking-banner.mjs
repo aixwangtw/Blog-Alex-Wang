@@ -48,7 +48,7 @@ function units(text) {
 }
 
 const TITLE_MAX_WIDTH = 525;
-const badgeText = `新手學 AI｜${page.badge}`;
+const badgeText = `Aix 系統開發｜${page.badge}`;
 const titleSize = Math.min(84, Math.floor(TITLE_MAX_WIDTH / units(page.title)));
 
 function buildLayer() {
