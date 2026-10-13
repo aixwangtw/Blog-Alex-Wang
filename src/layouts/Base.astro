@@ -426,6 +426,35 @@ const jsonLd = {
           <span class="hd-mark-t">Aix</span>
         </a>
 
+        <form
+          class="nav-search-form"
+          id="search-chat-form"
+          role="search"
+          data-ga-submit="search_chat_submit"
+          data-ga-label="搜尋站內內容"
+          data-ga-location="search_chat"
+          data-ga-action="search"
+          data-ga-input="#site-search"
+        >
+          <label class="sr-only" for="site-search">搜尋文章、常見問題</label>
+          <button type="submit" class="nav-search-submit" aria-label="送出搜尋" title="送出搜尋">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
+          </button>
+          <input
+            id="site-search"
+            type="search"
+            autocomplete="off"
+            enterkeyhint="search"
+            placeholder="搜尋文章、常見問題…"
+            aria-controls="search-chat-panel"
+            aria-haspopup="dialog"
+            data-ga-button="search_chat_toggle"
+            data-ga-label="搜尋與客服"
+            data-ga-location="header_nav"
+            data-ga-action="open_search"
+          />
+        </form>
+
         <nav class="mainnav" id="mainnav" aria-label="主要導覽">
           <ul>
             {HEADER_NAV.map((item) => (
@@ -522,20 +551,6 @@ const jsonLd = {
                 </div>
               </li>
             ))}
-            <li class="nav-search-item">
-              <button
-              class="nav-search nav-search--inline"
-              type="button"
-              aria-label="搜尋與客服"
-              aria-expanded="false"
-              aria-controls="search-chat-panel"
-              data-search-chat-toggle
-              data-ga-button="search_chat_toggle"
-              data-ga-label="搜尋與客服"
-              data-ga-location="header_nav"
-              data-ga-action="toggle_chat"
-            ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg></button>
-            </li>
             <li class="service-nav-item service-nav-item--accent service-nav-item--link">
               <div class="service-nav-shell">
                 <a
@@ -555,19 +570,6 @@ const jsonLd = {
         </nav>
 
         <div class="hd-tools">
-          <button
-              id="search-chat-toggle"
-              class="nav-search nav-search--bar"
-              type="button"
-              aria-label="搜尋與客服"
-              aria-expanded="false"
-              aria-controls="search-chat-panel"
-              data-search-chat-toggle
-              data-ga-button="search_chat_toggle"
-              data-ga-label="搜尋與客服"
-              data-ga-location="header_nav"
-              data-ga-action="toggle_chat"
-            ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg></button>
           <button
             class="hd-cue"
             id="nav-cue"
@@ -674,24 +676,6 @@ const jsonLd = {
             </article>
           </template>
         </div>
-        <form
-          class="search-chat-form"
-          id="search-chat-form"
-          role="search"
-          data-ga-submit="search_chat_submit"
-          data-ga-label="搜尋站內內容"
-          data-ga-location="search_chat"
-          data-ga-action="search"
-          data-ga-input="#site-search"
-        >
-          <label class="sr-only" for="site-search">搜尋站內文章、教學或工具</label>
-          <input id="site-search" type="search" autocomplete="off" placeholder="輸入你的問題…" />
-          <button type="submit" aria-label="送出搜尋" title="送出搜尋">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-              <path d="M12 19V5M6.5 10.5 12 5l5.5 5.5" />
-            </svg>
-          </button>
-        </form>
       </section>
     </div>
 
@@ -932,10 +916,12 @@ const jsonLd = {
           if (container) container.remove();
           return;
         }
-        var toggles = Array.from(document.querySelectorAll('[data-search-chat-toggle]'));
-        var lastToggle = null;
-        function visibleToggle() {
-          return lastToggle && lastToggle.offsetParent !== null ? lastToggle : toggles.find(function (t) { return t.offsetParent !== null; }) || null;
+        // 輸入框在頁首（logo 旁），面板從輸入框下方展開；輸入的字直接拿去跑面板的站內搜尋
+        var suppressOpen = false;
+        // 窄螢幕（<360px）輸入框只剩約 100px，提示文字縮短才不會被截成半句
+        var shortPlaceholder = window.matchMedia('(max-width: 359px)');
+        function syncPlaceholder() {
+          if (input) input.placeholder = shortPlaceholder.matches ? '搜尋…' : '搜尋文章、常見問題…';
         }
         var panel = document.getElementById('search-chat-panel');
         var closeButton = document.getElementById('search-chat-close');
@@ -978,20 +964,26 @@ const jsonLd = {
             activateRadarTab(radarTabs[nextIndex].getAttribute('data-search-radar-tab'), true);
           });
         });
+        function placePanel() {
+          // 桌機：面板左緣對齊輸入框、頂端貼在輸入框下方；手機由 CSS 改成全寬
+          var anchor = form ? form.getBoundingClientRect() : null;
+          if (!anchor || !panel) return;
+          panel.style.setProperty('--panel-left', Math.max(12, anchor.left) + 'px');
+          panel.style.setProperty('--panel-top', Math.round(anchor.bottom + 10) + 'px');
+        }
         function openSearch() {
           if (!panel) return;
           panel.hidden = false;
           document.body.classList.add('search-chat-open');
-          toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'true'); });
-          // 手機導覽選單若開著，先收起來，免得面板疊在選單上
+          placePanel();
+          // 手機導覽選單若開著（開關按鈕看得到才是手機版；桌機版 aria-expanded 恆為 true），先收起來，免得面板疊在選單上
           var navCue = document.getElementById('nav-cue');
-          if (navCue && navCue.getAttribute('aria-expanded') === 'true') navCue.click();
-          window.setTimeout(function () { input && input.focus(); }, 0);
+          if (navCue && navCue.offsetParent !== null && navCue.getAttribute('aria-expanded') === 'true') navCue.click();
+          if (input && document.activeElement !== input) window.setTimeout(function () { input.focus(); }, 0);
         }
         function closeSearch() {
           if (panel) panel.hidden = true;
           document.body.classList.remove('search-chat-open');
-          toggles.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
         }
         function loadFallback() {
           if (fallbackIndex) return Promise.resolve(fallbackIndex);
@@ -1108,6 +1100,22 @@ const jsonLd = {
             item.classList.toggle('is-active', index === activeResult);
           });
         }
+        // 服務站頁面（課程、演講、系統開發）不在 Pagefind 索引裡，由 search-index.json 裡標 s 的項目補上，
+        // 排在文章結果前面。比對：搜尋字出現在標題／描述／關鍵字，或某個關鍵字出現在搜尋字裡（例如「我想找一對一課程」）。
+        function findPages(query) {
+          var q = query.toLowerCase();
+          return loadFallback().then(function (items) {
+            return items.filter(function (item) {
+              if (!item.s) return false;
+              if ((item.t + item.d + item.g).toLowerCase().indexOf(q) !== -1) return true;
+              return item.g.toLowerCase().split(' ').some(function (word) {
+                return word.length > 1 && q.indexOf(word) !== -1;
+              });
+            }).map(function (item) {
+              return { u: item.u, t: item.t, d: escapeHtml(item.d) };
+            });
+          }).catch(function () { return []; });
+        }
         function searchFallback(query, sequence, faqPromise, reveal) {
           return Promise.all([loadFallback(), faqPromise]).then(function (loaded) {
             if (sequence !== searchSequence) return;
@@ -1126,6 +1134,7 @@ const jsonLd = {
         function executeSearch(query, reveal) {
           var sequence = ++searchSequence;
           var faqPromise = findFaq(query);
+          var pagesPromise = findPages(query);
           box.replaceChildren();
           loadPagefind().then(function (engine) {
             if (!engine) return searchFallback(query, sequence, faqPromise, reveal);
@@ -1134,15 +1143,20 @@ const jsonLd = {
                 return result.data();
               }));
             }).then(function (results) {
-              return faqPromise.then(function (faq) {
+              return Promise.all([faqPromise, pagesPromise]).then(function (loaded) {
+                var faq = loaded[0];
+                var pages = loaded[1];
                 if (!results || sequence !== searchSequence) return;
-                render(results.map(function (result) {
+                var articles = results.map(function (result) {
                   return {
                     u: result.url,
                     t: result.meta && result.meta.title ? result.meta.title : result.url,
                     d: result.excerpt || '',
                   };
-                }), faq);
+                });
+                render(pages.slice(0, 3).concat(articles.filter(function (article) {
+                  return !pages.some(function (page) { return page.u === article.u; });
+                })), faq);
                 if (reveal) revealResults();
               });
             }).catch(function () {
@@ -1164,17 +1178,25 @@ const jsonLd = {
         }
         function closeAndRestoreFocus() {
           closeSearch();
-          var target = visibleToggle();
-          if (target) target.focus();
+          if (input && panel && panel.contains(document.activeElement)) {
+            suppressOpen = true;
+            input.focus();
+            window.setTimeout(function () { suppressOpen = false; }, 0);
+          }
         }
-        toggles.forEach(function (t) {
-          t.addEventListener('click', function () {
-            lastToggle = t;
-            var open = t.getAttribute('aria-expanded') === 'true';
-            if (open) closeSearch();
-            else openSearch();
+        syncPlaceholder();
+        if (shortPlaceholder.addEventListener) shortPlaceholder.addEventListener('change', syncPlaceholder);
+        if (input) {
+          input.addEventListener('focus', function () {
+            if (!suppressOpen) openSearch();
           });
-        });
+          input.addEventListener('click', function () {
+            if (panel && panel.hidden) openSearch();
+          });
+          window.addEventListener('resize', function () {
+            if (panel && !panel.hidden) placePanel();
+          });
+        }
         if (closeButton) {
           closeButton.addEventListener('click', function () {
             closeAndRestoreFocus();
@@ -1186,10 +1208,12 @@ const jsonLd = {
             loadFaqMatcher();
           });
           input.addEventListener('input', function () {
+            if (panel && panel.hidden && input.value) openSearch();
             searchFor(input.value);
           });
           input.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
+              e.preventDefault();
               closeAndRestoreFocus();
               return;
             }
@@ -1219,7 +1243,7 @@ const jsonLd = {
           });
           document.addEventListener('click', function (e) {
             if (!panel || panel.hidden || !container) return;
-            if (container.contains(e.target) || (e.target.closest && e.target.closest('[data-search-chat-toggle]'))) return;
+            if (container.contains(e.target) || (form && form.contains(e.target))) return;
             closeSearch();
           });
           document.addEventListener('keydown', function (e) {
@@ -1383,7 +1407,7 @@ const jsonLd = {
       }
 
       .hd-tools {
-        order: 2;
+        order: 3;
         display: flex;
         align-items: center;
         gap: 6px;
@@ -1446,7 +1470,7 @@ const jsonLd = {
 
       /* ---------- 導覽本體：手機下拉、桌機橫排，同一組 DOM ---------- */
       .mainnav {
-        order: 3;
+        order: 4;
         flex-basis: 100%;
       }
       /* 內距放在 ul 上而且不隨開合改變：這樣 panel.scrollHeight 在任何時候
@@ -1813,7 +1837,7 @@ const jsonLd = {
           font-size: 18px;
         }
         .nav-js .mainnav {
-          order: 2;
+          order: 3;
           flex-basis: auto;
           margin-inline: auto 16px;
           max-height: none;
@@ -1972,7 +1996,7 @@ const jsonLd = {
           font-size: 12.5px;
         }
         .nav-js .hd-tools {
-          order: 3;
+          order: 4;
           margin-inline-end: 0;
         }
       }
@@ -2004,53 +2028,77 @@ const jsonLd = {
       .search-chatbot {
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       }
-      .service-subdomain .search-chatbot,
-      .service-subdomain .nav-search,
-      .service-subdomain .nav-search-item {
+      .service-subdomain .search-chatbot {
         display: none;
       }
       /* 內容站頁面被服務子網域打開時，LINE 鈕也不顯示 */
       .service-subdomain .floating-line {
         display: none;
       }
-      .nav-search {
+      .service-subdomain .nav-search-form {
+        display: none;
+      }
+      /* 頁首搜尋框：logo 右邊。手機夾在 logo 與漢堡鈕之間，桌機固定寬度 */
+      .nav-search-form {
+        order: 2;
+        display: flex;
+        flex: 1 1 0;
+        min-width: 0;
+        align-items: center;
+        height: 40px;
+        margin-inline: 8px;
+        border: 1px solid var(--color-rule-3);
+        border-radius: 999px;
+        background: var(--color-paper);
+        transition: border-color 0.18s var(--ease);
+      }
+      .nav-search-form:focus-within {
+        border-color: var(--color-accent);
+      }
+      .nav-search-submit {
         display: grid;
         flex: none;
-        width: 42px;
-        height: 42px;
+        width: 36px;
+        height: 100%;
         place-items: center;
         padding: 0;
         border: 0;
-        border-radius: 999px;
+        background: transparent;
+        color: var(--color-ink-3);
+        cursor: pointer;
+      }
+      .nav-search-submit svg {
+        width: 17px;
+        height: 17px;
+      }
+      .nav-search-form input {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        padding: 0 12px 0 0;
+        border: 0;
+        outline: 0;
         background: transparent;
         color: var(--color-ink);
-        cursor: pointer;
-        transition: color 0.18s var(--ease), background-color 0.18s var(--ease);
+        font: 400 14px/1 var(--font-sans, inherit);
       }
-      .nav-search svg {
-        width: 21px;
-        height: 21px;
+      .nav-search-form input::placeholder {
+        color: var(--color-ink-3);
       }
-      .nav-search[aria-expanded='true'] {
-        color: var(--color-accent);
-        background: var(--color-accent-tint);
-      }
-      .nav-search-item {
+      .nav-search-form input::-webkit-search-cancel-button {
         display: none;
       }
       @media (min-width: 1024px) {
-        .nav-js .nav-search--bar {
-          display: none;
-        }
-        .nav-js .nav-search-item {
-          display: block;
+        .nav-js .nav-search-form {
+          flex: 0 0 240px;
+          margin-inline: 24px 0;
         }
       }
       .search-chat-panel {
         position: fixed;
         z-index: 90;
-        top: 92px;
-        right: max(20px, calc((100vw - 72rem) / 2 + 40px));
+        top: var(--panel-top, 92px);
+        left: var(--panel-left, 40px);
         width: min(400px, calc(100vw - 24px));
         max-height: calc(100svh - 108px);
         flex-direction: column;
@@ -2391,12 +2439,6 @@ const jsonLd = {
         stroke-linejoin: round;
       }
       @media (max-width: 767px) {
-        .nav-search {
-          width: 44px;
-          height: 44px;
-          border: 1px solid var(--color-ink);
-          border-radius: 6px;
-        }
         .search-chat-panel {
           top: 92px;
           right: 12px;
@@ -2563,10 +2605,6 @@ const jsonLd = {
          :focus-visible 另外寫一份、不設任何條件（見 global.css）。
          ============================================================ */
       @media (hover: hover) and (pointer: fine) {
-        .nav-search:hover {
-          color: var(--color-accent);
-          background: var(--color-accent-tint);
-        }
         .hd-cue:hover {
           border-color: var(--color-ink);
         }
@@ -2612,7 +2650,6 @@ const jsonLd = {
       }
 
       /* 鍵盤焦點：不靠 hover 也要有等價的視覺回饋（不設裝置條件） */
-      .nav-search:focus-visible,
       .search-chat-bar button:focus-visible,
       .search-chat-tabs button:focus-visible,
       .search-chat-entries a:focus-visible,
@@ -2641,7 +2678,6 @@ const jsonLd = {
           scroll-behavior: auto;
         }
         .site-header,
-        .nav-search,
         .hd-cue,
         .hd-cue-b i,
         .mainnav,
