@@ -37,8 +37,8 @@ async function loadFont() {
 
 const page = {
   badge: '官方網站',
-  title: 'AI 新手教學',
-  subtitle: '把複雜工作流程，簡化成對話',
+  title: 'Aix 系統開發',
+  subtitle: '客製系統開發，代表案例數學題庫',
 };
 
 function units(text) {
@@ -49,7 +49,7 @@ function units(text) {
 }
 
 const TITLE_MAX_WIDTH = 525;
-const badgeText = `新手學 AI｜${page.badge}`;
+const badgeText = page.badge;
 const titleSize = Math.min(84, Math.floor(TITLE_MAX_WIDTH / units(page.title)));
 
 function buildLayer() {
@@ -159,7 +159,7 @@ function buildLayer() {
               fontSize: 21,
               color: ACCENT,
             },
-            children: '講師：Alex',
+            children: '工程師：Alex',
           },
         },
       ],
