@@ -10,6 +10,9 @@
 //    只命中主題詞（文章標題與標籤）算 0.25；再看題目本身被問句覆蓋多少、問句有幾個不同的詞段對上題目。
 //    題庫系統文章的題目加權優先（問句提到題庫、考卷、Word… 時加更多）。
 // 4. 分數未達 MATCH_THRESHOLD 就不顯示，交回原本的站內搜尋。
+// 5. 只打一個 2～4 字的中文詞（例如「保固」「維護」「接手」）時，一般打分會因為只有一個詞而被擋掉，
+//    改走 matchSingleTerm：這個詞要在題目或答案裡「整段原文出現」，而且對應的 FAQ 夠獨特才命中；
+//    主題詞（題庫、課程這類整個主題的名字）和太泛的詞不挑題。
 
 const SYNONYMS = [
   [/多少錢|價錢|價格|報價|收費|花費|開銷|成本|要錢|收錢|預算/g, '費用'],
@@ -101,6 +104,9 @@ export function buildFaqIndex(items) {
     question: tokenize(item.q),
     answer: tokenize(item.a),
     topic: tokenize(item.k || ''),
+    topicText: normalize(item.k || ''),
+    questionText: normalize(item.q),
+    answerText: normalize(item.a),
   }));
   const documentFrequency = new Map();
   for (const entry of entries) {
@@ -186,5 +192,46 @@ export function rankFaqs(index, query) {
  */
 export function matchFaq(index, query) {
   const [best] = rankFaqs(index, query);
-  return best && best.score >= MATCH_THRESHOLD ? best : null;
+  if (best && best.score >= MATCH_THRESHOLD) return best;
+  return matchSingleTerm(index, query);
+}
+
+// 單詞查詢最多容許幾題的答案出現這個詞；超過代表這個詞太泛（例如「題庫」「教學」），不挑題
+const SINGLE_TERM_MAX_ANSWER_HITS = 3;
+// 只有答案提到時，最像的那題的詞密度要是第二名的幾倍以上才算有明確贏家
+const SINGLE_TERM_DENSITY_LEAD = 1.5;
+
+function countOccurrences(text, term) {
+  return text.split(term).length - 1;
+}
+
+/**
+ * 只打一個中文詞時的比對。詞要整段出現在原文裡，不是只靠 bigram 拼湊：
+ * 1. 恰好一題的「題目」含這個詞 → 命中那題；有兩題以上的題目含它就不挑（詞太泛）。
+ * 2. 沒有題目含它，看「答案」：最多 3 題的答案含它，且詞密度（出現次數 ÷ 答案長度）最高的一題
+ *    至少是第二名的 1.5 倍（或是唯一一題）→ 命中。
+ * 回傳的分數固定為 MATCH_THRESHOLD，只表示「有命中」。
+ * @param {ReturnType<typeof buildFaqIndex>} index
+ * @param {string} query
+ * @returns {{ item: object, score: number } | null}
+ */
+export function matchSingleTerm(index, query) {
+  const term = normalize(query).replace(STOPWORDS, ' ').replace(/\s+/g, '');
+  if (!/^[\u3400-\u9fff\uf900-\ufaff]{2,4}$/.test(term)) return null;
+
+  // 兩題以上的主題詞（文章標題與標籤）含這個詞，代表它是整個主題的名字（題庫、課程、演講），
+  // 這種詞交給站內搜尋列出文章，不從中挑一題 FAQ
+  if (index.entries.filter((entry) => entry.topicText.includes(term)).length > 1) return null;
+
+  const inQuestion = index.entries.filter((entry) => entry.questionText.includes(term));
+  if (inQuestion.length === 1) return { item: inQuestion[0].item, score: MATCH_THRESHOLD };
+  if (inQuestion.length > 1) return null;
+
+  const inAnswer = index.entries
+    .filter((entry) => entry.answerText.includes(term))
+    .map((entry) => ({ entry, density: countOccurrences(entry.answerText, term) / entry.answerText.length }))
+    .sort((a, b) => b.density - a.density);
+  if (!inAnswer.length || inAnswer.length > SINGLE_TERM_MAX_ANSWER_HITS) return null;
+  if (inAnswer.length > 1 && inAnswer[0].density < inAnswer[1].density * SINGLE_TERM_DENSITY_LEAD) return null;
+  return { item: inAnswer[0].entry.item, score: MATCH_THRESHOLD };
 }
