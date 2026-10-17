@@ -23,7 +23,7 @@ const heroServiceCards = [{ key: 'development', href: '/services/development/', 
 const devShots = {
   main: { src: '/images/blog/math-teacher-question-bank/import-review.jpg', width: 1400, height: 875, alt: '題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目' },
   extras: [
-    { src: '/images/blog/math-teacher-question-bank/ai-similar-triangle.jpg', width: 1400, height: 875, alt: '題庫系統的 AI 出相似題：依一題三角形題目產生相似題與詳解' },
+    { src: '/images/blog/math-teacher-question-bank/ai-similar-triangle.jpg', width: 1400, height: 875, alt: 'Demo 的 AI 出題：依一題三角形題目產生相似題，附圖跟著重畫', caption: 'Demo 畫面：AI 出題' },
     { src: '/images/blog/math-teacher-question-bank/exam-export.jpg', width: 1400, height: 972, alt: '題庫系統的出卷頁：勾選題目、排序後直接匯出考卷' },
   ],
 };
@@ -123,7 +123,7 @@ const schema = [
   <section class="service-dev" id="system-development" aria-labelledby="service-dev-h">
     <p class="service-kicker">系統開發</p>
     <h2 id="service-dev-h">數學題庫系統</h2>
-    <p class="service-section-lead">題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程。代表案例是補習班數學題庫：考卷匯入、AI 辨識審核、AI 出相似題與詳解、出卷與匯出。</p>
+    <p class="service-section-lead">題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程。代表案例是補習班數學題庫：考卷匯入、AI 辨識審核、AI 詳解、出卷與複製到 Word。AI 出題是常見需求，Demo 可以先體驗，正式導入時依需求開發。</p>
     <figure class="service-shot service-shot--main">
       <img src={devShots.main.src} alt={devShots.main.alt} width={devShots.main.width} height={devShots.main.height} loading="lazy" decoding="async" />
     </figure>
@@ -131,6 +131,7 @@ const schema = [
       {devShots.extras.map((shot) => (
         <figure class="service-shot">
           <img src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} loading="lazy" decoding="async" />
+          {shot.caption && <figcaption>{shot.caption}</figcaption>}
         </figure>
       ))}
     </div>
@@ -174,6 +175,7 @@ const schema = [
     .service-dev h2 { margin-top:14px; font:600 clamp(36px, 4.6vw, 60px)/1.15 var(--font-serif, serif); letter-spacing:-.04em; }
     .service-shot { margin:0; }
     .service-shot img { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
+    .service-shot figcaption { margin-top:8px; color:var(--color-ink-2); font-size:14px; line-height:1.6; }
     .service-shot--main { margin-top:36px; }
     .service-shot-row { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:24px; margin-top:24px; }
     .service-dev-links { margin-top:28px; }

@@ -33,7 +33,7 @@ import Base from '../layouts/Base.astro';
 
 <Base
   title="客製化系統開發｜代表案例：數學題庫系統"
-  description="客製化系統開發。代表案例是補習班數學題庫系統：考卷匯入與 AI 辨識審核、AI 出相似題與詳解、出卷與匯出；本站整理這套系統的費用、試用 Demo、常見問題。"
+  description="客製化系統開發。代表案例是補習班數學題庫系統：考卷匯入與 AI 辨識審核、AI 詳解、出卷與複製到 Word（AI 出題可在 Demo 先體驗）；本站整理這套系統的費用、試用 Demo、常見問題。"
   ogImage={pageBannerUrl('home')}
   ogImageAlt="客製化系統開發｜代表案例：數學題庫系統"
 >
@@ -43,7 +43,7 @@ import Base from '../layouts/Base.astro';
         <div class="hero-copy hero-reveal" style="--d:0ms">
           <p class="hero-kicker">代表案例：數學題庫系統</p>
           <h1 id="hero-h"><span class="nb">客製化系統開發</span></h1>
-          <p class="hero-summary">本站整理補習班數學題庫系統的費用、試用Demo、<span class="nb">常見問題</span>。例如：考卷匯入匯出、AI出題與AI詳解，以及<span class="nb">其他客製化功能</span>。</p>
+          <p class="hero-summary">本站整理補習班數學題庫系統的費用、試用Demo、<span class="nb">常見問題</span>。例如：考卷匯入、AI詳解與複製到Word，AI出題可先在Demo體驗，以及<span class="nb">其他客製化功能</span>。</p>
           <div class="hero-actions">
             <a
               class="hero-secondary"
@@ -55,7 +55,7 @@ import Base from '../layouts/Base.astro';
             >找我做系統 <span aria-hidden="true">→</span></a>
             <a
               class="hero-ghost"
-              href="/blog/"
+              href="/blog/math-teacher-question-bank/"
               data-ga-button="hero_blog"
               data-ga-label="看題庫文章"
               data-ga-location="hero_intro"
@@ -85,11 +85,11 @@ import Base from '../layouts/Base.astro';
           <div class="service-copy">
             <p class="service-kicker">代表案例</p>
             <h2>數學題庫系統</h2>
-            <p>幫補習班數學老師把瑣碎的出題流程自動化：上傳考卷由 AI 拆成一題一題，老師對照原卷確認後收進題庫；出卷時勾選、排序，就能匯出圖片或貼進 Word。</p>
+            <p>幫補習班數學老師把瑣碎的出題流程自動化：上傳考卷由 AI 拆成一題一題，老師對照原卷確認後收進題庫；出卷時勾選、排序，就能複製到 Word 或 MathType。</p>
             <ul>
               <li>考卷匯入、AI 辨識與審核</li>
-              <li>AI 出相似題、AI 產生詳解</li>
-              <li>出卷與匯出（PNG、Word、MathType）</li>
+              <li>AI 產生詳解（AI 出題可在 Demo 體驗）</li>
+              <li>出卷與複製到 Word、MathType</li>
             </ul>
             <div class="development-links">
               <a class="service-link" href={DEVELOPMENT_SERVICE.caseArticle} data-ga-button="home_case_article" data-ga-label="看題庫系統完整介紹" data-ga-location="home_development_case" data-ga-action="navigate">看完整介紹 <span aria-hidden="true">→</span></a>
@@ -127,7 +127,7 @@ import Base from '../layouts/Base.astro';
             <div><dt>付款方式</dt><dd>分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。</dd></div>
             <div><dt>開發時程</dt><dd>約兩個月，實際依功能範圍而定；開發過程中需求原則上可以隨時調整。</dd></div>
             <div><dt>主機費用</dt><dd>主機建置依規格約新台幣 5,000 元（一次性），主機基本規格每月約新台幣 500 元。</dd></div>
-            <div><dt>AI 使用費</dt><dd>依實際用量計算，額度由我們協助申請、設定。辨識一份考卷不到 1 元，AI 出一題、寫一題詳解大約 0.1 元；每月多少會依老師匯入的考卷份數和出題、詳解題數幫你估算。</dd></div>
+            <div><dt>AI 使用費</dt><dd>依實際用量計算，額度由我們協助申請、設定。辨識一份考卷不到 1 元，AI 寫一題詳解大約 0.1 元；每月多少會依老師匯入的考卷份數和詳解題數幫你估算。</dd></div>
           </dl>
           <div class="development-cost-actions">
             <a class="development-cost-primary" href={DEVELOPMENT_SERVICE.url} data-ga-button="home_cost_service" data-ga-label="看系統開發服務與合作細節" data-ga-location="home_development_cost" data-ga-action="navigate">看系統開發服務與合作細節 <span aria-hidden="true">→</span></a>
@@ -141,7 +141,7 @@ import Base from '../layouts/Base.astro';
           <div class="instructor-main">
             <p class="service-kicker">題庫系統文章</p>
             <h2 id="instructor-h">數學題庫系統開發紀錄</h2>
-            <p class="instructor-intro">本站以數學題庫系統的案例文章為主：從補習班老師的出題痛點出發，記錄考卷怎麼匯入、AI 怎麼辨識與出題、出卷後怎麼匯出，並附 Demo 可以自己操作。</p>
+            <p class="instructor-intro">本站以數學題庫系統的案例文章為主：從補習班老師的出題痛點出發，記錄考卷怎麼匯入、AI 怎麼辨識與寫詳解、出卷後怎麼複製到 Word，並附 Demo 可以自己操作，Demo 也能體驗 AI 出題。</p>
             <div class="instructor-actions">
               <a class="service-link" href={DEVELOPMENT_SERVICE.caseArticle} data-ga-button="home_qb_article" data-ga-label="看題庫系統完整介紹" data-ga-location="home_qb_articles" data-ga-action="navigate">閱讀題庫系統完整介紹 <span aria-hidden="true">→</span></a>
               <a class="service-link" href="/blog/" data-ga-button="home_qb_blog" data-ga-label="看全部文章" data-ga-location="home_qb_articles" data-ga-action="navigate">看全部文章 <span aria-hidden="true">→</span></a>
@@ -149,8 +149,8 @@ import Base from '../layouts/Base.astro';
           </div>
           <dl class="instructor-facts">
             <div><dt>匯入</dt><dd>考卷匯入<br />AI 辨識與審核</dd></div>
-            <div><dt>出題</dt><dd>AI 出相似題<br />AI 產生詳解</dd></div>
-            <div><dt>出卷</dt><dd>勾選與排序<br />匯出 PNG、Word、MathType</dd></div>
+            <div><dt>AI</dt><dd>AI 產生詳解<br />AI 出題（Demo 可體驗）</dd></div>
+            <div><dt>出卷</dt><dd>勾選與排序<br />複製到 Word、MathType</dd></div>
           </dl>
         </section>
 

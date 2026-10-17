@@ -36,17 +36,17 @@ const developmentFaqs = DEVELOPMENT_FAQ_QUESTIONS.map((question) => {
 const caseArticleUrl = `${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`;
 
 const capabilities = [
-  { title: '題庫與教學系統', description: '考卷匯入、AI 辨識、單元分類、出卷與匯出，代表案例就是下方的數學題庫系統。' },
+  { title: '題庫與教學系統', description: '考卷匯入、AI 辨識、單元分類、出卷與複製到 Word，代表案例就是下方的數學題庫系統。' },
   { title: '後台管理系統', description: '把散在表單、試算表與訊息裡的資料，整理成一套有權限、可查詢的後台，例如 CRM 客戶管理。' },
   { title: 'LINE 相關網頁', description: 'LINE LIFF 網頁、預約與會員功能，讓客戶在 LINE 裡就能完成操作。' },
-  { title: 'AI 自動化流程', description: '把重複的整理、回覆與產出交給 AI，例如 AI 客服、AI 出題與 AI 詳解。' },
+  { title: 'AI 自動化流程', description: '把重複的整理、回覆與產出交給 AI，例如 AI 客服與 AI 詳解；AI 出題可在題庫 Demo 先體驗。' },
 ];
 
 const caseFeatures = [
   '上傳 PDF、Word 或考卷照片，AI 拆成一題一題，老師對照原卷審核',
   '依冊、章分單元，另有難易度、題型、學校、卷別標籤',
-  '出卷區勾選、排序後直接匯出 PNG，或複製到 Word、MathType',
-  'AI 出相似題、AI 產生詳解，老師確認後才收進題庫',
+  '題目列表勾選後，選題目版、詳解版或答與解版，複製到 Word 或 MathType',
+  'AI 產生詳解，老師確認後才收進題庫；AI 出題是常見需求，Demo 可以先體驗，正式導入時依需求開發',
 ];
 
 // 首屏下方三個合作重點（原本在服務站首頁）；時程與付款細節見下方「時程與費用」，同取自 DEVELOPMENT_SERVICE。
@@ -71,7 +71,7 @@ const schema = [
     name: '客製系統開發',
     serviceType: '客製系統開發 / 後台管理系統 / AI 自動化',
     description:
-      'Alex 和開發夥伴承接客製系統開發，用 AI 自動化整理資料、產出內容。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 出題、AI 詳解。',
+      'Alex 和開發夥伴承接客製系統開發，用 AI 自動化整理資料、產出內容。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 詳解；AI 出題可在 Demo 體驗。',
     provider: { '@id': AUTHOR.id },
     areaServed: '台灣',
   },
@@ -105,7 +105,7 @@ const schema = [
         <p class="text-sm font-semibold text-accent">客製系統開發｜題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程</p>
         <h1 class="t-h1 mt-3 font-semibold text-ink">客製化系統開發<span class="mt-2 block text-[0.55em] leading-snug">代表案例：數學題庫系統</span></h1>
         <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
-          補習班數學老師上傳 PDF、Word 或考卷照片，AI 拆成一題一題，老師對照原卷確認後才收進題庫；出卷時勾選、排序，就能匯出 PNG 或貼進 Word。你手上如果也有每天重複整理的資料，可以先試 Demo，再點右下角官方 LINE 跟我們聊。
+          補習班數學老師上傳 PDF、Word 或考卷照片，AI 拆成一題一題，老師對照原卷確認後才收進題庫；出卷時勾選、排序，就能複製到 Word 或 MathType。你手上如果也有每天重複整理的資料，可以先試 Demo，再點右下角官方 LINE 跟我們聊。
         </p>
         <div class="mt-6 flex flex-wrap gap-3">
           <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_demo" data-ga-label="試用 Demo" data-ga-location="development_hero" data-ga-action="external">試用 Demo</a>
