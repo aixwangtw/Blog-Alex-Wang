@@ -1,5 +1,5 @@
 ---
-title: 數學題庫系統介紹：考卷匯入、AI 詳解，補習班老師可以直接試用
+title: 數學題庫系統介紹：考卷匯入、AI 出題、AI 詳解，補習班老師可以直接試用
 description: 幫補習班數學老師把瑣碎的出題流程自動化，不用再挑題挑到青光眼：一次上傳多份 PDF 或考卷照片，AI 幫你把考卷拆成一題一題，老師對照原卷確認後收進題庫；在題目列表勾選題目，就能貼進 Word。Demo 還能試 AI 詳解、AI 出題和學生練習打卡。
 slug: math-teacher-question-bank
 status: draft
