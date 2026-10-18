@@ -13,7 +13,7 @@ faqs:
   - question: 回報的資料存在哪裡？
     answer: 存在你自己架設的主機上。系統架在自己的主機、用自己的網域。
   - question: 可以直接架在 Cloudflare Workers 或 Pages 上嗎？
-    answer: 不行。feedback-desk 是 PHP 程式，要有自己的主機才能架。沒有主機可以租一台 VPS，網域交給 Cloudflare 管理，再用 Cloudflare Tunnel 連到主機。
+    answer: 不行。feedback-desk 用 Laravel（PHP）寫成，需要一般主機上的資料庫和存放截圖的空間。沒有主機可以租一台 VPS，網域交給 Cloudflare 管理，再用 Cloudflare Tunnel 連到主機。
   - question: 手機能用嗎？
     answer: 可以。手機上問題清單會排成一張張卡片，單頁可以看調整說明和附圖、回留言。
   - question: 團隊自己建立的單，客戶看得到嗎？
@@ -60,7 +60,7 @@ feedback-desk 是開源的問題回報工具：[aixwangtw/feedback-desk](https:/
 
 ### 1. 準備主機
 
-feedback-desk 是 PHP 程式，要架在自己的主機上，不能直接架在 Cloudflare Workers 或 Pages。沒有主機可以租一台 VPS，網域交給 Cloudflare 管理，再用 Cloudflare Tunnel 連到主機。系統用自己的網域，回報的單和截圖都存在這台主機上。
+feedback-desk 用 Laravel（PHP）寫成，需要一般主機上的資料庫和存放截圖的空間，不能直接放上 Cloudflare Workers 或 Pages。沒有主機可以租一台 VPS，網域交給 Cloudflare 管理，再用 Cloudflare Tunnel 連到主機。系統用自己的網域，回報的單和截圖都存在這台主機上。
 
 ### 2. 安裝系統
 
