@@ -19,7 +19,7 @@ faqs:
     answer: 一次可以加多個問題，送出後每個問題各自成一張單。每題最多 5 張截圖，每張 10 MB 以內，格式可以是 JPG、PNG 或 WebP。
 ---
 
-feedback-desk 是我們用來跟客戶、團隊夥伴溝通系統問題的回報工具，現在開源在 GitHub：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)，MIT 授權，可以架在自己的主機上免費使用。
+feedback-desk 是我們用來跟客戶、團隊夥伴溝通系統調整的回報工具，現在開源在 GitHub：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)，MIT 授權，可以架在自己的主機上免費使用。
 
 我跟一位補習班老師合作開發[數學題庫系統](/blog/math-teacher-question-bank/)，老師想調整的地方都在這套系統開單。下圖是實際使用的畫面，介面上的「客戶」改稱為「老師」：
 
@@ -67,21 +67,21 @@ feedback-desk 是我們用來跟客戶、團隊夥伴溝通系統問題的回報
 
 我和夥伴分別用 Claude Code 和 Codex 處理這些單，處理結果寫在單上。
 
-## 手機也能用
+## 手機版
 
-手機上清單會排成一張張卡片，單頁的調整說明和留言也能直接看、直接回。
+手機上清單會排成一張張卡片，單頁可以看調整說明、回留言。
 
 <img src="/images/blog/feedback-desk/mobile-list.jpg" alt="示範資料：手機上的問題清單，每題一張卡片，顯示狀態、截圖縮圖和調整說明" width="320">
 
 <img src="/images/blog/feedback-desk/mobile-detail.jpg" alt="示範資料：手機上的單頁，問題說明、調整說明和處理紀錄由上往下排列" width="320">
 
-## 自己架起來用
+## 如何使用
 
-- **MIT 授權**：可以免費使用、修改。
-- **自己的主機與網域**：系統架在自己的主機、用自己的網域，資料存在自己的主機上。
-- **多個專案**：一套系統可以開多個專案，每個專案的單和截圖分開，各自有入口。
-- **稱呼可改**：介面上的稱呼可以換成自己的用語，例如把「客戶」改成「老師」。
-- **登入預填**：登入頁預先填好帳號密碼的功能預設關閉，需要時可以在設定打開。
+### 1. 準備主機
+
+feedback-desk 是 PHP 程式，要架在自己的主機上，不能直接架在 Cloudflare Workers 或 Pages。沒有主機可以租一台 VPS，網域交給 Cloudflare 管理，再用 Cloudflare Tunnel 連到主機。系統用自己的網域，回報的單和截圖都存在這台主機上。
+
+### 2. 安裝系統
 
 安裝步驟寫在 [README](https://github.com/aixwangtw/feedback-desk)。可以把 repo 網址交給 Claude Code、Codex 這類 AI Agent，請它照 README 安裝：
 
@@ -90,4 +90,14 @@ feedback-desk 是我們用來跟客戶、團隊夥伴溝通系統問題的回報
 https://github.com/aixwangtw/feedback-desk
 ```
 
-要架這套系統，需要一台自己的主機。沒有的話可以租一台 VPS，網域交給 Cloudflare 管理，再用 Cloudflare Tunnel 連到主機。feedback-desk 是 PHP 程式，不能直接架在 Cloudflare Workers 或 Pages 上。
+介面上的稱呼可以在設定換成自己的用語，例如把「客戶」改成「老師」、「開發團隊」改成「開發者」。
+
+### 3. 建立專案
+
+一套系統可以開多個專案，每個專案的單和截圖分開。建立專案時會產生兩個入口連結，一個給客戶、一個給團隊。連結只顯示這一次，請先存進密碼管理器；弄丟了可以重新產生，舊連結會同時失效。
+
+客戶不想用連結的話，也可以替該專案設一組客戶帳號密碼。登入頁預先填好帳號密碼的功能預設關閉，打開後密碼會寫在登入頁上，只適合內部或示範環境使用。
+
+### 4. 傳連結給客戶
+
+把客戶入口連結傳給客戶，客戶打開後就能在問題清單按「新增問題」開單。團隊用自己的入口連結處理，流程跟上面的「回報流程」一樣。
