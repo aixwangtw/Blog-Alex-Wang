@@ -169,7 +169,7 @@ https://github.com/mattpocock/skills</code></pre>
     <!-- ---------- 開源工具：feedback-desk ---------- -->
     <SectionHeading size="md" class="mt-16">開源工具：feedback-desk 回報系統</SectionHeading>
     <p class="mt-5 leading-8 text-ink-2">
-      跟客戶、團隊夥伴溝通系統問題的回報工具：客戶開單附截圖，團隊改好後在同一張單寫調整說明，客戶確認後結案。MIT 授權，架在自己的主機、用自己的網域。
+      跟客戶、團隊夥伴溝通系統問題的回報工具：客戶開單附截圖，團隊改好後在同一張單寫調整說明，客戶確認後結案。MIT 授權，部署到自己的 Cloudflare 帳號，只用免費方案；Claude Code、Codex 可以透過 MCP 直接處理單。
     </p>
     <div class="mt-7 overflow-hidden border border-rule bg-white/40">
       <a href="/blog/feedback-desk/" class="group grid h-full items-center no-underline sm:grid-cols-2">
@@ -211,7 +211,7 @@ https://github.com/aixwangtw/feedback-desk</code></pre>
             aria-label="複製 feedback-desk 安裝提示"
           >複製</button>
         </div>
-        <p class="mt-3 text-sm leading-6 text-ink-3">需要一台自己的主機。沒有的話可以租 VPS，網域交給 Cloudflare 並用 Tunnel 連到主機；不能直接架在 Cloudflare Workers 或 Pages。</p>
+        <p class="mt-3 text-sm leading-6 text-ink-3">需要 Node.js 20 以上和一個 Cloudflare 免費帳號，不需要自己的主機；第一次部署要在瀏覽器登入 Cloudflare 一次。想自己掌控主機或需要自動處理，可以用 GitHub 上的 laravel 分支。</p>
       </div>
     </div>
 
