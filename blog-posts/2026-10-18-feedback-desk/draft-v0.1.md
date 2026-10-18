@@ -5,6 +5,7 @@ slug: feedback-desk
 status: published
 featured: false
 pubDate: 2026-10-18
+updatedDate: 2026-10-19
 tags: [開源工具, 客製開發, 回報系統]
 faqs:
   - question: feedback-desk 要付費嗎？
@@ -31,35 +32,29 @@ feedback-desk 是開源的問題回報工具：[aixwangtw/feedback-desk](https:/
 
 我用 Claude Code 處理客戶開的單：讀單、改程式、在測試站驗收截圖、寫一段給客戶看的調整說明並附上截圖，再把單改成「待審核」。客戶看過說明和圖，確認沒問題才結案。需求、處理結果和確認都在同一張單上，Claude Code 自己讀單、看附圖，我不用把需求轉貼給它。
 
-我跟一位補習班老師合作開發[數學題庫系統](/blog/math-teacher-question-bank/)，老師想調整的地方都在這套系統開單。下圖是實際使用的畫面，介面上的「客戶」改稱為「老師」：
-
-<img src="/images/blog/feedback-desk/teacher-list.jpg" alt="實際使用中的問題清單：介面稱呼改為老師，共 4 題，分別是待處理、待審核和已完成" width="720">
+我跟一位補習班老師合作開發[數學題庫系統](/blog/math-teacher-question-bank/)，老師想調整的地方都在這套系統開單。
 
 ## 回報流程
 
-一張單有三種狀態：待處理、待審核、已完成。以下截圖用的是虛構的「晴天咖啡 線上訂位系統」示範資料。
+下圖是數學題庫系統實際使用的問題清單，介面上的「客戶」改稱為「老師」。
+
+<img src="/images/blog/feedback-desk/teacher-list.jpg" alt="數學題庫系統實際使用的問題清單：上方說明待處理、待審核、已完成三種狀態，表格共 4 題，第 1 題待處理、第 2 題待審核並附調整說明、第 3 和第 4 題已完成" width="720">
 
 ### 1. 開單附截圖
 
-客戶在問題清單按「新增問題」，寫下想調整的地方、附上截圖。一次可以加多個問題，送出後每個問題各自成一張單，狀態是「待處理」。
-
-<div class="img-row"><a href="/images/blog/feedback-desk/client-new-issue.jpg" style="--r:1.42"><img src="/images/blog/feedback-desk/client-new-issue.jpg" alt="示範資料（虛構的晴天咖啡）：新增問題視窗，填問題標題、問題說明、上傳截圖，下方可以再加一個問題或送出全部問題" width="1400" height="984" loading="lazy"></a><a href="/images/blog/feedback-desk/client-list.jpg" style="--r:0.95"><img src="/images/blog/feedback-desk/client-list.jpg" alt="示範資料（虛構的晴天咖啡）：客戶看到的問題清單，上方說明三種狀態，表格列出每題的狀態、圖片和調整說明" width="1400" height="1478" loading="lazy"></a></div>
+客戶在問題清單按「新增問題」，寫下想調整的地方、附上截圖。一次可以加多個問題，送出後每個問題各自成一張單，狀態是「待處理」，例如圖中第 1 題。
 
 ### 2. 用 Claude Code 處理單
 
-我請 Claude Code 讀單、看客戶附的截圖，改好程式後在測試站實際操作驗收、截圖。接著寫調整說明附上截圖，內容講原因、做了哪些調整、調整後的結果，不用技術用語。最後把狀態改成「待審核」。
+我請 Claude Code 讀單、看客戶附的截圖，改好程式後在測試站實際操作驗收、截圖。接著寫調整說明附上截圖，內容講原因、做了哪些調整、調整後的結果，不用技術用語。最後把狀態改成「待審核」。圖中第 2 題就是 Claude Code 處理完、等老師確認的單。
 
 讀單、寫調整說明、改狀態都有現成的指令，Claude Code 照提示詞操作就能跑完整圈，不用查資料庫，提示詞在下方「如何使用」第 5 步。我的夥伴則用 Codex 處理單。
 
 團隊也可以在網頁上自己寫調整說明，或在看板把卡片拖到另一欄改狀態。調整說明只有團隊能寫，客戶只能看。
 
-<div class="img-row"><a href="/images/blog/feedback-desk/team-kanban.jpg" style="--r:0.725"><img src="/images/blog/feedback-desk/team-kanban.jpg" alt="示範資料（虛構的晴天咖啡）：團隊端看板，待處理、待審核、已完成三欄，每張卡片顯示編號、建立者和調整說明" width="1400" height="1930" loading="lazy"></a><a href="/images/blog/feedback-desk/team-detail.jpg" style="--r:1.64"><img src="/images/blog/feedback-desk/team-detail.jpg" alt="示範資料（虛構的晴天咖啡）：團隊端的單頁，調整說明附圖下方有僅開發團隊可用的編輯調整說明" width="1400" height="853" loading="lazy"></a></div>
-
 ### 3. 確認調整結果
 
-客戶打開單看調整說明和附圖，確認沒問題就改成「已完成」。還有問題就在下方的處理紀錄留言，客戶和團隊都能留言、附圖。手機上也能看單、回留言。
-
-<div class="img-row"><a href="/images/blog/feedback-desk/client-detail.jpg" style="--r:0.86"><img src="/images/blog/feedback-desk/client-detail.jpg" alt="示範資料（虛構的晴天咖啡）：客戶端的單頁，依序是問題說明、調整說明附圖、處理紀錄留言串和補充訊息輸入框" width="1400" height="1625" loading="lazy"></a><a href="/images/blog/feedback-desk/mobile-detail.jpg" style="--r:0.29"><img src="/images/blog/feedback-desk/mobile-detail.jpg" alt="示範資料（虛構的晴天咖啡）：手機上的單頁，問題說明、調整說明和處理紀錄由上往下排列" width="390" height="1340" loading="lazy"></a></div>
+客戶打開單看調整說明和附圖，確認沒問題就改成「已完成」，例如圖中第 3、4 題。還有問題就在單頁下方的處理紀錄留言，客戶和團隊都能留言、附圖。手機上也能看單、回留言。
 
 ## 如何使用
 
