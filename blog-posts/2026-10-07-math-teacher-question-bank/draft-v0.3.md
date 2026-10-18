@@ -81,6 +81,8 @@ faqs:
 - **複製到 Word**：貼上後，公式可以在 Word 裡直接編輯。
 - **複製（MathType 用）**：給習慣用 MathType 的老師。
 
+<img src="/images/blog/math-teacher-question-bank/question-export.jpg" alt="題目列表的匯出視窗：上方選題目、詳解或答與解版本，下方選複製到 Word 或複製（MathType 用）" width="720">
+
 ## AI 詳解與 AI 出題
 
 - **AI 詳解**：一鍵產生詳解草稿，老師確認或修改後存檔；也可以自己寫，或上傳詳解截圖。
@@ -125,6 +127,10 @@ AI 額度用完時，老師可以選「用完就停」或「自動切換」到�
   - 可以建群組、加好友
 - 訂閱方案
   - 學生端可分免費、一般、進階等不同方案
+
+下圖是 Demo 的考卷管理畫面：
+
+<img src="/images/blog/math-teacher-question-bank/exam-manage.jpg" alt="考卷出題頁：左邊從題庫選題，右邊填考卷標頭、選標頭版型，下方是 A4 考卷預覽" width="720">
 
 Demo 目前可以體驗學生端的練習打卡：學生用手機拍照上傳練習、看排行。可以從 Demo 的[學生登入頁](https://demo-question.aixwang.dev/student/login)進去，登入頁已經預填 Demo 學生帳號，按「登入」就能看到學生的手機畫面。
 
