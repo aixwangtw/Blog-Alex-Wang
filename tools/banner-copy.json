@@ -53,5 +53,12 @@
     "role": "工程師",
     "title": "我如何從打工仔轉職成\n全職接案工程師：沒進\n過軟體業的自學路",
     "subtitle": "做過 CRM、LINE LIFF 網頁"
+  },
+  "feedback-desk": {
+    "badgePrefix": "",
+    "badge": "開源工具",
+    "title": "feedback-desk\n開源回報系統",
+    "subtitle": "開單、調整、確認在同一張單",
+    "role": "工程師"
   }
 }

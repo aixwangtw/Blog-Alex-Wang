@@ -14,7 +14,6 @@ import {
   PERSON_SCHEMA,
   SERVICE_SITE,
   SITE,
-  pageBannerUrl,
 } from '../consts';
 import '../styles/global.css';
 
@@ -55,14 +54,6 @@ const DROPDOWN_NAV = [
     subtitle: '免費教學影片、Skills 與學習路線',
     previews: [
       {
-        href: '/resources/',
-        eyebrow: '學習路線',
-        title: '免費資源總整理',
-        description: 'Codex 安裝、可直接交給 AI 安裝的 Skills、Threads 與 Instagram API 教學影片，照順序學。',
-        image: new URL(pageBannerUrl('resources')).pathname,
-        cta: '查看免費資源',
-      },
-      {
         href: 'https://www.instagram.com/reel/DbwqIJkydIQ/',
         eyebrow: '提升開發效率 Skill',
         title: '28 萬顆星開源 Skills，提升開發效率',
@@ -72,6 +63,16 @@ const DROPDOWN_NAV = [
         external: true,
         cta: '領取',
         repo: 'https://github.com/mattpocock/skills',
+      },
+      {
+        href: '/blog/feedback-desk/',
+        eyebrow: '開源回報系統',
+        title: 'feedback-desk 回報系統',
+        description: '跟客戶、團隊夥伴溝通系統問題：客戶開單附截圖，團隊寫調整說明，客戶確認後結案。MIT 開源，架在自己的主機。',
+        image: githubLogo.src,
+        navIcon: githubLogo.src,
+        cta: '領取',
+        repo: 'https://github.com/aixwangtw/feedback-desk',
       },
     ],
   },
@@ -91,6 +92,7 @@ const FOOTER_NAV = [
     label: '領取',
     links: [
       { href: '/resources/', label: '免費資源' },
+      { href: '/blog/feedback-desk/', label: 'feedback-desk 回報系統' },
     ],
   },
   {

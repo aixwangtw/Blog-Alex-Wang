@@ -247,6 +247,13 @@ export const FREE_ENTRY_LINKS = [
     analyticsKey: 'tools',
     analyticsLabel: '免費工具與學習資源',
   },
+  {
+    href: '/blog/feedback-desk/',
+    title: 'feedback-desk 回報系統',
+    description: '開源的回報工具，跟客戶、團隊夥伴溝通系統調整。',
+    analyticsKey: 'feedback_desk',
+    analyticsLabel: 'feedback-desk 回報系統',
+  },
 ] as const;
 
 import BANNER_VERSION from './data/banner-version.json';
