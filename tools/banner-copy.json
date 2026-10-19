@@ -57,8 +57,8 @@
   "feedback-desk": {
     "badgePrefix": "",
     "badge": "開源工具",
-    "title": "feedback-desk\n開源回報系統",
-    "subtitle": "開單、調整、確認在同一張單",
+    "title": "feedback-desk\n開源系統",
+    "subtitle": "客戶工單與 AI 交接",
     "role": "工程師"
   }
 }
