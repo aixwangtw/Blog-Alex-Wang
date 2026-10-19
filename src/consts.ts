@@ -25,8 +25,7 @@ export const SERVICE_SITE = {
 export const DEVELOPMENT_SERVICE = {
   url: `${SERVICE_SITE.url}/services/development/`,
   caseArticle: '/blog/math-teacher-question-bank/',
-  demoUrl: 'https://demo-question.aixwang.dev/admin/auth/login',
-  steps: ['先聊需求，看看你手上的資料', '試用 Demo，確認方向', '確認功能後報價', '分階段開發，每個階段都讓你試用', '上線並教你怎麼用', '持續維護'],
+  steps: ['先聊需求，看看你手上的資料', 'Demo 暫停開放，想試用請私訊', '確認功能後報價', '分階段開發，每個階段都讓你試用', '上線並教你怎麼用', '持續維護'],
   timeline: '開發時程約兩個月，實際依功能範圍而定；開發過程中需求原則上可以隨時調整。',
   payment: '開發費依功能報價，加 LINE 可以免費評估；分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。',
   hosting: '主機建置依規格約新台幣 5,000 元（一次性），主機基本規格每月約新台幣 500 元；AI 使用費依實際用量另計。',
@@ -139,10 +138,10 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
     tags: ['題庫系統'],
     cta: {
       title: '想做一套自己的題庫？',
-      text: '看系統開發服務的合作流程與費用怎麼算，也可以先試用題庫系統的 Demo。',
+      text: '看系統開發服務的合作流程與費用怎麼算；Demo 暫停開放，想試用請私訊。',
       href: DEVELOPMENT_SERVICE.url,
       label: '了解系統\n開發服務',
-      links: [{ href: DEVELOPMENT_SERVICE.demoUrl, label: '試用題庫系統 Demo', external: true }],
+      links: [],
     },
   },
   {
