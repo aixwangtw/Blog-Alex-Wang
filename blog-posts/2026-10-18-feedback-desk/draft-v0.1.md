@@ -81,6 +81,8 @@ AI Agent 透過 MCP 或指令讀單、上傳截圖、寫調整說明、改狀態
 
 ## 多人和多個 AI 怎麼交接？
 
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
+
 每張單上有需求、留言、調整說明和狀態，夥伴或另一個 AI 接手時，讀單就看得到之前的討論和處理紀錄。
 
 <!-- TODO（未上線：認領與交接紀錄、AI 標示）：下面兩段確認上線後才發。 -->
@@ -109,6 +111,8 @@ Cloudflare 版也是我在 Zeabur 倒掉之後做出來的替代方案。
 
 ## 如何使用
 
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
+
 以下指令在 Linux、macOS 的終端機執行，Windows 可以用 WSL。步驟和 GitHub 上的 [README](https://github.com/aixwangtw/feedback-desk#如何安裝與使用) 相同。
 
 ### 1. 準備 Node.js 與 Cloudflare 帳號
@@ -121,6 +125,8 @@ Cloudflare 版也是我在 Zeabur 倒掉之後做出來的替代方案。
 
 ### 2. 產生設定檔
 
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
+
 ```bash
 mkdir my-feedback-desk && cd my-feedback-desk
 npx github:aixwangtw/feedback-desk init --name my-feedback-desk
@@ -129,6 +135,8 @@ npx github:aixwangtw/feedback-desk init --name my-feedback-desk
 `--name` 只能用小寫英文、數字和連字號，會成為網址的一部分。這個資料夾之後部署、更新都要在裡面執行，請保留。
 
 ### 3. 部署到 Cloudflare
+
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
 
 ```bash
 npx github:aixwangtw/feedback-desk deploy
@@ -144,6 +152,8 @@ npx github:aixwangtw/feedback-desk deploy
 
 ### 4. 建立第一個團隊帳號
 
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
+
 在部署的資料夾執行：
 
 ```bash
@@ -158,6 +168,8 @@ npx github:aixwangtw/feedback-desk bootstrap alex --name "Alex"
 
 ### 5. 讓命令列工具登入
 
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
+
 在部署的資料夾執行：
 
 ```bash
@@ -169,6 +181,8 @@ npx github:aixwangtw/feedback-desk login
 授權碼不會放在網址裡，別人傳來的連結沒辦法替你填好。**如果你沒有在自己的終端機執行 login，不要在這個頁面按授權**，授權後對方可以用你的身分讀所有的單、改狀態、管理帳號。授權碼 10 分鐘後過期，過期就重新執行 login。
 
 ### 6. 建立專案、客戶入口與團隊帳號
+
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
 
 ```bash
 npx github:aixwangtw/feedback-desk project create "官網改版" --slug website --client-name "客戶名稱"
@@ -204,6 +218,8 @@ npx github:aixwangtw/feedback-desk developer create amy --name "Amy"
 
 ### 8. 把 MCP 加進 Claude Code、Codex
 
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
+
 先裝好 Claude Code 或 Codex，再執行：
 
 ```bash
@@ -213,6 +229,8 @@ npx github:aixwangtw/feedback-desk mcp install
 Claude Code 和 Codex 各拿到一組獨立的權杖，存在只有你的系統帳號能讀的檔案，不用另外設定環境變數。重開 Claude Code 後輸入 `/mcp`，看到 feedback-desk 已連線就完成了。只裝其中一個可以加 `--claude` 或 `--codex`。
 
 ### 9. 讓 AI Agent 處理單
+
+<!-- TODO：待 e2e 後核對（指令、順序、哪些步驟要人做，與 e2e 驗證後的 README 一致）。 -->
 
 在要修改的程式碼目錄開 Claude Code 或 Codex，貼上下面這段提示詞，把 `website` 換成自己的專案代號。這段提示詞跟 README 的第 9 步相同。
 
