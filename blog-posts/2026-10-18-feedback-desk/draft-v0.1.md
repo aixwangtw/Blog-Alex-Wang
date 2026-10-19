@@ -36,11 +36,11 @@ faqs:
     answer: 一次可以加多個問題，送出後每個問題各自成一張單。每題最多 5 張截圖，每張 10 MB 以內，格式可以是 JPG、PNG 或 WebP。附截圖需要瀏覽器開啟 JavaScript。
 ---
 
-feedback-desk 是我開源的系統開發溝通與 AI 交接系統，MIT 授權：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)。
+feedback-desk 是我開源的系統開發溝通與 AI 交接系統，MIT 授權：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)。它是接案用的客戶工單系統：客戶開單，團隊處理到結案，AI Agent 可以讀單、認領、交接。
 
 我現在同時接 3 個系統開發專案，每個專案都跟一位夥伴一起開發，所以每個專案有客戶、夥伴、我三個人，再加上我和夥伴各自的 AI。訊息分散在各個地方，也沒有統一的 API 讓 AI 讀需求、彼此交接，所以我用 Vibe Coding 自己做了這套。
 
-客戶在上面開單、留言，團隊和 AI Agent 在同一張單上讀需求、寫調整說明。AI Agent 透過 MCP 或命令列處理單，接法見「如何使用」第 8 步。
+AI Agent 透過 MCP 或命令列處理單，接法見「如何使用」第 8 步。
 
 我跟一位補習班老師合作開發[數學題庫系統](/blog/math-teacher-question-bank/)，老師想調整的地方都在這套系統開單。
 
