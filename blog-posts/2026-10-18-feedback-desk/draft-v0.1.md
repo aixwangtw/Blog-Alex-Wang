@@ -1,6 +1,6 @@
 ---
-title: feedback-desk：開源的客戶工單與 AI 交接系統
-description: feedback-desk 是開源的客戶工單與 AI 交接系統：客戶開單，團隊與 AI Agent 處理到結案，多個 AI 可以認領、交接。MIT 授權，Cloudflare 版只用免費方案，不用自己管主機。
+title: feedback-desk：開源的專案溝通、任務追蹤與 AI 交接系統
+description: feedback-desk 是開源的輕量專案溝通、任務追蹤系統，也讓 AI 互相交接：客戶開單，團隊與 AI Agent 處理到結案，多個 AI 可以認領、交接。MIT 授權，Cloudflare 版只用免費方案，不用自己管主機。
 slug: feedback-desk
 status: published
 featured: false
@@ -36,7 +36,7 @@ faqs:
     answer: 一次可以加多個問題，送出後每個問題各自成一張單。每題最多 5 張截圖，每張 10 MB 以內，格式可以是 JPG、PNG 或 WebP。附截圖需要瀏覽器開啟 JavaScript。
 ---
 
-feedback-desk 是我開源的客戶工單與 AI 交接系統，MIT 授權：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)。我接案時用它跟客戶溝通：客戶開單，團隊處理到結案，AI Agent 可以讀單、認領、交接。每張單有狀態、看板、認領和交接紀錄，可以用來追蹤待辦處理到哪、誰在做；排程、優先順序和報表沒有，需要的話要另外搭配專案管理工具。
+feedback-desk 是我開源的輕量專案溝通、任務追蹤系統，也讓 AI 互相交接，MIT 授權：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)。我接案時用它跟客戶溝通：客戶開單，團隊處理到結案，AI Agent 可以讀單、認領、交接。每張單有狀態、看板、認領和交接紀錄，能看出處理到哪、誰在做；排程、優先順序和報表沒有，需要的話要另外搭配專案管理工具。
 
 我現在同時接 3 個系統開發專案，每個專案都跟一位夥伴一起開發，所以每個專案有客戶、夥伴、我三個人，再加上我和夥伴各自的 AI。訊息分散在各個地方，也沒有統一的 API 讓 AI 讀需求、彼此交接，所以我用 Vibe Coding 自己做了這套。
 
