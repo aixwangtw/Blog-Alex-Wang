@@ -5,7 +5,7 @@ slug: feedback-desk
 status: published
 featured: false
 pubDate: 2026-10-18
-updatedDate: 2026-10-19
+updatedDate: 2026-10-20
 tags: [開源工具, 客製開發, 回報系統]
 faqs:
   - question: feedback-desk 要付費嗎？
@@ -36,7 +36,7 @@ faqs:
     answer: 一次可以加多個問題，送出後每個問題各自成一張單。每題最多 5 張截圖，每張 10 MB 以內，格式可以是 JPG、PNG 或 WebP。附截圖需要瀏覽器開啟 JavaScript。
 ---
 
-feedback-desk 是我開源的客戶工單與 AI 交接系統，MIT 授權：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)。我接案時用它跟客戶溝通：客戶開單，團隊處理到結案，AI Agent 可以讀單、認領、交接。
+feedback-desk 是我開源的客戶工單與 AI 交接系統，MIT 授權：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)。我接案時用它跟客戶溝通：客戶開單，團隊處理到結案，AI Agent 可以讀單、認領、交接。每張單有狀態、看板、認領和交接紀錄，可以用來追蹤待辦處理到哪、誰在做；排程、優先順序和報表沒有，需要的話要另外搭配專案管理工具。
 
 我現在同時接 3 個系統開發專案，每個專案都跟一位夥伴一起開發，所以每個專案有客戶、夥伴、我三個人，再加上我和夥伴各自的 AI。訊息分散在各個地方，也沒有統一的 API 讓 AI 讀需求、彼此交接，所以我用 Vibe Coding 自己做了這套。
 
@@ -93,6 +93,25 @@ AI Agent 透過 MCP 或指令讀單、上傳截圖、寫調整說明、改狀態
 - 主機版（laravel 分支）：用 Laravel 寫的，自己準備主機和資料庫架設，可以設定新單進來時由主機上的 Codex 自動處理（實驗功能）。
 
 Cloudflare 版也是我在 Zeabur 倒掉之後做出來的替代方案。
+
+## 跟 Jira 有什麼差別？
+
+Jira 是專案管理工具，有 sprint、backlog、自訂狀態流程、報表和自動化。feedback-desk 只有固定 3 種狀態、看板、認領和交接紀錄，主要做的是提供 MCP，讓 AI Agent 讀單、認領、交接。
+
+讓客戶自己開單、回覆，在 Atlassian 是 Jira Service Management（JSM）的功能。JSM 按 agent（處理單的人）計費，客戶不用授權，人數不限（[JSM 價格頁](https://www.atlassian.com/software/jira/service-management/pricing)）。
+
+Jira 和 JSM 的價格如下，2026 年 10 月查詢，單位美元，是 2026 年 10 月 13 日起的官方定價（[Atlassian 價目表](https://www.atlassian.com/licensing/future-pricing/cloud-pricing/pricing-tables)）。月繳和年繳的算法不同，下面各列一個例子：
+
+- Jira Free：最多 10 人、2 GB 檔案儲存（[Atlassian 說明](https://support.atlassian.com/jira-cloud-administration/docs/explore-jira-cloud-plans/)）。
+- Jira Standard：月繳每人每月 9.70（前 100 人）；年繳 10 人 950 一年。
+- Jira Premium：月繳每人每月 19.60（前 100 人）；年繳 10 人 1,950 一年。
+- Jira Enterprise：只有年繳，1,000 人 179,000 一年。
+- JSM Free：最多 3 個 agent、2 GB 儲存（[Atlassian 說明](https://support.atlassian.com/jira-cloud-administration/docs/explore-jira-cloud-plans/)）。
+- JSM Standard：月繳每個 agent 每月 26.90（前 15 個）；年繳 10 個 agent 2,700 一年。
+- JSM Premium：月繳每個 agent 每月 61.60（前 15 個）；年繳 10 個 agent 6,200 一年。
+- JSM Enterprise：只有年繳，300 個 agent 185,000 一年。
+
+feedback-desk 開源，部署在你自己的 Cloudflare 帳號，只用免費方案的額度，超過額度怎麼算見文末 FAQ「feedback-desk 要付費嗎？」。
 
 ## 如何使用
 
