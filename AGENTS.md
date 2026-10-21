@@ -116,6 +116,10 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
   - 反例：「29.9 萬顆星開源 Skills，提升開發效率」，看不出是誰的 Skills。
   - 正例：「Matt Pocock 開源 Skills 怎麼用？讓 AI 寫程式先問清楚，提升開發效率」。
 
+- 技術文章的檔名、路徑、類別／方法／資料表名一律放表格，內文用白話講。表格放在該節末尾，欄位用「內文說的｜對應檔案／程式」，讀者想查再看；讀者要自己輸入的指令（`/grill-me`、`npx ...`）照常寫在內文。
+  - 反例：「『這題還缺什麼』只寫在 `Question.php` 的 `missingRequirements()`，匯入由 `ProcessQuestionImportAction` 處理。」
+  - 正例：內文寫「這些檢查集中在題目資料的一個判斷裡」，節末表格列「題目資料裡『還缺什麼』的判斷｜`app/Models/Question.php` 的 `missingContentRequirements()`」。
+
 ### 本站錯誤範例（使用者判定為 AI 味或廢話）
 
 原句照錄，對應的通用規則在 de-ai-slop（R 編號）或上面的本站專屬補充。
@@ -137,11 +141,16 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 7. 給使用者確認方向時寫的三句好處：「需求先問清楚：不用做完再打掉重來」「抽出共用元件：改一次，全站跟著改」「模組解耦：改 A 不會壞 B，不用回頭修」。（matt-pocock-skills）
    - 原因：使用者說「太籠統 除非這只是你要跟我確定方向 內文不要」。內文每個好處都要換成題庫系統紀錄裡數得出來的事（哪個功能、哪個檔案、原本幾處改成一處、哪次返工），查不到就不寫。（de-ai-slop R48）
 
+8. 「Matt 的做法是把程式整理成一個個『外面簡單、裡面功能多』的盒子（他叫 deep module，深模組）：一大塊功能包在裡面，外面只留幾個簡單的按鈕，其他程式只透過按鈕用它」（matt-pocock-skills）
+   - 原因：使用者說「這段AI垃圾」。同一件事講兩次、家電比喻沒教會讀者怎麼改程式，題庫系統的實例在後面卻先繞抽象定義。改成第一句講做法、第二句直接講題庫「題目能不能啟用」四個入口都問同一個判斷，術語 deep module 放最後一句。（de-ai-slop R55）
+
 ### 修改紀錄
 
 新的寫在最上面。每筆寫日期、改了什麼規則、起因（哪篇文章的哪句、使用者原話）。
 
 - 2026-10-22
+  - 新增本站專屬「技術文章的檔名、路徑、類別／方法／資料表名一律放表格，內文用白話講」。起因：matt-pocock-skills 內文出現 `ProcessQuestionImportAction`、`CODING_STANDARDS.md`、各 SKILL.md 等名稱。使用者原話：「檔案名稱一律放表格 內文不要一堆」。
+  - de-ai-slop 新增 R55（同一件事不要換句話說兩次；有實例就直接講實例，不先繞抽象比喻），本站錯誤範例收第 8 條。起因：matt-pocock-skills 深模組那段。使用者原話：「Matt 的做法是把程式整理成一個個『外面簡單、裡面功能多』的盒子（他叫 deep module，深模組）：一大塊功能包在裡面，外面只留幾個簡單的按鈕，其他程式只透過按鈕用它 這段AI垃圾」。
   - de-ai-slop R48 補「籠統口號句」反例，本站錯誤範例收第 7 條。起因同上，使用者原話：「太籠統 除非這只是你要跟我確定方向 內文不要」。
   - matt-pocock-skills 流程段改用題庫系統的真實決策舉例，並寫明題庫不是用這套 Skills 做的。使用者原話：「直接把程式碼架構講清楚 全都用題庫系統舉例 DB 前後端 每個節點如何決策」「避免重工所以提升開發效率」。
   - 「介紹工具要介紹作者身分」正例改為口語寫法：年資＋一兩項代表戰績。起因：matt-pocock-skills 作者介紹列了 Total TypeScript、XState、Vercel、AI Hero 四項。使用者原話：「作者介紹可用9年開發經驗大神形容 舉Total TypeScript Vercel戰績就好」。
