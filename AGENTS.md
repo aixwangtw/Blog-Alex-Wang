@@ -120,6 +120,16 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
   - 反例：「『這題還缺什麼』只寫在 `Question.php` 的 `missingRequirements()`，匯入由 `ProcessQuestionImportAction` 處理。」
   - 正例：內文寫「這些檢查集中在題目資料的一個判斷裡」，節末表格列「題目資料裡『還缺什麼』的判斷｜`app/Models/Question.php` 的 `missingContentRequirements()`」。
 
+- 寫新文章或整篇改寫前，先定「包裝」，交給使用者確認後才寫內文。包裝四項：核心詞（一句撐起整篇的說法，例如「避免改 A 壞 B，提升開發效率」）、文章標題、導覽卡片文字、開頭第一句。
+  - 反例：使用者只說要寫一篇，直接產出全文，包裝與內文一起丟給使用者，退回時兩邊都要重寫。
+  - 正例：先列出核心詞、標題、卡片文字、開頭第一句，使用者點頭或改完，才開始寫內文。
+- 寫內文用 Matt Pocock 的三個寫作 skill（已全域安裝於 `~/.claude/skills/`），流程固定：
+  1. `/writing-fragments`：先挖使用者的真實經驗當素材，存成同資料夾的 `fragments.md`。
+  2. `/writing-shape`（或 `/writing-beats`）：依素材逐段成稿，一次只寫一段，使用者點頭才寫下一段。
+  - 反例：matt-pocock-skills 一次寫完全文，再逐題改，被退回十幾輪。
+  - 正例：素材先收進 `fragments.md`，每段寫完停下來等使用者確認，再寫下一段；全文沒有一段是使用者沒看過就上線的。
+- 文章審過才上線（2026-10-22 起）：只改本機草稿或 CMS 的 draft，使用者說「可以發布」才發布。
+
 ### 本站錯誤範例（使用者判定為 AI 味或廢話）
 
 原句照錄，對應的通用規則在 de-ai-slop（R 編號）或上面的本站專屬補充。
@@ -149,6 +159,7 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 新的寫在最上面。每筆寫日期、改了什麼規則、起因（哪篇文章的哪句、使用者原話）。
 
 - 2026-10-22
+  - 新增本站專屬「寫文前先定包裝、內文用三個寫作 skill 逐段成稿、審過才上線」三條。起因：matt-pocock-skills 一次寫完全文後被退回十幾輪。使用者原話：「規則也寫進去 直接開始用這3個整篇文改寫」，前一則確認：「先企劃 包裝 才內容」。
   - 新增本站專屬「技術文章的檔名、路徑、類別／方法／資料表名一律放表格，內文用白話講」。起因：matt-pocock-skills 內文出現 `ProcessQuestionImportAction`、`CODING_STANDARDS.md`、各 SKILL.md 等名稱。使用者原話：「檔案名稱一律放表格 內文不要一堆」。
   - de-ai-slop 新增 R55（同一件事不要換句話說兩次；有實例就直接講實例，不先繞抽象比喻），本站錯誤範例收第 8 條。起因：matt-pocock-skills 深模組那段。使用者原話：「Matt 的做法是把程式整理成一個個『外面簡單、裡面功能多』的盒子（他叫 deep module，深模組）：一大塊功能包在裡面，外面只留幾個簡單的按鈕，其他程式只透過按鈕用它 這段AI垃圾」。
   - de-ai-slop R48 補「籠統口號句」反例，本站錯誤範例收第 7 條。起因同上，使用者原話：「太籠統 除非這只是你要跟我確定方向 內文不要」。
