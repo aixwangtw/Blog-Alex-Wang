@@ -65,8 +65,8 @@ const DROPDOWN_NAV = [
       },
       {
         href: '/blog/feedback-desk/',
-        eyebrow: '開源回報系統',
-        title: 'feedback-desk 回報系統',
+        eyebrow: '開源接案溝通工具',
+        title: '客戶開單，AI Agent 讀單處理到結案',
         description: '跟客戶、團隊夥伴溝通系統問題：客戶開單附截圖，團隊寫調整說明，客戶確認後結案。MIT 開源，部署在自己的 Cloudflare 免費方案。',
         image: githubLogo.src,
         navIcon: githubLogo.src,
@@ -91,7 +91,7 @@ const FOOTER_NAV = [
     label: '領取',
     links: [
       { href: '/resources/', label: '免費資源' },
-      { href: '/blog/feedback-desk/', label: 'feedback-desk 回報系統' },
+      { href: '/blog/feedback-desk/', label: 'feedback-desk 接案溝通工具' },
     ],
   },
   {
@@ -535,6 +535,7 @@ const jsonLd = {
                                   type="button"
                                   class="service-preview-cta"
                                   data-copy-repo={item.repo}
+                                  data-copy-hint={CLAIM_INSTALL_HINT}
                                   data-ga-button={`header_resources_claim_${itemIndex + 1}`}
                                   data-ga-label={item.title}
                                   data-ga-location="header_resources_dropdown"
@@ -870,6 +871,85 @@ const jsonLd = {
       })();
 
       (function () {
+        // 共用提示元件：window.siteToast({ title, text, link })，約 3 秒自動淡出，點擊或 Esc 可提前關閉。
+        var timer = 0;
+        var node = null;
+        function ensureStyle() {
+          if (document.getElementById('site-toast-style')) return;
+          var st = document.createElement('style');
+          st.id = 'site-toast-style';
+          st.textContent =
+            '.site-toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));z-index:2147483000;' +
+            'width:max-content;max-width:min(92vw,420px);box-sizing:border-box;padding:14px 18px;border-radius:4px;' +
+            'background:#16161a;color:#fff;border-left:4px solid #7a2e3b;box-shadow:0 8px 28px rgba(0,0,0,.28);' +
+            'font-size:15px;line-height:1.55;text-align:left;cursor:pointer;pointer-events:auto;' +
+            'transform:translate(-50%,12px);opacity:0;transition:opacity .25s ease,transform .25s ease;overflow-wrap:anywhere}' +
+            '.site-toast.is-visible{opacity:1;transform:translate(-50%,0)}' +
+            '.site-toast strong{display:block;font-weight:700}' +
+            '.site-toast span{display:block;margin-top:2px;color:#e8e4dc}' +
+            '.site-toast a{color:#fff;text-decoration:underline;word-break:break-all}' +
+            '@media (prefers-reduced-motion:reduce){.site-toast{transition:none}}';
+          document.head.appendChild(st);
+        }
+        function hide() {
+          window.clearTimeout(timer);
+          if (!node) return;
+          var n = node;
+          node = null;
+          n.classList.remove('is-visible');
+          window.setTimeout(function () { n.remove(); }, 300);
+        }
+        window.siteToast = function (opts) {
+          ensureStyle();
+          hide();
+          var el = document.createElement('div');
+          el.className = 'site-toast';
+          el.setAttribute('role', 'status');
+          el.setAttribute('aria-live', 'polite');
+          var t = document.createElement('strong');
+          t.textContent = opts.title;
+          el.appendChild(t);
+          if (opts.text) {
+            var d = document.createElement('span');
+            d.textContent = opts.text;
+            el.appendChild(d);
+          }
+          if (opts.link) {
+            var a = document.createElement('span');
+            var l = document.createElement('a');
+            l.href = opts.link;
+            l.textContent = opts.link;
+            l.target = '_blank';
+            l.rel = 'noopener';
+            l.addEventListener('click', function (e) { e.stopPropagation(); });
+            a.appendChild(l);
+            el.appendChild(a);
+          }
+          el.addEventListener('click', hide);
+          document.body.appendChild(el);
+          node = el;
+          window.requestAnimationFrame(function () { el.classList.add('is-visible'); });
+          // 使用者若已被切到新分頁，等回到本分頁才開始計時，避免提示在沒人看時就消失。
+          var wait = opts.link ? 6000 : 3000;
+          function arm() {
+            window.clearTimeout(timer);
+            timer = window.setTimeout(hide, wait);
+          }
+          if (document.hidden) {
+            var onVisible = function () {
+              if (document.hidden) return;
+              document.removeEventListener('visibilitychange', onVisible);
+              if (node === el) arm();
+            };
+            document.addEventListener('visibilitychange', onVisible);
+          } else {
+            arm();
+          }
+        };
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && node) hide(); });
+      })();
+
+      (function () {
         // 「領取」只複製 Repo 網址；預覽卡片則保留為內容入口。
         // 用 data attribute 共用同一套行為，新增領取項目不需再寫一份 JS。
         var copyButtons = document.querySelectorAll('[data-copy-repo]');
@@ -896,6 +976,9 @@ const jsonLd = {
             var copyPromise = navigator.clipboard && navigator.clipboard.writeText
               ? navigator.clipboard.writeText(repo).catch(function () { return legacyCopy(repo); })
               : legacyCopy(repo);
+            // 先發出複製，再於同一個 click 事件內同步開新分頁（使用者手勢仍有效，不會被彈出視窗攔截；
+            // 若等 clipboard 的 Promise 完成才開，Safari／手機會視為非手勢而擋掉）。
+            window.open(repo, '_blank', 'noopener');
             copyPromise.then(function () {
               label.textContent = '已複製';
               button.setAttribute('aria-label', '已複製 Repo 連結');
@@ -903,8 +986,10 @@ const jsonLd = {
                 label.textContent = '領取';
                 button.setAttribute('aria-label', '複製 Repo 連結');
               }, 1800);
+              window.siteToast({ title: '已複製 GitHub 連結', text: button.getAttribute('data-copy-hint') || '' });
             }).catch(function () {
               label.textContent = '複製失敗';
+              window.siteToast({ title: '複製失敗，請手動複製下方連結', link: repo });
             });
           });
         });

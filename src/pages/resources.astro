@@ -257,9 +257,11 @@ https://github.com/aixwangtw/feedback-desk</code></pre>
             document.execCommand('copy');
             textarea.remove();
           }
+          (window as any).siteToast?.({ title: '已複製安裝提示', text: '貼給你的 AI Agent，說「幫我安裝」' });
           button.textContent = '已複製 ✓';
           window.setTimeout(() => (button.textContent = '複製'), 1500);
         } catch {
+          (window as any).siteToast?.({ title: '複製失敗，請手動選取上方文字複製' });
           button.textContent = '請手動複製';
           window.setTimeout(() => (button.textContent = '複製'), 1800);
         }
