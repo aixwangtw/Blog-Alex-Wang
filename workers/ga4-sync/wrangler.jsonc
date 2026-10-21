@@ -1,0 +1,22 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  // GA4 → Directus 同步排程（取代原本 WSL crontab 的 tools/daily-ga4-views-cron.sh）。
+  // 不走 Cloudflare Git 整合，改了要手動部署：npx wrangler deploy -c workers/ga4-sync/wrangler.jsonc
+  // 說明見 docs/ga4-views-sync.md「Cloudflare Worker 排程」。
+  "name": "blog-ga4-sync",
+  "main": "./src/index.mjs",
+  "compatibility_date": "2026-07-01",
+  // tools/lib/traffic-sources-lib.mjs 用 node:crypto 的 createHash 算 source_key。
+  "compatibility_flags": ["nodejs_compat"],
+  // workers.dev 只提供需 MANUAL_TRIGGER_TOKEN 的 POST /run 手動觸發。
+  "workers_dev": true,
+  // 每小時第 17 分（UTC）喚醒；程式內以 3 小時區塊閘門控制實際同步頻率，失敗時下個整點重試。
+  "triggers": {
+    "crons": ["17 * * * *"]
+  },
+  "observability": {
+    "enabled": true
+  }
+  // Secrets（wrangler secret put，不寫進 repo）：
+  //   GA4_PROPERTY_ID、GA4_SERVICE_ACCOUNT_JSON、DIRECTUS_TOKEN、MANUAL_TRIGGER_TOKEN
+}

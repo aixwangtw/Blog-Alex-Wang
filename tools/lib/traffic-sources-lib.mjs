@@ -24,8 +24,9 @@ export function classifySource(source, medium) {
   if (/(^|\.)facebook\.com$/.test(s) || s === 'fb') return 'Facebook';
   if (/(^|\.)line\.me$/.test(s) || s === 'line' || s.includes('liff.line')) return 'LINE';
   if (s.includes('youtube') || s.includes('youtu.be')) return 'YouTube';
-  // Google AI Overview 在 GA4 仍歸 google / organic，無法和一般自然搜尋可靠拆分。
-  if (s === 'google' && m === 'organic') return 'Google 搜尋／AI Overview';
+  // google / organic 同時包含一般搜尋結果與 AI Overview 點擊，GA4 無法拆開；
+  // 標籤只寫「Google 搜尋」，避免被誤讀成 AI 引用流量。明確的 AI 助理來源在上面另列。
+  if (s === 'google' && m === 'organic') return 'Google 搜尋';
   if (s === 'bing' && m === 'organic') return 'Bing 搜尋';
   if (s.includes('yahoo') && (m === 'organic' || m === 'referral')) return 'Yahoo 搜尋';
   // 不叫「直接進入」：這個分類混雜了真的直接輸入網址／書籤，跟從 App／通訊軟體點連結但沒帶

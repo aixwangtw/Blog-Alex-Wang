@@ -1,7 +1,7 @@
 import test from 'node:test'; import assert from 'node:assert/strict';
 import { buildTrafficSourceRows, classifySource } from './traffic-sources-lib.mjs';
 test('classifySource 辨識搜尋、Threads 與帶 UTM 的入口位置', () => {
-  assert.equal(classifySource('google', 'organic'), 'Google 搜尋／AI Overview');
+  assert.equal(classifySource('google', 'organic'), 'Google 搜尋');
   assert.equal(classifySource('l.threads.com', 'referral'), 'Threads');
   assert.equal(classifySource('ig', 'comment'), 'Instagram 留言');
   assert.equal(classifySource('youtube', 'description'), 'YouTube 資訊欄');

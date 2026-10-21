@@ -170,7 +170,7 @@ const PANELS = [
   },
   {
     name: '熱門入口工作階段', icon: 'bar_chart', type: 'bar-chart',
-    note: '依入口分類加總工作階段；Google 自然搜尋包含無法單獨辨識的 AI Overview。',
+    note: '依入口分類加總工作階段；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
     position_x: 1, position_y: 260, width: 60, height: 18,
     options: { collection: 'traffic_sources', xAxis: 'channel', yAxis: 'sessions', function: 'sum', horizontal: true, decimals: 0 },
   },
