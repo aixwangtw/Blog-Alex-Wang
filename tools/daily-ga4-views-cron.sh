@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# 每小時檢查一次、每天實際同步一次 GA4 文章與全站頁面觀看數到 Directus。
-# WSL 若在固定時刻未啟動，會在當天第一次啟動後補跑，不影響網站前台載入。
+# 每小時檢查一次、每 3 小時（00-02、03-05…共 8 個區塊）最多實際同步一次 GA4 文章與全站頁面觀看數到 Directus。
+# GA4 標準資源當日資料處理約需 2-6 小時，更密集同步拿不到更新的數字。
+# 同區塊內已成功就跳過；失敗不寫戳記，下個整點重試。
+# WSL 若在固定時刻未啟動，會在開機後的下一次檢查補跑，不影響網站前台載入。
 #
 # 手動測試：bash tools/daily-ga4-views-cron.sh --force
 # 查看紀錄：cat ~/.cache/aixwang-ga4-views/cron.log
@@ -15,6 +17,7 @@ SKIP_STAMP="$STATE_DIR/last-skip-log"
 LOCK_FILE="$STATE_DIR/sync.lock"
 LOG="$STATE_DIR/cron.log"
 TODAY=$(date +%F)
+BLOCK="$TODAY-$(( $(date +%-H) / 3 ))"
 
 FORCE=0
 [ "${1:-}" = "--force" ] && FORCE=1
@@ -26,7 +29,7 @@ log() { printf '%s  %s\n' "$(date '+%F %T')" "$1" >> "$LOG"; }
 exec 9>"$LOCK_FILE"
 flock -n 9 || exit 0
 
-if [ "$FORCE" -eq 0 ] && [ -f "$RUN_STAMP" ] && [ "$(cat "$RUN_STAMP")" = "$TODAY" ]; then
+if [ "$FORCE" -eq 0 ] && [ -f "$RUN_STAMP" ] && [ "$(cat "$RUN_STAMP")" = "$BLOCK" ]; then
   exit 0
 fi
 
@@ -75,7 +78,7 @@ fi
 status=$((article_status != 0 ? article_status : page_status != 0 ? page_status : daily_status != 0 ? daily_status : source_status))
 
 if [ "$status" -eq 0 ]; then
-  echo "$TODAY" > "$RUN_STAMP"
+  echo "$BLOCK" > "$RUN_STAMP"
   log "成功：文章 $(printf '%s' "$article_output" | tail -n 1)｜頁面 $(printf '%s' "$page_output" | tail -n 1)｜每日 $(printf '%s' "$daily_output" | tail -n 1)｜入口 $(printf '%s' "$source_output" | tail -n 1)"
 else
   log "失敗（exit $status）：$(printf '%s\n%s\n%s\n%s' "$article_output" "$page_output" "$daily_output" "$source_output" | tail -n 6 | tr '\n' ' | ')"
