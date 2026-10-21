@@ -93,7 +93,7 @@ feedback-desk 是一個跑在 Cloudflare Workers 的後端，用 Hono 寫；單�
 - MCP：Claude Code、Codex 這類 AI Agent 直接連上來讀單、寫調整說明、改狀態。
 - HTTP API：CLI 在你自己的電腦上執行，透過 API 操作同一批單；不支援 MCP 的 AI Agent 就用 CLI。
 
-部署、建帳號也用同一支 CLI，它會幫你呼叫 Cloudflare 的 wrangler。
+部署也用同一支 CLI，它會在背後呼叫 Cloudflare 自己的 CLI wrangler；日常讀單、建帳號則是透過 HTTP API。
 
 ## 兩個版本怎麼選？
 
