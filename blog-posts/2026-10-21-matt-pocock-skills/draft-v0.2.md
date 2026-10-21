@@ -1,10 +1,11 @@
 ---
-title: Matt Pocock 的開源 Skills 怎麼用？從 grill-me 問清楚需求到 AI 寫完程式
+title: Matt Pocock 開源 Skills 怎麼用？讓 AI 寫程式先問清楚，提升開發效率
 description: TypeScript 講師 Matt Pocock 把每天開發用的 Skills 開源在 GitHub，發文當下近 30 萬顆星。grill-me 在 AI 動工前一輪一輪問清楚需求，後面接寫規格、切任務卡、寫程式、檢查、檢討。附 Claude Code、Codex 安裝方式。
 slug: matt-pocock-skills
 status: published
 featured: false
 pubDate: 2026-10-21
+updatedDate: 2026-10-22
 tags: [Skills, Matt Pocock, grill-me, AI 開發]
 faqs:
   - question: 不會寫程式也能用 grill-me 嗎？
@@ -19,7 +20,7 @@ faqs:
     answer: 不用。Skills 以 MIT 授權開源，執行時用的是你自己 AI Agent 的方案額度，例如 Claude 或 ChatGPT 的訂閱。
 ---
 
-Matt Pocock 把自己每天寫程式用的 Skills 開源在 GitHub：[mattpocock/skills](https://github.com/mattpocock/skills)，MIT 授權，發文當下近 30 萬顆星。他是 TypeScript 課程 Total TypeScript 的作者，之前是 XState 核心團隊成員、在 Vercel 負責過開發者推廣，現在經營教工程師用 AI 開發的 AI Hero。
+Matt Pocock 把自己每天寫程式用的 Skills 開源在 GitHub：[mattpocock/skills](https://github.com/mattpocock/skills)，MIT 授權，發文當下近 30 萬顆星。他是有 9 年開發經驗的大神，做了 TypeScript 課程 Total TypeScript，也在 Vercel 負責過開發者推廣。
 
 這套裡最多人用的是 `grill-me`：你要 AI 動工之前，它先把你的計畫拷問一頓，問到每個決定都講清楚才開始。
 
@@ -33,6 +34,16 @@ Matt Pocock 把自己每天寫程式用的 Skills 開源在 GitHub：[mattpocock
 | AI 講話太囉嗦，一句話能講完的拖成一大段 | `grill-with-docs`：邊問邊把專案裡的用詞整理起來，之後你跟 AI 講同一套話 |
 | 程式寫完跑不起來 | `tdd`：先寫一個會失敗的測試，再寫程式讓它通過；`diagnosing-bugs`：難找的 bug 照固定步驟一步步抓 |
 | 程式越改越亂 | `to-spec`：寫規格前先跟你確認要改程式的哪幾塊；`improve-codebase-architecture`：定期掃程式碼，找可以整理的地方 |
+
+越改越亂最常見的就是改 A 壞 B：修好登入頁，註冊頁跟著壞掉。Matt 的做法是把程式整理成一個個「外面簡單、裡面功能多」的盒子（他叫 deep module，深模組）：一大塊功能包在裡面，外面只留幾個簡單的按鈕，其他程式只透過按鈕用它。就像家電，你只會按開關，裡面零件換了也不用重學怎麼用。
+
+盒子包好之後，要改的東西和 bug 都集中在盒子裡，修一次，每個用到它的地方都跟著好。測試也只從外面的按鈕測，裡面整個重寫，測試照樣能用；哪裡改壞了，測試會先抓到。
+
+對應的 Skills：
+
+- `improve-codebase-architecture`：輸入 `/improve-codebase-architecture`，它掃整個專案，找出可以包成盒子的地方，做成一份網頁報告；你挑一個，它再跟你一題一題討論怎麼包。它只出報告、不改程式，作者建議每隔幾天跑一次。
+- `codebase-design`：決定要整理哪一塊之後，用它設計盒子外面要留哪些按鈕。可以輸入 `/codebase-design`，AI 遇到設計問題也會自己拿來用。
+- `tdd`：測試只從盒子外面的按鈕測、不碰裡面，之後重構程式時，測試不會跟著亂壞。
 
 ## grill-me 怎麼運作？
 
@@ -160,11 +171,11 @@ npx 是把檔案複製進你的專案，可以自己改，但不會自動更新�
 
 ## 原文依據
 
-作者經歷：[Total TypeScript 首頁](https://www.totaltypescript.com/)（XState 核心團隊、Vercel 開發者推廣）、[GitHub 個人頁](https://github.com/mattpocock)（AI Hero）。
+作者經歷：[Total TypeScript 首頁](https://www.totaltypescript.com/)（Total TypeScript、Vercel 開發者推廣）、[This Dot 的訪談整理](https://www.thisdot.co/blog/get-100k-followers-by-teaching-typescript-with-matt-pocock-author-of-total)（2017 年開始寫網頁程式，9 年開發經驗由此推算）。
 
 以下都對照 mattpocock/skills 在 2026 年 10 月 19 日的版本（commit `5beb35b`）。
 
-- 這套 Skills 在解決什麼問題：[README](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/README.md)
+- 這套 Skills 在解決什麼問題：[README](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/README.md)；改 A 壞 B 與深模組：[codebase-design 的 SKILL.md](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/skills/engineering/codebase-design/SKILL.md)、[codebase-design 說明頁](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/docs/engineering/codebase-design.md)、[improve-codebase-architecture 說明頁](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/docs/engineering/improve-codebase-architecture.md)、[tdd 的 SKILL.md](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/skills/engineering/tdd/SKILL.md)
 - grill-me 怎麼運作：[grilling 的 SKILL.md](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/skills/productivity/grilling/SKILL.md)、[grill-me 說明頁](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/docs/productivity/grill-me.md)、[「回答是就採用建議」的變更紀錄](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/.changeset/grilling-yes-accepts-recommendation.md)
 - 主要流程怎麼走：[ask-matt 的 SKILL.md](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/skills/engineering/ask-matt/SKILL.md)、[implement-spec 說明頁](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/docs/engineering/implement-spec.md)、[CHANGELOG](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/CHANGELOG.md)
 - retro 會檢查什麼：[retro 的 SKILL.md](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/skills/engineering/retro/SKILL.md)、[retro 說明頁](https://github.com/mattpocock/skills/blob/5beb35b040e3de97e54fa9e386d7e42d15c295c2/docs/engineering/retro.md)
