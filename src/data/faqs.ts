@@ -62,12 +62,12 @@ export const RESOURCES_FAQS: Faq[] = [
   {
     question: 'grill-me Skill 怎麼安裝？',
     answer:
-      '複製第二步提供的提示與 mattpocock/skills 連結，直接貼進 Codex 請它安裝。完成後開一個新對話，輸入 /grill-me 即可開始。',
+      '複製第二步提供的提示與 mattpocock/skills 連結，貼進 Codex 或 Claude Code 請它安裝；Claude Code 也可以自己執行 claude plugin install mattpocock-skills@claude-plugins-official。兩種方式選一種，都裝每個 Skill 會出現兩次。完成後開一個新對話，輸入 /grill-me 即可開始。',
   },
   {
     question: '使用 grill-me 需要會寫程式嗎？',
     answer:
-      '不需要。grill-me 的用途是在動工前反問需求、挑戰假設並確認雙方理解，寫網站、規劃工作流程或整理想法都能使用。你只要回答它提出的問題與選擇即可。',
+      '不需要。grill-me 在動工前把計畫攤成一棵決策樹，每回合把現在問得下去的問題一次問完，每題編號並附建議答案，回答「是」就採用建議。AI 查得到的事實它自己查，決定留給你；全部問完、你確認雙方有共識才動工。寫網站、規劃工作流程或整理想法都能使用。',
   },
   {
     question: '只靠免費資源能學會 AI 自動化嗎？',

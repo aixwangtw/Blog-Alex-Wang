@@ -60,5 +60,12 @@
     "title": "feedback-desk\n開源系統",
     "subtitle": "客戶工單與 AI 交接",
     "role": "工程師"
+  },
+  "matt-pocock-skills": {
+    "badgePrefix": "",
+    "badge": "開源 Skills",
+    "title": "Matt Pocock Skills\n讓 AI 先問清楚",
+    "subtitle": "grill-me 到寫完程式的流程",
+    "role": "工程師"
   }
 }
