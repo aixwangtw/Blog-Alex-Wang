@@ -42,3 +42,6 @@ design-history/**/mobile-375.png
 # 舊 logo 備份留本機
 local-preview/logo-backup/
 local-preview/unused-assets/
+
+# Wrangler 本機暫存
+.wrangler/
