@@ -5,7 +5,7 @@ slug: feedback-desk
 status: published
 featured: false
 pubDate: 2026-10-18
-updatedDate: 2026-10-20
+updatedDate: 2026-10-21
 tags: [開源工具, 客製開發, 回報系統]
 faqs:
   - question: feedback-desk 要付費嗎？
@@ -39,8 +39,6 @@ faqs:
 feedback-desk 是我開源的輕量專案溝通、任務追蹤系統，也讓 AI 互相交接，MIT 授權：[aixwangtw/feedback-desk](https://github.com/aixwangtw/feedback-desk)。我接案時用它跟客戶溝通：客戶開單，團隊處理到結案，AI Agent 可以讀單、認領、交接。每張單有狀態、看板、認領和交接紀錄，能看出處理到哪、誰在做；排程、優先順序和報表沒有，需要的話要另外搭配專案管理工具。
 
 我現在同時接 3 個系統開發專案，每個專案都跟一位夥伴一起開發，所以每個專案有客戶、夥伴、我三個人，再加上我和夥伴各自的 AI。訊息分散在各個地方，也沒有統一的 API 讓 AI 讀需求、彼此交接，所以我用 Vibe Coding 自己做了這套。
-
-AI Agent 透過 MCP 或命令列處理單，接法見「如何使用」第 8 步。
 
 我跟一位補習班老師合作開發[數學題庫系統](/blog/math-teacher-question-bank/)，老師想調整的地方都在這套系統開單。
 
@@ -85,6 +83,18 @@ AI Agent 透過 MCP 或指令讀單、上傳截圖、寫調整說明、改狀態
 - 我整理了 AI 寫調整說明的規則，讓 Claude Code 寫的說明簡潔，客戶很快看懂改了什麼、要確認什麼。規則開源在 [de-ai-slop](https://github.com/aixwangtw/de-ai-slop)。
 - 夥伴用 Codex，處理同樣的單。兩邊的 AI 怎麼接續對方的工作，見上一節「多人和多個 AI 怎麼交接？」。
 
+## 系統怎麼組成？
+
+feedback-desk 是一個跑在 Cloudflare Workers 的後端，用 Hono 寫；單、留言、帳號存在 Cloudflare D1 資料庫，截圖存在 Cloudflare R2。
+
+同一個後端有三個入口：
+
+- 網頁：客戶開單、留言、確認結案；團隊看清單和看板、寫調整說明。
+- MCP：Claude Code、Codex 這類 AI Agent 直接連上來讀單、寫調整說明、改狀態。
+- HTTP API：命令列工具在你自己的電腦上執行，透過 API 操作同一批單；不支援 MCP 的 AI Agent 就用命令列。
+
+部署、建帳號也用同一支命令列工具，它會幫你呼叫 Cloudflare 的 wrangler。
+
 ## 兩個版本怎麼選？
 
 兩個版本都開源，放在同一個 GitHub repo 的不同分支：
@@ -92,7 +102,7 @@ AI Agent 透過 MCP 或指令讀單、上傳截圖、寫調整說明、改狀態
 - Cloudflare 版（main 分支）：部署到自己的 Cloudflare 帳號，只用免費方案，不用自己管主機，不熟悉主機架設的人也能用。README 附了請 AI Agent 帶你安裝部署的提示詞，下方「如何使用」就是這個版本的步驟。
 - 主機版（laravel 分支）：用 Laravel 寫的，自己準備主機和資料庫架設，可以設定新單進來時由主機上的 Codex 自動處理（實驗功能）。
 
-Cloudflare 版也是我在 Zeabur 倒掉之後做出來的替代方案。
+Zeabur 倒了之後，我做了 Cloudflare 版當替代方案。
 
 ## 跟 Jira 有什麼差別？
 
