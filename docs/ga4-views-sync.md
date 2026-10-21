@@ -166,9 +166,9 @@ npx wrangler deploy -c workers/ga4-sync/wrangler.jsonc
 
 | 項目 | Free 上限 | 實測（2026-10-21） |
 | --- | --- | --- |
-| Subrequest／次 | 50 | 完整同步 24（OAuth 1、GA4 8、Directus 讀 6、批次寫入約 9）；閘門跳過時 1 |
-| CPU time／次（Cron） | 10 ms | 完整同步約 49 ms；單段 15～22 ms；只換 token＋讀一次約 6～10 ms |
-| Wall time／次（Cron） | 15 分鐘 | 約 10 秒 |
+| Subrequest／次 | 50 | 完整同步 22～24（OAuth 1、GA4 8、閘門讀 1、Directus 讀 6、批次寫入 6～8）；閘門跳過時 1 |
+| CPU time／次（Cron） | 10 ms | 完整同步 38～49 ms（首次排程實跑 38 ms）；單段 15～22 ms；閘門跳過 1 ms |
+| Wall time／次（Cron） | 15 分鐘 | 10～16 秒 |
 | Cron Triggers／帳號 | 5 | 用 1 個 |
 
 **CPU 超過 Free 方案的 10 ms**：官方文件說每個 isolate 有彈性容許「偶爾」超過，但「持續超過會被終止」
@@ -218,6 +218,8 @@ printf '%s' "$GA4_SYNC_TRIGGER_TOKEN" | $W MANUAL_TRIGGER_TOKEN
 換完用上面的 dry-run 手動觸發確認能跑，再到 Google Cloud 停用舊金鑰。secret 更新立即生效，不需重新部署。
 
 ### 退回本機排程
+
+2026-10-22 起本機 crontab 已移除 GA4 這行（內容統計 `daily-stats-cron.sh` 保留）。
 
 Worker 若持續失敗（例如 `exceededCpu`），把這行加回 `crontab -e`，本機腳本會接手：
 
