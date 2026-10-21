@@ -39,7 +39,7 @@ const rest = posts.filter((post) => !post.data.featured && post.id !== PINNED_ID
 
 <Base
   title="部落格｜系統開發案例與 AI 實作"
-  description="Alex 的系統開發案例與 AI 實作紀錄：置頂的數學題庫系統介紹考卷匯入、AI 詳解；其他文章是 Codex 在 Windows 的安裝教學（VS Code 插件版、Codex CLI 與 WSL2），以及我從打工仔轉職全職接案工程師的自學經歷。"
+  description="Alex 的系統開發案例與 AI 實作紀錄：置頂的數學題庫系統介紹考卷匯入、AI 詳解，AI 出題可在 Demo 體驗；其他文章是 Codex 在 Windows 的安裝教學（VS Code 插件版、Codex CLI 與 WSL2），以及我從打工仔轉職全職接案工程師的自學經歷。"
   ogImage={pageBannerUrl('blog')}
   ogImageAlt="Aix 部落格｜系統開發案例與 AI 實作"
   schema={schema}
@@ -63,6 +63,7 @@ const rest = posts.filter((post) => !post.data.featured && post.id !== PINNED_ID
         </a>
         <div class="mt-6 flex flex-wrap gap-x-6 gap-y-3">
           <a href={DEVELOPMENT_SERVICE.url} class="font-semibold text-accent no-underline" data-ga-button="blog_pinned_service" data-ga-label="看系統開發服務" data-ga-location="blog_pinned" data-ga-action="navigate">看系統開發服務 →</a>
+          <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="font-semibold text-accent no-underline" data-ga-button="blog_pinned_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="blog_pinned" data-ga-action="external">試用 Demo ↗</a>
         </div>
       </section>
     )}

@@ -33,7 +33,7 @@ import Base from '../layouts/Base.astro';
 
 <Base
   title="客製化系統開發｜代表案例：數學題庫系統"
-  description="客製化系統開發。代表案例是補習班數學題庫系統：考卷匯入與 AI 辨識審核、AI 詳解、出卷與複製到 Word；本站整理這套系統的費用、常見問題。"
+  description="客製化系統開發。代表案例是補習班數學題庫系統：考卷匯入與 AI 辨識審核、AI 詳解、出卷與複製到 Word（AI 出題可在 Demo 先體驗）；本站整理這套系統的費用、試用 Demo、常見問題。"
   ogImage={pageBannerUrl('home')}
   ogImageAlt="客製化系統開發｜代表案例：數學題庫系統"
 >
@@ -43,7 +43,7 @@ import Base from '../layouts/Base.astro';
         <div class="hero-copy hero-reveal" style="--d:0ms">
           <p class="hero-kicker">代表案例：數學題庫系統</p>
           <h1 id="hero-h"><span class="nb">客製化系統開發</span></h1>
-          <p class="hero-summary">本站整理補習班數學題庫系統的費用、<span class="nb">常見問題</span>。例如：考卷匯入、AI詳解與複製到Word，以及<span class="nb">其他客製化功能</span>。</p>
+          <p class="hero-summary">本站整理補習班數學題庫系統的費用、試用Demo、<span class="nb">常見問題</span>。例如：考卷匯入、AI詳解與複製到Word，AI出題可先在Demo體驗，以及<span class="nb">其他客製化功能</span>。</p>
           <div class="hero-actions">
             <a
               class="hero-secondary"
@@ -88,11 +88,12 @@ import Base from '../layouts/Base.astro';
             <p>幫補習班數學老師把瑣碎的出題流程自動化：上傳考卷由 AI 拆成一題一題，老師對照原卷確認後收進題庫；出卷時勾選、排序，就能複製到 Word 或 MathType。</p>
             <ul>
               <li>考卷匯入、AI 辨識與審核</li>
-              <li>AI 產生詳解</li>
+              <li>AI 產生詳解（AI 出題可在 Demo 體驗）</li>
               <li>出卷與複製到 Word、MathType</li>
             </ul>
             <div class="development-links">
               <a class="service-link" href={DEVELOPMENT_SERVICE.caseArticle} data-ga-button="home_case_article" data-ga-label="看題庫系統完整介紹" data-ga-location="home_development_case" data-ga-action="navigate">看完整介紹 <span aria-hidden="true">→</span></a>
+              <a class="service-link" href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" data-ga-button="home_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="home_development_case" data-ga-action="external">試用 Demo <span aria-hidden="true">↗</span></a>
             </div>
           </div>
           <figure class="service-media">
@@ -140,7 +141,7 @@ import Base from '../layouts/Base.astro';
           <div class="instructor-main">
             <p class="service-kicker">題庫系統文章</p>
             <h2 id="instructor-h">數學題庫系統開發紀錄</h2>
-            <p class="instructor-intro">本站以數學題庫系統的案例文章為主：從補習班老師的出題痛點出發，記錄考卷怎麼匯入、AI 怎麼辨識與寫詳解、出卷後怎麼複製到 Word。Demo 暫停開放，想試用請私訊。</p>
+            <p class="instructor-intro">本站以數學題庫系統的案例文章為主：從補習班老師的出題痛點出發，記錄考卷怎麼匯入、AI 怎麼辨識與寫詳解、出卷後怎麼複製到 Word，並附 Demo 可以自己操作，Demo 也能體驗 AI 出題。</p>
             <div class="instructor-actions">
               <a class="service-link" href={DEVELOPMENT_SERVICE.caseArticle} data-ga-button="home_qb_article" data-ga-label="看題庫系統完整介紹" data-ga-location="home_qb_articles" data-ga-action="navigate">閱讀題庫系統完整介紹 <span aria-hidden="true">→</span></a>
               <a class="service-link" href="/blog/" data-ga-button="home_qb_blog" data-ga-label="看全部文章" data-ga-location="home_qb_articles" data-ga-action="navigate">看全部文章 <span aria-hidden="true">→</span></a>
@@ -148,7 +149,7 @@ import Base from '../layouts/Base.astro';
           </div>
           <dl class="instructor-facts">
             <div><dt>匯入</dt><dd>考卷匯入<br />AI 辨識與審核</dd></div>
-            <div><dt>AI</dt><dd>AI 產生詳解<br />AI 出題</dd></div>
+            <div><dt>AI</dt><dd>AI 產生詳解<br />AI 出題（Demo 可體驗）</dd></div>
             <div><dt>出卷</dt><dd>勾選與排序<br />複製到 Word、MathType</dd></div>
           </dl>
         </section>
