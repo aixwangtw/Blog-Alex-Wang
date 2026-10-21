@@ -249,10 +249,10 @@ export const FREE_ENTRY_LINKS = [
   },
   {
     href: '/blog/feedback-desk/',
-    title: 'feedback-desk 接案溝通工具',
+    title: 'feedback-desk PM溝通工具',
     description: '開源的回報工具，跟客戶、團隊夥伴溝通系統調整。',
     analyticsKey: 'feedback_desk',
-    analyticsLabel: 'feedback-desk 接案溝通工具',
+    analyticsLabel: 'feedback-desk PM溝通工具',
   },
 ] as const;
 
