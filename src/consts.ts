@@ -6,9 +6,9 @@ export const SITE = {
   formerNames: ['AI新手教學', 'AI Beginner Blog'],
   url: 'https://aixwang.dev',
   description:
-    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統。另提供 AI 教學與演講。',
+    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發與 AI 導入，代表案例是補習班數學老師用的題庫系統。另提供 AI 一對一教學與演講。',
   // 頁尾顯示用：不帶「另提供 AI 教學與演講」，結構化資料仍用上面的 description
-  footerDescription: 'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發，代表案例是補習班數學老師用的題庫系統。',
+  footerDescription: 'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發與 AI 導入，代表案例是補習班數學老師用的題庫系統。',
   locale: 'zh-TW',
 };
 
@@ -18,18 +18,21 @@ export const SERVICE_SITE = {
   title: 'Aix 系統開發服務',
   url: 'https://service.aixwang.dev',
   description:
-    '我和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統。另提供 AI 教學與演講。',
+    '我和開發夥伴承接客製系統開發與 AI 導入，談需求時先免費做簡易 Demo，看過再決定要不要簽約；代表案例是數學題庫系統。另提供 AI 一對一教學，手把手帶你用 Claude Code 做出系統、網頁或動畫影片。',
 };
 
-// 系統開發服務頁與首頁共用的事實（流程、時程、付款），內容需與題庫文章 FAQ 第 1 題一致，不得寫開發費金額。
+// 系統開發服務頁與首頁共用的事實（流程、時程、付款、主機），內容取自
+// 〈系統開發、AI 導入費用怎麼算？〉文章（guideArticle），且不得與題庫文章 FAQ 矛盾；不得寫開發費金額。
 export const DEVELOPMENT_SERVICE = {
   url: `${SERVICE_SITE.url}/services/development/`,
   caseArticle: '/blog/math-teacher-question-bank/',
+  guideArticle: '/blog/custom-system-development-demo/',
   demoUrl: 'https://demo-question.aixwang.dev/admin/auth/login',
-  steps: ['先聊需求，看看你手上的資料', '試用 Demo，確認方向', '確認功能後報價', '分階段開發，每個階段都讓你試用', '上線並教你怎麼用', '持續維護'],
-  timeline: '開發時程約兩個月，實際依功能範圍而定；開發過程中需求原則上可以隨時調整。',
+  steps: ['先聊需求：想做什麼、預算、時程、現在用的工具', '免費做簡易 Demo，看過再決定', '確認功能後報價、簽約', '分階段開發，每個階段都讓你試用', '上線並教你怎麼用，一年保固', '保固結束後可簽維護合約'],
+  timeline: '時程依功能多寡估算：以技術上來說，大約兩個月可以完成 5 個左右的複雜功能，我們做過的功能會更快；開發過程中需求原則上可以隨時調整。',
   payment: '開發費依功能報價，加 LINE 可以免費評估；分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。',
-  hosting: '主機建置依規格約新台幣 5,000 元（一次性），主機基本規格每月約新台幣 500 元；AI 使用費依實際用量另計。',
+  hosting: '主機用 Google Cloud（GCP），帳號用你的名義申請，沒用過 GCP 會幫你申請 90 天免費試用（Google 提供 300 美元試用額度）。主機建置約新台幣 5,000 元，只收一次；試用結束、升級成付費帳戶後，基本規格每月約 500 元，規格越高費用越高，費用由你的帳號直接付給 Google。',
+  aiCost: 'AI 費用依實際用量計算，評估時一起估算。',
 };
 
 export const AUTHOR = {
@@ -44,6 +47,8 @@ export const AUTHOR = {
   // Laravel 見轉職文 FAQ（技術棧）與題庫系統本身；對話式拍片、HyperFrames 是教學主題，放最後。
   knowsAbout: [
     '客製系統開發',
+    'AI 導入',
+    'API 串接',
     '後台管理系統',
     'Laravel',
     'LINE LIFF 網頁',
@@ -145,6 +150,18 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
       links: [{ href: DEVELOPMENT_SERVICE.demoUrl, label: '試用題庫系統 Demo', external: true }],
     },
   },
+  // 只有〈系統開發、AI 導入費用怎麼算？〉帶「系統開發」tag。內文已講完流程與費用、最後一段也連了題庫介紹與 Demo，
+  // 文末不再叫讀者去看流程費用或題庫介紹，只留服務頁入口與 LINE。
+  {
+    tags: ['系統開發'],
+    cta: {
+      title: '想聊你的需求嗎？',
+      text: '加 LINE 可以免費評估，點右下角官方 LINE 直接問我；服務頁整理了可以做的系統與做過的案子。',
+      href: DEVELOPMENT_SERVICE.url,
+      label: '了解系統\n開發服務',
+      links: [],
+    },
+  },
   {
     tags: ['客製開發', 'AI 導入'],
     cta: {
@@ -226,7 +243,7 @@ export const COLLABORATION_ENTRY_LINKS = [
   {
     href: `${SERVICE_SITE.url}/services/development/`,
     title: '系統開發',
-    description: '用 AI 自動化整理資料、產出內容，代表案例：數學題庫。',
+    description: 'AI 導入、資料管理、API 串接，先免費看簡易 Demo 再決定。',
     analyticsKey: 'development',
     analyticsLabel: '系統開發服務',
   },
@@ -289,7 +306,7 @@ export const PROFESSIONAL_SERVICE_SCHEMA = {
   '@id': `${SERVICE_SITE.url}/#professionalservice`,
   name: SITE.title,
   url: `${SERVICE_SITE.url}/`,
-  description: '客製系統開發：題庫與教學系統、後台管理系統、LINE 相關網頁與 AI 自動化流程；代表案例是補習班數學題庫系統。',
+  description: '客製系統開發與 AI 導入：AI 導入、資料管理、API 串接（LINE、金流、Google 服務、既有系統），做過數學題庫系統、CRM、背書系統、健檢系統、預約系統、揪團平台等。另提供 AI 一對一教學。',
   image: `${SITE.url}/aixwang-icon.png`,
   address: { '@type': 'PostalAddress', addressCountry: 'TW' },
   areaServed: { '@type': 'Country', name: '台灣' },

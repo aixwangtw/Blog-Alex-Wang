@@ -16,8 +16,11 @@ import {
 } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
-// 服務項目結構化資料只列系統開發；教學與演講是次要服務，入口只留快速入口、頁尾與各自頁面。
-const heroServiceCards = [{ key: 'development', href: '/services/development/', title: '系統開發' }];
+// 2026-10-24 起首頁定位為兩大服務：客製系統開發（含 AI 導入）與 AI 一對一教學；演講入口只留快速入口、頁尾與自己的頁面。
+const heroServiceCards = [
+  { key: 'development', href: '/services/development/', title: '系統開發' },
+  { key: 'course', href: '/course/', title: 'AI 一對一教學' },
+];
 
 // 系統開發區的三張真實截圖：主圖放大，另兩張當輔助。
 const devShots = {
@@ -38,7 +41,7 @@ const entryTabs = [
 ].map((tab) => ({ ...tab, links: tab.links.map((entry) => ({ ...entry, href: absolute(entry.href) })) }));
 
 // <title>、og:title 與 WebPage.name 共用同一個字串，避免兩處漂移
-const pageTitle = 'Aix 系統開發服務｜客製化系統開發、數學題庫系統案例';
+const pageTitle = 'Aix 系統開發服務｜系統開發、AI 導入、AI 一對一教學';
 
 const schema = [
   {
@@ -112,18 +115,20 @@ const schema = [
   <section class="service-hero">
     <div class="service-hero-copy">
       <p class="service-kicker">{SERVICE_SITE.title}</p>
-      <h1><span class="nb">客製系統開發</span></h1>
-      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。和開發夥伴承接客製系統開發，代表案例是補習班用的數學題庫系統。先看案例與合作流程，再加 LINE 聊你的需求。</p>
+      <h1><span class="nb">客製系統開發</span><br /><span class="nb">AI 手把手教學</span></h1>
+      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。和開發夥伴承接客製系統開發與 AI 導入，談需求時先免費做簡易 Demo，看過再決定要不要簽約。也提供付費一對一教學，手把手帶你在自己的電腦上用 Claude Code 做出系統、網頁或動畫影片。</p>
       <div class="service-hero-actions">
         <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
+        <a class="service-hero-ghost" href="/course/" data-ga-button="service_home_course" data-ga-label="看一對一教學" data-ga-location="service_home_hero" data-ga-action="navigate">看一對一教學</a>
       </div>
     </div>
   </section>
 
   <section class="service-dev" id="system-development" aria-labelledby="service-dev-h">
     <p class="service-kicker">系統開發</p>
-    <h2 id="service-dev-h">數學題庫系統</h2>
-    <p class="service-section-lead">題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程。代表案例是補習班數學題庫：考卷匯入、AI 辨識審核、AI 詳解、出卷與複製到 Word。AI 出題是常見需求，Demo 可以先體驗，正式導入時依需求開發。</p>
+    <h2 id="service-dev-h">客製系統開發、AI 導入</h2>
+    <p class="service-section-lead">AI 導入、資料管理、API 串接是我們團隊的強項：讓 AI 讀文件、整理資料、產生報告，做客戶、訂單、庫存這類資料的後台，或接 LINE、金流、Google 服務。做過的系統有 CRM、背書系統、健檢系統、預約系統、揪團平台等。</p>
+    <p class="service-section-lead">下面是代表案例數學題庫系統的畫面：考卷匯入、AI 辨識審核、AI 詳解、出卷與複製到 Word。AI 出題是常見需求，Demo 可以先體驗，正式導入時依需求開發。</p>
     <figure class="service-shot service-shot--main">
       <img src={devShots.main.src} alt={devShots.main.alt} width={devShots.main.width} height={devShots.main.height} loading="lazy" decoding="async" />
     </figure>
@@ -137,6 +142,16 @@ const schema = [
     </div>
     <p class="service-dev-links">
       <a href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_dev" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a>
+      <a href={`${SITE.url}/blog/math-teacher-question-bank/`} data-ga-button="service_home_dev_case" data-ga-label="看題庫系統完整介紹" data-ga-location="service_home_dev" data-ga-action="navigate">看題庫系統完整介紹 <span aria-hidden="true">→</span></a>
+    </p>
+  </section>
+
+  <section class="service-dev service-course" id="ai-tutoring" aria-labelledby="service-course-h">
+    <p class="service-kicker">AI 手把手教學</p>
+    <h2 id="service-course-h">手把手帶你實戰</h2>
+    <p class="service-section-lead">付費一對一教學，三個方案：用 Claude Code 開發含資料庫與自動部署的系統、寫簡單網頁、做動畫影片。在你自己的電腦上做，雙北咖啡廳實體課或線上課，一次 3 小時，依教學項目報價。</p>
+    <p class="service-dev-links">
+      <a href="/course/" data-ga-button="service_home_course_detail" data-ga-label="看教學內容與報價" data-ga-location="service_home_course" data-ga-action="navigate">看教學內容與報價 <span aria-hidden="true">→</span></a>
     </p>
   </section>
 
@@ -153,11 +168,11 @@ const schema = [
   <div class="service-home-cta">
     <Cta
       title="對系統有疑問嗎？"
-      text="先看題庫系統的案例，或試用 Demo 看看適不適合你的需求。"
+      text="加 LINE 可以免費評估，談需求時先免費做簡易 Demo，看過再決定要不要簽約。想自己學著做，可以看一對一教學。"
       label={'了解系統\n開發服務'}
       external={false}
       hint="有問題點右下角官方 LINE 直接問我"
-      links={[]}
+      links={[{ href: '/course/', label: '看一對一教學' }]}
     />
   </div>
 
@@ -170,6 +185,8 @@ const schema = [
     .service-hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:34px; }
     .service-hero-actions a { display:inline-flex; min-height:50px; align-items:center; justify-content:center; padding:0 24px; border:1px solid var(--color-accent); background:var(--color-accent); color:#fff; font-weight:700; text-decoration:none; }
     .service-hero h1 .nb { white-space:nowrap; }
+    .service-hero-actions a.service-hero-ghost { border-color:var(--color-ink); background:transparent; color:var(--color-ink); }
+    .service-dev-links { display:flex; flex-wrap:wrap; gap:12px 28px; }
     .service-lead a { color:var(--color-accent); text-decoration:underline; text-underline-offset:4px; }
     .service-dev { width:min(1120px, calc(100% - 48px)); margin:96px auto 0; padding-top:56px; border-top:1px solid var(--color-rule); }
     .service-dev h2 { margin-top:14px; font:600 clamp(36px, 4.6vw, 60px)/1.15 var(--font-serif, serif); letter-spacing:-.04em; }

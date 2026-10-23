@@ -1,8 +1,8 @@
 ---
 // 系統開發服務頁（service.aixwang.dev/services/development/）。
-// 內容只寫已確認的事實：做過的案例類型、題庫系統功能、流程與付款方式；
-// 流程、時程、付款與主機費用統一取自 consts.ts 的 DEVELOPMENT_SERVICE，
-// 需與題庫文章 FAQ 第 1 題一致，不寫開發費金額。
+// 2026-10-24 起改成通用的客製系統開發介紹，題庫系統降為代表案例。
+// 內容只寫〈系統開發、AI 導入費用怎麼算？〉文章已寫明的事實；
+// 流程、時程、付款與主機費用統一取自 consts.ts 的 DEVELOPMENT_SERVICE，不寫開發費金額。
 import { getCollection } from 'astro:content';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FaqList from '../../components/FaqList.astro';
@@ -14,32 +14,37 @@ import { AUTHOR, DEVELOPMENT_SERVICE, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE,
 import ServiceBase from '../../layouts/ServiceBase.astro';
 import { blogBannerPath } from '../../lib/blog-banner';
 
-// 常見問題：題目與答案一字不改，取自題庫文章 FAQ 裡已有的系統開發題（費用、流程、AI 成本、Demo、其他科目）。
+// 常見問題：題目與答案一字不改，取自〈系統開發、AI 導入費用怎麼算？〉文章的 7 題 FAQ。
+// 2026-10-24 前讀的是題庫文章的系統開發題；新文章的 7 題是通用版（費用、Demo、功能、修改、原始碼、維護、案例），
+// 和題庫文章那幾題講同一批事，兩邊並列會在同一個 FAQPage 出現重複題目，所以只讀新文章，題庫專屬問題連到題庫文章。
 // 找不到就中斷建置，避免文章 FAQ 改題後這裡悄悄變成空的或漂移。
-const caseArticle = (await getCollection('blog')).find((post) => post.id === 'math-teacher-question-bank');
+const posts = await getCollection('blog');
+const guideArticle = posts.find((post) => post.id === 'custom-system-development-demo');
 const DEVELOPMENT_FAQ_QUESTIONS = [
-  '開發怎麼進行？費用怎麼算？',
-  'AI 的使用費用怎麼算？',
-  '可以提供原始碼跟資料庫嗎？',
-  '不想讓題目被外流出去，可以簽保密協議嗎？',
-  '擔心保固結束後找不到人處理怎麼辦？',
-  '除了數學以外，也有其他科目嗎？',
-  '國中、高中都可以用嗎？',
-  '有 Demo 可以試用嗎？',
+  '系統開發的費用怎麼算？可以分期嗎？',
+  '簽約前能先看到 Demo 嗎？要收費嗎？',
+  '包含哪些功能？可以加 AI 嗎？',
+  '做的過程中能不能隨時修改？',
+  '資料和原始碼歸誰？可以簽保密協議嗎？',
+  '保固結束後誰來維護？',
+  '做過什麼案子？',
 ];
 const developmentFaqs = DEVELOPMENT_FAQ_QUESTIONS.map((question) => {
-  const faq = caseArticle?.data.faqs.find((item) => item.question === question);
-  if (!faq) throw new Error(`題庫文章找不到 FAQ「${question}」，請更新 services/development.astro 的題目清單`);
+  const faq = guideArticle?.data.faqs.find((item) => item.question === question);
+  if (!faq) throw new Error(`系統開發文章找不到 FAQ「${question}」，請更新 services/development.astro 的題目清單`);
   return faq;
 });
 
 const caseArticleUrl = `${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`;
+const guideArticleUrl = `${SITE.url}${DEVELOPMENT_SERVICE.guideArticle}`;
+const feedbackDeskUrl = `${SITE.url}/blog/feedback-desk/`;
 
+// 可以做什麼：取自新文章 FAQ「包含哪些功能？可以加 AI 嗎？」
 const capabilities = [
-  { title: '題庫與教學系統', description: '考卷匯入、AI 辨識、單元分類、出卷與複製到 Word，代表案例就是下方的數學題庫系統。' },
-  { title: '後台管理系統', description: '把散在表單、試算表與訊息裡的資料，整理成一套有權限、可查詢的後台，例如 CRM 客戶管理。' },
-  { title: 'LINE 相關網頁', description: 'LINE LIFF 網頁、預約與會員功能，讓客戶在 LINE 裡就能完成操作。' },
-  { title: 'AI 自動化流程', description: '把重複的整理、回覆與產出交給 AI，例如 AI 客服與 AI 詳解；AI 出題可在題庫 Demo 先體驗。' },
+  { title: 'AI 導入', description: '讓 AI 讀文件、整理資料、產生報告、回答常見問題。' },
+  { title: '資料管理', description: '客戶、訂單、學生、庫存這類資料的後台，可以搜尋、匯入匯出、分權限。' },
+  { title: 'API 串接', description: '接 LINE、金流、Google 服務，或你現在已經在用的系統。' },
+  { title: '只做你要的功能', description: '大多數功能都能做，報價只算你要的功能；一開始用不到的可以之後再加。' },
 ];
 
 const caseFeatures = [
@@ -49,14 +54,22 @@ const caseFeatures = [
   'AI 產生詳解，老師確認後才收進題庫；AI 出題是常見需求，Demo 可以先體驗，正式導入時依需求開發',
 ];
 
-// 首屏下方三個合作重點（原本在服務站首頁）；時程與付款細節見下方「時程與費用」，同取自 DEVELOPMENT_SERVICE。
-const developmentHighlights = ['和開發夥伴一起開發', '開發時程約兩個月', '分三期付款'];
+// 上線之後：資料、原始碼、維護（取自新文章同名一節）
+const afterLaunch = [
+  '上線後有一年保固。保固結束後可以簽維護合約；想找其他人接手也可以，我們會配合交接。',
+  '系統和資料都放在你自己的主機上，主機帳號從一開始就是你的名義。需要的話可以簽保密協議，簽約時寫進合約。',
+  '原始碼和資料庫也可以交給你，同樣寫進合約，但交出原始碼後，就不提供一年保固。',
+];
+
+// 首屏下方三個合作重點，細節見下方各節，同取自 DEVELOPMENT_SERVICE 與新文章。
+const developmentHighlights = ['簡易 Demo 免費', '依功能報價、分三期付款', '上線後一年保固'];
 
 const pageToc = [
   { id: 'development-scope', label: '可以做什麼' },
-  { id: 'development-case', label: '代表案例' },
   { id: 'development-process', label: '合作流程' },
   { id: 'development-cost', label: '時程與費用' },
+  { id: 'development-after', label: '上線之後' },
+  { id: 'development-case', label: '做過的案子' },
   { id: 'development-faq', label: '常見問題' },
 ];
 
@@ -69,9 +82,9 @@ const schema = [
     '@type': 'Service',
     '@id': `${DEVELOPMENT_SERVICE.url}#service`,
     name: '客製系統開發',
-    serviceType: '客製系統開發 / 後台管理系統 / AI 自動化',
+    serviceType: '系統開發 / AI 導入 / 資料管理 / API 串接',
     description:
-      'Alex 和開發夥伴承接客製系統開發，用 AI 自動化整理資料、產出內容。代表案例是補習班數學老師用的題庫系統：考卷匯入、AI 詳解；AI 出題可在 Demo 體驗。',
+      'Alex 和開發夥伴承接客製系統開發與 AI 導入。談需求時先免費做簡易 Demo，看過再決定要不要簽約；開發費依功能報價、分三期付款，上線後一年保固。代表案例是補習班數學老師用的題庫系統。',
     provider: { '@id': AUTHOR.id },
     areaServed: '台灣',
   },
@@ -91,37 +104,24 @@ const schema = [
 ---
 
 <ServiceBase
-  title="客製化系統開發服務｜數學題庫系統案例"
-  description="Alex 和開發夥伴承接客製系統開發：題庫與教學系統、後台管理系統、LINE 相關網頁與 AI 自動化流程。代表案例是補習班數學題庫系統，開發時程約兩個月，分三期付款。"
-  ogImage={`${SITE.url}${blogBannerPath('math-teacher-question-bank')}`}
-  ogImageAlt="客製系統開發｜代表案例：數學題庫系統"
+  title="系統開發、AI 導入｜客製系統開發服務，先免費看 Demo 再簽約"
+  description="客製系統開發與 AI 導入：談需求時先免費做簡易 Demo，看過再決定要不要簽約。開發費依功能報價、分三期付款，主機帳號用你的名義，一年保固、可簽保密協議。代表案例：數學題庫系統。"
+  ogImage={`${SITE.url}${blogBannerPath('custom-system-development-demo')}`}
+  ogImageAlt="系統開發、AI 導入：先免費看 Demo 再簽約"
   schema={schema}
 >
   <div class="mx-auto max-w-6xl px-5 py-10 sm:px-6 sm:py-14">
     <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: '客製系統開發' }]} class="mb-8" />
 
-    <section class="grid items-center gap-9 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14">
-      <div>
-        <p class="text-sm font-semibold text-accent">客製系統開發｜題庫與教學系統、後台管理、LINE 網頁、AI 自動化流程</p>
-        <h1 class="t-h1 mt-3 font-semibold text-ink">客製化系統開發<span class="mt-2 block text-[0.55em] leading-snug">代表案例：數學題庫系統</span></h1>
-        <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
-          補習班數學老師上傳 PDF、Word 或考卷照片，AI 拆成一題一題，老師對照原卷確認後才收進題庫；出卷時勾選、排序，就能複製到 Word 或 MathType。你手上如果也有每天重複整理的資料，可以先試 Demo，再點右下角官方 LINE 跟我們聊。
-        </p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_demo" data-ga-label="試用 Demo" data-ga-location="development_hero" data-ga-action="external">試用 Demo</a>
-        </div>
+    <section class="max-w-3xl">
+      <p class="text-sm font-semibold text-accent">客製系統開發｜AI 導入、資料管理、API 串接</p>
+      <h1 class="t-h1 mt-3 font-semibold text-ink">系統開發、AI 導入<span class="mt-2 block text-[0.55em] leading-snug">先免費看 Demo，再決定要不要簽約</span></h1>
+      <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
+        第一次聊，我們會先了解你想做什麼、預算大概多少、希望什麼時候上線，還有你現在用什麼工具。接著依你的需求免費做一個簡易 Demo，讓你看系統大概長什麼樣子、流程對不對；看完覺得不適合，不用付任何費用。
+      </p>
+      <div class="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+        <a href={guideArticleUrl} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_guide" data-ga-label="看費用與合作方式" data-ga-location="development_hero" data-ga-action="navigate">看費用與合作方式</a>
       </div>
-      <video
-        src={`${SITE.url}/videos/math-question-bank-reel.mp4`}
-        poster={`${SITE.url}/images/math-question-bank-reel-poster.webp`}
-        width="720"
-        height="1280"
-        controls
-        preload="metadata"
-        playsinline
-        aria-label="數學題庫系統介紹短影音：AI 辨識紙本考卷、AI 出題、AI 解析答案"
-        class="aspect-[9/16] h-auto w-[min(78%,300px)] justify-self-center border border-rule bg-ink lg:w-[min(340px,calc((100svh-160px)*9/16))]"
-      ></video>
     </section>
 
     <ul class="mt-10 grid border-y border-rule sm:grid-cols-3" aria-label="系統開發合作重點">
@@ -133,7 +133,7 @@ const schema = [
     </ul>
 
     <nav aria-label="系統開發服務目錄" class="mt-8 overflow-x-auto border-y border-rule">
-      <ul class="flex min-w-max sm:grid sm:min-w-0 sm:grid-cols-5">
+      <ul class="flex min-w-max sm:grid sm:min-w-0 sm:grid-cols-6">
         {pageToc.map((item) => (
           <li class="min-w-28 flex-1"><a href={`#${item.id}`} class="block px-3 py-4 text-center font-semibold text-ink transition hover:bg-paper-2 hover:text-accent">{item.label}</a></li>
         ))}
@@ -141,6 +141,7 @@ const schema = [
     </nav>
 
     <SectionHeading id="development-scope" size="md" class="mt-16 scroll-mt-24">可以做什麼</SectionHeading>
+    <p class="mt-4 max-w-3xl leading-8 text-ink-2">大多數功能都能做，AI 導入、資料管理、API 串接是我們團隊的強項。</p>
     <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {capabilities.map((item) => (
         <Card>
@@ -148,21 +149,6 @@ const schema = [
           <p class="mt-3 leading-7 text-ink-2">{item.description}</p>
         </Card>
       ))}
-    </div>
-
-    <SectionHeading id="development-case" size="md" class="mt-16 scroll-mt-24">代表案例：數學題庫系統</SectionHeading>
-    <div class="mt-6 grid items-start gap-8 lg:grid-cols-[1fr_1fr]">
-      <div>
-        <p class="leading-8 text-ink-2">幫補習班數學老師把瑣碎的出題流程自動化，不用再挑題挑到青光眼。</p>
-        <ul class="mt-5 space-y-4">
-          {caseFeatures.map((item) => <CheckItem>{item}</CheckItem>)}
-        </ul>
-        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-3">
-          <a href={caseArticleUrl} class="font-semibold text-accent no-underline" data-ga-button="development_case_article" data-ga-label="看題庫系統完整介紹" data-ga-location="development_case" data-ga-action="navigate">看完整介紹 →</a>
-          <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="font-semibold text-accent no-underline" data-ga-button="development_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="development_case" data-ga-action="external">試用 Demo ↗</a>
-        </div>
-      </div>
-      <img src={`${SITE.url}/images/blog/math-teacher-question-bank/exam-export.jpg`} alt="題庫系統的出卷頁：勾選題目、排序後直接匯出考卷" width="1400" height="972" class="h-auto w-full border border-rule" loading="lazy" decoding="async" />
     </div>
 
     <SectionHeading id="development-process" size="md" class="mt-16 scroll-mt-24">合作流程</SectionHeading>
@@ -174,25 +160,62 @@ const schema = [
         </li>
       ))}
     </ol>
+    <p class="mt-6 max-w-3xl leading-8 text-ink-2">
+      試用時，我會提供一套問題回報系統。想改的地方一個問題開一張單，可以附截圖；我們改好會在單上寫調整說明、附上畫面，你確認沒問題才算完成。這套回報系統是我們自己開發、開源的 <a href={feedbackDeskUrl} class="font-semibold text-accent underline underline-offset-4" data-ga-button="development_process_feedback_desk" data-ga-label="feedback-desk 介紹" data-ga-location="development_process" data-ga-action="navigate">feedback-desk</a>。
+    </p>
 
     <SectionHeading id="development-cost" size="md" class="mt-16 scroll-mt-24">時程與費用</SectionHeading>
     <ul class="mt-6 space-y-4">
       <CheckItem>{DEVELOPMENT_SERVICE.timeline}</CheckItem>
       <CheckItem>{DEVELOPMENT_SERVICE.payment}</CheckItem>
       <CheckItem>{DEVELOPMENT_SERVICE.hosting}</CheckItem>
+      <CheckItem>{DEVELOPMENT_SERVICE.aiCost}</CheckItem>
     </ul>
+
+    <SectionHeading id="development-after" size="md" class="mt-16 scroll-mt-24">上線之後</SectionHeading>
+    <ul class="mt-6 space-y-4">
+      {afterLaunch.map((item) => <CheckItem>{item}</CheckItem>)}
+    </ul>
+
+    <SectionHeading id="development-case" size="md" class="mt-16 scroll-mt-24">做過的案子</SectionHeading>
+    <p class="mt-4 max-w-3xl leading-8 text-ink-2">做過的系統有 CRM、背書系統、健檢系統、預約系統、揪團平台等，代表案例是幫補習班老師做的數學題庫系統。</p>
+    <div class="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14">
+      <div>
+        <h3 class="text-xl font-semibold text-ink">代表案例：數學題庫系統</h3>
+        <p class="mt-3 leading-8 text-ink-2">幫補習班數學老師把瑣碎的出題流程自動化，不用再挑題挑到青光眼。</p>
+        <ul class="mt-5 space-y-4">
+          {caseFeatures.map((item) => <CheckItem>{item}</CheckItem>)}
+        </ul>
+        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+          <a href={caseArticleUrl} class="font-semibold text-accent no-underline" data-ga-button="development_case_article" data-ga-label="看題庫系統完整介紹" data-ga-location="development_case" data-ga-action="navigate">看完整介紹 →</a>
+          <a href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" class="font-semibold text-accent no-underline" data-ga-button="development_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="development_case" data-ga-action="external">試用 Demo ↗</a>
+        </div>
+      </div>
+      <video
+        src={`${SITE.url}/videos/math-question-bank-reel.mp4`}
+        poster={`${SITE.url}/images/math-question-bank-reel-poster.webp`}
+        width="720"
+        height="1280"
+        controls
+        preload="metadata"
+        playsinline
+        aria-label="數學題庫系統介紹短影音：AI 辨識紙本考卷、AI 出題、AI 解析答案"
+        class="aspect-[9/16] h-auto w-[min(78%,300px)] justify-self-center border border-rule bg-ink lg:w-[300px]"
+      ></video>
+    </div>
 
     <SectionHeading id="development-faq" size="md" class="mt-16 scroll-mt-24">常見問題</SectionHeading>
     <div class="mt-6">
       <FaqList faqs={developmentFaqs} />
     </div>
-    <p class="mt-4 text-sm">
-      <a href={caseArticleUrl} class="text-accent underline underline-offset-4">更多問題見題庫系統完整介紹 →</a>
+    <p class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      <a href={guideArticleUrl} class="text-accent underline underline-offset-4">完整說明見〈系統開發、AI 導入費用怎麼算？〉→</a>
+      <a href={caseArticleUrl} class="text-accent underline underline-offset-4">題庫系統的問題見題庫系統完整介紹 →</a>
     </p>
 
     <Cta
       title="對系統有疑問嗎？"
-      text="先試用題庫系統 Demo，確認方向。需求內容很長也沒關係，我跟夥伴都會一一看過再回覆。"
+      text="加 LINE 可以免費評估。想先看做好的系統長什麼樣子，可以試用題庫系統的 Demo，免費、不用註冊。"
       hint="有問題點右下角官方 LINE 直接問我"
       href={DEVELOPMENT_SERVICE.demoUrl}
       label={'試用\n題庫 Demo'}
