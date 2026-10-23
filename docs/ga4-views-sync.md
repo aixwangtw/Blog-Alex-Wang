@@ -104,14 +104,16 @@ YouTube 資訊欄等具體位置無法從未加標記的歷史網址反推；分
 
 入口分類「Google 搜尋」（`google` / `organic`）**同時包含一般搜尋結果與 AI Overview 點擊，GA4 無法分開**，
 不要把這個數字讀成 AI 引用流量（2026-10-21 起從「Google 搜尋／AI Overview」改名，就是因為舊名容易被
-誤讀）。明確的 AI 助理來源另外列（2026-10-23 曾短暫改名「AI 搜尋」，使用者定案後改回「AI 助理」）：來源名含 `chatgpt`／`openai`、`perplexity`、`claude`／`anthropic`、
+誤讀）。明確的 AI 搜尋來源另外列（名稱 2026-10-23 曾在「AI 助理」「AI 搜尋」間來回，定案為「AI 搜尋」，細項依來源拆 ChatGPT、Gemini 等）：來源名含 `chatgpt`／`openai`、`perplexity`、`claude`／`anthropic`、
 `gemini`／`bard.google`、`copilot` 的工作階段分別歸到 ChatGPT、Perplexity、Claude、Gemini、
 Microsoft Copilot（依 `sessionSource` 判斷，見 `tools/lib/traffic-sources-lib.mjs` 的 `classifySource()`）。
-入口分類共 9 類，排序（2026-10-23 定案；「直接或不明來源」「不明」「回訪讀者」「App 內建瀏覽器」名稱都已移除）：
+入口分類共 10 類，排序（2026-10-23 定案；「直接或不明來源」「不明」「回訪讀者」「App 內建瀏覽器」「AI 助理」名稱都已移除）：
 
-1. 依造訪次數多到少：Google 搜尋、Facebook、Threads、Instagram、AI 助理、LINE、站內換頁。
+1. 固定最前：Google 搜尋第一、AI 搜尋第二（不論數字）。
+2. 第三起依造訪次數多到少：Facebook、Threads、Instagram、LINE、YouTube、站內換頁；0 排此區最後。
    LINE 只算 GA4 來源為 `line`（連結帶 `utm_source=line`，包含文章的 LINE 分享按鈕 `utm_medium=social&utm_campaign=article_share`）。
-2. 固定排最後：其他、疑似自動程式。
+3. 固定最後：其他、疑似自動程式。
+4. Google 搜尋、AI 搜尋、LINE、YouTube 就算 0 也列出（長條圖、今日入口清單與 hover、主要入口 hover）。
 
 只有原本被 GA4 歸為 direct 的造訪才會細分（非 direct 維持依 `sessionSource`／`sessionMedium` 的分類），判斷順序
 由「最確定」到「最弱」，寫在 `classifyVisit()`：
@@ -123,10 +125,12 @@ Microsoft Copilot（依 `sessionSource` 判斷，見 `tools/lib/traffic-sources-
 | 3 | 進站那一頁的 `pageReferrer` 是 aixwang.dev | 站內換頁 | 其實是站內點擊 |
 | 4 | 其餘（含回訪讀者、App 內建瀏覽器、查不到來源） | 其他 | 這幾類使用者決定不單獨列，但保留成細項 |
 
-**「其他」的細項**：分類時保留「其他」底下的名稱，存在 `traffic_sources.channel_detail`（中文標題「入口細項」；其他分類為空）與
-`audience_metrics.today_sources[].details`（`[{name, users}]`，只有「其他」帶）。細項：Bing 搜尋、Yahoo 搜尋等搜尋引擎、各推薦連結網域、YouTube（2026-10-23 起併入「其他」）、
-App 內建瀏覽器（browser 為 Safari (in-app)／Android Webview）、回訪讀者（newVsReturning=returning）、查不出來源。
-後台長條圖、入口表、主要入口 hover、使用者卡今日入口 hover，滑鼠移到「其他」都會彈出細項與數字（降冪）。名稱常數在 `DETAIL`。
+**細項**：分類時保留「AI 搜尋」「其他」底下的名稱，存在 `traffic_sources.channel_detail`（中文標題「入口細項」；其他分類為空）與
+`audience_metrics.today_sources[].details`（`[{name, users}]`，只有這兩類帶）。
+AI 搜尋細項：ChatGPT、Gemini、Perplexity、Claude、Copilot（有資料才出現）；
+其他細項：Bing 搜尋、Yahoo 搜尋等搜尋引擎、各推薦連結網域、App 內建瀏覽器（browser 為 Safari (in-app)／Android Webview）、
+回訪讀者（newVsReturning=returning）、查不出來源。滑鼠移到這兩類（長條圖、入口表、主要入口 hover、使用者卡今日入口 hover）會彈出細項與數字（降冪）。
+名稱常數在 `DETAIL`。
 
 分類名稱與「合併關係」（`CHANNEL_MERGE`）集中在 `tools/lib/traffic-sources-lib.mjs` 開頭的 `CH` 常數，之後要改名或併類只改那裡
 （前端排序清單 `directus-extensions/traffic-panels/src/shared/channels.ts` 需同步）。

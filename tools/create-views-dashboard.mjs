@@ -56,7 +56,7 @@ const PANELS = [
   },
   {
     name: '熱門入口造訪次數', icon: 'bar_chart', type: 'traffic-channel-bars',
-    note: '依入口分類加總造訪次數（分 9 類）：外部來源由多到少，接著是站內換頁，最後固定為其他、疑似自動程式；「Facebook」含從 IG、Threads 點出、帶 fbclid 的連結；「LINE」只算連結帶 utm_source=line 的造訪；「其他」滑鼠移上去可看細項（Bing 搜尋、各推薦連結網域、YouTube、App 內建瀏覽器、回訪讀者、查不出來源）；「疑似自動程式」是推論（螢幕解析度 800x600，或美國來源且完全沒有互動）；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
+    note: '依入口分類加總造訪次數（分 10 類）：Google 搜尋固定第一、AI 搜尋固定第二，第三起 Facebook、Threads、Instagram、LINE、YouTube、站內換頁由多到少（LINE、YouTube 為 0 也列出），最後固定為其他、疑似自動程式；「AI 搜尋」「其他」滑鼠移上去可看細項；「Facebook」含從 IG、Threads 點出、帶 fbclid 的連結；「LINE」只算連結帶 utm_source=line 的造訪；「疑似自動程式」是推論（螢幕解析度 800x600，或美國來源且完全沒有互動）；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
     position_x: 1, position_y: 137, width: 60, height: 18,
     options: {},
   },

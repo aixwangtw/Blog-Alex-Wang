@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import { useApi } from '@directus/extensions-sdk';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { type DetailItem, sortChannels, sortDetails } from '../shared/channels';
+import { type DetailItem, sortDetails, withPinned } from '../shared/channels';
 import { formatNumber, readStorage, todayIn, writeStorage } from '../shared/format';
 import { KINDS, query } from '../shared/query';
 
@@ -191,7 +191,7 @@ function tipPosition(event: MouseEvent) {
 	return { x: Math.max(8, Math.min(event.clientX + 14, window.innerWidth - 328)), y: Math.max(8, Math.min(event.clientY + 18, window.innerHeight - 220)) };
 }
 function showEntryTip(event: MouseEvent, row: Row) {
-	if (row.entries.length === 0) {
+	if (row.entries.length === 0 || row.entrySessions <= 0) {
 		entryTip.value = null;
 		return;
 	}
@@ -285,7 +285,7 @@ async function load() {
 				list.push(entry);
 			}
 			entry.sessions += sessions;
-			if (channel === '其他') entry.details = [...(entry.details ?? []), { name: item.channel_detail || '查不出來源', sessions }];
+			if (item.channel_detail) entry.details = [...(entry.details ?? []), { name: item.channel_detail, sessions }];
 			entriesByPath.set(key, list);
 		}
 		for (const list of entriesByPath.values()) for (const entry of list) if (entry.details) entry.details = sortDetails(entry.details);
@@ -295,7 +295,7 @@ async function load() {
 		rows.value = (list.data.data ?? []).map((item: any): Row => {
 			// 文章的路徑規則來自 tools/sync-ga4-daily-views.mjs：/blog/<slug>/
 			const path = props.kind === 'articles' ? `/blog/${item.slug}/` : item.path;
-			const entries = sortChannels(entriesByPath.get(normalizePath(path)) ?? [], 'sessions');
+			const entries = withPinned(entriesByPath.get(normalizePath(path)) ?? [], 'sessions', (channel) => ({ channel, sessions: 0 }));
 			const entrySessions = entries.reduce((sum, entry) => sum + entry.sessions, 0);
 			return {
 				entries,

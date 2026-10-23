@@ -1,23 +1,23 @@
 import test from 'node:test'; import assert from 'node:assert/strict';
-import { CHANNELS, CH, CHANNEL_MERGE, DERIVED_CHANNELS, EXTERNAL_CHANNELS, TAIL_CHANNELS, attachSessionStartReferrers, buildTodaySources, buildTrafficSourceRows, classifySource, classifyVisit, classifyVisitDetail, hasFbclid, isSuspectedBot, parseGa4DirectVisitRows, parseGa4ReferrerRows, parseGa4SourceRows, parseGa4TodaySourceRows, sortChannelsForDisplay } from './traffic-sources-lib.mjs';
+import { CHANNELS, CH, CHANNEL_MERGE, HEAD_CHANNELS, PINNED_CHANNELS, RANKED_CHANNELS, TAIL_CHANNELS, attachSessionStartReferrers, buildTodaySources, buildTrafficSourceRows, classifySource, classifyVisit, classifyVisitDetail, hasFbclid, isSuspectedBot, parseGa4DirectVisitRows, parseGa4ReferrerRows, parseGa4SourceRows, parseGa4TodaySourceRows, sortChannelsForDisplay, withPinnedChannels } from './traffic-sources-lib.mjs';
 test('classifySource 依 source／medium 分類（direct 與未列名來源都是「其他」）', () => {
   const cases = [
     ['google', 'organic', 'Google 搜尋'], ['google', 'cpc', '其他'],
     ['l.threads.com', 'referral', 'Threads'], ['threads.net', 'social', 'Threads'],
     ['ig', 'comment', 'Instagram'], ['l.instagram.com', 'referral', 'Instagram'],
     ['lm.facebook.com', 'referral', 'Facebook'], ['fb', 'social', 'Facebook'],
-    ['chatgpt.com', 'referral', 'AI 助理'], ['gemini.google.com', 'referral', 'AI 助理'], ['perplexity', 'referral', 'AI 助理'],
-    ['claude.ai', 'referral', 'AI 助理'], ['copilot.microsoft.com', 'referral', 'AI 助理'], ['someai.example', 'ai-assistant', 'AI 助理'],
+    ['chatgpt.com', 'referral', 'AI 搜尋'], ['gemini.google.com', 'referral', 'AI 搜尋'], ['perplexity', 'referral', 'AI 搜尋'],
+    ['claude.ai', 'referral', 'AI 搜尋'], ['copilot.microsoft.com', 'referral', 'AI 搜尋'], ['someai.example', 'ai-assistant', 'AI 搜尋'],
     ['(direct)', '(none)', '其他'],
     ['bing', 'organic', '其他'], ['yahoo', 'organic', '其他'], ['example.com', 'referral', '其他'],
     ['line.me', 'referral', 'LINE'], ['line', 'social', 'LINE'], ['LINE', 'Social', 'LINE'], ['liff.line.me', 'referral', 'LINE'],
-    ['youtube', 'description', '其他'], ['m.youtube.com', 'referral', '其他'], ['yt', 'social', '其他'], ['(not set)', '(not set)', '其他'], ['', '', '其他'],
+    ['youtube', 'description', 'YouTube'], ['m.youtube.com', 'referral', 'YouTube'], ['yt', 'social', 'YouTube'], ['(not set)', '(not set)', '其他'], ['', '', '其他'],
   ];
   for (const [source, medium, expected] of cases) assert.equal(classifySource(source, medium), expected, `${source}/${medium}`);
   for (const [source, medium] of cases) assert.ok(CHANNELS.includes(classifySource(source, medium)));
 });
 test('後台不得出現已取消的分類名稱', () => {
-  for (const banned of ['不明', '回訪讀者', 'App 內建瀏覽器', '直接或不明來源', 'AI 搜尋']) assert.ok(!CHANNELS.includes(banned), banned);
+  for (const banned of ['不明', '回訪讀者', 'App 內建瀏覽器', '直接或不明來源', 'AI 助理']) assert.ok(!CHANNELS.includes(banned), banned);
   assert.deepEqual(CHANNEL_MERGE, {});
 });
 const direct = (extra = {}) => ({ source: '(direct)', medium: '(none)', landing_page: '/blog/a/', page_referrer: '', screen_resolution: '1920x1080', country: 'Taiwan', engaged_sessions: 1, engagement_seconds: 12, ...extra });
@@ -28,8 +28,8 @@ test('classifyVisit：非 direct 維持 classifySource，不受其他維度影�
 test('LINE：source=line（含 utm_source=line、LINE 分享按鈕的 campaign=article_share）歸獨立「LINE」類，排在外部來源區', () => {
   assert.equal(classifyVisit({ source: 'line', medium: 'social', campaign: 'article_share' }), 'LINE');
   assert.equal(classifyVisit({ source: 'line', medium: 'social', screen_resolution: '800x600' }), 'LINE');
-  assert.ok(EXTERNAL_CHANNELS.includes(CH.LINE));
-  assert.deepEqual(sortChannelsForDisplay([{ channel: '其他', sessions: 99 }, { channel: 'LINE', sessions: 1 }, { channel: '站內換頁', sessions: 5 }]).map((x) => x.channel), ['LINE', '站內換頁', '其他']);
+  assert.ok(RANKED_CHANNELS.includes(CH.LINE));
+  assert.deepEqual(sortChannelsForDisplay([{ channel: '其他', sessions: 99 }, { channel: 'LINE', sessions: 1 }, { channel: '站內換頁', sessions: 5 }]).map((x) => x.channel), ['站內換頁', 'LINE', '其他']);
 });
 test('classifyVisit：direct 的細分與優先順序（fbclid > 疑似自動程式 > 站內換頁 > 其他）', () => {
   assert.equal(classifyVisit(direct()), '其他');
@@ -56,30 +56,47 @@ test('所有分類結果都在 CHANNELS 內，且 CHANNELS 無重複', () => {
   assert.equal(new Set(CHANNELS).size, CHANNELS.length);
   for (const visit of [direct(), direct({ landing_page: '/?fbclid=1' }), direct({ screen_resolution: '800x600' }), direct({ page_referrer: 'https://aixwang.dev/' }), { source: 'x', medium: 'y' }]) assert.ok(CHANNELS.includes(classifyVisit(visit)));
 });
-test('sortChannelsForDisplay：外部來源依人數、接著站內換頁，最後固定「其他」「疑似自動程式」', () => {
+test('sortChannelsForDisplay：Google 搜尋第一、AI 搜尋第二，其餘依人數（0 排區尾），最後固定「其他」「疑似自動程式」', () => {
   const sorted = sortChannelsForDisplay([
     { channel: '疑似自動程式', sessions: 500 }, { channel: '其他', sessions: 1 }, { channel: '站內換頁', sessions: 5 },
-    { channel: 'AI 助理', sessions: 2 }, { channel: 'Facebook', sessions: 40 }, { channel: 'Google 搜尋', sessions: 3 }, { channel: 'Threads', sessions: 40 }, { channel: 'Instagram', sessions: 9 }, { channel: 'LINE', sessions: 4 },
+    { channel: 'AI 搜尋', sessions: 2 }, { channel: 'Facebook', sessions: 40 }, { channel: 'Google 搜尋', sessions: 3 }, { channel: 'Threads', sessions: 40 }, { channel: 'Instagram', sessions: 9 }, { channel: 'LINE', sessions: 0 }, { channel: 'YouTube', sessions: 6 },
   ]);
-  assert.deepEqual(sorted.map((x) => x.channel), ['Facebook', 'Threads', 'Instagram', 'LINE', 'Google 搜尋', 'AI 助理', '站內換頁', '其他', '疑似自動程式']);
+  assert.deepEqual(sorted.map((x) => x.channel), ['Google 搜尋', 'AI 搜尋', 'Facebook', 'Threads', 'Instagram', 'YouTube', '站內換頁', 'LINE', '其他', '疑似自動程式']);
   assert.deepEqual(sortChannelsForDisplay([{ channel: 'a', users: 1 }, { channel: 'b', users: 3 }], 'users').map((x) => x.channel), ['b', 'a']);
-  assert.deepEqual([...EXTERNAL_CHANNELS, ...DERIVED_CHANNELS, ...TAIL_CHANNELS], CHANNELS);
+  assert.deepEqual([...HEAD_CHANNELS, ...RANKED_CHANNELS, ...TAIL_CHANNELS], CHANNELS);
   assert.deepEqual(TAIL_CHANNELS, ['其他', '疑似自動程式']);
+  assert.deepEqual(HEAD_CHANNELS, ['Google 搜尋', 'AI 搜尋']);
+});
+test('withPinnedChannels：Google 搜尋、AI 搜尋、LINE、YouTube 沒資料也補 0 列，其他分類沒資料不補', () => {
+  const out = withPinnedChannels([{ channel: 'Facebook', sessions: 4 }, { channel: '其他', sessions: 1 }]);
+  assert.deepEqual(out.map((x) => [x.channel, x.sessions]), [['Google 搜尋', 0], ['AI 搜尋', 0], ['Facebook', 4], ['LINE', 0], ['YouTube', 0], ['其他', 1]]);
+  assert.deepEqual(PINNED_CHANNELS, ['Google 搜尋', 'AI 搜尋', 'LINE', 'YouTube']);
+});
+test('AI 搜尋細項：ChatGPT、Gemini、Perplexity、Claude、Copilot 各自一項', () => {
+  const d = (source, medium = 'referral') => classifyVisitDetail({ source, medium });
+  assert.deepEqual(d('chatgpt.com'), { channel: 'AI 搜尋', detail: 'ChatGPT' });
+  assert.deepEqual(d('gemini.google.com'), { channel: 'AI 搜尋', detail: 'Gemini' });
+  assert.deepEqual(d('perplexity'), { channel: 'AI 搜尋', detail: 'Perplexity' });
+  assert.deepEqual(d('claude.ai'), { channel: 'AI 搜尋', detail: 'Claude' });
+  assert.deepEqual(d('copilot.microsoft.com'), { channel: 'AI 搜尋', detail: 'Copilot' });
+  assert.deepEqual(d('someai.example', 'ai-assistant'), { channel: 'AI 搜尋', detail: 'someai.example' });
+  const today = buildTodaySources([{ source: 'chatgpt.com', medium: 'referral', users: 2 }, { source: 'gemini.google.com', medium: 'referral', users: 3 }, { source: 'chatgpt.com', medium: 'referral', users: 1 }]);
+  assert.deepEqual(today.find((x) => x.channel === 'AI 搜尋'), { channel: 'AI 搜尋', users: 6, details: [{ name: 'ChatGPT', users: 3 }, { name: 'Gemini', users: 3 }] });
 });
 test('buildTodaySources 依入口分類合併、依固定順序排列並略過 0 人', () => {
   const result = buildTodaySources([
     { source: 'google', medium: 'organic', users: 7 }, { source: 'l.threads.com', medium: 'referral', users: 3 }, { source: 'threads.net', medium: 'social', users: 1 },
     { source: '(direct)', medium: '(none)', users: 5 }, { source: 'bing', medium: 'organic', users: 0 }, { source: 'x', medium: 'y', users: 2 },
   ]);
-  assert.deepEqual(result, [{ channel: 'Google 搜尋', users: 7 }, { channel: 'Threads', users: 4 }, { channel: '其他', users: 7, details: [{ name: '查不出來源', users: 5 }, { name: 'x / y', users: 2 }] }]);
-  assert.deepEqual(buildTodaySources([], 3), []);
+  assert.deepEqual(result, [{ channel: 'Google 搜尋', users: 7 }, { channel: 'AI 搜尋', users: 0 }, { channel: 'Threads', users: 4 }, { channel: 'LINE', users: 0 }, { channel: 'YouTube', users: 0 }, { channel: '其他', users: 7, details: [{ name: '查不出來源', users: 5 }, { name: 'x / y', users: 2 }] }]);
+  assert.deepEqual(buildTodaySources([], 4).map((x) => x.channel), ['Google 搜尋', 'AI 搜尋', 'LINE', 'YouTube']);
   assert.equal(buildTodaySources([{ source: 'google', medium: 'organic', users: 3 }, { source: 'fb', medium: 'social', users: 2 }, { source: 'x', medium: 'y', users: 1 }], 2).length, 2);
 });
 test('buildTodaySources 直接造訪用同一套細分規則', () => {
   const d = { source: '(direct)', medium: '(none)', landing_page: '/', engaged_sessions: 1, engagement_seconds: 10 };
   assert.deepEqual(buildTodaySources([
     { ...d, landing_page: '/?fbclid=abc', users: 2 }, { ...d, page_referrer: 'https://aixwang.dev/', users: 1 }, { ...d, users: 4 }, { ...d, screen_resolution: '800x600', users: 6 },
-  ]), [{ channel: 'Facebook', users: 2 }, { channel: '站內換頁', users: 1 }, { channel: '其他', users: 4, details: [{ name: '查不出來源', users: 4 }] }, { channel: '疑似自動程式', users: 6 }]);
+  ]).filter((x) => x.users > 0), [{ channel: 'Facebook', users: 2 }, { channel: '站內換頁', users: 1 }, { channel: '其他', users: 4, details: [{ name: '查不出來源', users: 4 }] }, { channel: '疑似自動程式', users: 6 }]);
 });
 test('buildTrafficSourceRows：細分後依「分類＋進站頁」合併，source_key 不重複', () => {
   const rows = buildTrafficSourceRows({ syncedAt: 'x', gaRows: [
@@ -123,7 +140,7 @@ test('「其他」細項：搜尋引擎、YouTube、推薦網域、direct 的 Ap
   assert.deepEqual(d({ source: 'tw.search.yahoo.com', medium: 'referral' }), { channel: '其他', detail: 'Yahoo 搜尋' });
   assert.deepEqual(d({ source: 'cn.bing.com', medium: 'referral' }), { channel: '其他', detail: 'Bing 搜尋' });
   assert.deepEqual(d({ source: 'yahoo', medium: 'organic' }), { channel: '其他', detail: 'Yahoo 搜尋' });
-  assert.deepEqual(d({ source: 'm.youtube.com', medium: 'referral' }), { channel: '其他', detail: 'YouTube' });
+  assert.deepEqual(d({ source: 'm.youtube.com', medium: 'referral' }), { channel: 'YouTube', detail: '' });
   assert.deepEqual(d({ source: 'example.com', medium: 'referral' }), { channel: '其他', detail: 'example.com' });
   assert.deepEqual(d({ source: '(not set)', medium: '(not set)' }), { channel: '其他', detail: '查不出來源' });
   assert.deepEqual(d({ source: 'newsletter', medium: 'email' }), { channel: '其他', detail: 'newsletter / email' });
@@ -141,5 +158,5 @@ test('buildTodaySources：「其他」帶細項，依人數降冪；其他分類
     { ...d, users: 3 }, { source: 'google', medium: 'organic', users: 9 },
   ]);
   assert.deepEqual(result[0], { channel: 'Google 搜尋', users: 9 });
-  assert.deepEqual(result[1], { channel: '其他', users: 9, details: [{ name: '查不出來源', users: 3 }, { name: 'App 內建瀏覽器', users: 3 }, { name: 'Bing 搜尋', users: 2 }, { name: '回訪讀者', users: 1 }] });
+  assert.deepEqual(result.find((x) => x.channel === '其他'), { channel: '其他', users: 9, details: [{ name: '查不出來源', users: 3 }, { name: 'App 內建瀏覽器', users: 3 }, { name: 'Bing 搜尋', users: 2 }, { name: '回訪讀者', users: 1 }] });
 });

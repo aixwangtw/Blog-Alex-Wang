@@ -43,8 +43,8 @@ export const FIELD_LABELS = {
     ...SYNCED,
   },
   traffic_sources: {
-    channel: ['入口分類', undefined, '入口分類，共 9 類。依造訪次數由多到少：Google 搜尋、Facebook、Threads、Instagram、AI 助理、LINE（只有連結帶 utm_source=line 或 GA4 來源為 line 才算）、站內換頁；最後固定為其他、疑似自動程式。「其他」滑鼠移上去可看細項（Bing 搜尋、Yahoo 搜尋、各推薦連結網域、YouTube、App 內建瀏覽器、回訪讀者、查不出來源）。「Facebook」含從 IG、Threads 點出、帶 fbclid 的連結。GA4 查無來源（直接）的造訪才會細分，判斷順序：網址帶 fbclid → Facebook；疑似自動程式（推論，非 GA4 官方標記：螢幕解析度 800x600，或美國來源且完全沒有互動）；進站頁的上一頁是本站 → 站內換頁；其餘 → 其他（含查不到來源者與未列名的來源）。'], sessions: ['造訪次數', undefined, '造訪次數（GA4 工作階段數）。'], views: ['觀看'], source: ['來源'], medium: ['媒介'],
-    channel_detail: ['入口細項', undefined, '「其他」底下的細項，例如 Bing 搜尋、Yahoo 搜尋、各推薦連結網域、YouTube、App 內建瀏覽器、回訪讀者、查不出來源；其他分類為空。'],
+    channel: ['入口分類', undefined, '入口分類，共 10 類。Google 搜尋固定第一、AI 搜尋固定第二；第三起依造訪次數由多到少：Facebook、Threads、Instagram、LINE（只有連結帶 utm_source=line 或 GA4 來源為 line 才算）、YouTube、站內換頁（0 排最後，LINE、YouTube 沒有資料也會列出）；最後固定為其他、疑似自動程式。「AI 搜尋」「其他」滑鼠移上去可看細項（AI 搜尋：ChatGPT、Gemini、Perplexity、Claude、Copilot；其他：Bing 搜尋、Yahoo 搜尋、各推薦連結網域、App 內建瀏覽器、回訪讀者、查不出來源）。「Facebook」含從 IG、Threads 點出、帶 fbclid 的連結。GA4 查無來源（直接）的造訪才會細分，判斷順序：網址帶 fbclid → Facebook；疑似自動程式（推論，非 GA4 官方標記：螢幕解析度 800x600，或美國來源且完全沒有互動）；進站頁的上一頁是本站 → 站內換頁；其餘 → 其他。'], sessions: ['造訪次數', undefined, '造訪次數（GA4 工作階段數）。'], views: ['觀看'], source: ['來源'], medium: ['媒介'],
+    channel_detail: ['入口細項', undefined, '入口細項，AI 搜尋與其他底下的細項。AI 搜尋：ChatGPT、Gemini、Perplexity、Claude、Copilot；其他：Bing 搜尋、Yahoo 搜尋、各推薦連結網域、App 內建瀏覽器、回訪讀者、查不出來源；其他分類為空。'],
     campaign: ['活動'], landing_page: ['進站頁'],
     ...SYNCED,
   },

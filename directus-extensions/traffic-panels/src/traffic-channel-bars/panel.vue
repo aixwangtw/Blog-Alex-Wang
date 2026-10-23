@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { useApi } from '@directus/extensions-sdk';
 import { computed, onMounted, ref } from 'vue';
-import { type DetailItem, sortChannels, sortDetails } from '../shared/channels';
+import { type DetailItem, sortDetails, withPinned } from '../shared/channels';
 import DetailPopover from '../shared/DetailPopover.vue';
 import { formatNumber } from '../shared/format';
 import { query } from '../shared/query';
@@ -63,11 +63,11 @@ onMounted(async () => {
 			const sessions = Number(item.sum?.sessions ?? 0);
 			const row = byChannel.get(channel) ?? { channel, sessions: 0, details: [] };
 			row.sessions += sessions;
-			if (channel === '其他') row.details.push({ name: item.channel_detail || '查不出來源', sessions });
+			if (item.channel_detail) row.details.push({ name: item.channel_detail, sessions });
 			byChannel.set(channel, row);
 		}
 		for (const row of byChannel.values()) row.details = sortDetails(row.details);
-		rows.value = sortChannels([...byChannel.values()], 'sessions');
+		rows.value = withPinned([...byChannel.values()], 'sessions', (channel) => ({ channel, sessions: 0, details: [] }));
 	} catch (error: any) {
 		errorText.value = `讀取失敗：${error?.response?.data?.errors?.[0]?.message ?? error?.message ?? error}`;
 	} finally {

@@ -7,7 +7,7 @@
 | --- | --- | --- |
 | `traffic-summary-card` | 並排顯示三個（或兩個）數字，滑鼠移上去彈出細項。流量：當日／近 30 天／累積；內容（「文章產出與品質」儀表板）：發文概況、寫作品質、站內連結 | `kind`：`users`／`articles`／`pages`／`content-posts`／`content-quality`／`content-links`；`timezone` |
 | `traffic-content-table` | 每篇文章（或每頁）一列，可排序、拖拉欄寬、點一列展開逐日明細 | `kind`：`articles`／`pages`；`timezone` |
-| `traffic-channel-bars` | 熱門入口造訪次數長條圖：外部來源與站內換頁由多到少 → 固定最後其他、疑似自動程式 | 無 |
+| `traffic-channel-bars` | 熱門入口造訪次數長條圖：Google 搜尋、AI 搜尋固定前兩名 → 其餘由多到少（LINE、YouTube 為 0 也列出）→ 固定最後其他、疑似自動程式；hover AI 搜尋／其他看細項 | 無 |
 | `traffic-source-table` | 流量入口表：入口｜進站頁（中文標題，hover 顯示路徑）｜造訪次數｜觀看次數；可排序（預設依入口分類固定順序）、拖拉欄寬（localStorage `traffic-panels:widths:sources`） | 無 |
 | `content-article-table` | 已發布文章明細：標題、發布日、更新日、字數、SEO 描述字數、標籤數、FAQ 數、站內連結狀況（白話）；可排序、拖拉欄寬（localStorage `content-panels:widths:articles`） | 無 |
 

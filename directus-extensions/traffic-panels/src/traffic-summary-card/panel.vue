@@ -111,7 +111,7 @@ async function loadUsers() {
 	let sources: { channel: string; users: number; details?: { name: string; users: number }[] }[] = [];
 	try {
 		const raw = typeof row.today_sources === 'string' ? JSON.parse(row.today_sources) : row.today_sources;
-		if (Array.isArray(raw)) sources = raw.filter((item) => item && Number(item.users) > 0);
+		if (Array.isArray(raw)) sources = raw.filter((item) => item && item.channel);
 	} catch {
 		sources = [];
 	}
@@ -125,7 +125,8 @@ async function loadUsers() {
 		{
 			label: '今日活躍',
 			value: formatNumber(row.active_users_today),
-			sub: sources.length > 0 ? sources.slice(0, 3).map((item) => `${item.channel} ${formatNumber(item.users)}`).join(' · ') : undefined,
+			// 摘要只列前 3 個有人的入口；hover 的完整清單（含 0 人的 LINE、YouTube 等）在下面。
+			sub: sources.some((item) => Number(item.users) > 0) ? sources.filter((item) => Number(item.users) > 0).slice(0, 3).map((item) => `${item.channel} ${formatNumber(item.users)}`).join(' · ') : undefined,
 		},
 		{ label: '近 30 天活躍', value: formatNumber(row.active_users_30d) },
 		{ label: '總使用者', value: formatNumber(row.total_users) },

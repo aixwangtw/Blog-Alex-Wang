@@ -110,14 +110,15 @@ export const TODAY_SOURCE_METRICS = ['activeUsers', 'engagedSessions', 'userEnga
 export const TODAY_REFERRER_METRICS = ['activeUsers'];
 
 /**
- * 入口分類共 9 類（YouTube 併入「其他」，細項保留，見 classifyVisitDetail）。排序分三段：
- * 1. EXTERNAL_CHANNELS：明確的外部來源，依人數／造訪次數多到少；
- * 2. DERIVED_CHANNELS：原本被 GA4 歸成 direct 的造訪，推論出是站內換頁，依人數排序（與外部來源之後接續）；
+ * 入口分類共 10 類（2026-10-23 使用者定案）。排序：
+ * 1. HEAD_CHANNELS：Google 搜尋第一、AI 搜尋第二，不論數字；
+ * 2. RANKED_CHANNELS（Facebook、Threads、Instagram、LINE、YouTube、站內換頁）依人數多到少，0 排此區最後；
  * 3. TAIL_CHANNELS：固定排最後，順序固定「其他」「疑似自動程式」。
+ * LINE、YouTube（以及固定在前的兩類）沒資料也要列出 0（PINNED_CHANNELS，見 withPinnedChannels）。
  */
 /** 分類名稱集中在這裡；其他程式碼一律引用 CH.xxx，改名只改這一處（前端面板的同步清單見 directus-extensions/traffic-panels/src/shared/channels.ts）。 */
 export const CH = {
-  GOOGLE: 'Google 搜尋', FACEBOOK: 'Facebook', THREADS: 'Threads', INSTAGRAM: 'Instagram', AI: 'AI 助理', LINE: 'LINE',
+  GOOGLE: 'Google 搜尋', FACEBOOK: 'Facebook', THREADS: 'Threads', INSTAGRAM: 'Instagram', LINE: 'LINE', YOUTUBE: 'YouTube', AI: 'AI 搜尋',
   ON_SITE: '站內換頁',
   OTHER: '其他', BOT: '疑似自動程式',
 };
@@ -126,24 +127,36 @@ export const CH = {
  * 2026-10-23 使用者定案：回訪讀者、App 內建瀏覽器、不明都不單獨列，統稱「其他」（直接寫在 classifyVisit，不靠這張表）。
  */
 export const CHANNEL_MERGE = {};
-export const EXTERNAL_CHANNELS = [CH.GOOGLE, CH.FACEBOOK, CH.THREADS, CH.INSTAGRAM, CH.AI, CH.LINE];
-export const DERIVED_CHANNELS = [CH.ON_SITE];
+/** 固定排最前面的分類（不論數字）：Google 搜尋第一、AI 搜尋第二。 */
+export const HEAD_CHANNELS = [CH.GOOGLE, CH.AI];
+/** 第三起依人數多到少的區塊（0 排此區最後，同數依此順序）。 */
+export const RANKED_CHANNELS = [CH.FACEBOOK, CH.THREADS, CH.INSTAGRAM, CH.LINE, CH.YOUTUBE, CH.ON_SITE];
+/** 沒有資料也要列出（0）的分類。 */
+export const PINNED_CHANNELS = [CH.GOOGLE, CH.AI, CH.LINE, CH.YOUTUBE];
+/** 固定排在最後，順序固定。 */
 export const TAIL_CHANNELS = [CH.OTHER, CH.BOT];
-export const CHANNELS = [...EXTERNAL_CHANNELS, ...DERIVED_CHANNELS, ...TAIL_CHANNELS];
+export const CHANNELS = [...HEAD_CHANNELS, ...RANKED_CHANNELS, ...TAIL_CHANNELS];
 
 /**
- * 依固定規則排列。items 為 [{ channel, [countKey] }]；沒有資料的分類不補 0 列。
- * 未列名的分類視同外部來源，避免新增分類時被藏起來。
+ * 依固定規則排列。items 為 [{ channel, [countKey] }]：Google 搜尋、AI 搜尋固定最前；
+ * 中間依人數多到少；「其他」「疑似自動程式」固定最後。未列名的分類視同中間區，避免新增分類時被藏起來。
  */
 export function sortChannelsForDisplay(items, countKey = 'sessions') {
   const count = (item) => Number(item[countKey] ?? 0);
-  const rank = (name) => (DERIVED_CHANNELS.includes(name) ? 1 : TAIL_CHANNELS.includes(name) ? 2 : 0);
+  const rank = (name) => (HEAD_CHANNELS.includes(name) ? 0 : TAIL_CHANNELS.includes(name) ? 2 : 1);
   return [...items].sort((a, b) => {
     const ra = rank(a.channel); const rb = rank(b.channel);
     if (ra !== rb) return ra - rb;
+    if (ra === 0) return HEAD_CHANNELS.indexOf(a.channel) - HEAD_CHANNELS.indexOf(b.channel);
     if (ra === 2) return TAIL_CHANNELS.indexOf(a.channel) - TAIL_CHANNELS.indexOf(b.channel);
     return count(b) - count(a) || CHANNELS.indexOf(a.channel) - CHANNELS.indexOf(b.channel);
   });
+}
+
+/** 補上 PINNED_CHANNELS 缺的 0 筆（Google 搜尋、AI 搜尋、LINE、YouTube 沒資料也要列出），再依固定規則排列。 */
+export function withPinnedChannels(items, countKey = 'sessions') {
+  const missing = PINNED_CHANNELS.filter((name) => !items.some((item) => item.channel === name)).map((channel) => ({ channel, [countKey]: 0 }));
+  return sortChannelsForDisplay([...items, ...missing], countKey);
 }
 
 /** GA4 是否把這次造訪歸成「直接」（沒有任何來源資訊）。 */
@@ -161,6 +174,7 @@ export function classifySource(source, medium) {
   if (s.includes('threads')) return CH.THREADS;
   if (s === 'ig' || s.includes('instagram')) return CH.INSTAGRAM;
   if (s.includes('facebook') || s === 'fb') return CH.FACEBOOK;
+  if (s.includes('youtube') || s === 'yt' || s === 'youtu.be') return CH.YOUTUBE;
   // 發文連結加 utm_source=line 時 GA4 的 source 就是 line（見 docs/utm-tracking.md）。
   if (s === 'line' || s.includes('line.me') || s.includes('liff') || s.includes('line.naver')) return CH.LINE;
   // google / organic 同時包含一般搜尋結果與 AI Overview 點擊，GA4 無法拆開；
@@ -203,14 +217,19 @@ export function isSuspectedBot(visit) {
  * 4. 其餘 → 其他（2026-10-23 起，回訪讀者、App 內建瀏覽器、不明都不單獨列，統稱其他；因此不再查 browser、newVsReturning）。
  */
 /** 「其他」底下的細項名稱（Bing 搜尋、YouTube…）。名稱集中在這裡，改名只改這一處。 */
-export const DETAIL = { IN_APP: 'App 內建瀏覽器', RETURNING: '回訪讀者', UNKNOWN: '查不出來源', YOUTUBE: 'YouTube' };
+export const DETAIL = { IN_APP: 'App 內建瀏覽器', RETURNING: '回訪讀者', UNKNOWN: '查不出來源' };
+/** AI 搜尋底下的細項：依來源名稱對應（先符合者優先）。 */
+const AI_SOURCES = [['chatgpt', 'ChatGPT'], ['openai', 'ChatGPT'], ['gemini', 'Gemini'], ['bard.google', 'Gemini'], ['perplexity', 'Perplexity'], ['claude', 'Claude'], ['anthropic', 'Claude'], ['copilot', 'Copilot']];
+function aiSourceDetail(source) {
+  const s = String(source ?? '').toLowerCase();
+  return AI_SOURCES.find(([key]) => s.includes(key))?.[1] ?? (String(source ?? '') || DETAIL.UNKNOWN);
+}
 const SEARCH_ENGINES = { bing: 'Bing 搜尋', yahoo: 'Yahoo 搜尋', duckduckgo: 'DuckDuckGo 搜尋', baidu: '百度搜尋', yandex: 'Yandex 搜尋', naver: 'Naver 搜尋', ecosia: 'Ecosia 搜尋' };
 const IN_APP_BROWSERS = ['safari (in-app)', 'android webview'];
 
-/** 非 direct、但被歸「其他」的來源細項：搜尋引擎中文名、YouTube、其餘用來源名稱（推薦連結的網域）。 */
+/** 非 direct、但被歸「其他」的來源細項：搜尋引擎中文名、其餘用來源名稱（推薦連結的網域）。 */
 function otherSourceDetail(source, medium) {
   const s = String(source ?? '').toLowerCase(); const m = String(medium ?? '').toLowerCase();
-  if (s.includes('youtube') || s === 'yt' || s === 'youtu.be') return DETAIL.YOUTUBE;
   if (!s || s === '(not set)') return DETAIL.UNKNOWN;
   const engine = Object.keys(SEARCH_ENGINES).find((k) => s === k || s.includes(`${k}.`) || s.endsWith(k));
   if (engine && ['organic', 'referral', '', '(not set)'].includes(m)) return SEARCH_ENGINES[engine];
@@ -220,8 +239,9 @@ function otherSourceDetail(source, medium) {
 }
 
 /**
- * 完整分類，回傳 { channel, detail }。detail 只在 channel 為「其他」時有值（其餘為空字串）：
- * Bing 搜尋、Yahoo 搜尋、各推薦連結網域、YouTube、App 內建瀏覽器、回訪讀者、查不出來源。
+ * 完整分類，回傳 { channel, detail }。detail 只在 channel 為「其他」或「AI 搜尋」時有值（其餘為空字串）：
+ * 其他：Bing 搜尋、Yahoo 搜尋、各推薦連結網域、App 內建瀏覽器、回訪讀者、查不出來源；
+ * AI 搜尋：ChatGPT、Gemini、Perplexity、Claude、Copilot（有資料才會出現）。
  * direct 的「其他」細項：browser 為 Safari (in-app)／Android Webview → App 內建瀏覽器；newVsReturning=returning → 回訪讀者；其餘 → 查不出來源。
  */
 export function classifyVisitDetail(visit) {
@@ -241,8 +261,9 @@ export function classifyVisitDetail(visit) {
   } else if (channel === CH.OTHER) {
     detail = otherSourceDetail(visit.source, visit.medium);
   }
+  if (channel === CH.AI) detail = aiSourceDetail(visit.source);
   const merged = CHANNEL_MERGE[channel] ?? channel;
-  return { channel: merged, detail: merged === CH.OTHER ? detail || DETAIL.UNKNOWN : '' };
+  return { channel: merged, detail: merged === CH.OTHER ? detail || DETAIL.UNKNOWN : merged === CH.AI ? detail : '' };
 }
 
 export function classifyVisit(visit) {
@@ -280,8 +301,8 @@ export function parseGa4TodaySourceRows(response) {
 }
 
 /**
- * 依 classifyVisitDetail 歸類並加總，回傳 [{ channel, users, details? }]，順序同 sortChannelsForDisplay。
- * 「其他」多一個 details: [{ name, users }]（人數多到少，同數依名稱），供後台 hover 顯示。
+ * 依 classifyVisitDetail 歸類並加總，回傳 [{ channel, users, details? }]，順序同 sortChannelsForDisplay，LINE、YouTube 沒人也列出（0）。
+ * 「其他」「AI 搜尋」多一個 details: [{ name, users }]（人數多到少，同數依名稱），供後台 hover 顯示。
  * 同一人若今天從兩個入口進站會各算一次，所以加總可能大於「今日活躍」。
  */
 export function buildTodaySources(rows, limit = 20) {
@@ -295,7 +316,7 @@ export function buildTodaySources(rows, limit = 20) {
     if (detail) entry.details.set(detail, (entry.details.get(detail) ?? 0) + users);
     byChannel.set(channel, entry);
   }
-  return sortChannelsForDisplay([...byChannel.values()].map((entry) => ({
+  return withPinnedChannels([...byChannel.values()].map((entry) => ({
     channel: entry.channel,
     users: entry.users,
     ...(entry.details.size > 0 ? { details: [...entry.details].map(([name, users]) => ({ name, users })).sort((a, b) => b.users - a.users || a.name.localeCompare(b.name, 'zh-TW')) } : {}),

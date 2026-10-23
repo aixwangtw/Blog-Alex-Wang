@@ -197,7 +197,7 @@ async function load() {
 			const row = merged.get(key) ?? { channel, details: [], path, title: titles.get(path) ?? (path === '/' ? '首頁' : path), sessions: 0, views: 0 };
 			row.sessions += sessions;
 			row.views += Number(item.sum?.views ?? 0);
-			if (channel === '其他') row.details.push({ name: item.channel_detail || '查不出來源', sessions });
+			if (item.channel_detail) row.details.push({ name: item.channel_detail, sessions });
 			merged.set(key, row);
 		}
 		for (const row of merged.values()) row.details = sortDetails(row.details);
