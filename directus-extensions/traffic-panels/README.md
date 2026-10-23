@@ -7,6 +7,7 @@
 | --- | --- | --- |
 | `traffic-summary-card` | 並排顯示「當日／近 30 天／累積」三個數字，滑鼠移上去彈出細項 | `kind`：`users`／`articles`／`pages`；`timezone` |
 | `traffic-content-table` | 每篇文章（或每頁）一列，可排序、拖拉欄寬、點一列展開逐日明細 | `kind`：`articles`／`pages`；`timezone` |
+| `traffic-source-table` | 流量入口表：入口｜進站頁（中文標題，hover 顯示路徑）｜造訪次數｜觀看次數；可排序、拖拉欄寬（localStorage `traffic-panels:widths:sources`） | 無 |
 
 - 資料來源：`audience_metrics`（key=site）、`articles`、`page_views`、`daily_content_views`。
 - 文章與逐日明細的對應鍵是路徑 `/blog/<slug>/`（與 `tools/sync-ga4-daily-views.mjs` 一致），頁面用 `page_views.path`。
@@ -49,7 +50,7 @@ docker compose restart directus                  # 這一步才會中斷服務
 
 # 驗證
 curl -s https://cms.aixwang.dev/server/ping
-# 後台 Settings > Extensions 應出現 directus-extension-traffic-panels（含兩個 panel）
+# 後台 Settings > Extensions 應出現 directus-extension-traffic-panels（含三個 panel）
 ```
 
 之後更新擴充：重複 build、`docker cp` 覆蓋、`docker compose restart directus`。

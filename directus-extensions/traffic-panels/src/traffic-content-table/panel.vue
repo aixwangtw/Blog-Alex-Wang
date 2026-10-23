@@ -75,7 +75,7 @@
 		</table>
 		<Teleport to="body">
 			<div v-if="entryTip" class="entry-popover" :style="{ left: `${entryTip.x}px`, top: `${entryTip.y}px` }">
-				<div class="entry-popover-title">前 5 名入口（開站以來累積工作階段）</div>
+				<div class="entry-popover-title">前 5 名入口（開站以來累積造訪次數）</div>
 				<table>
 					<tbody>
 						<tr v-for="item in entryTip.items" :key="item.channel">
@@ -116,7 +116,7 @@ const COLUMNS: { key: ColumnKey; label: string; numeric: boolean }[] = [
 	{ key: 'views', label: '累積觀看', numeric: true },
 	{ key: 'avg', label: '每人平均停留（秒）', numeric: true },
 	{ key: 'entryShare', label: '主要入口（占比）', numeric: false },
-	{ key: 'entrySessions', label: '入口工作階段', numeric: true },
+	{ key: 'entrySessions', label: '入口造訪次數', numeric: true },
 ];
 const DEFAULT_WIDTHS: Record<ColumnKey, number> = { title: 220, today: 100, views30d: 120, views: 100, avg: 170, entryShare: 180, entrySessions: 130 };
 const ARROW_WIDTH = 28;
@@ -247,7 +247,7 @@ async function load() {
 					limit: -1,
 				})}`,
 			),
-			// 入口：traffic_sources 以 landing page 為鍵（開站以來累積），依 進站頁＋入口分類 加總工作階段。
+			// 入口：traffic_sources 以 landing page 為鍵（開站以來累積），依 進站頁＋入口分類 加總造訪次數。
 			api.get(
 				`/items/traffic_sources?${query({
 					'aggregate[sum]': 'sessions',

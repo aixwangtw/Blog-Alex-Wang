@@ -29,9 +29,10 @@ for (const [collection, fields] of Object.entries(FIELD_LABELS)) {
     if (only && only !== `${collection}.${field}`) continue;
     try {
       const current = await request(`/fields/${collection}/${field}`);
-      const entry = skipDisplay ? [spec[0]] : spec;
+      const entry = skipDisplay ? [spec[0], undefined, spec[2]] : spec;
       const patch = buildMetaPatch(current.meta, entry);
       if (JSON.stringify(patch.translations) === JSON.stringify(current.meta?.translations)
+        && (!patch.note || patch.note === current.meta?.note)
         && (!patch.display || JSON.stringify(patch.display_options) === JSON.stringify(current.meta?.display_options))) { same++; continue; }
       console.log(`${apply ? '更新' : '將更新'} ${collection}.${field} → ${spec[0]}${patch.display ? `（${JSON.stringify(patch.display_options)}）` : ''}`);
       if (apply) await request(`/fields/${collection}/${field}`, { method: 'PATCH', body: JSON.stringify({ meta: patch }) });

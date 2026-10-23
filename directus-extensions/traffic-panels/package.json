@@ -12,7 +12,8 @@
     "path": { "app": "dist/app.js", "api": "dist/api.js" },
     "entries": [
       { "type": "panel", "name": "traffic-summary-card", "source": "src/traffic-summary-card/index.ts" },
-      { "type": "panel", "name": "traffic-content-table", "source": "src/traffic-content-table/index.ts" }
+      { "type": "panel", "name": "traffic-content-table", "source": "src/traffic-content-table/index.ts" },
+      { "type": "panel", "name": "traffic-source-table", "source": "src/traffic-source-table/index.ts" }
     ],
     "host": "^11.0.0"
   },

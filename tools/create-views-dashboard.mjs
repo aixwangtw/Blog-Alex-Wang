@@ -44,15 +44,27 @@ const PANELS = [
   },
   {
     name: '文章觀看明細', icon: 'table_view', type: 'traffic-content-table',
-    note: '每篇已發布文章一列（草稿不列）；「主要入口」是開站以來帶來最多工作階段的入口與占比，滑鼠移上去看前 5 名；點欄位標題排序、拖拉標題右緣調整欄寬（記在這個瀏覽器），點一列展開逐日明細。',
+    note: '每篇已發布文章一列（草稿不列）；「主要入口」是開站以來帶來最多造訪次數的入口與占比，滑鼠移上去看前 5 名；點欄位標題排序、拖拉標題右緣調整欄寬（記在這個瀏覽器），點一列展開逐日明細。',
     position_x: 1, position_y: 11, width: 60, height: 50,
     options: { kind: 'articles', timezone: 'Asia/Taipei' },
   },
   {
     name: '頁面觀看明細', icon: 'table_view', type: 'traffic-content-table',
-    note: '每個一般頁面一列；「主要入口」是開站以來帶來最多工作階段的入口與占比，滑鼠移上去看前 5 名；點欄位標題排序、拖拉標題右緣調整欄寬，點一列展開逐日明細。',
+    note: '每個一般頁面一列；「主要入口」是開站以來帶來最多造訪次數的入口與占比，滑鼠移上去看前 5 名；點欄位標題排序、拖拉標題右緣調整欄寬，點一列展開逐日明細。',
     position_x: 1, position_y: 97, width: 60, height: 40,
     options: { kind: 'pages', timezone: 'Asia/Taipei' },
+  },
+  {
+    name: '熱門入口造訪次數', icon: 'bar_chart', type: 'bar-chart',
+    note: '依入口分類加總造訪次數（分 7 類）；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
+    position_x: 1, position_y: 137, width: 60, height: 18,
+    options: { collection: 'traffic_sources', xAxis: 'channel', yAxis: 'sessions', function: 'sum', horizontal: true, decimals: 0 },
+  },
+  {
+    name: '流量入口與進站頁', icon: 'alt_route', type: 'traffic-source-table',
+    note: '入口、進站頁、造訪次數、觀看次數；進站頁顯示中文標題，滑鼠移上去看網址路徑。預設依造訪次數排序，點欄位標題改排序、拖拉標題右緣調整欄寬（記在這個瀏覽器）。要區分 IG 留言、YouTube 資訊欄等位置，分享連結需帶 UTM。',
+    position_x: 1, position_y: 155, width: 60, height: 30,
+    options: {},
   },
   {
     name: '每日流量趨勢', icon: 'show_chart', type: 'time-series',
@@ -62,25 +74,9 @@ const PANELS = [
   },
   {
     name: '每日活躍使用者', icon: 'person_check', type: 'time-series',
-    note: '每天至少有一次參與工作階段的使用者；使用全站日期層級查詢，不會跨頁重複加總。',
+    note: '每天至少有一次有參與互動的使用者；使用全站日期層級查詢，不會跨頁重複加總。',
     position_x: 1, position_y: 79, width: 60, height: 18,
     options: { collection: 'daily_views', dateField: 'date', valueField: 'active_users', function: 'sum', precision: 'day', range: 'auto', showXAxis: true, showYAxis: true },
-  },
-  {
-    name: '熱門入口工作階段', icon: 'bar_chart', type: 'bar-chart',
-    note: '依入口分類加總工作階段；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
-    position_x: 1, position_y: 137, width: 60, height: 18,
-    options: { collection: 'traffic_sources', xAxis: 'channel', yAxis: 'sessions', function: 'sum', horizontal: true, decimals: 0 },
-  },
-  {
-    name: '流量入口與進站頁', icon: 'alt_route', type: 'directus-panel-table',
-    note: '依工作階段排序；要區分 IG 留言、YouTube 資訊欄等位置，分享連結需帶 UTM。',
-    position_x: 1, position_y: 155, width: 60, height: 45,
-    options: {
-      collection: 'traffic_sources',
-      fields: ['channel', 'sessions', 'views', 'medium', 'campaign', 'landing_page'],
-      sort_field: 'sessions', sort_direction: 'desc', limit: 100, filter: {},
-    },
   },
 ];
 
@@ -102,7 +98,13 @@ async function countRows(path) {
 // 依目前已發布文章數與頁面數決定明細表高度，並讓後面的面板 y 連續排列。
 const publishedArticles = token ? await countRows('/items/articles?filter[status][_eq]=published&aggregate[count]=*') : null;
 const pageCount = token ? await countRows('/items/page_views?aggregate[count]=*') : null;
+// 流量入口表一列＝一組（入口分類, 進站頁），數 groupBy 後的列數。
+const sourceRowCount = token
+  ? await fetch(`${CMS}/items/traffic_sources?aggregate[sum]=sessions&groupBy[]=channel,landing_page&limit=-1`, { headers: { Authorization: `Bearer ${token}` } })
+    .then((res) => (res.ok ? res.json() : null)).then((json) => json?.data?.length || null).catch(() => null)
+  : null;
 for (const panel of PANELS) {
+  if (panel.type === 'traffic-source-table') panel.height = tableHeight(sourceRowCount ?? 20);
   if (panel.type !== 'traffic-content-table') continue;
   panel.height = tableHeight(panel.options.kind === 'articles' ? (publishedArticles ?? 5) : (pageCount ?? 10));
 }
@@ -113,6 +115,7 @@ for (const panel of PANELS.filter((p) => p.position_y !== 1)) {
 }
 
 const OBSOLETE_PANEL_NAMES = [
+  '熱門入口工作階段',
   '最後同步時間',
   '近 30 天熱門文章',
   '每篇文章觀看次數（累積／近 30 天）',

@@ -10,31 +10,22 @@ export function parseGa4SourceRows(response) {
   }));
 }
 
+/** 入口分類固定 7 類；Bing、Yahoo、推薦連結、LINE、YouTube 與任何未列者一律歸「其他」。 */
+export const CHANNELS = ['Google 搜尋', 'Facebook', 'Threads', 'Instagram', 'AI 助理', '直接或不明來源', '其他'];
+
 export function classifySource(source, medium) {
-  const s = String(source).toLowerCase(); const m = String(medium).toLowerCase();
-  if ((s === 'ig' || s.includes('instagram')) && m.includes('comment')) return 'Instagram 留言';
-  if (s.includes('youtube') && (m.includes('description') || m.includes('info'))) return 'YouTube 資訊欄';
-  if (s.includes('chatgpt') || s.includes('openai')) return 'ChatGPT';
-  if (s.includes('perplexity')) return 'Perplexity';
-  if (s.includes('claude') || s.includes('anthropic')) return 'Claude';
-  if (s.includes('gemini') || s.includes('bard.google')) return 'Gemini';
-  if (s.includes('copilot')) return 'Microsoft Copilot';
+  const s = String(source ?? '').toLowerCase(); const m = String(medium ?? '').toLowerCase();
+  if (m === 'ai-assistant' || ['chatgpt', 'openai', 'perplexity', 'claude', 'anthropic', 'gemini', 'bard.google', 'copilot'].some((k) => s.includes(k))) return 'AI 助理';
   if (s.includes('threads')) return 'Threads';
   if (s === 'ig' || s.includes('instagram')) return 'Instagram';
-  if (/(^|\.)facebook\.com$/.test(s) || s === 'fb') return 'Facebook';
-  if (/(^|\.)line\.me$/.test(s) || s === 'line' || s.includes('liff.line')) return 'LINE';
-  if (s.includes('youtube') || s.includes('youtu.be')) return 'YouTube';
+  if (s.includes('facebook') || s === 'fb') return 'Facebook';
   // google / organic 同時包含一般搜尋結果與 AI Overview 點擊，GA4 無法拆開；
   // 標籤只寫「Google 搜尋」，避免被誤讀成 AI 引用流量。明確的 AI 助理來源在上面另列。
   if (s === 'google' && m === 'organic') return 'Google 搜尋';
-  if (s === 'bing' && m === 'organic') return 'Bing 搜尋';
-  if (s.includes('yahoo') && (m === 'organic' || m === 'referral')) return 'Yahoo 搜尋';
-  // 不叫「直接進入」：這個分類混雜了真的直接輸入網址／書籤，跟從 App／通訊軟體點連結但沒帶
+  // 這個分類混雜了真的直接輸入網址／書籤，跟從 App／通訊軟體點連結但沒帶
   // referrer 而被 GA4 判斷成查無來源的情況，兩者無法用 GA4 現有資料分開。
-  if (s === '(direct)' || m === '(none)') return '不明來源';
-  if (m === 'organic') return `${source} 搜尋`;
-  if (m === 'referral') return `${source} 推薦連結`;
-  return source || '其他';
+  if (s === '(direct)' || m === '(none)') return '直接或不明來源';
+  return '其他';
 }
 
 export function buildTrafficSourceRows({ gaRows, articleTitles = new Map(), syncedAt }) {

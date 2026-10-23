@@ -20,7 +20,7 @@ export const DATE_DISPLAY = {
 
 const SYNCED = { views_synced_at: ['最後同步時間', 'timestamp'] };
 
-/** 欄位 → [中文標題, 顯示類型 'timestamp' | 'date' | 省略]。 */
+/** 欄位 → [中文標題, 顯示類型 'timestamp' | 'date' | 省略, 欄位說明（選填）]。 */
 export const FIELD_LABELS = {
   articles: {
     title: ['標題'], status: ['狀態'],
@@ -43,7 +43,7 @@ export const FIELD_LABELS = {
     ...SYNCED,
   },
   traffic_sources: {
-    channel: ['入口分類'], sessions: ['工作階段'], views: ['觀看'], source: ['來源'], medium: ['媒介'],
+    channel: ['入口分類', undefined, '入口分類，固定 7 類：Google 搜尋、Facebook、Threads、Instagram、AI 助理、直接或不明來源、其他。'], sessions: ['造訪次數', undefined, '造訪次數（GA4 工作階段數）。'], views: ['觀看'], source: ['來源'], medium: ['媒介'],
     campaign: ['活動'], landing_page: ['進站頁'],
     ...SYNCED,
   },
@@ -62,8 +62,9 @@ export function mergeTranslations(existing, label) {
 }
 
 /** 組出要 PATCH 的 meta 片段（只含 translations 與 display 相關欄位）。 */
-export function buildMetaPatch(currentMeta, [label, displayKind]) {
+export function buildMetaPatch(currentMeta, [label, displayKind, note]) {
   const patch = { translations: mergeTranslations(currentMeta?.translations, label) };
+  if (note) patch.note = note;
   const display = displayKind === 'timestamp' ? TIMESTAMP_DISPLAY : displayKind === 'date' ? DATE_DISPLAY : null;
   if (display) Object.assign(patch, { display: display.display, display_options: { ...display.display_options } });
   return patch;
