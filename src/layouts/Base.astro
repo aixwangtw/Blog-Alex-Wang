@@ -236,7 +236,18 @@ const jsonLd = {
           window.dataLayer.push(arguments);
         };
         window.gtag('js', new Date());
-        window.gtag('config', 'G-91Z2F673C0');
+        var gaConfig = {};
+        try {
+          var gaUrl = new URL(window.location.href);
+          if (gaUrl.searchParams.get('s') === 'line') {
+            gaUrl.searchParams.delete('s');
+            gaConfig = { campaign_source: 'line', campaign_medium: 'social', campaign_name: 'article_share', page_location: gaUrl.href };
+            window.gtag('config', 'G-91Z2F673C0', gaConfig);
+            window.history.replaceState(window.history.state, '', gaUrl.pathname + gaUrl.search + gaUrl.hash);
+            gaConfig = null;
+          }
+        } catch (e) {}
+        if (gaConfig) window.gtag('config', 'G-91Z2F673C0');
 
         window.addEventListener('load', function () {
           var s = document.createElement('script');
