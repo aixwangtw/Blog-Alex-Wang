@@ -104,14 +104,14 @@ YouTube 資訊欄等具體位置無法從未加標記的歷史網址反推；分
 
 入口分類「Google 搜尋」（`google` / `organic`）**同時包含一般搜尋結果與 AI Overview 點擊，GA4 無法分開**，
 不要把這個數字讀成 AI 引用流量（2026-10-21 起從「Google 搜尋／AI Overview」改名，就是因為舊名容易被
-誤讀）。明確的 AI 搜尋來源（2026-10-23 起從「AI 助理」改名）另外列：來源名含 `chatgpt`／`openai`、`perplexity`、`claude`／`anthropic`、
+誤讀）。明確的 AI 助理來源另外列（2026-10-23 曾短暫改名「AI 搜尋」，使用者定案後改回「AI 助理」）：來源名含 `chatgpt`／`openai`、`perplexity`、`claude`／`anthropic`、
 `gemini`／`bard.google`、`copilot` 的工作階段分別歸到 ChatGPT、Perplexity、Claude、Gemini、
 Microsoft Copilot（依 `sessionSource` 判斷，見 `tools/lib/traffic-sources-lib.mjs` 的 `classifySource()`）。
-入口分類共 13 類，排序分三段（2026-10-23 改版；「直接或不明來源」名稱已移除）：
+入口分類共 10 類，排序（2026-10-23 定案；「直接或不明來源」「不明」「回訪讀者」「App 內建瀏覽器」名稱都已移除）：
 
-1. 外部來源，依造訪次數多到少：Google 搜尋、Facebook、Threads、Instagram、AI 搜尋、YouTube、LINE。
-2. GA4 查無來源（direct）時，用其他維度推論出去處，依造訪次數多到少：回訪讀者、App 內建瀏覽器、站內換頁。
-3. 固定排最後：其他、疑似自動程式、不明。
+1. 依造訪次數多到少：Google 搜尋、Facebook、Threads、Instagram、AI 助理、YouTube、LINE、站內換頁。
+   LINE 只算 GA4 來源為 `line`（連結帶 `utm_source=line`，包含文章的 LINE 分享按鈕 `utm_medium=social&utm_campaign=article_share`）。
+2. 固定排最後：其他、疑似自動程式。
 
 只有原本被 GA4 歸為 direct 的造訪才會細分（非 direct 維持依 `sessionSource`／`sessionMedium` 的分類），判斷順序
 由「最確定」到「最弱」，寫在 `classifyVisit()`：
@@ -119,14 +119,15 @@ Microsoft Copilot（依 `sessionSource` 判斷，見 `tools/lib/traffic-sources-
 | 順序 | 條件 | 歸類 | 理由 |
 | --- | --- | --- | --- |
 | 1 | 進站網址帶 `fbclid` | Facebook（含從 IG、Threads 點出） | Meta 在點擊當下加的參數，證據最硬 |
-| 2 | 螢幕解析度 800x600，或國家 United States 且 `engagedSessions` 0、停留 0 秒 | 疑似自動程式 | **推論，非 GA4 官方標記**；不是真人就不該算進讀者去處，所以排在 3～5 前 |
+| 2 | 螢幕解析度 800x600，或國家 United States 且 `engagedSessions` 0、停留 0 秒 | 疑似自動程式 | **推論，非 GA4 官方標記**；不是真人就不該算進讀者去處，所以排在站內換頁前 |
 | 3 | 進站那一頁的 `pageReferrer` 是 aixwang.dev | 站內換頁 | 其實是站內點擊 |
-| 4 | 瀏覽器是 Safari (in-app) 或 Android Webview | App 內建瀏覽器 | LINE、FB、IG 等 App 點開連結沒帶 referrer |
-| 5 | `newVsReturning` = returning | 回訪讀者 | 描述「人」而不是「從哪來」，資訊最弱 |
-| 6 | 其餘 | 不明 | |
+| 4 | 其餘（含回訪讀者、App 內建瀏覽器、查不到來源） | 其他 | 這幾類使用者決定不單獨列 |
+
+分類名稱與「合併關係」（`CHANNEL_MERGE`）集中在 `tools/lib/traffic-sources-lib.mjs` 開頭的 `CH` 常數，之後要改名或併類只改那裡
+（前端排序清單 `directus-extensions/traffic-panels/src/shared/channels.ts` 需同步）。
 
 實作注意：GA4 單次查詢最多 9 個維度，`dimensionFilter` 的欄位（`hostName`）也算，所以入口資料分三次查再合併
-（一般造訪、direct 造訪多帶 browser／newVsReturning／screenResolution／country、direct 造訪的進站 referrer）。
+（一般造訪、direct 造訪多帶 screenResolution／country、direct 造訪的進站 referrer）。
 `pageReferrer` 是事件層級，不能直接加進同一個查詢：一次造訪看兩頁，第二頁的 referrer 是本站，同一次造訪會重複出現
 在兩列（實測 direct 450 次會變成 553 次）。所以另用只含 `session_start` 事件的查詢取得「進站那一頁」的 referrer，
 再對應回去（`attachSessionStartReferrers()`）。`traffic_sources` 的列粒度仍是「分類＋進站頁＋source／medium／campaign」。

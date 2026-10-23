@@ -11,7 +11,7 @@ export function parseGa4SourceRows(response) {
   }));
 }
 
-const DIRECT_KEY_FIELDS = ['landing_page', 'browser', 'new_vs_returning', 'screen_resolution', 'country'];
+const DIRECT_KEY_FIELDS = ['landing_page', 'screen_resolution', 'country'];
 
 /**
  * 直接造訪（medium 是 (none)）：維度順序見 DIRECT_VISIT_DIMENSIONS，指標見 DIRECT_VISIT_METRICS。
@@ -24,7 +24,7 @@ export function parseGa4DirectVisitRows(response) {
     const m = (i) => Number(row?.metricValues?.[i]?.value ?? 0);
     return {
       source: '(direct)', medium: '(none)', campaign: '(direct)',
-      landing_page: d(0), browser: d(1), new_vs_returning: d(2), screen_resolution: d(3), country: d(4),
+      landing_page: d(0), screen_resolution: d(1), country: d(2),
       sessions: m(0), views: m(1), engaged_sessions: m(2), engagement_seconds: m(3),
     };
   });
@@ -35,8 +35,8 @@ export function parseGa4ReferrerRows(response) {
   return (response?.rows ?? []).map((row) => {
     const d = (i) => row?.dimensionValues?.[i]?.value ?? '';
     return {
-      landing_page: d(0), browser: d(1), new_vs_returning: d(2), screen_resolution: d(3), country: d(4),
-      page_referrer: d(5), count: Number(row?.metricValues?.[0]?.value ?? 0),
+      landing_page: d(0), screen_resolution: d(1), country: d(2),
+      page_referrer: d(3), count: Number(row?.metricValues?.[0]?.value ?? 0),
     };
   });
 }
@@ -58,8 +58,7 @@ function allocate(total, weights) {
  * 為什麼不直接在同一個查詢加 pageReferrer 維度：pageReferrer 是事件層級，一次造訪看了兩頁，
  * 第二頁的 referrer 就是本站，同一次造訪會同時出現在「空 referrer」與「本站」兩列，造訪次數被重複計算
  * （實測直接造訪 450 次，加維度後變 553 次）。所以另用只含 session_start 事件的查詢取得每次造訪
- * 「進站那一頁」的 referrer（一次造訪只有一個 session_start），再依其餘維度（landing、browser、
- * newVsReturning、screenResolution、country）對應回去，並把 sessions／views 等計數欄位（countFields）依比例分配，
+ * 「進站那一頁」的 referrer（一次造訪只有一個 session_start），再依其餘維度（landing、screenResolution、country）對應回去，並把 sessions／views 等計數欄位（countFields）依比例分配，
  * 其他欄位（互動指標）原樣複製。找不到對應的造訪視為 referrer 空白。非 direct 的列不動。
  */
 export function attachSessionStartReferrers(rows, referrerRows, countFields = ['sessions', 'views']) {
@@ -92,7 +91,7 @@ export function attachSessionStartReferrers(rows, referrerRows, countFields = ['
  * GA4 單次查詢最多 9 個維度，而且 dimensionFilter 用到的欄位（本站 hostName 一定要）也算在內，
  * 所以入口資料拆成幾次查詢再合併（本機腳本與 Worker 共用這份定義，避免兩邊漂移）：
  * 1. 一般造訪（medium 不是 (none)）：4 個維度；
- * 2. 直接造訪：多帶 browser、newVsReturning、screenResolution、country 判斷去處；
+ * 2. 直接造訪：多帶 screenResolution、country 判斷是否疑似自動程式；
  * 3. 直接造訪的 session_start referrer：見 attachSessionStartReferrers。
  */
 export const MEDIUM_NONE_FILTER = { filter: { fieldName: 'sessionMedium', stringFilter: { matchType: 'EXACT', value: '(none)' } } };
@@ -100,7 +99,7 @@ export const NON_DIRECT_FILTER = { notExpression: MEDIUM_NONE_FILTER };
 export const SESSION_START_FILTER = { filter: { fieldName: 'eventName', stringFilter: { matchType: 'EXACT', value: 'session_start' } } };
 export const TRAFFIC_SOURCE_DIMENSIONS = ['sessionSource', 'sessionMedium', 'sessionCampaignName', 'landingPagePlusQueryString'];
 export const TRAFFIC_SOURCE_METRICS = ['sessions', 'screenPageViews'];
-export const DIRECT_VISIT_DIMENSIONS = ['landingPagePlusQueryString', 'browser', 'newVsReturning', 'screenResolution', 'country'];
+export const DIRECT_VISIT_DIMENSIONS = ['landingPagePlusQueryString', 'screenResolution', 'country'];
 export const DIRECT_VISIT_METRICS = ['sessions', 'screenPageViews', 'engagedSessions', 'userEngagementDuration'];
 export const REFERRER_DIMENSIONS = [...DIRECT_VISIT_DIMENSIONS, 'pageReferrer'];
 export const REFERRER_METRICS = ['sessions'];
@@ -111,14 +110,25 @@ export const TODAY_SOURCE_METRICS = ['activeUsers', 'engagedSessions', 'userEnga
 export const TODAY_REFERRER_METRICS = ['activeUsers'];
 
 /**
- * 入口分類共 13 類（指定的 11 類，加上原本就獨立的 YouTube、LINE）。排序分三段：
+ * 入口分類共 10 類（YouTube 為原本就獨立、使用者定案名單未列但未要求取消，故保留）。排序分三段：
  * 1. EXTERNAL_CHANNELS：明確的外部來源，依人數／造訪次數多到少；
- * 2. DERIVED_CHANNELS：原本被 GA4 歸成 direct 的造訪，用其他維度推論出的去處，依人數多到少；
- * 3. TAIL_CHANNELS：固定排最後，順序固定「其他」「疑似自動程式」「不明」。
+ * 2. DERIVED_CHANNELS：原本被 GA4 歸成 direct 的造訪，推論出是站內換頁，依人數排序（與外部來源之後接續）；
+ * 3. TAIL_CHANNELS：固定排最後，順序固定「其他」「疑似自動程式」。
  */
-export const EXTERNAL_CHANNELS = ['Google 搜尋', 'Facebook', 'Threads', 'Instagram', 'AI 搜尋', 'YouTube', 'LINE'];
-export const DERIVED_CHANNELS = ['回訪讀者', 'App 內建瀏覽器', '站內換頁'];
-export const TAIL_CHANNELS = ['其他', '疑似自動程式', '不明'];
+/** 分類名稱集中在這裡；其他程式碼一律引用 CH.xxx，改名只改這一處（前端面板的同步清單見 directus-extensions/traffic-panels/src/shared/channels.ts）。 */
+export const CH = {
+  GOOGLE: 'Google 搜尋', FACEBOOK: 'Facebook', THREADS: 'Threads', INSTAGRAM: 'Instagram', AI: 'AI 助理', YOUTUBE: 'YouTube', LINE: 'LINE',
+  ON_SITE: '站內換頁',
+  OTHER: '其他', BOT: '疑似自動程式',
+};
+/**
+ * 合併關係：把某分類改併到別的分類，只改這一處（例如 { [CH.ON_SITE]: CH.OTHER }）。目前不合併。
+ * 2026-10-23 使用者定案：回訪讀者、App 內建瀏覽器、不明都不單獨列，統稱「其他」（直接寫在 classifyVisit，不靠這張表）。
+ */
+export const CHANNEL_MERGE = {};
+export const EXTERNAL_CHANNELS = [CH.GOOGLE, CH.FACEBOOK, CH.THREADS, CH.INSTAGRAM, CH.AI, CH.YOUTUBE, CH.LINE];
+export const DERIVED_CHANNELS = [CH.ON_SITE];
+export const TAIL_CHANNELS = [CH.OTHER, CH.BOT];
 export const CHANNELS = [...EXTERNAL_CHANNELS, ...DERIVED_CHANNELS, ...TAIL_CHANNELS];
 
 /**
@@ -142,26 +152,24 @@ export function isDirectVisit(source, medium) {
 }
 
 /**
- * 只靠 source／medium 的分類。原本歸 direct 的回傳「不明」；
- * 完整判斷（含 fbclid、瀏覽器等）請用 classifyVisit。
+ * 只靠 source／medium 的分類。direct 與未列名來源都回傳「其他」；
+ * 完整判斷（含 fbclid、站內換頁、疑似自動程式）請用 classifyVisit。
  */
 export function classifySource(source, medium) {
   const s = String(source ?? '').toLowerCase(); const m = String(medium ?? '').toLowerCase();
-  if (m === 'ai-assistant' || ['chatgpt', 'openai', 'perplexity', 'claude', 'anthropic', 'gemini', 'bard.google', 'copilot'].some((k) => s.includes(k))) return 'AI 搜尋';
-  if (s.includes('threads')) return 'Threads';
-  if (s === 'ig' || s.includes('instagram')) return 'Instagram';
-  if (s.includes('facebook') || s === 'fb') return 'Facebook';
-  if (s.includes('youtube') || s === 'yt' || s === 'youtu.be') return 'YouTube';
+  if (m === 'ai-assistant' || ['chatgpt', 'openai', 'perplexity', 'claude', 'anthropic', 'gemini', 'bard.google', 'copilot'].some((k) => s.includes(k))) return CH.AI;
+  if (s.includes('threads')) return CH.THREADS;
+  if (s === 'ig' || s.includes('instagram')) return CH.INSTAGRAM;
+  if (s.includes('facebook') || s === 'fb') return CH.FACEBOOK;
+  if (s.includes('youtube') || s === 'yt' || s === 'youtu.be') return CH.YOUTUBE;
   // 發文連結加 utm_source=line 時 GA4 的 source 就是 line（見 docs/utm-tracking.md）。
-  if (s === 'line' || s.includes('line.me') || s.includes('liff') || s.includes('line.naver')) return 'LINE';
+  if (s === 'line' || s.includes('line.me') || s.includes('liff') || s.includes('line.naver')) return CH.LINE;
   // google / organic 同時包含一般搜尋結果與 AI Overview 點擊，GA4 無法拆開；
-  // 標籤只寫「Google 搜尋」，避免被誤讀成 AI 引用流量。明確的 AI 搜尋來源在上面另列。
-  if (s === 'google' && m === 'organic') return 'Google 搜尋';
-  if (isDirectVisit(source, medium)) return '不明';
-  return '其他';
+  // 標籤只寫「Google 搜尋」，避免被誤讀成 AI 引用流量。明確的 AI 助理來源在上面另列。
+  if (s === 'google' && m === 'organic') return CH.GOOGLE;
+  return CH.OTHER;
 }
 
-const IN_APP_BROWSERS = ['safari (in-app)', 'android webview'];
 const SITE_HOST = 'aixwang.dev';
 
 function urlHost(value) {
@@ -185,29 +193,29 @@ export function isSuspectedBot(visit) {
 }
 
 /**
- * 完整入口分類。visit 欄位：source、medium、landing_page（原始、含查詢字串）、browser、
- * new_vs_returning、page_referrer、screen_resolution、country、engaged_sessions、engagement_seconds。
+ * 完整入口分類。visit 欄位：source、medium、landing_page（原始、含查詢字串）、page_referrer、
+ * screen_resolution、country、engaged_sessions、engagement_seconds。
  *
- * 只有 GA4 原本歸 direct 的造訪才會往下細分，非 direct 一律維持 classifySource 的結果。
- * 細分的優先順序（由「最確定、最具體」到「最弱」）：
+ * 只有 GA4 原本歸 direct 的造訪才會往下細分，非 direct 一律維持 classifySource 的結果
+ * （source=line 或 utm_source=line 的造訪在這裡就是 LINE）。細分的優先順序（由「最確定」到「最弱」）：
  * 1. fbclid → Facebook：網址帶 fbclid 是 Meta 在點擊當下加的，直接證明是從 Meta 系產品（含 IG、Threads）點出，證據最硬。
- * 2. 疑似自動程式：不是真人就不該被算進任何讀者去處，所以排在「站內換頁、App、回訪」之前，
- *    否則爬蟲的內部換頁或固定瀏覽器會被誤算成讀者行為。
- * 3. 站內換頁：pageReferrer 是本站，代表這次造訪其實是站內點擊（例如工作階段逾時後重算）。
- * 4. App 內建瀏覽器：Safari (in-app)／Android Webview，通常是 LINE、FB、IG 等 App 點開連結而沒帶 referrer。
- * 5. 回訪讀者：newVsReturning=returning。它描述的是「人」而不是「從哪來」，資訊最弱，所以排最後。
- * 6. 其餘 → 不明。
+ * 2. 疑似自動程式：不是真人就不該被算進讀者去處，所以排在站內換頁前，否則爬蟲的站內換頁會被誤算成讀者行為。
+ * 3. 站內換頁：進站那一頁的 pageReferrer 是本站，代表這次造訪其實是站內點擊。
+ * 4. 其餘 → 其他（2026-10-23 起，回訪讀者、App 內建瀏覽器、不明都不單獨列，統稱其他；因此不再查 browser、newVsReturning）。
  */
 export function classifyVisit(visit) {
+  const channel = classifyVisitRaw(visit);
+  return CHANNEL_MERGE[channel] ?? channel;
+}
+
+function classifyVisitRaw(visit) {
   const base = classifySource(visit.source, visit.medium);
   if (!isDirectVisit(visit.source, visit.medium)) return base;
-  if (hasFbclid(visit.landing_page)) return 'Facebook';
-  if (isSuspectedBot(visit)) return '疑似自動程式';
+  if (hasFbclid(visit.landing_page)) return CH.FACEBOOK;
+  if (isSuspectedBot(visit)) return CH.BOT;
   const refHost = urlHost(visit.page_referrer);
-  if (refHost === SITE_HOST || refHost.endsWith(`.${SITE_HOST}`)) return '站內換頁';
-  if (IN_APP_BROWSERS.includes(String(visit.browser ?? '').toLowerCase())) return 'App 內建瀏覽器';
-  if (String(visit.new_vs_returning ?? '').toLowerCase() === 'returning') return '回訪讀者';
-  return '不明';
+  if (refHost === SITE_HOST || refHost.endsWith(`.${SITE_HOST}`)) return CH.ON_SITE;
+  return CH.OTHER;
 }
 
 export function buildTrafficSourceRows({ gaRows, articleTitles = new Map(), syncedAt }) {
@@ -219,7 +227,7 @@ export function buildTrafficSourceRows({ gaRows, articleTitles = new Map(), sync
     if (!classification.is_current || !['頁面', '文章'].includes(classification.content_type)) continue;
     const channel = classifyVisit(row);
     const campaign = row.campaign || '(not set)';
-    // 多出來的判斷用維度（browser、referrer 等）分類後就彙總掉，列的粒度維持「分類＋進站頁＋source/medium/campaign」。
+    // 多出來的判斷用維度（螢幕解析度、國家、referrer）分類後就彙總掉，列的粒度維持「分類＋進站頁＋source/medium/campaign」。
     const rawKey = [channel, row.source, row.medium, campaign, landing].join('|');
     const source_key = createHash('sha256').update(rawKey).digest('hex');
     const current = grouped.get(source_key) ?? { source_key, channel, source: row.source, medium: row.medium, campaign, landing_page: landing, sessions: 0, views: 0, views_synced_at: syncedAt };
@@ -234,7 +242,7 @@ export function parseGa4TodaySourceRows(response) {
     const d = (i) => row?.dimensionValues?.[i]?.value ?? '';
     const m = (i) => Number(row?.metricValues?.[i]?.value ?? 0);
     return {
-      source: d(0), medium: d(1), landing_page: d(2), browser: d(3), new_vs_returning: d(4), screen_resolution: d(5), country: d(6),
+      source: d(0), medium: d(1), landing_page: d(2), screen_resolution: d(3), country: d(4),
       users: m(0), engaged_sessions: m(1), engagement_seconds: m(2),
     };
   });

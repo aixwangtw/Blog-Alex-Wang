@@ -43,7 +43,7 @@ export const FIELD_LABELS = {
     ...SYNCED,
   },
   traffic_sources: {
-    channel: ['入口分類', undefined, '入口分類，共 13 類。外部來源（依造訪次數多到少）：Google 搜尋、Facebook、Threads、Instagram、AI 搜尋、YouTube、LINE；接著是 GA4 查無來源時推論出去處的：回訪讀者、App 內建瀏覽器、站內換頁（依造訪次數多到少）；最後固定為其他、疑似自動程式、不明。「Facebook」含從 IG、Threads 點出、帶 fbclid 的連結。GA4 查無來源（直接）的造訪才會細分，判斷順序：網址帶 fbclid → Facebook；疑似自動程式（推論，非 GA4 官方標記：螢幕解析度 800x600，或美國來源且完全沒有互動）；進站頁的上一頁是本站 → 站內換頁；瀏覽器是 Safari (in-app) 或 Android Webview → App 內建瀏覽器；曾回訪的使用者 → 回訪讀者；其餘 → 不明。'], sessions: ['造訪次數', undefined, '造訪次數（GA4 工作階段數）。'], views: ['觀看'], source: ['來源'], medium: ['媒介'],
+    channel: ['入口分類', undefined, '入口分類，共 10 類。依造訪次數由多到少：Google 搜尋、Facebook、Threads、Instagram、AI 助理、YouTube、LINE（只有連結帶 utm_source=line 或 GA4 來源為 line 才算）、站內換頁；最後固定為其他、疑似自動程式。「Facebook」含從 IG、Threads 點出、帶 fbclid 的連結。GA4 查無來源（直接）的造訪才會細分，判斷順序：網址帶 fbclid → Facebook；疑似自動程式（推論，非 GA4 官方標記：螢幕解析度 800x600，或美國來源且完全沒有互動）；進站頁的上一頁是本站 → 站內換頁；其餘 → 其他（含查不到來源者與未列名的來源）。'], sessions: ['造訪次數', undefined, '造訪次數（GA4 工作階段數）。'], views: ['觀看'], source: ['來源'], medium: ['媒介'],
     campaign: ['活動'], landing_page: ['進站頁'],
     ...SYNCED,
   },

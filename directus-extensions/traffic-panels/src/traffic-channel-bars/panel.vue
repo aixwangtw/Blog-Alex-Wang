@@ -31,30 +31,6 @@ const errorText = ref('');
 const rows = ref<Row[]>([]);
 const max = computed(() => Math.max(0, ...rows.value.map((row) => row.sessions)));
 
-onMounted, ref } from 'vue';
-import { sortChannels } from '../shared/channels';
-import { formatNumber } from '../shared/format';
-import { query } from '../shared/query';
-
-interface Row {
-	channel: string;
-	sessions: number;
-}
-
-const api = useApi();
-const loading = ref(true);
-const errorText = ref('');
-const rows = ref<Row[]>([]);
-const max = computed(() => Math.max(0, ...rows.value.map((row) => row.sessions)));
-
-function sortForDisplay(items: Row[]): Row[] {
-	const pinned = PINNED.map((name) => items.find((item) => item.channel === name) ?? { channel: name, sessions: 0 });
-	const rest = items
-		.filter((item) => !PINNED.includes(item.channel))
-		.sort((a, b) => b.sessions - a.sessions || a.channel.localeCompare(b.channel, 'zh-TW'));
-	return [...pinned, ...rest];
-}
-
 onMounted(async () => {
 	try {
 		const response = await api.get(`/items/traffic_sources?${query({ 'aggregate[sum]': 'sessions', 'groupBy[]': 'channel', limit: -1 })}`);

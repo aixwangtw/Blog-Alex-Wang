@@ -1,11 +1,11 @@
 /**
  * 入口分類的固定排序，需與 tools/lib/traffic-sources-lib.mjs 的
  * EXTERNAL_CHANNELS／DERIVED_CHANNELS／TAIL_CHANNELS 一致：
- * 外部來源依人數多到少 → 衍生分類依人數多到少 → 固定最後「其他」「疑似自動程式」「不明」。
+ * 外部來源依人數多到少 → 衍生分類依人數多到少 → 固定最後「其他」「疑似自動程式」。
  */
-export const EXTERNAL_CHANNELS = ['Google 搜尋', 'Facebook', 'Threads', 'Instagram', 'AI 搜尋', 'YouTube', 'LINE'];
-export const DERIVED_CHANNELS = ['回訪讀者', 'App 內建瀏覽器', '站內換頁'];
-export const TAIL_CHANNELS = ['其他', '疑似自動程式', '不明'];
+export const EXTERNAL_CHANNELS = ['Google 搜尋', 'Facebook', 'Threads', 'Instagram', 'AI 助理', 'YouTube', 'LINE'];
+export const DERIVED_CHANNELS = ['站內換頁'];
+export const TAIL_CHANNELS = ['其他', '疑似自動程式'];
 const ALL_CHANNELS = [...EXTERNAL_CHANNELS, ...DERIVED_CHANNELS, ...TAIL_CHANNELS];
 
 function rank(name: string): number {

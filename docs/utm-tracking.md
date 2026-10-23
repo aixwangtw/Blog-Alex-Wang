@@ -1,7 +1,7 @@
 # 發文連結加 UTM 追蹤標籤
 
 目的：讓後台「流量統計」的入口分類能分清楚讀者是從哪個貼文、哪個平台點進來。沒加 UTM 時，
-LINE、Email、部分 App 點出的連結常被 GA4 記成「直接」（沒有來源資訊），後台只能靠推論歸到「回訪讀者」「App 內建瀏覽器」「不明」等。
+LINE、Email、部分 App 點出的連結常被 GA4 記成「直接」（沒有來源資訊），後台只能歸到「其他」。
 只需要改貼出去的連結，不用改網站。
 
 ## 格式
@@ -21,10 +21,10 @@ LINE、Email、部分 App 點出的連結常被 GA4 記成「直接」（沒有�
 
 ## 分類怎麼判斷
 
-分類規則在 `tools/lib/traffic-sources-lib.mjs` 的 `classifySource()`／`classifyVisit()`，只看 `utm_source`（GA4 的 `sessionSource`）與 `utm_medium`：
+分類規則在 `tools/lib/traffic-sources-lib.mjs` 的 `classifySource()`／`classifyVisit()`，加了 UTM 的連結只看 `utm_source`（GA4 的 `sessionSource`）與 `utm_medium`：
 
-- 來源含 `line`（`line`、`line.me`、`liff`、`line.naver`）→ **LINE**（獨立一類，排在依人數排序的外部來源區）。
-  在這次修改之前就已獨立成類，所以 `utm_source=line` 不會落到「其他」。
+- 來源含 `line`（`line`、`line.me`、`liff`、`line.naver`）→ **LINE**（獨立一類，排在依人數排序區）。
+  沒加 UTM 的 LINE 點擊會被記成直接，歸「其他」，所以 LINE 的數字只會是有加標籤的連結。
 - 來源 `facebook`／`fb` → Facebook；`ig`／含 `instagram` → Instagram；含 `threads` → Threads；含 `youtube`／`yt` → YouTube。
 - 來源名稱沒對上任何一類（例如 `newsletter`）→ **其他**。要為 Email 獨立一類請告知，再改分類。
 - 大小寫不影響；`utm_source` 請固定用同一種寫法，避免同一個平台被拆成多個來源列。
