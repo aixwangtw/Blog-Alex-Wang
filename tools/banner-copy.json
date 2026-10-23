@@ -67,5 +67,12 @@
     "title": "Matt Pocock Skills\n讓 AI 先問清楚",
     "subtitle": "grill-me 到寫完程式的流程",
     "role": "工程師"
+  },
+  "custom-system-development-demo": {
+    "badgePrefix": "",
+    "badge": "系統開發",
+    "title": "系統開發、AI 導入\n先免費看 Demo",
+    "subtitle": "依功能報價、分三期付款",
+    "role": "工程師"
   }
 }
