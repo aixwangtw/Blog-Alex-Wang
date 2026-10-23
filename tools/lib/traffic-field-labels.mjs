@@ -43,7 +43,7 @@ export const FIELD_LABELS = {
     ...SYNCED,
   },
   traffic_sources: {
-    channel: ['入口分類', undefined, '入口分類，固定 7 類：Google 搜尋、Facebook、Threads、Instagram、AI 助理、直接或不明來源、其他。'], sessions: ['造訪次數', undefined, '造訪次數（GA4 工作階段數）。'], views: ['觀看'], source: ['來源'], medium: ['媒介'],
+    channel: ['入口分類', undefined, '入口分類，固定 9 類：Google 搜尋、AI 搜尋、Facebook、Threads、Instagram、YouTube、LINE、直接或不明來源、其他。'], sessions: ['造訪次數', undefined, '造訪次數（GA4 工作階段數）。'], views: ['觀看'], source: ['來源'], medium: ['媒介'],
     campaign: ['活動'], landing_page: ['進站頁'],
     ...SYNCED,
   },

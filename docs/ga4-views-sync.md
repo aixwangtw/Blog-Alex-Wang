@@ -104,9 +104,12 @@ YouTube 資訊欄等具體位置無法從未加標記的歷史網址反推；分
 
 入口分類「Google 搜尋」（`google` / `organic`）**同時包含一般搜尋結果與 AI Overview 點擊，GA4 無法分開**，
 不要把這個數字讀成 AI 引用流量（2026-10-21 起從「Google 搜尋／AI Overview」改名，就是因為舊名容易被
-誤讀）。明確的 AI 助理來源另外列：來源名含 `chatgpt`／`openai`、`perplexity`、`claude`／`anthropic`、
+誤讀）。明確的 AI 搜尋來源（2026-10-23 起從「AI 助理」改名）另外列：來源名含 `chatgpt`／`openai`、`perplexity`、`claude`／`anthropic`、
 `gemini`／`bard.google`、`copilot` 的工作階段分別歸到 ChatGPT、Perplexity、Claude、Gemini、
 Microsoft Copilot（依 `sessionSource` 判斷，見 `tools/lib/traffic-sources-lib.mjs` 的 `classifySource()`）。
+入口分類共 9 類：Google 搜尋、AI 搜尋、Facebook、Threads、Instagram、YouTube、LINE、直接或不明來源、其他。
+2026-10-23 起 YouTube（`youtube`／`yt`／`youtu.be`）與 LINE（`line`／`line.me`／`liff`）不再併入「其他」。
+儀表板「熱門入口造訪次數」改用自訂面板 `traffic-channel-bars`：Google 搜尋固定第一、AI 搜尋固定第二，其餘依造訪次數多到少。
 
 所有自動同步查詢都固定篩選 `hostName = aixwang.dev`。因此 `localhost` 本機開發、預覽環境與在本機
 執行的 Browser Agent 即使曾載入 GA4，也不會寫進 CMS 的文章、頁面、每日趨勢或流量入口統計。

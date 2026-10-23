@@ -10,17 +10,29 @@ export function parseGa4SourceRows(response) {
   }));
 }
 
-/** 入口分類固定 7 類；Bing、Yahoo、推薦連結、LINE、YouTube 與任何未列者一律歸「其他」。 */
-export const CHANNELS = ['Google 搜尋', 'Facebook', 'Threads', 'Instagram', 'AI 助理', '直接或不明來源', '其他'];
+/** 入口分類固定 9 類；Bing、Yahoo、推薦連結與任何未列者一律歸「其他」（YouTube、LINE 各自獨立）。 */
+export const CHANNELS = ['Google 搜尋', 'AI 搜尋', 'Facebook', 'Threads', 'Instagram', 'YouTube', 'LINE', '直接或不明來源', '其他'];
+
+/** 「熱門入口造訪次數」固定排前面的分類：Google 搜尋第一、AI 搜尋第二，其餘依造訪次數多到少。 */
+export const PINNED_CHANNELS = ['Google 搜尋', 'AI 搜尋'];
+
+/** 依固定順序排列 [{ channel, sessions }]；釘選的分類即使 0 次也保留位置。 */
+export function sortChannelsForDisplay(items) {
+  const pinned = PINNED_CHANNELS.map((name) => items.find((item) => item.channel === name) ?? { channel: name, sessions: 0 });
+  const rest = items.filter((item) => !PINNED_CHANNELS.includes(item.channel)).sort((a, b) => b.sessions - a.sessions || a.channel.localeCompare(b.channel, 'zh-TW'));
+  return [...pinned, ...rest];
+}
 
 export function classifySource(source, medium) {
   const s = String(source ?? '').toLowerCase(); const m = String(medium ?? '').toLowerCase();
-  if (m === 'ai-assistant' || ['chatgpt', 'openai', 'perplexity', 'claude', 'anthropic', 'gemini', 'bard.google', 'copilot'].some((k) => s.includes(k))) return 'AI 助理';
+  if (m === 'ai-assistant' || ['chatgpt', 'openai', 'perplexity', 'claude', 'anthropic', 'gemini', 'bard.google', 'copilot'].some((k) => s.includes(k))) return 'AI 搜尋';
   if (s.includes('threads')) return 'Threads';
   if (s === 'ig' || s.includes('instagram')) return 'Instagram';
   if (s.includes('facebook') || s === 'fb') return 'Facebook';
+  if (s.includes('youtube') || s === 'yt' || s === 'youtu.be') return 'YouTube';
+  if (s === 'line' || s.includes('line.me') || s.includes('liff') || s.includes('line.naver')) return 'LINE';
   // google / organic 同時包含一般搜尋結果與 AI Overview 點擊，GA4 無法拆開；
-  // 標籤只寫「Google 搜尋」，避免被誤讀成 AI 引用流量。明確的 AI 助理來源在上面另列。
+  // 標籤只寫「Google 搜尋」，避免被誤讀成 AI 引用流量。明確的 AI 搜尋來源在上面另列。
   if (s === 'google' && m === 'organic') return 'Google 搜尋';
   // 這個分類混雜了真的直接輸入網址／書籤，跟從 App／通訊軟體點連結但沒帶
   // referrer 而被 GA4 判斷成查無來源的情況，兩者無法用 GA4 現有資料分開。

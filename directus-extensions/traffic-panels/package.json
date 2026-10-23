@@ -13,7 +13,8 @@
     "entries": [
       { "type": "panel", "name": "traffic-summary-card", "source": "src/traffic-summary-card/index.ts" },
       { "type": "panel", "name": "traffic-content-table", "source": "src/traffic-content-table/index.ts" },
-      { "type": "panel", "name": "traffic-source-table", "source": "src/traffic-source-table/index.ts" }
+      { "type": "panel", "name": "traffic-source-table", "source": "src/traffic-source-table/index.ts" },
+      { "type": "panel", "name": "traffic-channel-bars", "source": "src/traffic-channel-bars/index.ts" }
     ],
     "host": "^11.0.0"
   },

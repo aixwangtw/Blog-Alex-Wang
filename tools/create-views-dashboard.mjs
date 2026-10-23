@@ -55,10 +55,10 @@ const PANELS = [
     options: { kind: 'pages', timezone: 'Asia/Taipei' },
   },
   {
-    name: '熱門入口造訪次數', icon: 'bar_chart', type: 'bar-chart',
-    note: '依入口分類加總造訪次數（分 7 類）；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
+    name: '熱門入口造訪次數', icon: 'bar_chart', type: 'traffic-channel-bars',
+    note: '依入口分類加總造訪次數（分 9 類）；Google 搜尋固定第一、AI 搜尋固定第二，其餘由多到少；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
     position_x: 1, position_y: 137, width: 60, height: 18,
-    options: { collection: 'traffic_sources', xAxis: 'channel', yAxis: 'sessions', function: 'sum', horizontal: true, decimals: 0 },
+    options: {},
   },
   {
     name: '流量入口與進站頁', icon: 'alt_route', type: 'traffic-source-table',

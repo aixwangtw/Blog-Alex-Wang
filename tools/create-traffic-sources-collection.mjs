@@ -2,7 +2,7 @@ const CMS = 'https://cms.aixwang.dev'; const COLLECTION = 'traffic_sources'; con
 if (apply && !token) throw new Error('要 --apply 必須設定 DIRECTUS_TOKEN。');
 const FIELDS = [
   { field: 'source_key', type: 'string', schema: { is_nullable: false, is_unique: true }, meta: { interface: 'input', readonly: true, hidden: true } },
-  { field: 'channel', type: 'string', meta: { interface: 'input', readonly: true, width: 'half', note: '入口分類，固定 7 類：Google 搜尋、Facebook、Threads、Instagram、AI 助理、直接或不明來源、其他。' } },
+  { field: 'channel', type: 'string', meta: { interface: 'input', readonly: true, width: 'half', note: '入口分類，固定 9 類：Google 搜尋、AI 搜尋、Facebook、Threads、Instagram、YouTube、LINE、直接或不明來源、其他。' } },
   { field: 'sessions', type: 'integer', meta: { interface: 'input', readonly: true, width: 'half', note: '造訪次數（GA4 工作階段數）。' } },
   { field: 'views', type: 'integer', meta: { interface: 'input', readonly: true, width: 'half', note: '觀看數。' } },
   { field: 'source', type: 'string', meta: { interface: 'input', readonly: true, width: 'half' } },
