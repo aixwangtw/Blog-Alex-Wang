@@ -49,6 +49,12 @@ const PANELS = [
     options: { kind: 'articles', timezone: 'Asia/Taipei' },
   },
   {
+    name: '頁面觀看明細', icon: 'table_view', type: 'traffic-content-table',
+    note: '每個一般頁面一列；「主要入口」是開站以來帶來最多工作階段的入口與占比，滑鼠移上去看前 5 名；點欄位標題排序、拖拉標題右緣調整欄寬，點一列展開逐日明細。',
+    position_x: 1, position_y: 97, width: 60, height: 40,
+    options: { kind: 'pages', timezone: 'Asia/Taipei' },
+  },
+  {
     name: '每日流量趨勢', icon: 'show_chart', type: 'time-series',
     note: '新站每日總觀看數；排除 StarJobTW 舊站與非現行路徑。當天數字尚未結算，可能持續增加。',
     position_x: 1, position_y: 61, width: 60, height: 18,
@@ -59,12 +65,6 @@ const PANELS = [
     note: '每天至少有一次參與工作階段的使用者；使用全站日期層級查詢，不會跨頁重複加總。',
     position_x: 1, position_y: 79, width: 60, height: 18,
     options: { collection: 'daily_views', dateField: 'date', valueField: 'active_users', function: 'sum', precision: 'day', range: 'auto', showXAxis: true, showYAxis: true },
-  },
-  {
-    name: '頁面觀看明細', icon: 'table_view', type: 'traffic-content-table',
-    note: '每個一般頁面一列；「主要入口」是開站以來帶來最多工作階段的入口與占比，滑鼠移上去看前 5 名；點欄位標題排序、拖拉標題右緣調整欄寬，點一列展開逐日明細。',
-    position_x: 1, position_y: 97, width: 60, height: 40,
-    options: { kind: 'pages', timezone: 'Asia/Taipei' },
   },
   {
     name: '熱門入口工作階段', icon: 'bar_chart', type: 'bar-chart',
@@ -83,6 +83,34 @@ const PANELS = [
     },
   },
 ];
+
+/**
+ * 明細表高度：表頭＋每列約 34px，加面板標題與留白，格子 18px；展開逐日明細時在面板內捲動。
+ * @param {number} rows
+ * @returns {number}
+ */
+function tableHeight(rows) {
+  return Math.min(50, Math.max(14, Math.ceil((34 * (rows + 1) + 80) / 18) + 2));
+}
+
+async function countRows(path) {
+  const res = await fetch(`${CMS}${path}`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!res.ok) return null;
+  return Number((await res.json()).data?.[0]?.count ?? 0) || null;
+}
+
+// 依目前已發布文章數與頁面數決定明細表高度，並讓後面的面板 y 連續排列。
+const publishedArticles = token ? await countRows('/items/articles?filter[status][_eq]=published&aggregate[count]=*') : null;
+const pageCount = token ? await countRows('/items/page_views?aggregate[count]=*') : null;
+for (const panel of PANELS) {
+  if (panel.type !== 'traffic-content-table') continue;
+  panel.height = tableHeight(panel.options.kind === 'articles' ? (publishedArticles ?? 5) : (pageCount ?? 10));
+}
+let nextY = 1 + Math.max(...PANELS.filter((p) => p.position_y === 1).map((p) => p.height));
+for (const panel of PANELS.filter((p) => p.position_y !== 1)) {
+  panel.position_y = nextY;
+  nextY += panel.height;
+}
 
 const OBSOLETE_PANEL_NAMES = [
   '最後同步時間',
