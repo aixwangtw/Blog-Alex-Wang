@@ -120,6 +120,8 @@ test('attachSessionStartReferrers：以進站 referrer 切分，總數不變（�
 test('「其他」細項：搜尋引擎、YouTube、推薦網域、direct 的 App 內建瀏覽器／回訪讀者／查不出來源', () => {
   const d = (visit) => classifyVisitDetail(visit);
   assert.deepEqual(d({ source: 'bing', medium: 'organic' }), { channel: '其他', detail: 'Bing 搜尋' });
+  assert.deepEqual(d({ source: 'tw.search.yahoo.com', medium: 'referral' }), { channel: '其他', detail: 'Yahoo 搜尋' });
+  assert.deepEqual(d({ source: 'cn.bing.com', medium: 'referral' }), { channel: '其他', detail: 'Bing 搜尋' });
   assert.deepEqual(d({ source: 'yahoo', medium: 'organic' }), { channel: '其他', detail: 'Yahoo 搜尋' });
   assert.deepEqual(d({ source: 'm.youtube.com', medium: 'referral' }), { channel: '其他', detail: 'YouTube' });
   assert.deepEqual(d({ source: 'example.com', medium: 'referral' }), { channel: '其他', detail: 'example.com' });

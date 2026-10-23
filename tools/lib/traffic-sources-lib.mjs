@@ -213,7 +213,7 @@ function otherSourceDetail(source, medium) {
   if (s.includes('youtube') || s === 'yt' || s === 'youtu.be') return DETAIL.YOUTUBE;
   if (!s || s === '(not set)') return DETAIL.UNKNOWN;
   const engine = Object.keys(SEARCH_ENGINES).find((k) => s === k || s.includes(`${k}.`) || s.endsWith(k));
-  if (engine && (m === 'organic' || m === '' || m === '(not set)')) return SEARCH_ENGINES[engine];
+  if (engine && ['organic', 'referral', '', '(not set)'].includes(m)) return SEARCH_ENGINES[engine];
   if (m === 'organic') return `${source} 搜尋`;
   if (m === 'referral' || m === 'social' || m === '(not set)' || !m) return String(source);
   return `${source} / ${medium}`;
