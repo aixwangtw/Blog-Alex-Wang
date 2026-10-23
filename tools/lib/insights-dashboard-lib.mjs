@@ -1,22 +1,26 @@
-// Directus Insights dashboard／panel 的純資料與版面配置邏輯（不做網路請求、不讀環境變數）。
+// Directus Insights「文章產出與品質」dashboard 的純資料與版面配置邏輯（不做網路請求、不讀環境變數）。
 // 從 tools/create-insights-dashboard.mjs 抽出來，讓 PANELS 定義與 layoutPanels() 版面計算
 // 可以直接被 tools/lib/insights-dashboard-lib.test.mjs 測試，不用真的打 Directus API。
 //
-// PANELS 分三組，對應 docs/cms-insights-dashboard.md 的分類：
-//   A. 直接查 articles collection 就算得出來
-//   B. articles 算不出來，改讀 content_stats（目前快照，一篇文章一列，由
-//      tools/write-content-stats.mjs 寫入）
-//   C. 趨勢圖，讀 content_stats_history（一天一列的站台彙總歷史）
+// 口徑：全部只算已發布文章（草稿只在「發文概況」顯示一個數字）。資料來源：
+//   - articles（即時）：已發布／草稿／主打篇數、每月發文數、發布狀態；
+//   - content_stats（每篇已發布文章一列的快照，由 tools/write-content-stats.mjs 每天寫入）：字數、標籤、FAQ、站內連結；
+//   - content_stats_history（一天一列的站台彙總歷史）：趨勢圖、最長發文空窗。
 //
-// 每個 panel type 的 options 需要哪些欄位，是直接讀 Directus GitHub 原始碼（main 分支，
-// 抓取日期 2026-07-31）確認的，不是查文件猜的：
-//   https://github.com/directus/directus/tree/main/app/src/panels/metric/index.ts
-//   https://github.com/directus/directus/tree/main/app/src/panels/list/index.ts
-//   https://github.com/directus/directus/tree/main/app/src/panels/time-series/index.ts
-//   https://github.com/directus/directus/tree/main/app/src/panels/bar-chart/index.ts
-//   https://github.com/directus/directus/tree/main/app/src/panels/pie-chart/index.ts
+// 版面與「流量統計」一致：60 格滿版（Directus VWorkspace 每格 18px）。
+// 卡片與明細表是自訂擴充 directus-extension-traffic-panels 的面板（見 directus-extensions/traffic-panels/README.md），
+// 圖表仍用 Directus 內建 panel。內建 panel type 的 options 欄位是讀 Directus GitHub 原始碼確認的（抓取日期 2026-07-31）：
+//   https://github.com/directus/directus/tree/main/app/src/panels/<type>/index.ts
 
-/** 內建 panel type 的 id 字串，抓自上述原始碼的 definePanel({ id: '...' })。 */
+export const DASHBOARD_NAME = '文章產出與品質';
+/** 舊名稱：腳本依序用這些名稱找既有 dashboard 並改名，保留原有 id 與連結。 */
+export const LEGACY_DASHBOARD_NAMES = ['網站內容統計', 'Blog 內容統計', '內容統計'];
+export const DASHBOARD_NOTE = '看文章的產出與品質：發了幾篇、寫得多長、標籤與 FAQ 夠不夠、文章之間有沒有互相連結。只算已發布文章（草稿只顯示一個數字）。資料每天更新一次。';
+
+/** 自訂擴充的 package 名稱（用來確認主機已安裝）。 */
+export const EXTENSION_PACKAGE = 'directus-extension-traffic-panels';
+
+/** 內建與自訂 panel type 的 id 字串。 */
 export const KNOWN_PANEL_TYPES = [
   'label',
   'list',
@@ -29,77 +33,85 @@ export const KNOWN_PANEL_TYPES = [
   'line-chart',
   'meter',
   'pie-chart',
+  // 自訂擴充
+  'traffic-summary-card',
+  'content-article-table',
 ];
+
+/** 自訂擴充提供的 panel type（沒裝擴充時建出來是空 panel，所以腳本 --apply 前會先確認）。 */
+export const CUSTOM_PANEL_TYPES = ['traffic-summary-card', 'content-article-table'];
 
 /**
  * 每種 panel type 的 query() 函式裡，「沒給就整個 panel 查不出東西」的必要 options 欄位
- * （抓自各 index.ts 的 query() 開頭那段 early return 判斷）。用來在建立前做基本檢查，
- * 避免手動填錯漏掉必要欄位、建出一個 Directus 後台會顯示空白的 panel。
+ * （抓自各 index.ts 的 query() 開頭那段 early return 判斷）。
  */
 export const REQUIRED_OPTION_FIELDS = {
-  metric: ['function'], // query(): if (!options || !options.function) return;
-  list: ['collection'], // query(): if (!options?.collection) return;
-  'time-series': ['function', 'valueField', 'dateField'], // query(): 三者缺一 return
-  'bar-chart': ['collection', 'xAxis', 'yAxis'], // query(): requiredFields
-  'pie-chart': ['column'], // query(): if (!options.column) return;
+  metric: ['function'],
+  list: ['collection'],
+  'time-series': ['function', 'valueField', 'dateField'],
+  'bar-chart': ['collection', 'xAxis', 'yAxis'],
+  'pie-chart': ['column'],
+  'traffic-summary-card': ['kind'],
 };
 
+/** 版面總寬（格）。 */
+export const GRID_WIDTH = 60;
+
+/** `traffic-summary-card` 的內容類型（需與擴充的 kind 選項一致）。 */
+export const CONTENT_CARD_KINDS = ['content-posts', 'content-quality', 'content-links'];
+
 export const PANELS = [
-  // ── A. 直接查 articles collection 就算得出來 ──────────────────────────
+  // ── 第 1 排：三張卡片 ───────────────────────────────────────────────
   {
-    group: 'A',
-    name: '總篇數',
-    type: 'metric',
-    icon: 'article',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'articles', field: 'id', function: 'count' },
+    row: 1,
+    name: '發文概況',
+    type: 'traffic-summary-card',
+    icon: 'edit_calendar',
+    note: '並排顯示已發布、草稿、主打篇數；主打是已發布文章裡標為主打的。草稿只在這裡顯示一個數字，不計入其他任何統計。滑鼠移上去看第一篇與最新一篇的發布日、最長多久沒發文（天）。',
+    width: 20,
+    height: 10,
+    options: { kind: 'content-posts' },
   },
   {
-    group: 'A',
-    name: 'featured 篇數',
-    type: 'metric',
-    icon: 'star',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'articles', field: 'id', function: 'count', filter: { featured: { _eq: true } } },
+    row: 1,
+    name: '寫作品質',
+    type: 'traffic-summary-card',
+    icon: 'edit_note',
+    note: '已發布文章的平均正文字數、平均標籤數、平均 FAQ 數（每天更新一次的快照）。滑鼠移上去看字數最少與最多的文章。',
+    width: 20,
+    height: 10,
+    options: { kind: 'content-quality' },
   },
   {
-    group: 'A',
-    name: '最早發佈日',
-    type: 'metric',
-    icon: 'first_page',
-    minWidth: 6,
-    minHeight: 4,
-    // Directus GraphQL 的 aggregated_fields 不包含 date 欄位；日期不可用 min/max 聚合。
-    // metric 的 first/last 會改走一般 items 查詢，再依 sortField 取第一列／最後一列。
-    options: { collection: 'articles', field: 'pub_date', function: 'first', sortField: 'pub_date' },
+    row: 1,
+    name: '站內連結',
+    type: 'traffic-summary-card',
+    icon: 'link',
+    note: '已發布文章之間的連結檢查（每天更新一次）：左邊是沒有任何其他文章連到它的篇數，右邊是文章裡沒有連到其他文章的篇數。滑鼠移到數字上看是哪幾篇。',
+    width: 20,
+    height: 10,
+    options: { kind: 'content-links' },
   },
+
+  // ── 第 2 排：發布狀態、每月發文數 ────────────────────────────────────
   {
-    group: 'A',
-    name: '最新發佈日',
-    type: 'metric',
-    icon: 'last_page',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'articles', field: 'pub_date', function: 'last', sortField: 'pub_date' },
-  },
-  {
-    group: 'A',
-    name: 'status 分布',
+    row: 2,
+    name: '發布狀態',
     type: 'pie-chart',
     icon: 'donut_large',
-    minWidth: 10,
-    minHeight: 10,
+    note: '全部文章依狀態的篇數比例（published＝已發布、draft＝草稿）。',
+    width: 24,
+    height: 22,
     options: { collection: 'articles', column: 'status', function: 'count', donut: true, showLabels: true, legend: 'bottom' },
   },
   {
-    group: 'A',
+    row: 2,
     name: '每月發文數',
     type: 'time-series',
     icon: 'show_chart',
-    minWidth: 12,
-    minHeight: 6,
+    note: '已發布文章依發布日（pub_date）統計每月篇數；草稿不算。',
+    width: 36,
+    height: 22,
     options: {
       collection: 'articles',
       dateField: 'pub_date',
@@ -107,268 +119,118 @@ export const PANELS = [
       function: 'count',
       precision: 'month',
       range: 'auto',
+      filter: { status: { _eq: 'published' } },
       showXAxis: true,
       showYAxis: true,
     },
   },
+
+  // ── 第 3 排：文章明細表（高度依已發布篇數，見 layoutPanels） ──────────────
   {
-    group: 'A',
-    name: '最近更新的文章',
-    type: 'list',
-    icon: 'update',
-    minWidth: 12,
-    minHeight: 6,
-    options: {
-      collection: 'articles',
-      sortField: 'updated_date',
-      sortDirection: 'desc',
-      displayTemplate: '{{title}} — {{updated_date}}',
-      limit: 20,
-      linkToItem: true,
-    },
+    row: 3,
+    name: '文章明細',
+    type: 'content-article-table',
+    icon: 'table_view',
+    note: '只列已發布文章。SEO 描述字數建議 40～80 字；站內連結狀況用白話說明。字數、標籤、FAQ、連結來自每天更新一次的內容統計，剛發布的文章要等下次更新才有這些數字。點欄位標題排序、拖拉標題右緣調整欄寬。',
+    width: 60,
+    height: 18,
+    options: {},
   },
 
-  // ── B. articles 算不出來，讀 content_stats（目前快照，一篇一列）──────────
+  // ── 第 4 排：趨勢 ────────────────────────────────────────────────────
   {
-    group: 'B',
-    name: '平均正文字數',
-    type: 'metric',
-    icon: 'notes',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats', field: 'word_count', function: 'avg', maximumFractionDigits: 0 },
-  },
-  {
-    group: 'B',
-    name: '正文字數：最少',
-    type: 'metric',
-    icon: 'south',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats', field: 'word_count', function: 'min' },
-  },
-  {
-    group: 'B',
-    name: '正文字數：最多',
-    type: 'metric',
-    icon: 'north',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats', field: 'word_count', function: 'max' },
-  },
-  {
-    group: 'B',
-    name: '正文字數排行',
-    type: 'list',
-    icon: 'format_list_numbered',
-    minWidth: 12,
-    minHeight: 6,
-    options: {
-      collection: 'content_stats',
-      sortField: 'word_count',
-      sortDirection: 'desc',
-      displayTemplate: '{{title}} — {{word_count}} 字',
-      limit: 20,
-    },
-  },
-  {
-    group: 'B',
-    name: 'description 達標分布',
-    type: 'bar-chart',
-    icon: 'bar_chart',
-    minWidth: 12,
-    minHeight: 10,
-    options: { collection: 'content_stats', xAxis: 'desc_status', yAxis: 'slug', function: 'count', horizontal: true, decimals: 0 },
-  },
-  {
-    group: 'B',
-    name: '平均每篇標籤數',
-    type: 'metric',
-    icon: 'sell',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats', field: 'tag_count', function: 'avg' },
-  },
-  {
-    group: 'B',
-    name: '平均每篇 FAQ 題數',
-    type: 'metric',
-    icon: 'quiz',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats', field: 'faq_count', function: 'avg' },
-  },
-  {
-    group: 'B',
-    name: '孤島文章數（零站內連入）',
-    type: 'metric',
-    icon: 'link_off',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats', field: 'slug', function: 'count', filter: { is_island: { _eq: true } } },
-  },
-  {
-    group: 'B',
-    name: '死路文章數（沒有連出任何站內文章）',
-    type: 'metric',
-    icon: 'block',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats', field: 'slug', function: 'count', filter: { is_dead_end: { _eq: true } } },
-  },
-  {
-    group: 'B',
-    name: '孤島文章清單',
-    type: 'list',
-    icon: 'link_off',
-    minWidth: 12,
-    minHeight: 6,
-    options: { collection: 'content_stats', filter: { is_island: { _eq: true } }, sortField: 'slug', sortDirection: 'asc', displayTemplate: '{{title}}（{{slug}}）', limit: 50 },
-  },
-  {
-    group: 'B',
-    name: '死路文章清單',
-    type: 'list',
-    icon: 'block',
-    minWidth: 12,
-    minHeight: 6,
-    options: { collection: 'content_stats', filter: { is_dead_end: { _eq: true } }, sortField: 'slug', sortDirection: 'asc', displayTemplate: '{{title}}（{{slug}}）', limit: 50 },
-  },
-  {
-    group: 'B',
-    name: 'slug 含非 ASCII 字元的文章',
-    type: 'list',
-    icon: 'translate',
-    minWidth: 12,
-    minHeight: 6,
-    options: { collection: 'content_stats', filter: { slug_has_non_ascii: { _eq: true } }, sortField: 'slug', sortDirection: 'asc', displayTemplate: '{{title}} — {{slug}}', limit: 50 },
-  },
-  {
-    group: 'B',
-    name: '目前不重複標籤數',
-    type: 'metric',
-    icon: 'sell',
-    minWidth: 6,
-    minHeight: 4,
-    // content_stats（一篇文章一列）沒有「不重複標籤數」這種站台彙總數字，只能從
-    // content_stats_history（一天一列）取「run_date 最新的那一列」的值：
-    // function='last' + sortField='run_date' 是 Directus metric panel 官方支援的寫法
-    // （query() 內部會用 sort=`-${sortField}` 排序後 limit=1，取到的就是最新一列）。
-    options: { collection: 'content_stats_history', field: 'unique_tag_count', function: 'last', sortField: 'run_date' },
-  },
-  {
-    group: 'B',
-    name: '目前 featured 比例（%）',
-    type: 'metric',
-    icon: 'percent',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats_history', field: 'featured_ratio', function: 'last', sortField: 'run_date', suffix: '%' },
-  },
-  {
-    group: 'B',
-    name: '目前最長發文空窗（天）',
-    type: 'metric',
-    icon: 'hourglass_empty',
-    minWidth: 6,
-    minHeight: 4,
-    options: { collection: 'content_stats_history', field: 'max_gap_days', function: 'last', sortField: 'run_date', suffix: ' 天' },
-  },
-  {
-    group: 'B',
-    name: '草稿篇數',
-    type: 'metric',
-    icon: 'edit_note',
-    minWidth: 6,
-    minHeight: 4,
-    // 非 published（草稿等）文章篇數，不計入其他任何指標，只是讓人看得到「還有多少草稿沒發」。
-    // content_stats（一篇文章一列）不含草稿的列，這個數字只存在 content_stats_history（站台彙總），
-    // 用法跟上面幾個「目前 XXX」metric panel 相同：function='last' + sortField='run_date'。
-    options: { collection: 'content_stats_history', field: 'draft_count', function: 'last', sortField: 'run_date' },
-  },
-
-  // ── C. 趨勢（讀 content_stats_history，一天一列，本來就適合畫 time-series）──
-  {
-    group: 'C',
+    row: 4,
     name: '平均字數趨勢',
     type: 'time-series',
     icon: 'trending_up',
-    minWidth: 12,
-    minHeight: 6,
-    options: { collection: 'content_stats_history', dateField: 'run_date', valueField: 'avg_word_count', function: 'avg', precision: 'day', range: 'auto' },
+    note: '每天一次的內容統計，已發布文章的平均正文字數。',
+    width: 30,
+    height: 18,
+    options: { collection: 'content_stats_history', dateField: 'run_date', valueField: 'avg_word_count', function: 'avg', precision: 'day', range: 'auto', showXAxis: true, showYAxis: true },
   },
   {
-    group: 'C',
-    name: '總篇數趨勢',
+    row: 4,
+    name: '已發布篇數趨勢',
     type: 'time-series',
     icon: 'trending_up',
-    minWidth: 12,
-    minHeight: 6,
-    options: { collection: 'content_stats_history', dateField: 'run_date', valueField: 'article_count', function: 'avg', precision: 'day', range: 'auto' },
-  },
-  {
-    group: 'C',
-    name: 'description 達標篇數趨勢',
-    type: 'time-series',
-    icon: 'trending_up',
-    minWidth: 12,
-    minHeight: 6,
-    options: { collection: 'content_stats_history', dateField: 'run_date', valueField: 'desc_pass_count', function: 'avg', precision: 'day', range: 'auto' },
+    note: '每天一次的內容統計，當時的已發布篇數（文章下架成草稿也會讓數字下降）。',
+    width: 30,
+    height: 18,
+    options: { collection: 'content_stats_history', dateField: 'run_date', valueField: 'article_count', function: 'avg', precision: 'day', range: 'auto', showXAxis: true, showYAxis: true },
   },
 ];
 
 /**
- * 版面配置：以 48 格（每格 18px，約 864px）排成寬版網格。
- * metric 一張 16 格、每列三張；list／圖表一張 24 格、每列兩張；不同資料群組間留兩格空白。
- * 這是依 Directus 11 的 VWorkspace gridSize=18 實際規格調整，避免舊版只用 minWidth
- * 造成 metric 只有 108px、list 只有 216px，所有標題與數字擠成一團。
+ * 要從 dashboard 移除的舊 panel 名稱（改版前的所有零碎 metric 與 list、達標分布、非 ASCII slug 清單、description 達標趨勢…）。
+ * 腳本 --apply 時依名稱刪除；新版同名的 panel（「每月發文數」「平均字數趨勢」）不在這裡，會被更新而不是刪除。
+ */
+export const OBSOLETE_PANEL_NAMES = [
+  '總篇數',
+  'featured 篇數',
+  '最早發佈日',
+  '最新發佈日',
+  'status 分布',
+  '最近更新的文章',
+  '平均正文字數',
+  '正文字數：最少',
+  '正文字數：最多',
+  '正文字數排行',
+  'description 達標分布',
+  '平均每篇標籤數',
+  '平均每篇 FAQ 題數',
+  '孤島文章數（零站內連入）',
+  '死路文章數（沒有連出任何站內文章）',
+  '孤島文章清單',
+  '死路文章清單',
+  'slug 含非 ASCII 字元的文章',
+  '目前不重複標籤數',
+  '目前 featured 比例（%）',
+  '目前最長發文空窗（天）',
+  '草稿篇數',
+  '總篇數趨勢',
+  'description 達標篇數趨勢',
+];
+
+/**
+ * 明細表高度（格，每格 18px）：表頭＋每列約 34px，加面板標題與留白，最低 14、最高 50；超過時在面板內捲動。
+ * 與 tools/create-views-dashboard.mjs 的 tableHeight 同一公式。
+ *
+ * @param {number} rows
+ * @returns {number}
+ */
+export function articleTableHeight(rows) {
+  return Math.min(50, Math.max(14, Math.ceil((34 * (rows + 1) + 80) / 18) + 2));
+}
+
+/**
+ * 版面配置：60 格滿版。每個 panel 的 row 決定排在第幾排，同一排由左到右依序排；
+ * 排與排之間不留空，y 由上一排最高的 panel 高度推算。content-article-table 的高度依已發布篇數調整。
  *
  * @param {typeof PANELS} panels
- * @returns {Array<typeof PANELS[number] & { position_x: number, position_y: number, width: number, height: number }>}
+ * @param {{ publishedCount?: number | null }} [options]
+ * @returns {Array<typeof PANELS[number] & { position_x: number, position_y: number }>}
  */
-export function layoutPanels(panels) {
-  const gridWidth = 48;
-  const sizeByType = {
-    metric: { width: 16, height: 5 },
-    list: { width: 24, height: 12 },
-    'time-series': { width: 24, height: 14 },
-    'bar-chart': { width: 24, height: 14 },
-    'pie-chart': { width: 24, height: 14 },
-  };
-  let cursorX = 1;
+export function layoutPanels(panels, { publishedCount = null } = {}) {
+  const rows = [...new Set(panels.map((p) => p.row))].sort((a, b) => a - b);
+  const laidOut = [];
   let cursorY = 1;
-  let rowHeight = 0;
-  let currentGroup = panels[0]?.group;
-
-  const nextRow = () => {
-    cursorX = 1;
-    cursorY += rowHeight;
-    rowHeight = 0;
-  };
-
-  return panels.map((p) => {
-    if (currentGroup !== undefined && p.group !== currentGroup) {
-      if (cursorX !== 1) nextRow();
-      cursorY += 2;
-      currentGroup = p.group;
+  for (const row of rows) {
+    let cursorX = 1;
+    let rowHeight = 0;
+    for (const p of panels.filter((item) => item.row === row)) {
+      const height = p.type === 'content-article-table' && publishedCount !== null ? articleTableHeight(publishedCount) : p.height;
+      laidOut.push({ ...p, height, position_x: cursorX, position_y: cursorY });
+      cursorX += p.width;
+      rowHeight = Math.max(rowHeight, height);
     }
-
-    const preferred = sizeByType[p.type] ?? { width: Math.max(p.minWidth, 16), height: Math.max(p.minHeight, 6) };
-    const width = Math.max(p.minWidth, preferred.width);
-    const height = Math.max(p.minHeight, preferred.height);
-
-    if (cursorX + width - 1 > gridWidth) nextRow();
-
-    const laidOut = { ...p, position_x: cursorX, position_y: cursorY, width, height };
-    cursorX += width;
-    rowHeight = Math.max(rowHeight, height);
-    return laidOut;
-  });
+    cursorY += rowHeight;
+  }
+  return laidOut;
 }
 
 /**
  * 檢查每個 panel 定義有沒有缺該 panel type 的必要 options 欄位（見 REQUIRED_OPTION_FIELDS）、
- * type 是不是已知的內建 panel type。回傳問題清單，空陣列代表全部通過。
+ * type 是不是已知的 panel type。回傳問題清單，空陣列代表全部通過。
  *
  * @param {typeof PANELS} panels
  * @returns {string[]} 問題描述清單（例如 "「總篇數」缺少必要欄位 options.function"）
@@ -377,7 +239,7 @@ export function validatePanelDefs(panels) {
   const problems = [];
   for (const p of panels) {
     if (!KNOWN_PANEL_TYPES.includes(p.type)) {
-      problems.push(`「${p.name}」的 type「${p.type}」不是已知的內建 panel type`);
+      problems.push(`「${p.name}」的 type「${p.type}」不是已知的 panel type`);
       continue;
     }
     const required = REQUIRED_OPTION_FIELDS[p.type] ?? [];

@@ -9,7 +9,7 @@
 		<div v-if="errorText" class="state error">{{ errorText }}</div>
 		<div v-else-if="loading" class="state">載入中…</div>
 		<div v-else class="cells">
-			<div v-for="cell in cells" :key="cell.label" class="cell" :class="{ 'has-sub': cell.sub }">
+			<div v-for="cell in cells" :key="cell.label" class="cell" :class="{ 'has-sub': cell.sub }" @mouseenter="cellTip = cell.tip ?? null">
 				<div class="value">{{ cell.value }}</div>
 				<div class="label">{{ cell.label }}</div>
 				<div
@@ -23,7 +23,7 @@
 
 		<Teleport to="body">
 			<div v-if="hovering && shownDetails.length > 0" class="traffic-popover" :style="popoverStyle">
-				<div class="popover-title">{{ hoverSub ? subTitle : detailTitle }}</div>
+				<div class="popover-title">{{ shownTitle }}</div>
 				<table>
 					<thead v-if="shownHead.length > 0">
 						<tr>
@@ -31,7 +31,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="row in shownDetails" :key="row[0]">
+						<tr v-for="(row, rowIndex) in shownDetails" :key="`${rowIndex}-${row[0]}`">
 							<td v-for="(cell, index) in row" :key="index" :class="{ num: index > 0 }">{{ cell }}</td>
 						</tr>
 					</tbody>
@@ -44,23 +44,31 @@
 <script setup lang="ts">
 import { useApi } from '@directus/extensions-sdk';
 import { computed, onMounted, ref, watch } from 'vue';
-import { formatNumber, todayIn } from '../shared/format';
+import { formatDate, formatDecimal, formatNumber, todayIn } from '../shared/format';
 import { KINDS, query } from '../shared/query';
 
 const props = withDefaults(
-	defineProps<{ kind?: 'users' | 'articles' | 'pages'; timezone?: string; showHeader?: boolean }>(),
+	defineProps<{ kind?: 'users' | 'articles' | 'pages' | 'content-posts' | 'content-quality' | 'content-links'; timezone?: string; showHeader?: boolean }>(),
 	{ kind: 'users', timezone: 'Asia/Taipei', showHeader: false },
 );
 
 const api = useApi();
 const loading = ref(true);
 const errorText = ref('');
-const cells = ref<{ label: string; value: string; sub?: string }[]>([]);
+interface Tip {
+	title: string;
+	head: string[];
+	rows: string[][];
+}
+const cells = ref<{ label: string; value: string; sub?: string; tip?: Tip }[]>([]);
+/** 滑鼠目前所在那一格自己的提示（有的話優先於整張卡片共用的提示）。 */
+const cellTip = ref<Tip | null>(null);
 const subTitle = ref('');
 const subDetails = ref<string[][]>([]);
 const hoverSub = ref(false);
-const shownDetails = computed(() => (hoverSub.value ? subDetails.value : details.value));
-const shownHead = computed(() => (hoverSub.value ? ['入口', '人數'] : detailHead.value));
+const shownDetails = computed(() => (hoverSub.value ? subDetails.value : cellTip.value ? cellTip.value.rows : details.value));
+const shownHead = computed(() => (hoverSub.value ? ['入口', '人數'] : cellTip.value ? cellTip.value.head : detailHead.value));
+const shownTitle = computed(() => (hoverSub.value ? subTitle.value : cellTip.value ? cellTip.value.title : detailTitle.value));
 const detailTitle = ref('');
 const detailHead = ref<string[]>([]);
 const details = ref<string[][]>([]);
@@ -88,6 +96,7 @@ function onEnterSub() {
 function onLeave() {
 	hovering.value = false;
 	hoverSub.value = false;
+	cellTip.value = null;
 }
 
 async function aggregate(collection: string, params: Record<string, string>) {
@@ -99,7 +108,7 @@ async function loadUsers() {
 	const row = (await api.get(`/items/audience_metrics?${query({ 'filter[key][_eq]': 'site', limit: 1 })}`)).data.data?.[0];
 	if (!row) throw new Error('audience_metrics 沒有 key=site 的資料');
 	// 今日入口：audience_metrics.today_sources（同步腳本寫入的 [{channel, users}]，人數多的在前）。
-	let sources: { channel: string; users: number }[] = [];
+	let sources: { channel: string; users: number; details?: { name: string; users: number }[] }[] = [];
 	try {
 		const raw = typeof row.today_sources === 'string' ? JSON.parse(row.today_sources) : row.today_sources;
 		if (Array.isArray(raw)) sources = raw.filter((item) => item && Number(item.users) > 0);
@@ -107,7 +116,11 @@ async function loadUsers() {
 		sources = [];
 	}
 	subTitle.value = '今日入口（活躍使用者）';
-	subDetails.value = sources.map((item) => [String(item.channel), formatNumber(item.users)]);
+	// 「其他」底下接細項（縮排，人數多到少；同步腳本已排序）。
+	subDetails.value = sources.flatMap((item) => [
+		[String(item.channel), formatNumber(item.users)],
+		...(Array.isArray(item.details) ? item.details.filter((detail) => Number(detail.users) > 0).map((detail) => [`　└ ${detail.name}`, formatNumber(detail.users)]) : []),
+	]);
 	cells.value = [
 		{
 			label: '今日活躍',
@@ -168,11 +181,83 @@ async function loadContent(kind: 'articles' | 'pages') {
 	details.value = [[`平均停留（近 30 天）`, avg === null || avg === undefined ? '—' : `${formatNumber(avg)} 秒`]];
 }
 
+// ── 內容統計卡片（「文章產出與品質」儀表板）：口徑一律只算已發布 ──
+
+async function fetchPublishedArticles() {
+	const response = await api.get(`/items/articles?${query({ fields: 'slug,title,pub_date,featured', 'filter[status][_eq]': 'published', sort: 'pub_date', limit: -1 })}`);
+	return (response.data.data ?? []) as { slug: string; title: string; pub_date: string | null; featured: boolean }[];
+}
+
+async function fetchStats() {
+	const response = await api.get(`/items/content_stats?${query({ limit: -1 })}`);
+	return (response.data.data ?? []) as any[];
+}
+
+async function loadContentPosts() {
+	const [published, draft, latestHistory] = await Promise.all([
+		fetchPublishedArticles(),
+		aggregate('articles', { 'aggregate[count]': 'id', 'filter[status][_neq]': 'published' }),
+		api.get(`/items/content_stats_history?${query({ fields: 'max_gap_days,run_date', sort: '-run_date', limit: 1 })}`),
+	]);
+	const dates = published.map((item) => item.pub_date).filter((value): value is string => Boolean(value)).sort();
+	const gap = latestHistory.data.data?.[0]?.max_gap_days;
+	cells.value = [
+		{ label: '已發布', value: formatNumber(published.length) },
+		{ label: '草稿', value: formatNumber(draft.count?.id ?? draft.count ?? 0) },
+		{ label: '主打', value: formatNumber(published.filter((item) => item.featured).length) },
+	];
+	detailTitle.value = '發文時間';
+	detailHead.value = [];
+	details.value = [
+		['第一篇發布日', formatDate(dates[0])],
+		['最新一篇發布日', formatDate(dates[dates.length - 1])],
+		['最長多久沒發文', gap === null || gap === undefined ? '—' : `${formatNumber(gap)} 天`],
+	];
+}
+
+async function loadContentQuality() {
+	const stats = await fetchStats();
+	const average = (field: string) => (stats.length === 0 ? null : stats.reduce((sum, item) => sum + Number(item[field] ?? 0), 0) / stats.length);
+	const byWords = [...stats].sort((a, b) => Number(a.word_count) - Number(b.word_count));
+	const fewest = byWords[0];
+	const most = byWords[byWords.length - 1];
+	cells.value = [
+		{ label: '平均字數', value: formatNumber(average('word_count')) },
+		{ label: '平均標籤數', value: formatDecimal(average('tag_count')) },
+		{ label: '平均 FAQ 數', value: formatDecimal(average('faq_count')) },
+	];
+	detailTitle.value = '字數最少與最多';
+	detailHead.value = [];
+	details.value = [
+		['最少', fewest ? `${formatNumber(fewest.word_count)} 字` : '—'],
+		...(fewest ? [[String(fewest.title), '']] : []),
+		['最多', most ? `${formatNumber(most.word_count)} 字` : '—'],
+		...(most ? [[String(most.title), '']] : []),
+	];
+}
+
+async function loadContentLinks() {
+	const stats = await fetchStats();
+	const titles = (list: any[]) => (list.length === 0 ? [['（沒有）']] : list.map((item) => [String(item.title || item.slug)]));
+	const islands = stats.filter((item) => item.is_island);
+	const deadEnds = stats.filter((item) => item.is_dead_end);
+	cells.value = [
+		{ label: '沒有其他文章連進來', value: formatNumber(islands.length), tip: { title: '沒有其他文章連進來的文章', head: [], rows: titles(islands) } },
+		{ label: '沒有連到其他文章', value: formatNumber(deadEnds.length), tip: { title: '沒有連到其他文章的文章', head: [], rows: titles(deadEnds) } },
+	];
+	detailTitle.value = '';
+	details.value = [];
+}
+
 async function load() {
 	loading.value = true;
 	errorText.value = '';
 	try {
+		cellTip.value = null;
 		if (props.kind === 'users') await loadUsers();
+		else if (props.kind === 'content-posts') await loadContentPosts();
+		else if (props.kind === 'content-quality') await loadContentQuality();
+		else if (props.kind === 'content-links') await loadContentLinks();
 		else await loadContent(props.kind);
 	} catch (error: any) {
 		errorText.value = `讀取失敗：${error?.response?.data?.errors?.[0]?.message ?? error?.message ?? error}`;

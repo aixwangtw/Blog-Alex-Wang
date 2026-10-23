@@ -5,12 +5,13 @@
 
 | Panel id | 用途 | 選項 |
 | --- | --- | --- |
-| `traffic-summary-card` | 並排顯示「當日／近 30 天／累積」三個數字，滑鼠移上去彈出細項 | `kind`：`users`／`articles`／`pages`；`timezone` |
+| `traffic-summary-card` | 並排顯示三個（或兩個）數字，滑鼠移上去彈出細項。流量：當日／近 30 天／累積；內容（「文章產出與品質」儀表板）：發文概況、寫作品質、站內連結 | `kind`：`users`／`articles`／`pages`／`content-posts`／`content-quality`／`content-links`；`timezone` |
 | `traffic-content-table` | 每篇文章（或每頁）一列，可排序、拖拉欄寬、點一列展開逐日明細 | `kind`：`articles`／`pages`；`timezone` |
-| `traffic-channel-bars` | 熱門入口造訪次數長條圖：Google 搜尋固定第一、AI 搜尋固定第二，其餘由多到少 | 無 |
-| `traffic-source-table` | 流量入口表：入口｜進站頁（中文標題，hover 顯示路徑）｜造訪次數｜觀看次數；可排序、拖拉欄寬（localStorage `traffic-panels:widths:sources`） | 無 |
+| `traffic-channel-bars` | 熱門入口造訪次數長條圖：外部來源與站內換頁由多到少 → 固定最後其他、疑似自動程式 | 無 |
+| `traffic-source-table` | 流量入口表：入口｜進站頁（中文標題，hover 顯示路徑）｜造訪次數｜觀看次數；可排序（預設依入口分類固定順序）、拖拉欄寬（localStorage `traffic-panels:widths:sources`） | 無 |
+| `content-article-table` | 已發布文章明細：標題、發布日、更新日、字數、SEO 描述字數、標籤數、FAQ 數、站內連結狀況（白話）；可排序、拖拉欄寬（localStorage `content-panels:widths:articles`） | 無 |
 
-- 資料來源：`audience_metrics`（key=site）、`articles`、`page_views`、`daily_content_views`。
+- 資料來源：`audience_metrics`（key=site）、`articles`、`page_views`、`daily_content_views`、`traffic_sources`、`content_stats`、`content_stats_history`。
 - 文章與逐日明細的對應鍵是路徑 `/blog/<slug>/`（與 `tools/sync-ga4-daily-views.mjs` 一致），頁面用 `page_views.path`。
 - 「當日」以 `timezone`（預設 `Asia/Taipei`）判斷今天，需與 GA4 Property 時區一致；這點只是預設值，沒有查證 Property 實際時區。
 - 欄寬存在瀏覽器 localStorage（`traffic-panels:widths:articles`／`:pages`），清掉就回預設。
@@ -51,7 +52,7 @@ docker compose restart directus                  # 這一步才會中斷服務
 
 # 驗證
 curl -s https://cms.aixwang.dev/server/ping
-# 後台 Settings > Extensions 應出現 directus-extension-traffic-panels（含四個 panel）
+# 後台 Settings > Extensions 應出現 directus-extension-traffic-panels（含五個 panel）
 ```
 
 之後更新擴充：重複 build、`docker cp` 覆蓋、`docker compose restart directus`。
@@ -74,6 +75,8 @@ curl -s https://cms.aixwang.dev/server/ping
 ```bash
 DIRECTUS_TOKEN=... node tools/create-views-dashboard.mjs          # 先 dry-run
 DIRECTUS_TOKEN=... node tools/create-views-dashboard.mjs --apply  # 覆蓋儀表板，舊 panel 會被移除
+DIRECTUS_TOKEN=... node tools/create-insights-dashboard.mjs          # 「文章產出與品質」（卡片與明細表也用本擴充），先 dry-run
+DIRECTUS_TOKEN=... node tools/create-insights-dashboard.mjs --apply
 ```
 
 ## 回復

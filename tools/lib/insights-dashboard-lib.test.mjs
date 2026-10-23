@@ -1,183 +1,135 @@
 // 跑法：node --test tools/lib/insights-dashboard-lib.test.mjs
-// （或用 package.json 的 npm run test:insights-dashboard）
+// （或用 package.json 的 npm run test:insights）
 //
 // 不打真的 Directus API。這裡驗證的是「PANELS 這份寫死的 panel 清單本身有沒有問題」與
-// 「layoutPanels() 的版面計算邏輯對不對」——這兩件事沒有真的 Directus 實例可以幫忙把關
-// （dry-run 只會印出 payload，不會驗證 Directus 收到後會不會噴錯），所以特別重要。
+// 「layoutPanels() 的版面計算邏輯對不對」。
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  articleTableHeight,
+  CONTENT_CARD_KINDS,
+  CUSTOM_PANEL_TYPES,
+  DASHBOARD_NAME,
+  GRID_WIDTH,
   KNOWN_PANEL_TYPES,
+  LEGACY_DASHBOARD_NAMES,
   layoutPanels,
+  OBSOLETE_PANEL_NAMES,
   PANELS,
   REQUIRED_OPTION_FIELDS,
   validatePanelDefs,
 } from './insights-dashboard-lib.mjs';
 
-// ── PANELS 本身的完整性 ───────────────────────────────────────────────────
+test('dashboard 改名為「文章產出與品質」，舊名保留在 LEGACY 以便沿用原 dashboard', () => {
+  assert.equal(DASHBOARD_NAME, '文章產出與品質');
+  assert.ok(LEGACY_DASHBOARD_NAMES.includes('網站內容統計'));
+  assert.ok(!LEGACY_DASHBOARD_NAMES.includes(DASHBOARD_NAME));
+});
 
-test('PANELS：每個 panel 的 name 在整份清單裡是唯一的（name 是冪等比對的 key）', () => {
+test('PANELS：name 唯一（name 是冪等比對的 key），type 都已知，通過 validatePanelDefs', () => {
   const names = PANELS.map((p) => p.name);
-  const unique = new Set(names);
-  assert.equal(unique.size, names.length, `有重複的 panel name：${names.filter((n, i) => names.indexOf(n) !== i).join('、')}`);
+  assert.equal(new Set(names).size, names.length);
+  for (const p of PANELS) assert.ok(KNOWN_PANEL_TYPES.includes(p.type), `「${p.name}」用了未知的 type「${p.type}」`);
+  assert.deepEqual(validatePanelDefs(PANELS), []);
 });
 
-test('PANELS：每個 panel 的 type 都是已知的內建 panel type', () => {
-  for (const p of PANELS) {
-    assert.ok(KNOWN_PANEL_TYPES.includes(p.type), `「${p.name}」用了未知的 type「${p.type}」`);
-  }
-});
-
-test('PANELS：每個 panel 都有 group（A/B/C 之一）、正整數 minWidth/minHeight', () => {
-  for (const p of PANELS) {
-    assert.ok(['A', 'B', 'C'].includes(p.group), `「${p.name}」的 group 不是 A/B/C`);
-    assert.ok(Number.isInteger(p.minWidth) && p.minWidth > 0, `「${p.name}」的 minWidth 不是正整數`);
-    assert.ok(Number.isInteger(p.minHeight) && p.minHeight > 0, `「${p.name}」的 minHeight 不是正整數`);
-  }
-});
-
-test('PANELS：通過 validatePanelDefs() 檢查（沒有缺任何 panel type 要求的必要 options 欄位）', () => {
-  const problems = validatePanelDefs(PANELS);
-  assert.deepEqual(problems, []);
-});
-
-test('PANELS：group B／C 裡讀 content_stats* 的 panel，collection 只會是 content_stats 或 content_stats_history', () => {
-  const nonArticlesPanels = PANELS.filter((p) => p.group !== 'A');
-  for (const p of nonArticlesPanels) {
-    const collection = p.options?.collection;
-    assert.ok(
-      collection === 'content_stats' || collection === 'content_stats_history',
-      `「${p.name}」（group ${p.group}）的 collection 是「${collection}」，預期是 content_stats 或 content_stats_history`,
-    );
-  }
-});
-
-test('PANELS：group A 的 panel 只查 articles collection（不依賴還沒寫入的 content_stats*）', () => {
-  const groupA = PANELS.filter((p) => p.group === 'A');
-  assert.ok(groupA.length > 0);
-  for (const p of groupA) {
-    assert.equal(p.options?.collection, 'articles', `「${p.name}」（group A）的 collection 不是 articles`);
-  }
-});
-
-test('PANELS：發佈日期指標使用 first/last 排序，不對 date 欄位做 min/max 聚合', () => {
-  const earliest = PANELS.find((p) => p.name === '最早發佈日');
-  const latest = PANELS.find((p) => p.name === '最新發佈日');
-
-  assert.deepEqual(earliest?.options, {
-    collection: 'articles',
-    field: 'pub_date',
-    function: 'first',
-    sortField: 'pub_date',
-  });
-  assert.deepEqual(latest?.options, {
-    collection: 'articles',
-    field: 'pub_date',
-    function: 'last',
-    sortField: 'pub_date',
-  });
-});
-
-// ── validatePanelDefs：邊界情況 ────────────────────────────────────────────
-
-test('validatePanelDefs：抓出未知的 panel type', () => {
-  const problems = validatePanelDefs([{ name: '壞掉的 panel', type: 'not-a-real-type', options: {} }]);
-  assert.equal(problems.length, 1);
-  assert.match(problems[0], /不是已知的內建 panel type/);
-});
-
-test('validatePanelDefs：抓出 metric panel 缺 function', () => {
-  const problems = validatePanelDefs([{ name: '缺 function 的 metric', type: 'metric', options: { collection: 'articles' } }]);
-  assert.equal(problems.length, 1);
-  assert.match(problems[0], /options\.function/);
-});
-
-test('validatePanelDefs：抓出 bar-chart panel 缺 xAxis／yAxis', () => {
-  const problems = validatePanelDefs([{ name: '缺軸的長條圖', type: 'bar-chart', options: { collection: 'articles' } }]);
-  assert.equal(problems.length, 2);
-  assert.ok(problems.some((p) => p.includes('options.xAxis')));
-  assert.ok(problems.some((p) => p.includes('options.yAxis')));
-});
-
-test('validatePanelDefs：抓出 time-series panel 缺 dateField', () => {
-  const problems = validatePanelDefs([
-    { name: '缺日期欄位的時序圖', type: 'time-series', options: { collection: 'articles', function: 'count', valueField: 'id' } },
-  ]);
-  assert.equal(problems.length, 1);
-  assert.match(problems[0], /options\.dateField/);
-});
-
-test('validatePanelDefs：欄位齊全時回傳空陣列', () => {
-  const problems = validatePanelDefs([
-    { name: '正常的 metric', type: 'metric', options: { collection: 'articles', field: 'id', function: 'count' } },
-    { name: '正常的 list', type: 'list', options: { collection: 'articles' } },
-    { name: '正常的 pie', type: 'pie-chart', options: { collection: 'articles', column: 'status' } },
-  ]);
-  assert.deepEqual(problems, []);
-});
-
-// ── layoutPanels ─────────────────────────────────────────────────────────
-
-test('layoutPanels：48 格寬版網格，metric 每列三張、list／圖表每列兩張', () => {
-  const panels = [
-    { name: 'a', group: 'A', type: 'metric', minWidth: 6, minHeight: 4 },
-    { name: 'b', group: 'A', type: 'metric', minWidth: 6, minHeight: 4 },
-    { name: 'c', group: 'A', type: 'metric', minWidth: 6, minHeight: 4 },
-    { name: 'd', group: 'A', type: 'list', minWidth: 12, minHeight: 6 },
-    { name: 'e', group: 'B', type: 'time-series', minWidth: 12, minHeight: 6 },
-  ];
-  const laidOut = layoutPanels(panels);
-
+test('PANELS：新版面共 8 張，順序為 三張卡片、發布狀態、每月發文數、文章明細、兩張趨勢', () => {
   assert.deepEqual(
-    laidOut.map((p) => [p.position_x, p.position_y, p.width, p.height]),
-    [
-      [1, 1, 16, 5],
-      [17, 1, 16, 5],
-      [33, 1, 16, 5],
-      [1, 6, 24, 12],
-      [1, 20, 24, 14],
-    ],
+    PANELS.map((p) => p.name),
+    ['發文概況', '寫作品質', '站內連結', '發布狀態', '每月發文數', '文章明細', '平均字數趨勢', '已發布篇數趨勢'],
   );
+  assert.deepEqual(PANELS.map((p) => p.row), [1, 1, 1, 2, 2, 3, 4, 4]);
 });
 
-test('layoutPanels：所有 panel 都在 48 格寬度內，任兩張矩形不重疊', () => {
-  const laidOut = layoutPanels(PANELS);
-  for (const panel of laidOut) {
-    assert.ok(panel.position_x >= 1, `「${panel.name}」超出左界`);
-    assert.ok(panel.position_x + panel.width - 1 <= 48, `「${panel.name}」超出 48 格右界`);
+test('PANELS：每張都有 note 說明口徑與非空 icon', () => {
+  for (const p of PANELS) {
+    assert.ok(typeof p.note === 'string' && p.note.length >= 10, `「${p.name}」缺 note`);
+    assert.ok(p.icon, `「${p.name}」缺 icon`);
   }
+});
 
+test('PANELS：三張卡片用 content-* kind，且 kind 都在擴充支援的清單內', () => {
+  const cards = PANELS.filter((p) => p.type === 'traffic-summary-card');
+  assert.deepEqual(cards.map((p) => p.options.kind), ['content-posts', 'content-quality', 'content-links']);
+  for (const card of cards) assert.ok(CONTENT_CARD_KINDS.includes(card.options.kind));
+  assert.ok(PANELS.some((p) => p.type === 'content-article-table'));
+  for (const type of CUSTOM_PANEL_TYPES) assert.ok(KNOWN_PANEL_TYPES.includes(type));
+});
+
+test('PANELS：口徑只算已發布——每月發文數帶 status=published 篩選，趨勢讀 content_stats_history', () => {
+  const monthly = PANELS.find((p) => p.name === '每月發文數');
+  assert.deepEqual(monthly.options.filter, { status: { _eq: 'published' } });
+  assert.equal(monthly.options.precision, 'month');
+  for (const name of ['平均字數趨勢', '已發布篇數趨勢']) {
+    assert.equal(PANELS.find((p) => p.name === name).options.collection, 'content_stats_history');
+  }
+});
+
+test('OBSOLETE_PANEL_NAMES：舊的零碎 metric／list／達標分布／非 ASCII 清單／達標趨勢都在清單內，且不含新版 panel', () => {
+  for (const name of ['總篇數', '平均正文字數', '正文字數排行', 'description 達標分布', 'slug 含非 ASCII 字元的文章', 'description 達標篇數趨勢', '孤島文章清單', '死路文章清單', '草稿篇數', '總篇數趨勢', 'status 分布']) {
+    assert.ok(OBSOLETE_PANEL_NAMES.includes(name), `OBSOLETE 缺「${name}」`);
+  }
+  const current = new Set(PANELS.map((p) => p.name));
+  for (const name of OBSOLETE_PANEL_NAMES) assert.ok(!current.has(name), `「${name}」同時在新版與 OBSOLETE`);
+  assert.equal(new Set(OBSOLETE_PANEL_NAMES).size, OBSOLETE_PANEL_NAMES.length);
+});
+
+test('validatePanelDefs：抓出未知 type、缺必要欄位，欄位齊全時回傳空陣列', () => {
+  assert.match(validatePanelDefs([{ name: 'x', type: 'not-a-real-type', options: {} }])[0], /不是已知的 panel type/);
+  assert.match(validatePanelDefs([{ name: 'x', type: 'metric', options: { collection: 'articles' } }])[0], /options\.function/);
+  assert.match(validatePanelDefs([{ name: 'x', type: 'traffic-summary-card', options: {} }])[0], /options\.kind/);
+  assert.equal(validatePanelDefs([{ name: 'x', type: 'bar-chart', options: { collection: 'a' } }]).length, 2);
+  assert.match(validatePanelDefs([{ name: 'x', type: 'time-series', options: { collection: 'a', function: 'count', valueField: 'id' } }])[0], /options\.dateField/);
+  assert.deepEqual(validatePanelDefs([
+    { name: 'm', type: 'metric', options: { function: 'count' } },
+    { name: 'p', type: 'pie-chart', options: { column: 'status' } },
+    { name: 't', type: 'content-article-table', options: {} },
+  ]), []);
+});
+
+test('layoutPanels：60 格滿版，每排由左到右、排與排緊接，y 由上一排最高者推算', () => {
+  const laidOut = layoutPanels(PANELS, { publishedCount: 5 });
+  const byName = Object.fromEntries(laidOut.map((p) => [p.name, p]));
+  assert.deepEqual([byName['發文概況'], byName['寫作品質'], byName['站內連結']].map((p) => [p.position_x, p.position_y, p.width]), [[1, 1, 20], [21, 1, 20], [41, 1, 20]]);
+  assert.deepEqual([byName['發布狀態'], byName['每月發文數']].map((p) => [p.position_x, p.position_y, p.width]), [[1, 11, 24], [25, 11, 36]]);
+  assert.deepEqual([byName['文章明細'].position_x, byName['文章明細'].position_y, byName['文章明細'].width], [1, 33, 60]);
+  assert.deepEqual([byName['平均字數趨勢'], byName['已發布篇數趨勢']].map((p) => [p.position_x, p.position_y, p.width]), [[1, 33 + articleTableHeight(5), 30], [31, 33 + articleTableHeight(5), 30]]);
+});
+
+test('layoutPanels：每排剛好填滿 60 格，且任兩張不重疊', () => {
+  const laidOut = layoutPanels(PANELS, { publishedCount: 12 });
+  for (const row of new Set(laidOut.map((p) => p.row))) {
+    assert.equal(laidOut.filter((p) => p.row === row).reduce((sum, p) => sum + p.width, 0), GRID_WIDTH, `第 ${row} 排沒有填滿 ${GRID_WIDTH} 格`);
+  }
   for (let i = 0; i < laidOut.length; i++) {
     for (let j = i + 1; j < laidOut.length; j++) {
       const a = laidOut[i];
       const b = laidOut[j];
-      const overlaps =
-        a.position_x < b.position_x + b.width &&
-        b.position_x < a.position_x + a.width &&
-        a.position_y < b.position_y + b.height &&
-        b.position_y < a.position_y + a.height;
+      const overlaps = a.position_x < b.position_x + b.width && b.position_x < a.position_x + a.width && a.position_y < b.position_y + b.height && b.position_y < a.position_y + a.height;
       assert.equal(overlaps, false, `「${a.name}」和「${b.name}」重疊`);
     }
   }
 });
 
-test('layoutPanels：不修改傳入的原始陣列與物件（回傳新物件）', () => {
-  const original = [{ name: 'a', group: 'A', type: 'metric', minWidth: 6, minHeight: 4 }];
-  const laidOut = layoutPanels(original);
-  assert.equal('position_x' in original[0], false);
-  assert.notEqual(laidOut[0], original[0]);
+test('articleTableHeight：依篇數增加、下限 14、上限 50', () => {
+  assert.equal(articleTableHeight(0), 14);
+  assert.equal(articleTableHeight(5), 18);
+  assert.ok(articleTableHeight(10) > articleTableHeight(5));
+  assert.equal(articleTableHeight(500), 50);
 });
 
-test('layoutPanels：空陣列回傳空陣列', () => {
+test('layoutPanels：不指定篇數時用 panel 預設高度；不修改原陣列；空陣列回傳空陣列', () => {
+  const original = [{ name: 'a', row: 1, type: 'content-article-table', width: 60, height: 18 }];
+  const laidOut = layoutPanels(original);
+  assert.equal(laidOut[0].height, 18);
+  assert.equal('position_x' in original[0], false);
   assert.deepEqual(layoutPanels([]), []);
 });
 
-// ── REQUIRED_OPTION_FIELDS 本身的合理性（避免筆誤成沒作用的檢查）─────────────
-
 test('REQUIRED_OPTION_FIELDS：每個 key 都是已知的 panel type，每個必要欄位清單至少一項', () => {
   for (const [type, fields] of Object.entries(REQUIRED_OPTION_FIELDS)) {
-    assert.ok(KNOWN_PANEL_TYPES.includes(type), `REQUIRED_OPTION_FIELDS 裡的「${type}」不是已知 panel type`);
-    assert.ok(Array.isArray(fields) && fields.length > 0, `「${type}」的必要欄位清單是空的`);
+    assert.ok(KNOWN_PANEL_TYPES.includes(type));
+    assert.ok(Array.isArray(fields) && fields.length > 0);
   }
 });

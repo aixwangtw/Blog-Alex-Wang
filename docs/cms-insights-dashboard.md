@@ -144,51 +144,50 @@ DIRECTUS_TOKEN=xxx npm run insights:write-stats -- --apply   # 真的寫入
   就加 `--no-delete-missing`。
 
 **之後要更新數據，重跑這一支就好**，不用重跑第 1 步。想要有歷史趨勢可以看，把這支腳本排程
-成每天跑一次（cron 或 CI 排程都可以，這份文件沒有幫你設好排程，只提供腳本本身）。
+成每天跑一次（目前由 Hetzner 主機 cron 執行，見文末「還沒解決」第 1 點）。
 
 ### 3. 建立 dashboard 與 panel（只需要做一次）
 
 ```bash
-npm run insights:create-dashboard                        # dry-run，印出要建立的 25 個 panel
-DIRECTUS_TOKEN=xxx npm run insights:create-dashboard -- --apply   # 真的建立
+npm run insights:create-dashboard                        # dry-run，印出要建立／更新／刪除的 panel
+DIRECTUS_TOKEN=xxx npm run insights:create-dashboard -- --apply   # 真的執行
 ```
 
-冪等：dashboard 用名稱（「Blog 內容統計」）查是否已存在，存在就沿用；每個 panel 用「同一個
-dashboard 底下名稱是否已存在」查，存在就跳過。**已知取捨**：如果你手動把某個 panel 改名，
-重跑這支腳本會誤判成「不存在」而建出一個新的重複 panel——想改名又不想被誤判，直接在後台手動
-管理，不要再跑這支腳本針對同一個 dashboard。
+腳本 `--apply` 時**會實際 PATCH／DELETE**（不是「跳過已存在的」）：dashboard 用名稱找（現名「文章產出與品質」，
+找不到再依序找舊名「網站內容統計」「Blog 內容統計」「內容統計」），找到就沿用同一個 id、改名並更新說明；
+每個 panel 用「同一個 dashboard 底下名稱是否已存在」查，存在就**更新版面與設定**（會蓋掉在後台手動調整的版面），
+不存在就建立；舊版 panel（`OBSOLETE_PANEL_NAMES`）依名稱刪除。**已知取捨**：手動把某個 panel 改名，
+重跑會被當成不存在而新建一個。卡片與明細表是自訂擴充 `directus-extension-traffic-panels` 的面板，
+`--apply` 前會確認主機已安裝，沒裝就中止（安裝見 `directus-extensions/traffic-panels/README.md`）。
 
 這支腳本依賴第 1、2 步（部分 panel 讀 `content_stats`/`content_stats_history`，這兩個
 collection 要先有資料，panel 才看得到數字；panel 本身可以先建，只是暫時顯示空的）。
 
 ### 建好之後在哪裡看
 
-Directus 後台左側選單找 **Insights**，會看到一個叫「網站內容統計」的 dashboard。
-
-版面使用 **48 格寬版網格**（Directus 每格 18px，總寬約 864px）：摘要數字每列三張，圖表與清單
-每列兩張，A/B/C 資料群組之間保留空白。重跑 `insights:create-dashboard -- --apply` 會同步更新
-面板設定與這份標準版面；`insights:write-stats` 只更新資料，不會動到版面。
+Directus 後台左側選單找 **Insights**，會看到「文章產出與品質」（2026-10-23 前叫「網站內容統計」，同一個 dashboard）。
+`insights:write-stats` 只更新資料，不會動到版面。
 
 觀看次數明細不使用 Insights 的 list 假裝表格；改用 Content 模組的原生 tabular 書籤，可依累積或
 近 30 天觀看數排序。建立方式與頁面統計見 `docs/ga4-views-sync.md`。
 
-## dashboard 裡的 26 個 panel
+## dashboard 的面板（2026-10-23 改版）
 
-分三組，對照上面的分類表：
+口徑全部只算**已發布**文章；草稿只在「發文概況」顯示一個數字。版面 60 格滿版（與「流量統計」一致），共 8 個 panel：
 
-- **A 組（7 個，直接查 `articles`）**：總篇數、featured 篇數、最早／最新發佈日、status 分布
-  （圓餅圖）、每月發文數（時序圖）、最近更新的文章（清單）。
-- **B 組（15 個，讀 `content_stats` 目前快照）**：平均/最少/最多正文字數、正文字數排行、
-  description 達標分布（長條圖）、平均每篇標籤數、平均每篇 FAQ 題數、孤島/死路文章數與清單、
-  slug 含非 ASCII 字元的文章、目前不重複標籤數、目前 featured 比例、目前最長發文空窗。
-  （最後三個讀的是 `content_stats_history`，用 `function=last` + `sortField=run_date` 取「最新
-  一列」的值——這是 Directus metric panel 官方支援的寫法，因為這三個數字是站台層級的彙總，
-  `content_stats`（一篇文章一列）裡沒地方放。）
-- **C 組（3 個，讀 `content_stats_history` 畫趨勢）**：平均字數趨勢、總篇數趨勢、
-  description 達標篇數趨勢。這三個圖在只有一天資料時只會有一個點，之後每天跑一次
-  `insights:write-stats` 才會慢慢畫出線。
+1. 第 1 排三張卡片（自訂擴充 `traffic-summary-card` 的內容類型）：
+   - **發文概況**：已發布／草稿／主打篇數；hover 看第一篇與最新一篇發布日（yyyy/MM/dd）、最長多久沒發文（天，取自 `content_stats_history.max_gap_days`）。
+   - **寫作品質**：平均字數／平均標籤數／平均 FAQ 數；hover 看字數最少與最多的文章。
+   - **站內連結**：「沒有其他文章連進來」篇數／「沒有連到其他文章」篇數；hover 列出是哪幾篇（舊稱孤島、死路）。
+2. 第 2 排：**發布狀態**（圓餅圖，讀 `articles`）、**每月發文數**（只算已發布）。
+3. 第 3 排：**文章明細**（自訂擴充 `content-article-table`）：標題、發布日、更新日、字數、SEO 描述字數、標籤數、FAQ 數、站內連結狀況（白話）；可排序、拖拉欄寬。SEO 描述 40～80 字的門檻沒改，只是顯示每篇字數。
+4. 第 4 排：**平均字數趨勢**、**已發布篇數趨勢**（讀 `content_stats_history`，每天一個點）。
 
-完整定義在 `tools/lib/insights-dashboard-lib.mjs` 的 `PANELS`。
+已刪除：description 達標分布圖、slug 含非 ASCII 清單、description 達標篇數趨勢，以及所有舊的零碎 metric 與 list
+（清單見 `tools/lib/insights-dashboard-lib.mjs` 的 `OBSOLETE_PANEL_NAMES`）。每個 panel 都有 note 說明口徑。
+資料欄位 `desc_status`、`slug_has_non_ascii` 等仍由 `write-content-stats.mjs` 寫入，只是不再顯示。
+
+完整定義（事實來源）在 `tools/lib/insights-dashboard-lib.mjs` 的 `PANELS`。
 
 ## 跑測試
 
@@ -219,12 +218,14 @@ type 是已知型別、必要 options 欄位沒缺）與 `layoutPanels()` 排出
   （`input`/`boolean`/`datetime`/`input-code`），照 `tools/create-views-fields.mjs` 的既有慣例，
   但沒有真的在後台看過畫面。
 - Directus Insights 工作區沒有固定總欄數；目前依官方前端 `VWorkspace` 的 18px gridSize，採用
-  48 格（約 864px）作為可讀性與一般桌機寬度之間的基準。
+  60 格（與「流量統計」一致）。
 
 ## 還沒解決、需要你決定的問題
 
-1. **要不要排程 `insights:write-stats`**：這份文件沒有幫你設定 cron／CI 排程，只提供腳本
-   本身。想要 C 組的趨勢圖有意義，需要每天（或固定頻率）自動跑一次，累積歷史資料點。
+1. **排程 `insights:write-stats`**：2026-10-23 起改由 Hetzner 主機（`~/blog-ga4-sync`，與 GA4 同步共用 repo 與 `.env`）
+   每天 UTC 02:23 跑 `tools/daily-stats-cron.sh`（避開同步的第 15～20 分與備份的 03:20）。本機 WSL 的排程已拿掉，
+   本機仍可手動備援：`bash tools/daily-stats-cron.sh --force`。主機上 repo 由 `run-sync.sh` 每 3 小時 `git pull`，
+   所以改了腳本只要推到 main 就會生效。
 2. **token 權限範圍**：需要確認你打算用來 `--apply` 的 token，對
    `content_stats`／`content_stats_history`／`directus_dashboards`／`directus_panels` 都有
    讀寫權限；如果是自訂角色（不是管理員），要手動去角色設定裡勾這幾個 collection。

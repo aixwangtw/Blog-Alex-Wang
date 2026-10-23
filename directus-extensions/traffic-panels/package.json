@@ -1,6 +1,6 @@
 {
   "name": "directus-extension-traffic-panels",
-  "description": "流量統計儀表板的合併卡片（當日／近 30 天／累積）與合併表格（可拖拉欄寬、展開逐日明細）。",
+  "description": "流量統計與內容統計儀表板用的自訂面板：合併卡片、合併表格、入口長條圖、文章明細表。",
   "icon": "extension",
   "version": "1.0.0",
   "private": true,
@@ -14,7 +14,8 @@
       { "type": "panel", "name": "traffic-summary-card", "source": "src/traffic-summary-card/index.ts" },
       { "type": "panel", "name": "traffic-content-table", "source": "src/traffic-content-table/index.ts" },
       { "type": "panel", "name": "traffic-source-table", "source": "src/traffic-source-table/index.ts" },
-      { "type": "panel", "name": "traffic-channel-bars", "source": "src/traffic-channel-bars/index.ts" }
+      { "type": "panel", "name": "traffic-channel-bars", "source": "src/traffic-channel-bars/index.ts" },
+      { "type": "panel", "name": "content-article-table", "source": "src/content-article-table/index.ts" }
     ],
     "host": "^11.0.0"
   },

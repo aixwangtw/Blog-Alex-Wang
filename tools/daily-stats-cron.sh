@@ -2,22 +2,30 @@
 #
 # 每天把內容統計寫進 Directus 的 content_stats / content_stats_history，供後台 Insights 報表讀取。
 #
-# 為什麼是「每小時觸發、當天只實際跑一次」而不是每天固定時間跑一次：
-# 這台是 WSL2，cron 只在 WSL 起來的時候才會跑。固定時間排程的話，那個時間點沒開 IDE
-# 就整天跳過、而且不會補跑。改成每小時觸發、用戳記檔擋掉當天第二次以後的執行，
-# 效果就是「當天第一次開 IDE 時補跑一次」，之後整天不再重複。
+# 現在跑在 Hetzner 主機（~/blog-ga4-sync，與 GA4 同步共用同一個 repo 與 .env），每天一次：
+#   23 2 * * * <repo>/tools/daily-stats-cron.sh
+# 本機 WSL 的排程已拿掉；這支腳本在本機仍可手動備援：bash tools/daily-stats-cron.sh --force
+#
+# 為什麼用戳記檔：排程可以寫成每小時觸發、當天只實際跑一次——主機重開或某次失敗時，下個整點會自動補跑；
+# 失敗不寫成功戳記。本機（WSL 只在開機時才會跑 cron）尤其需要這個行為。
 #
 # token 從專案根目錄的 .env 讀（.gitignore 已排除 .env*）。沒有 token 就安靜跳過，
-# 不會失敗、不會每小時洗 log——這樣可以先把排程掛上去，token 之後補進 .env 就自動生效。
+# 不會失敗、不會每小時洗 log——可以先掛排程，token 之後補進 .env 就自動生效。
+#
+# 專案路徑取這支腳本所在 repo，node 優先用 PATH 上的，找不到再載入 nvm（cron 的 PATH 很短）。
 #
 # 手動測試：bash tools/daily-stats-cron.sh --force   （忽略當天戳記，強制跑一次）
 # 看紀錄：  cat ~/.cache/aixwang-blog-stats/cron.log
 
 set -uo pipefail
 
-PROJECT=/home/js0980420/projects/Blog-Alex-Wang
-# nvm 裝的 node，cron 的 PATH 吃不到，一定要寫絕對路徑
-NODE=/home/js0980420/.nvm/versions/node/v24.11.0/bin/node
+PROJECT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if ! command -v node >/dev/null 2>&1; then
+  export NVM_DIR="$HOME/.nvm"
+  # shellcheck disable=SC1091
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+fi
+NODE=$(command -v node || true)
 
 STATE_DIR="$HOME/.cache/aixwang-blog-stats"
 RUN_STAMP="$STATE_DIR/last-success"   # 最後一次成功寫入的日期
@@ -29,6 +37,8 @@ FORCE=0
 [ "${1:-}" = "--force" ] && FORCE=1
 
 mkdir -p "$STATE_DIR"
+exec 9>"$STATE_DIR/stats.lock"
+flock -n 9 || exit 0
 
 log() { printf '%s  %s\n' "$(date '+%F %T')" "$1" >> "$LOG"; }
 
@@ -54,6 +64,7 @@ if [ -z "${DIRECTUS_TOKEN:-}" ]; then
 fi
 
 cd "$PROJECT" || { log "失敗：進不了 $PROJECT"; exit 1; }
+[ -n "$NODE" ] || { log "失敗：找不到 node"; exit 1; }
 
 output=$("$NODE" tools/write-content-stats.mjs --apply 2>&1)
 status=$?
