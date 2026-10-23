@@ -54,8 +54,8 @@ npm run views:create-dashboard -- --apply
 最後一行會在「流量統計」直接建立文章觀看次數表格，並建立兩個 Content 原生表格書籤：
 「文章觀看次數表格」與「全站頁面觀看次數表格」。Insights 表格使用 Marketplace 的
 `@directus-labs/table-view-panel`。
-日常自動同步由 Cloudflare Worker `blog-ga4-sync` 負責（見下方「Cloudflare Worker 排程」），依序同步文章、全站頁面、
-每日流量與流量入口，不增加前台請求，也不影響頁面載入。本機四支腳本保留當手動備援。
+日常自動同步由 Hetzner 主機（`ssh lineliff-prod`）的 crontab 負責（見下方「Hetzner 排程」），依序同步文章、全站頁面、
+每日流量與流量入口，不增加前台請求，也不影響頁面載入。Cloudflare Worker `blog-ga4-sync` 與本機四支腳本保留當手動備援。
 
 `daily_views` 會保存新站自 2026-07-22 起每天的總流量、文章流量、一般頁面流量、活躍使用者與
 總使用者，供 Insights 畫折線圖。全站使用者數使用日期層級的獨立 GA4 查詢，不會把同一個人看過
@@ -68,7 +68,7 @@ npm run views:create-dashboard -- --apply
 
 同步查詢會要求 GA4 回傳目前的 Property quota，終端輸出會顯示本次消耗與剩餘的每日 tokens，方便確認
 實際消耗。標準 GA4 Property 目前每天有 200,000 Core tokens，多數一般查詢少於 10 tokens；排程
-每 3 小時最多實際同步一次（每天最多 8 次）。Worker 每次完整同步打 8 個 GA4 查詢，2026-10-21 實測
+每 3 小時同步一次（每天 8 次）。Worker 每次完整同步打 8 個 GA4 查詢，2026-10-21 實測
 一次消耗 11～40 tokens（Worker log 的 `usage.ga4TokensConsumed`），8 次／天遠低於每日 200,000 配額。
 間隔定為 3 小時，是因為 GA4 標準資源的當日資料處理約需 2-6 小時，更密集同步拿不到更新的數字
 （出處：<https://support.google.com/analytics/answer/11198161>）。
@@ -123,18 +123,41 @@ Microsoft Copilot（依 `sessionSource` 判斷，見 `tools/lib/traffic-sources-
 > （`tools/lib/ga4-views-lib.test.mjs`），實際串接後如果格式跟預期不同，錯誤訊息會直接印出來，
 > 不會默默吃掉或用猜的填資料。
 
-## Cloudflare Worker 排程（正式自動同步）
+## Hetzner 排程（正式自動同步）
 
-2026-10-21 起，自動同步從 WSL crontab（`tools/daily-ga4-views-cron.sh`，只在 WSL 開著時才跑）搬到
-獨立的 Cloudflare Worker：
+2026-10-23 起，自動同步由 Hetzner 主機（`ssh lineliff-prod`，時區 UTC）的 crontab 執行。
+2026-10-21 到 10-22 曾短暫由 Cloudflare Worker 執行；8/28～10/23 因 Directus 金鑰失效，排程一直失敗，
+10-23 換上有效的金鑰後，已在 Hetzner 手動跑一次完整同步成功。
 
 | 項目 | 內容 |
 | --- | --- |
-| Worker 名稱 | `blog-ga4-sync`（程式在 `workers/ga4-sync/`，設定 `workers/ga4-sync/wrangler.jsonc`） |
-| Cron Trigger | `17 * * * *`（UTC，每小時第 17 分喚醒） |
-| 實際同步頻率 | 每 3 小時區塊（UTC 00-02、03-05…）最多一次；判斷依據是 `traffic_sources` 最新的 `views_synced_at`（流量入口是最後一段，有寫入代表四段都成功） |
-| 失敗重試 | 失敗時不會寫 `traffic_sources`，下一個整點喚醒就會重跑整輪 |
-| 手動觸發網址 | `https://blog-ga4-sync.js0980420.workers.dev/run`（只收 POST，需 token） |
+| 專案目錄 | `~/blog-ga4-sync/`（部落格 repo 的 clone） |
+| 排程腳本 | `~/blog-ga4-sync/run-sync.sh`（先 `git pull`，載入 `.env`，依序跑 `tools/sync-ga4-views.mjs`、`sync-ga4-page-views.mjs`、`sync-ga4-daily-views.mjs`、`sync-ga4-traffic-sources.mjs`，皆帶 `--apply`；前一段失敗就不跑後面） |
+| crontab | `17 */3 * * * /home/alex/blog-ga4-sync/run-sync.sh`（UTC 每 3 小時第 17 分）；同一份 crontab 另有 `20 3 * * * ~/backups/backup-db.sh`，與本同步無關 |
+| 設定檔 | `~/blog-ga4-sync/.env`：`DIRECTUS_TOKEN`、`GA4_PROPERTY_ID`、`GOOGLE_APPLICATION_CREDENTIALS`（指向 `~/.config/aixwang/ga4-views-sync.json`） |
+| log | `~/.cache/aixwang-ga4-sync/cron.log`，最後一行以「成功」或「失敗（exit N）」開頭 |
+| 防重疊 | `flock` 鎖檔 `~/.cache/aixwang-ga4-sync/sync.lock` |
+| 實測用量（2026-10-23 手動跑一次） | 耗時約 16 秒、最大記憶體約 130 MB、CPU 時間約 4 秒（user 3.44 + sys 0.60） |
+
+驗證同步成功：看 `cron.log` 最後一行是「成功」，或查 Directus `traffic_sources` 最新的 `views_synced_at`
+是否為最近時間。
+
+### 換金鑰
+
+- 換 Directus token：直接編輯主機 `~/blog-ga4-sync/.env` 的 `DIRECTUS_TOKEN`（先備份 `.env`），
+  然後手動跑 `~/blog-ga4-sync/run-sync.sh`，確認 `cron.log` 最後一行為「成功」。
+- 換 GA4 金鑰：在 Google Cloud 建新 JSON 金鑰，放到主機 `~/.config/aixwang/ga4-views-sync.json`
+  （或改 `.env` 的 `GOOGLE_APPLICATION_CREDENTIALS` 路徑），手動跑一次確認成功，再停用舊金鑰。
+- 金鑰不要貼進對話、不進 repo。
+
+## Cloudflare Worker（手動備援）
+
+Worker `blog-ga4-sync` 在 2026-10-21 建立並曾負責排程；2026-10-23 排程搬到 Hetzner 後，
+`workers/ga4-sync/wrangler.jsonc` 的 `crons` 已改為空陣列並重新部署，Worker 本身與手動 `POST /run` 保留。
+以下的 3 小時閘門、用量與 log 說明是 Worker 排程運作時的資料，現在只在手動觸發或恢復排程時適用。
+
+恢復 Worker 排程的方式：把 `wrangler.jsonc` 的 `crons` 填回 `["17 * * * *"]`，
+再 `npx wrangler deploy -c workers/ga4-sync/wrangler.jsonc`，並把 Hetzner crontab 那行註解掉，避免兩邊重複跑。
 
 為什麼是獨立 Worker、不塞進主站 `blog-alex-wang`：主站走 Cloudflare Git 整合，每次 push 都會重新部署；
 同步程式需要 GA4 金鑰與 Directus admin token，放在獨立 Worker 可以讓主站完全不持有這些秘密，
@@ -169,7 +192,7 @@ npx wrangler deploy -c workers/ga4-sync/wrangler.jsonc
 | Subrequest／次 | 50 | 完整同步 22～24（OAuth 1、GA4 8、閘門讀 1、Directus 讀 6、批次寫入 6～8）；閘門跳過時 1 |
 | CPU time／次（Cron） | 10 ms | 完整同步 38～49 ms（首次排程實跑 38 ms）；單段 15～22 ms；閘門跳過 1 ms |
 | Wall time／次（Cron） | 15 分鐘 | 10～16 秒 |
-| Cron Triggers／帳號 | 5 | 用 1 個 |
+| Cron Triggers／帳號 | 5 | 曾用 1 個（現已移除） |
 
 **CPU 超過 Free 方案的 10 ms**：官方文件說每個 isolate 有彈性容許「偶爾」超過，但「持續超過會被終止」
 （outcome `exceededCpu`、Error 1102），沒有給明確門檻。實測幾次完整同步都成功，但這不是保證。
@@ -217,17 +240,16 @@ printf '%s' "$GA4_SYNC_TRIGGER_TOKEN" | $W MANUAL_TRIGGER_TOKEN
 
 換完用上面的 dry-run 手動觸發確認能跑，再到 Google Cloud 停用舊金鑰。secret 更新立即生效，不需重新部署。
 
-### 退回本機排程
+### 本機備援
 
-2026-10-22 起本機 crontab 已移除 GA4 這行（內容統計 `daily-stats-cron.sh` 保留）。
+本機 crontab 已不含 GA4 這行（內容統計 `daily-stats-cron.sh` 保留）。`tools/daily-ga4-views-cron.sh`
+仍是手動備援，Hetzner 與 Worker 都壞時可手動執行：
 
-Worker 若持續失敗（例如 `exceededCpu`），把這行加回 `crontab -e`，本機腳本會接手：
-
-```cron
-17 * * * * /usr/bin/bash /home/js0980420/projects/Blog-Alex-Wang/tools/daily-ga4-views-cron.sh
+```bash
+bash tools/daily-ga4-views-cron.sh --force
 ```
 
-兩邊同時跑也不會寫壞資料（同樣的計算、整批覆蓋），只是 GA4 查詢多一倍。
+多處同時跑也不會寫壞資料（同樣的計算、整批覆蓋），只是 GA4 查詢會多一倍。
 
 ## 你需要準備的東西
 

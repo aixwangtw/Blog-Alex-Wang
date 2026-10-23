@@ -1,6 +1,7 @@
 {
   "$schema": "../../node_modules/wrangler/config-schema.json",
-  // GA4 → Directus 同步排程（取代原本 WSL crontab 的 tools/daily-ga4-views-cron.sh）。
+  // GA4 → Directus 同步 Worker。定時排程已於 2026-10-23 搬到 Hetzner（lineliff-prod 的 crontab），
+  // 這裡不再設 cron，只保留手動 POST /run 作為備援。
   // 不走 Cloudflare Git 整合，改了要手動部署：npx wrangler deploy -c workers/ga4-sync/wrangler.jsonc
   // 說明見 docs/ga4-views-sync.md「Cloudflare Worker 排程」。
   "name": "blog-ga4-sync",
@@ -10,9 +11,9 @@
   "compatibility_flags": ["nodejs_compat"],
   // workers.dev 只提供需 MANUAL_TRIGGER_TOKEN 的 POST /run 手動觸發。
   "workers_dev": true,
-  // 每小時第 17 分（UTC）喚醒；程式內以 3 小時區塊閘門控制實際同步頻率，失敗時下個整點重試。
+  // 排程已搬到 Hetzner，故 crons 為空；要恢復 Worker 排程時填回 ["17 * * * *"] 再部署。
   "triggers": {
-    "crons": ["17 * * * *"]
+    "crons": []
   },
   "observability": {
     "enabled": true
