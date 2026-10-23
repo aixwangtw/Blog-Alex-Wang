@@ -18,6 +18,7 @@ const FIELDS = [
   { field: 'mobile_users_30d', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '近 30 天，GA4 deviceCategory=mobile 的活躍使用者，區間與指標與 active_users_30d 相同。' } },
   { field: 'tablet_users_30d', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '近 30 天，GA4 deviceCategory=tablet 的活躍使用者，區間與指標與 active_users_30d 相同。' } },
   { field: 'other_users_30d', type: 'integer', schema: { default_value: 0 }, meta: { interface: 'input', readonly: true, width: 'half', note: '近 30 天，GA4 deviceCategory 不是 desktop/mobile/tablet 的活躍使用者，避免這幾類被靜默漏計。' } },
+  { field: 'today_sources', type: 'json', meta: { interface: 'input-code', options: { language: 'json' }, readonly: true, width: 'full', note: 'GA4 Property 時區今天各入口的活躍使用者，格式 [{channel, users}]，人數多的在前、最多 20 筆；入口分類與 traffic_sources.channel 同一套。同一人從多個入口進站會各算一次。' } },
   { field: 'synced_at', type: 'timestamp', meta: { interface: 'datetime', display: 'datetime', display_options: { relative: false, format: 'short', use24: true }, readonly: true, width: 'half', note: '最後同步時間。' } },
 ];
 

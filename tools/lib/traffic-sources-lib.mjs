@@ -53,3 +53,29 @@ export function buildTrafficSourceRows({ gaRows, articleTitles = new Map(), sync
   }
   return [...grouped.values()].sort((a, b) => b.sessions - a.sessions || b.views - a.views);
 }
+
+/** 解析「今日入口」查詢：維度 [sessionSource, sessionMedium]，指標 [activeUsers]。 */
+export function parseGa4TodaySourceRows(response) {
+  return (response?.rows ?? []).map((row) => ({
+    source: row?.dimensionValues?.[0]?.value ?? '', medium: row?.dimensionValues?.[1]?.value ?? '',
+    users: Number(row?.metricValues?.[0]?.value ?? 0),
+  }));
+}
+
+/**
+ * 依 classifySource 歸類並加總，回傳 [{ channel, users }]，人數多的在前（同數依名稱）。
+ * 同一人若今天從兩個入口進站會各算一次，所以加總可能大於「今日活躍」。
+ */
+export function buildTodaySources(rows, limit = 20) {
+  const byChannel = new Map();
+  for (const row of rows ?? []) {
+    const users = Number(row.users ?? 0);
+    if (!Number.isFinite(users) || users <= 0) continue;
+    const channel = classifySource(row.source, row.medium);
+    byChannel.set(channel, (byChannel.get(channel) ?? 0) + users);
+  }
+  return [...byChannel.entries()]
+    .map(([channel, users]) => ({ channel, users }))
+    .sort((a, b) => b.users - a.users || a.channel.localeCompare(b.channel, 'zh-TW'))
+    .slice(0, limit);
+}

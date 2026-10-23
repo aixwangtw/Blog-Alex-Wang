@@ -23,7 +23,7 @@ import {
   parseGa4DailyUserRows,
   parseGa4DeviceMetrics,
 } from '../../../tools/lib/daily-views-lib.mjs';
-import { buildTrafficSourceRows, parseGa4SourceRows } from '../../../tools/lib/traffic-sources-lib.mjs';
+import { buildTodaySources, buildTrafficSourceRows, parseGa4SourceRows, parseGa4TodaySourceRows } from '../../../tools/lib/traffic-sources-lib.mjs';
 import { getGoogleAccessToken } from './google-auth.mjs';
 
 const CMS = 'https://cms.aixwang.dev';
@@ -223,7 +223,7 @@ export async function runGa4Sync({ env, apply, now = new Date(), sections = SECT
   // ── 3. 每日流量、逐篇每日明細、置頂數字（tools/sync-ga4-daily-views.mjs） ──
   if (wants.has('daily')) {
     const sinceLaunch = { startDate: SITE_LAUNCH_DATE, endDate: 'today' };
-    const [gaRows, userResponse, audienceResponse, deviceResponse] = await Promise.all([
+    const [gaRows, userResponse, audienceResponse, deviceResponse, todaySourceResponse] = await Promise.all([
       ga4.runPagedReport(
         {
           dateRanges: [sinceLaunch],
@@ -254,9 +254,15 @@ export async function runGa4Sync({ env, apply, now = new Date(), sections = SECT
         dimensions: [{ name: 'deviceCategory' }],
         metrics: [{ name: 'totalUsers' }, { name: 'activeUsers' }],
       }),
+      ga4.runReport({
+        dateRanges: [{ startDate: 'today', endDate: 'today' }],
+        dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }],
+        metrics: [{ name: 'activeUsers' }],
+        limit: PAGE_SIZE,
+      }),
     ]);
     const syncedAt = new Date().toISOString();
-    const audienceMetrics = { ...parseGa4AudienceMetrics(audienceResponse), ...parseGa4DeviceMetrics(deviceResponse), synced_at: syncedAt };
+    const audienceMetrics = { ...parseGa4AudienceMetrics(audienceResponse), ...parseGa4DeviceMetrics(deviceResponse), today_sources: buildTodaySources(parseGa4TodaySourceRows(todaySourceResponse)), synced_at: syncedAt };
     const rows = buildDailyViewRows({
       gaRows,
       dailyUserRows: parseGa4DailyUserRows(userResponse),

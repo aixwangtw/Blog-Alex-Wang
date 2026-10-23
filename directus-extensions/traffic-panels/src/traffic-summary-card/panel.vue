@@ -9,23 +9,29 @@
 		<div v-if="errorText" class="state error">{{ errorText }}</div>
 		<div v-else-if="loading" class="state">載入中…</div>
 		<div v-else class="cells">
-			<div v-for="cell in cells" :key="cell.label" class="cell">
+			<div v-for="cell in cells" :key="cell.label" class="cell" :class="{ 'has-sub': cell.sub }">
 				<div class="value">{{ cell.value }}</div>
 				<div class="label">{{ cell.label }}</div>
+				<div
+					v-if="cell.sub"
+					class="sub"
+					@mouseenter="onEnterSub"
+					@mouseleave="hoverSub = false"
+				>{{ cell.sub }}</div>
 			</div>
 		</div>
 
 		<Teleport to="body">
-			<div v-if="hovering && details.length > 0" class="traffic-popover" :style="popoverStyle">
-				<div class="popover-title">{{ detailTitle }}</div>
+			<div v-if="hovering && shownDetails.length > 0" class="traffic-popover" :style="popoverStyle">
+				<div class="popover-title">{{ hoverSub ? subTitle : detailTitle }}</div>
 				<table>
-					<thead v-if="detailHead.length > 0">
+					<thead v-if="shownHead.length > 0">
 						<tr>
-							<th v-for="(head, index) in detailHead" :key="index" :class="{ num: index > 0 }">{{ head }}</th>
+							<th v-for="(head, index) in shownHead" :key="index" :class="{ num: index > 0 }">{{ head }}</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="row in details" :key="row[0]">
+						<tr v-for="row in shownDetails" :key="row[0]">
 							<td v-for="(cell, index) in row" :key="index" :class="{ num: index > 0 }">{{ cell }}</td>
 						</tr>
 					</tbody>
@@ -49,7 +55,12 @@ const props = withDefaults(
 const api = useApi();
 const loading = ref(true);
 const errorText = ref('');
-const cells = ref<{ label: string; value: string }[]>([]);
+const cells = ref<{ label: string; value: string; sub?: string }[]>([]);
+const subTitle = ref('');
+const subDetails = ref<string[][]>([]);
+const hoverSub = ref(false);
+const shownDetails = computed(() => (hoverSub.value ? subDetails.value : details.value));
+const shownHead = computed(() => (hoverSub.value ? ['入口', '人數'] : detailHead.value));
 const detailTitle = ref('');
 const detailHead = ref<string[]>([]);
 const details = ref<string[][]>([]);
@@ -71,8 +82,12 @@ function onEnter(event: MouseEvent) {
 function onMove(event: MouseEvent) {
 	pointer.value = { x: event.clientX, y: event.clientY };
 }
+function onEnterSub() {
+	hoverSub.value = subDetails.value.length > 0;
+}
 function onLeave() {
 	hovering.value = false;
+	hoverSub.value = false;
 }
 
 async function aggregate(collection: string, params: Record<string, string>) {
@@ -83,8 +98,22 @@ async function aggregate(collection: string, params: Record<string, string>) {
 async function loadUsers() {
 	const row = (await api.get(`/items/audience_metrics?${query({ 'filter[key][_eq]': 'site', limit: 1 })}`)).data.data?.[0];
 	if (!row) throw new Error('audience_metrics 沒有 key=site 的資料');
+	// 今日入口：audience_metrics.today_sources（同步腳本寫入的 [{channel, users}]，人數多的在前）。
+	let sources: { channel: string; users: number }[] = [];
+	try {
+		const raw = typeof row.today_sources === 'string' ? JSON.parse(row.today_sources) : row.today_sources;
+		if (Array.isArray(raw)) sources = raw.filter((item) => item && Number(item.users) > 0);
+	} catch {
+		sources = [];
+	}
+	subTitle.value = '今日入口（活躍使用者）';
+	subDetails.value = sources.map((item) => [String(item.channel), formatNumber(item.users)]);
 	cells.value = [
-		{ label: '今日活躍', value: formatNumber(row.active_users_today) },
+		{
+			label: '今日活躍',
+			value: formatNumber(row.active_users_today),
+			sub: sources.length > 0 ? sources.slice(0, 3).map((item) => `${item.channel} ${formatNumber(item.users)}`).join(' · ') : undefined,
+		},
 		{ label: '近 30 天活躍', value: formatNumber(row.active_users_30d) },
 		{ label: '總使用者', value: formatNumber(row.total_users) },
 	];
@@ -105,13 +134,27 @@ async function loadUsers() {
 
 async function loadContent(kind: 'articles' | 'pages') {
 	const { collection, contentType } = KINDS[kind];
+	// 文章只算已發布：草稿不計入近 30 天、累積與當日。
+	const published = kind === 'articles';
+	let publishedPaths = '';
+	if (published) {
+		const slugs = (await api.get(`/items/articles?${query({ fields: 'slug', 'filter[status][_eq]': 'published', limit: -1 })}`)).data.data ?? [];
+		publishedPaths = slugs.map((item: any) => `/blog/${item.slug}/`).join(',');
+	}
 	const [today, totals] = await Promise.all([
-		aggregate('daily_content_views', {
-			'aggregate[sum]': 'views',
-			'filter[content_type][_eq]': contentType,
-			'filter[date][_eq]': todayIn(props.timezone),
+		published && !publishedPaths
+			? Promise.resolve({})
+			: aggregate('daily_content_views', {
+					'aggregate[sum]': 'views',
+					'filter[content_type][_eq]': contentType,
+					'filter[date][_eq]': todayIn(props.timezone),
+					...(published ? { 'filter[path][_in]': publishedPaths } : {}),
+				}),
+		aggregate(collection, {
+			'aggregate[sum]': 'views,views_30d',
+			'aggregate[avg]': 'avg_engagement_seconds_30d',
+			...(published ? { 'filter[status][_eq]': 'published' } : {}),
 		}),
-		aggregate(collection, { 'aggregate[sum]': 'views,views_30d', 'aggregate[avg]': 'avg_engagement_seconds_30d' }),
 	]);
 	// Directus 對沒有符合列的 sum 會回 null，顯示成 0 比「—」合理。
 	cells.value = [
@@ -181,6 +224,17 @@ watch(() => [props.kind, props.timezone], load);
 	margin-top: 4px;
 	font-size: 13px;
 	color: var(--theme--foreground-subdued, #888);
+}
+.sub {
+	margin-top: 2px;
+	font-size: 12px;
+	color: var(--theme--foreground-subdued, #888);
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+	cursor: default;
+}
+.cell.has-sub {
+	flex: 1.9 1 0;
 }
 .state {
 	color: var(--theme--foreground-subdued, #888);

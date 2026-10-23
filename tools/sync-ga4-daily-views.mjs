@@ -1,4 +1,5 @@
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
+import { buildTodaySources, parseGa4TodaySourceRows } from './lib/traffic-sources-lib.mjs';
 import { buildDailyContentViewRows, buildDailyViewRows, parseGa4AudienceMetrics, parseGa4DailyRows, parseGa4DailyUserRows, parseGa4DeviceMetrics } from './lib/daily-views-lib.mjs';
 
 const CMS = 'https://cms.aixwang.dev';
@@ -73,15 +74,34 @@ async function fetchDeviceMetrics() {
   return parseGa4DeviceMetrics(response);
 }
 
-const [gaRows, dailyUserRows, audienceMetrics, deviceMetrics, articles] = await Promise.all([
+// 今日入口：指標用 activeUsers，與卡片「今日活躍」同一指標；入口維度與 traffic_sources 相同（sessionSource／sessionMedium）。
+async function fetchTodaySources() {
+  const client = new BetaAnalyticsDataClient();
+  const [response] = await client.runReport({
+    property: `properties/${propertyId}`,
+    dateRanges: [{ startDate: 'today', endDate: 'today' }],
+    dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }],
+    metrics: [{ name: 'activeUsers' }],
+    dimensionFilter: { filter: { fieldName: 'hostName', stringFilter: { matchType: 'EXACT', value: 'aixwang.dev', caseSensitive: false } } },
+    returnPropertyQuota: true,
+    limit: 10000,
+  });
+  const quota = response.propertyQuota?.tokensPerDay;
+  if (quota) console.log(`GA4 每日配額：今日入口查詢消耗 ${quota.consumed}，剩餘 ${quota.remaining} tokens。`);
+  return buildTodaySources(parseGa4TodaySourceRows(response));
+}
+
+const [gaRows, dailyUserRows, audienceMetrics, deviceMetrics, todaySources, articles] = await Promise.all([
   fetchGaRows(),
   fetchGaUserRows(),
   fetchAudienceMetrics(),
   fetchDeviceMetrics(),
+  fetchTodaySources(),
   directus('/items/articles?fields=slug,title&limit=-1'),
 ]);
 const syncedAt = new Date().toISOString();
 Object.assign(audienceMetrics, deviceMetrics);
+audienceMetrics.today_sources = todaySources;
 audienceMetrics.synced_at = syncedAt;
 const articleTitles = new Map(articles.map((article) => [article.slug, article.title]));
 const rows = buildDailyViewRows({ gaRows, dailyUserRows, articleTitles, startDate: SITE_LAUNCH_DATE, endDate: syncedAt.slice(0, 10), syncedAt });
@@ -89,6 +109,7 @@ const contentRows = buildDailyContentViewRows({ gaRows, articleTitles, syncedAt 
 console.log(`每日流量 ${rows.length} 天；合計 ${rows.reduce((sum, row) => sum + row.total_views, 0)} 次。`);
 console.log(`逐篇／逐頁每日流量 ${contentRows.length} 筆（只保存有觀看的日期）。`);
 console.log(`置頂數字：總使用者 ${audienceMetrics.total_users}／近 30 天活躍 ${audienceMetrics.active_users_30d}／今日活躍 ${audienceMetrics.active_users_today}。`);
+console.log(`今日入口：${todaySources.slice(0, 5).map((item) => `${item.channel} ${item.users}`).join('、') || '（今天尚無資料）'}。`);
 console.log(`裝置類別（新站上線至今）：桌機 ${audienceMetrics.desktop_users}／手機 ${audienceMetrics.mobile_users}／平板 ${audienceMetrics.tablet_users}／其他 ${audienceMetrics.other_users}。`);
 console.log(`裝置類別（近 30 天活躍）：桌機 ${audienceMetrics.desktop_users_30d}／手機 ${audienceMetrics.mobile_users_30d}／平板 ${audienceMetrics.tablet_users_30d}／其他 ${audienceMetrics.other_users_30d}。`);
 if (!apply) { console.log('dry-run：沒有寫入 CMS。'); process.exit(0); }

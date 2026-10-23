@@ -48,7 +48,7 @@ export const FIELD_LABELS = {
     ...SYNCED,
   },
   audience_metrics: {
-    total_users: ['總使用者'], active_users_30d: ['近 30 天活躍使用者'], active_users_today: ['今日活躍使用者'],
+    total_users: ['總使用者'], active_users_30d: ['近 30 天活躍使用者'], active_users_today: ['今日活躍使用者'], today_sources: ['今日入口'],
     desktop_users: ['桌機使用者（累積）'], mobile_users: ['手機使用者（累積）'], tablet_users: ['平板使用者（累積）'], other_users: ['其他裝置使用者（累積）'],
     desktop_users_30d: ['桌機使用者（近 30 天）'], mobile_users_30d: ['手機使用者（近 30 天）'], tablet_users_30d: ['平板使用者（近 30 天）'], other_users_30d: ['其他裝置使用者（近 30 天）'],
     synced_at: ['最後同步時間', 'timestamp'],
