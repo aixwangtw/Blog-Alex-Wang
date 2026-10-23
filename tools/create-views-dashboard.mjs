@@ -6,8 +6,10 @@
 //   DIRECTUS_TOKEN=xxx node tools/create-views-dashboard.mjs --apply
 
 const CMS = process.env.DIRECTUS_URL ?? 'https://cms.aixwang.dev';
-const DASHBOARD_NAME = '流量統計';
-const LEGACY_DASHBOARD_NAMES = ['互動數據分析'];
+// 名稱前面有一個肉眼看不到的零寬空格（U+200B）：Insights 左側清單由前端固定依 name 排序，
+// 加上它才會排在「文章產出與品質」前面（已用 Postgres en_US.utf8 實測）。畫面上仍顯示「流量統計」。
+const DASHBOARD_NAME = '\u200B流量統計';
+const LEGACY_DASHBOARD_NAMES = ['流量統計', '互動數據分析'];
 const TABLE_EXTENSION = {
   id: '41ca762d-e56a-4377-87c2-73ca6f77cca2',
   version: 'a4cd622d-0861-4ae5-8b39-7fc67bfa48c1',

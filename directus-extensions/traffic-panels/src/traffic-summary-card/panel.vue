@@ -9,15 +9,9 @@
 		<div v-if="errorText" class="state error">{{ errorText }}</div>
 		<div v-else-if="loading" class="state">載入中…</div>
 		<div v-else class="cells">
-			<div v-for="cell in cells" :key="cell.label" class="cell" :class="{ 'has-sub': cell.sub }" @mouseenter="cellTip = cell.tip ?? null">
+			<div v-for="cell in cells" :key="cell.label" class="cell" @mouseenter="cellTip = cell.tip ?? null">
 				<div class="value">{{ cell.value }}</div>
 				<div class="label">{{ cell.label }}</div>
-				<div
-					v-if="cell.sub"
-					class="sub"
-					@mouseenter="onEnterSub"
-					@mouseleave="hoverSub = false"
-				>{{ cell.sub }}</div>
 			</div>
 		</div>
 
@@ -60,15 +54,12 @@ interface Tip {
 	head: string[];
 	rows: string[][];
 }
-const cells = ref<{ label: string; value: string; sub?: string; tip?: Tip }[]>([]);
+const cells = ref<{ label: string; value: string; tip?: Tip }[]>([]);
 /** 滑鼠目前所在那一格自己的提示（有的話優先於整張卡片共用的提示）。 */
 const cellTip = ref<Tip | null>(null);
-const subTitle = ref('');
-const subDetails = ref<string[][]>([]);
-const hoverSub = ref(false);
-const shownDetails = computed(() => (hoverSub.value ? subDetails.value : cellTip.value ? cellTip.value.rows : details.value));
-const shownHead = computed(() => (hoverSub.value ? ['入口', '人數'] : cellTip.value ? cellTip.value.head : detailHead.value));
-const shownTitle = computed(() => (hoverSub.value ? subTitle.value : cellTip.value ? cellTip.value.title : detailTitle.value));
+const shownDetails = computed(() => (cellTip.value ? cellTip.value.rows : details.value));
+const shownHead = computed(() => (cellTip.value ? cellTip.value.head : detailHead.value));
+const shownTitle = computed(() => (cellTip.value ? cellTip.value.title : detailTitle.value));
 const detailTitle = ref('');
 const detailHead = ref<string[]>([]);
 const details = ref<string[][]>([]);
@@ -90,12 +81,8 @@ function onEnter(event: MouseEvent) {
 function onMove(event: MouseEvent) {
 	pointer.value = { x: event.clientX, y: event.clientY };
 }
-function onEnterSub() {
-	hoverSub.value = subDetails.value.length > 0;
-}
 function onLeave() {
 	hovering.value = false;
-	hoverSub.value = false;
 	cellTip.value = null;
 }
 
@@ -115,9 +102,8 @@ async function loadUsers() {
 	} catch {
 		sources = [];
 	}
-	subTitle.value = '今日入口（活躍使用者）';
 	// 「其他」底下接細項（縮排，人數多到少；同步腳本已排序）。
-	subDetails.value = sources.flatMap((item) => [
+	const todayRows = sources.flatMap((item) => [
 		[String(item.channel), formatNumber(item.users)],
 		...(Array.isArray(item.details) ? item.details.filter((detail) => Number(detail.users) > 0).map((detail) => [`　└ ${detail.name}`, formatNumber(detail.users)]) : []),
 	]);
@@ -125,8 +111,8 @@ async function loadUsers() {
 		{
 			label: '今日活躍',
 			value: formatNumber(row.active_users_today),
-			// 摘要只列前 3 個有人的入口；hover 的完整清單（含 0 人的 LINE、YouTube 等）在下面。
-			sub: sources.some((item) => Number(item.users) > 0) ? sources.filter((item) => Number(item.users) > 0).slice(0, 3).map((item) => `${item.channel} ${formatNumber(item.users)}`).join(' · ') : undefined,
+			// 今日入口不放在卡片上，滑鼠移到這一格才在彈窗顯示（含 0 人的 LINE、YouTube 等）。
+			tip: todayRows.length > 0 ? { title: '今日入口（活躍使用者）', head: ['入口', '人數'], rows: todayRows } : undefined,
 		},
 		{ label: '近 30 天活躍', value: formatNumber(row.active_users_30d) },
 		{ label: '總使用者', value: formatNumber(row.total_users) },
@@ -288,7 +274,7 @@ watch(() => [props.kind, props.timezone], load);
 	display: flex;
 	width: 100%;
 	justify-content: space-around;
-	align-items: center;
+	align-items: stretch;
 	gap: 8px;
 }
 .cell {
@@ -310,17 +296,6 @@ watch(() => [props.kind, props.timezone], load);
 	margin-top: 4px;
 	font-size: 13px;
 	color: var(--theme--foreground-subdued, #888);
-}
-.sub {
-	margin-top: 2px;
-	font-size: 12px;
-	color: var(--theme--foreground-subdued, #888);
-	line-height: 1.35;
-	overflow-wrap: anywhere;
-	cursor: default;
-}
-.cell.has-sub {
-	flex: 1.9 1 0;
 }
 .state {
 	color: var(--theme--foreground-subdued, #888);
