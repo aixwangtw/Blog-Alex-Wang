@@ -31,3 +31,16 @@ export function writeStorage(key: string, value: unknown): void {
 		/* 寫不進去就算了，下次載入回到預設寬度 */
 	}
 }
+
+/** 保留指定小數位數（預設 1 位）；null/NaN 顯示「—」。 */
+export function formatDecimal(value: unknown, digits = 1): string {
+	const n = Number(value);
+	if (value === null || value === undefined || value === '' || !Number.isFinite(n)) return '—';
+	return n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: digits });
+}
+
+/** 'YYYY-MM-DD'（Directus date 欄位，無時區）→ 'yyyy/MM/dd'；空值顯示「—」。 */
+export function formatDate(value: unknown): string {
+	const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value ?? ''));
+	return match ? `${match[1]}/${match[2]}/${match[3]}` : '—';
+}

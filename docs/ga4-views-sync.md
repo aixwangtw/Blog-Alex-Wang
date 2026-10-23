@@ -107,9 +107,9 @@ YouTube 資訊欄等具體位置無法從未加標記的歷史網址反推；分
 誤讀）。明確的 AI 助理來源另外列（2026-10-23 曾短暫改名「AI 搜尋」，使用者定案後改回「AI 助理」）：來源名含 `chatgpt`／`openai`、`perplexity`、`claude`／`anthropic`、
 `gemini`／`bard.google`、`copilot` 的工作階段分別歸到 ChatGPT、Perplexity、Claude、Gemini、
 Microsoft Copilot（依 `sessionSource` 判斷，見 `tools/lib/traffic-sources-lib.mjs` 的 `classifySource()`）。
-入口分類共 10 類，排序（2026-10-23 定案；「直接或不明來源」「不明」「回訪讀者」「App 內建瀏覽器」名稱都已移除）：
+入口分類共 9 類，排序（2026-10-23 定案；「直接或不明來源」「不明」「回訪讀者」「App 內建瀏覽器」名稱都已移除）：
 
-1. 依造訪次數多到少：Google 搜尋、Facebook、Threads、Instagram、AI 助理、YouTube、LINE、站內換頁。
+1. 依造訪次數多到少：Google 搜尋、Facebook、Threads、Instagram、AI 助理、LINE、站內換頁。
    LINE 只算 GA4 來源為 `line`（連結帶 `utm_source=line`，包含文章的 LINE 分享按鈕 `utm_medium=social&utm_campaign=article_share`）。
 2. 固定排最後：其他、疑似自動程式。
 
@@ -121,7 +121,12 @@ Microsoft Copilot（依 `sessionSource` 判斷，見 `tools/lib/traffic-sources-
 | 1 | 進站網址帶 `fbclid` | Facebook（含從 IG、Threads 點出） | Meta 在點擊當下加的參數，證據最硬 |
 | 2 | 螢幕解析度 800x600，或國家 United States 且 `engagedSessions` 0、停留 0 秒 | 疑似自動程式 | **推論，非 GA4 官方標記**；不是真人就不該算進讀者去處，所以排在站內換頁前 |
 | 3 | 進站那一頁的 `pageReferrer` 是 aixwang.dev | 站內換頁 | 其實是站內點擊 |
-| 4 | 其餘（含回訪讀者、App 內建瀏覽器、查不到來源） | 其他 | 這幾類使用者決定不單獨列 |
+| 4 | 其餘（含回訪讀者、App 內建瀏覽器、查不到來源） | 其他 | 這幾類使用者決定不單獨列，但保留成細項 |
+
+**「其他」的細項**：分類時保留「其他」底下的名稱，存在 `traffic_sources.channel_detail`（中文標題「入口細項」；其他分類為空）與
+`audience_metrics.today_sources[].details`（`[{name, users}]`，只有「其他」帶）。細項：Bing 搜尋、Yahoo 搜尋等搜尋引擎、各推薦連結網域、YouTube（2026-10-23 起併入「其他」）、
+App 內建瀏覽器（browser 為 Safari (in-app)／Android Webview）、回訪讀者（newVsReturning=returning）、查不出來源。
+後台長條圖、入口表、主要入口 hover、使用者卡今日入口 hover，滑鼠移到「其他」都會彈出細項與數字（降冪）。名稱常數在 `DETAIL`。
 
 分類名稱與「合併關係」（`CHANNEL_MERGE`）集中在 `tools/lib/traffic-sources-lib.mjs` 開頭的 `CH` 常數，之後要改名或併類只改那裡
 （前端排序清單 `directus-extensions/traffic-panels/src/shared/channels.ts` 需同步）。

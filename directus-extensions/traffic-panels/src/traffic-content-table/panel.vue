@@ -75,14 +75,21 @@
 		</table>
 		<Teleport to="body">
 			<div v-if="entryTip" class="entry-popover" :style="{ left: `${entryTip.x}px`, top: `${entryTip.y}px` }">
-				<div class="entry-popover-title">前 5 名入口（開站以來累積造訪次數）</div>
+				<div class="entry-popover-title">各入口（開站以來累積造訪次數；「其他」底下是細項）</div>
 				<table>
 					<tbody>
-						<tr v-for="item in entryTip.items" :key="item.channel">
-							<td>{{ item.channel }}</td>
-							<td class="num">{{ formatNumber(item.sessions) }}</td>
-							<td class="num">{{ Math.round((item.sessions / entryTip.total) * 100) }}%</td>
-						</tr>
+						<template v-for="item in entryTip.items" :key="item.channel">
+							<tr>
+								<td>{{ item.channel }}</td>
+								<td class="num">{{ formatNumber(item.sessions) }}</td>
+								<td class="num">{{ Math.round((item.sessions / entryTip.total) * 100) }}%</td>
+							</tr>
+							<tr v-for="detail in item.details ?? []" :key="`${item.channel}|${detail.name}`" class="detail-row">
+								<td>└ {{ detail.name }}</td>
+								<td class="num">{{ formatNumber(detail.sessions) }}</td>
+								<td class="num"></td>
+							</tr>
+						</template>
 					</tbody>
 				</table>
 			</div>
@@ -93,10 +100,16 @@
 <script setup lang="ts">
 import { useApi } from '@directus/extensions-sdk';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { sortChannels } from '../shared/channels';
+import { type DetailItem, sortChannels, sortDetails } from '../shared/channels';
 import { formatNumber, readStorage, todayIn, writeStorage } from '../shared/format';
 import { KINDS, query } from '../shared/query';
 
+interface Entry {
+	channel: string;
+	sessions: number;
+	/** 「其他」底下的細項（Bing 搜尋、回訪讀者…），其他分類沒有。 */
+	details?: DetailItem[];
+}
 interface Row {
 	path: string;
 	title: string;
@@ -104,7 +117,7 @@ interface Row {
 	views30d: number;
 	views: number;
 	avg: number | null;
-	entries: { channel: string; sessions: number }[];
+	entries: Entry[];
 	entrySessions: number;
 	entryShare: number | null;
 }
@@ -182,7 +195,7 @@ function showEntryTip(event: MouseEvent, row: Row) {
 		entryTip.value = null;
 		return;
 	}
-	entryTip.value = { ...tipPosition(event), items: row.entries.slice(0, 5), total: row.entrySessions };
+	entryTip.value = { ...tipPosition(event), items: row.entries, total: row.entrySessions };
 }
 function moveEntryTip(event: MouseEvent) {
 	if (entryTip.value) entryTip.value = { ...entryTip.value, ...tipPosition(event) };
@@ -254,20 +267,28 @@ async function load() {
 			api.get(
 				`/items/traffic_sources?${query({
 					'aggregate[sum]': 'sessions',
-					'groupBy[]': 'landing_page,channel',
+					'groupBy[]': 'landing_page,channel,channel_detail',
 					limit: -1,
 				})}`,
 			),
 		]);
-		const entriesByPath = new Map<string, { channel: string; sessions: number }[]>();
+		const entriesByPath = new Map<string, Entry[]>();
 		for (const item of sources.data.data ?? []) {
 			const sessions = Number(item.sum?.sessions ?? 0);
 			if (!item.landing_page || sessions <= 0) continue;
 			const key = normalizePath(item.landing_page);
 			const list = entriesByPath.get(key) ?? [];
-			list.push({ channel: item.channel || '其他', sessions });
+			const channel = item.channel || '其他';
+			let entry = list.find((candidate) => candidate.channel === channel);
+			if (!entry) {
+				entry = { channel, sessions: 0 };
+				list.push(entry);
+			}
+			entry.sessions += sessions;
+			if (channel === '其他') entry.details = [...(entry.details ?? []), { name: item.channel_detail || '查不出來源', sessions }];
 			entriesByPath.set(key, list);
 		}
+		for (const list of entriesByPath.values()) for (const entry of list) if (entry.details) entry.details = sortDetails(entry.details);
 		const todayByPath = new Map<string, number>();
 		for (const item of today.data.data ?? []) todayByPath.set(item.path, Number(item.sum?.views ?? 0));
 
@@ -484,6 +505,10 @@ watch(
 }
 .entry-popover td {
 	padding: 3px 0;
+}
+.entry-popover .detail-row td {
+	padding-left: 12px;
+	color: var(--theme--foreground-subdued, #888);
 }
 .entry-popover .num {
 	text-align: right;

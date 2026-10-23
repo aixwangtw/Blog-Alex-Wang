@@ -25,7 +25,7 @@ LINE、Email、部分 App 點出的連結常被 GA4 記成「直接」（沒有�
 
 - 來源含 `line`（`line`、`line.me`、`liff`、`line.naver`）→ **LINE**（獨立一類，排在依人數排序區）。
   沒加 UTM 的 LINE 點擊會被記成直接，歸「其他」，所以 LINE 的數字只會是有加標籤的連結。
-- 來源 `facebook`／`fb` → Facebook；`ig`／含 `instagram` → Instagram；含 `threads` → Threads；含 `youtube`／`yt` → YouTube。
+- 來源 `facebook`／`fb` → Facebook；`ig`／含 `instagram` → Instagram；含 `threads` → Threads；含 `youtube`/`yt` → 其他（細項顯示 YouTube，滑鼠移到「其他」可看）。
 - 來源名稱沒對上任何一類（例如 `newsletter`）→ **其他**。要為 Email 獨立一類請告知，再改分類。
 - 大小寫不影響；`utm_source` 請固定用同一種寫法，避免同一個平台被拆成多個來源列。
 

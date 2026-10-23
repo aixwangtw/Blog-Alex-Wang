@@ -23,3 +23,13 @@ export function sortChannels<T extends { channel: string }>(items: T[], countKey
 		return count(b) - count(a) || ALL_CHANNELS.indexOf(a.channel) - ALL_CHANNELS.indexOf(b.channel);
 	});
 }
+
+export interface DetailItem {
+	name: string;
+	sessions: number;
+}
+
+/** 依數字降冪（同數依名稱）。 */
+export function sortDetails(items: DetailItem[]): DetailItem[] {
+	return [...items].sort((a, b) => b.sessions - a.sessions || a.name.localeCompare(b.name, 'zh-TW'));
+}

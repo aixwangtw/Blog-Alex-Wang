@@ -25,7 +25,14 @@
 			</thead>
 			<tbody>
 				<tr v-for="row in sortedRows" :key="`${row.channel}|${row.path}`">
-					<td class="text-cell" :title="row.channel">{{ row.channel }}</td>
+					<td
+						class="text-cell"
+						:class="{ 'has-detail': row.details.length > 0 }"
+						:title="row.details.length > 0 ? '' : row.channel"
+						@mouseenter="showTip($event, row)"
+						@mousemove="moveTip"
+						@mouseleave="tip.visible = false"
+					>{{ row.channel }}</td>
 					<td class="text-cell" :title="row.path">{{ row.title }}</td>
 					<td class="num">{{ formatNumber(row.sessions) }}</td>
 					<td class="num">{{ formatNumber(row.views) }}</td>
@@ -35,18 +42,22 @@
 				</tr>
 			</tbody>
 		</table>
+		<DetailPopover :visible="tip.visible" :x="tip.x" :y="tip.y" :title="tip.title" :rows="tip.rows" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import { useApi } from '@directus/extensions-sdk';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { sortChannels } from '../shared/channels';
+import { type DetailItem, sortChannels, sortDetails } from '../shared/channels';
+import DetailPopover from '../shared/DetailPopover.vue';
 import { formatNumber, readStorage, writeStorage } from '../shared/format';
 import { query } from '../shared/query';
 
 interface Row {
 	channel: string;
+	/** 「其他」底下的細項（人數／造訪次數多到少），其他分類為空。 */
+	details: DetailItem[];
 	path: string;
 	title: string;
 	sessions: number;
@@ -63,6 +74,18 @@ const COLUMNS: { key: ColumnKey; label: string; numeric: boolean }[] = [
 const DEFAULT_WIDTHS: Record<ColumnKey, number> = { channel: 160, title: 420, sessions: 120, views: 120 };
 const MIN_WIDTH = 60;
 const STORAGE_KEY = 'traffic-panels:widths:sources';
+
+const tip = ref({ visible: false, x: 0, y: 0, title: '', rows: [] as { name: string; value: string; indent?: boolean }[] });
+function showTip(event: MouseEvent, row: Row) {
+	if (row.details.length === 0) {
+		tip.value.visible = false;
+		return;
+	}
+	tip.value = { visible: true, x: event.clientX, y: event.clientY, title: `「${row.channel}」的細項（造訪次數）`, rows: row.details.map((item) => ({ name: item.name, value: formatNumber(item.sessions) })) };
+}
+function moveTip(event: MouseEvent) {
+	if (tip.value.visible) tip.value = { ...tip.value, x: event.clientX, y: event.clientY };
+}
 
 const api = useApi();
 const loading = ref(true);
@@ -155,7 +178,7 @@ async function load() {
 	errorText.value = '';
 	try {
 		const [sources, articles, pages] = await Promise.all([
-			api.get(`/items/traffic_sources?${query({ 'aggregate[sum]': 'sessions,views', 'groupBy[]': 'channel,landing_page', limit: -1 })}`),
+			api.get(`/items/traffic_sources?${query({ 'aggregate[sum]': 'sessions,views', 'groupBy[]': 'channel,channel_detail,landing_page', limit: -1 })}`),
 			api.get(`/items/articles?${query({ fields: 'slug,title', limit: -1 })}`),
 			api.get(`/items/page_views?${query({ fields: 'path,name', limit: -1 })}`),
 		]);
@@ -163,18 +186,22 @@ async function load() {
 		for (const item of pages.data.data ?? []) if (item.path && item.name) titles.set(normalizePath(item.path), item.name);
 		for (const item of articles.data.data ?? []) if (item.slug && item.title) titles.set(normalizePath(`/blog/${item.slug}/`), item.title);
 
-		rows.value = (sources.data.data ?? [])
-			.filter((item: any) => item.landing_page)
-			.map((item: any): Row => {
-				const path = normalizePath(item.landing_page);
-				return {
-					channel: item.channel || '其他',
-					path,
-					title: titles.get(path) ?? (path === '/' ? '首頁' : path),
-					sessions: Number(item.sum?.sessions ?? 0),
-					views: Number(item.sum?.views ?? 0),
-				};
-			});
+		// 同一（入口分類, 進站頁）可能有多筆細項，合併成一列並保留細項。
+		const merged = new Map<string, Row>();
+		for (const item of sources.data.data ?? []) {
+			if (!item.landing_page) continue;
+			const path = normalizePath(item.landing_page);
+			const channel = item.channel || '其他';
+			const key = `${channel}|${path}`;
+			const sessions = Number(item.sum?.sessions ?? 0);
+			const row = merged.get(key) ?? { channel, details: [], path, title: titles.get(path) ?? (path === '/' ? '首頁' : path), sessions: 0, views: 0 };
+			row.sessions += sessions;
+			row.views += Number(item.sum?.views ?? 0);
+			if (channel === '其他') row.details.push({ name: item.channel_detail || '查不出來源', sessions });
+			merged.set(key, row);
+		}
+		for (const row of merged.values()) row.details = sortDetails(row.details);
+		rows.value = [...merged.values()];
 	} catch (error: any) {
 		errorText.value = `讀取失敗：${error?.response?.data?.errors?.[0]?.message ?? error?.message ?? error}`;
 	} finally {
@@ -250,6 +277,10 @@ onBeforeUnmount(stopResize);
 }
 .text-cell {
 	text-overflow: ellipsis;
+}
+.has-detail {
+	text-decoration: underline dotted;
+	cursor: help;
 }
 .traffic-table tbody tr:hover {
 	background: var(--theme--background-subdued, rgba(128, 128, 128, 0.1));
