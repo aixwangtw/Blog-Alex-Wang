@@ -1,5 +1,5 @@
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
-import { buildTodaySources, parseGa4TodaySourceRows } from './lib/traffic-sources-lib.mjs';
+import { MEDIUM_NONE_FILTER, REFERRER_DIMENSIONS, SESSION_START_FILTER, TODAY_REFERRER_METRICS, TODAY_SOURCE_DIMENSIONS, TODAY_SOURCE_METRICS, attachSessionStartReferrers, buildTodaySources, parseGa4ReferrerRows, parseGa4TodaySourceRows } from './lib/traffic-sources-lib.mjs';
 import { buildDailyContentViewRows, buildDailyViewRows, parseGa4AudienceMetrics, parseGa4DailyRows, parseGa4DailyUserRows, parseGa4DeviceMetrics } from './lib/daily-views-lib.mjs';
 
 const CMS = 'https://cms.aixwang.dev';
@@ -74,21 +74,17 @@ async function fetchDeviceMetrics() {
   return parseGa4DeviceMetrics(response);
 }
 
-// 今日入口：指標用 activeUsers，與卡片「今日活躍」同一指標；入口維度與 traffic_sources 相同（sessionSource／sessionMedium）。
+// 今日入口：指標用 activeUsers，與卡片「今日活躍」同一指標；分類與 traffic_sources 同一套（classifyVisit）。
+// 直接造訪另查進站 referrer（原因見 traffic-sources-lib.mjs 的 attachSessionStartReferrers）。
 async function fetchTodaySources() {
   const client = new BetaAnalyticsDataClient();
-  const [response] = await client.runReport({
-    property: `properties/${propertyId}`,
-    dateRanges: [{ startDate: 'today', endDate: 'today' }],
-    dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }],
-    metrics: [{ name: 'activeUsers' }],
-    dimensionFilter: { filter: { fieldName: 'hostName', stringFilter: { matchType: 'EXACT', value: 'aixwang.dev', caseSensitive: false } } },
-    returnPropertyQuota: true,
-    limit: 10000,
-  });
-  const quota = response.propertyQuota?.tokensPerDay;
-  if (quota) console.log(`GA4 每日配額：今日入口查詢消耗 ${quota.consumed}，剩餘 ${quota.remaining} tokens。`);
-  return buildTodaySources(parseGa4TodaySourceRows(response));
+  const host = { filter: { fieldName: 'hostName', stringFilter: { matchType: 'EXACT', value: 'aixwang.dev', caseSensitive: false } } };
+  const base = { property: `properties/${propertyId}`, dateRanges: [{ startDate: 'today', endDate: 'today' }], returnPropertyQuota: true, limit: 10000 };
+  const [response] = await client.runReport({ ...base, dimensions: TODAY_SOURCE_DIMENSIONS.map((name) => ({ name })), metrics: TODAY_SOURCE_METRICS.map((name) => ({ name })), dimensionFilter: host });
+  const [referrerResponse] = await client.runReport({ ...base, dimensions: REFERRER_DIMENSIONS.map((name) => ({ name })), metrics: TODAY_REFERRER_METRICS.map((name) => ({ name })), dimensionFilter: { andGroup: { expressions: [host, MEDIUM_NONE_FILTER, SESSION_START_FILTER] } } });
+  const quota = referrerResponse.propertyQuota?.tokensPerDay;
+  if (quota) console.log(`GA4 每日配額：今日入口查詢後剩餘 ${quota.remaining} tokens。`);
+  return buildTodaySources(attachSessionStartReferrers(parseGa4TodaySourceRows(response), parseGa4ReferrerRows(referrerResponse), ['users']));
 }
 
 const [gaRows, dailyUserRows, audienceMetrics, deviceMetrics, todaySources, articles] = await Promise.all([

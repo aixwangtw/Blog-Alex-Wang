@@ -41,6 +41,7 @@
 <script setup lang="ts">
 import { useApi } from '@directus/extensions-sdk';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { sortChannels } from '../shared/channels';
 import { formatNumber, readStorage, writeStorage } from '../shared/format';
 import { query } from '../shared/query';
 
@@ -106,8 +107,17 @@ function normalizePath(path: string): string {
 	return value.endsWith('/') ? value : `${value}/`;
 }
 
-const sortKey = ref<ColumnKey>('sessions');
+// 預設排序（sortKey 為 null）：入口分類依固定順序，同一分類內依造訪次數多到少；點欄位標題才改用該欄排序。
+const sortKey = ref<ColumnKey | null>(null);
 const sortDesc = ref(true);
+
+/** 入口分類的固定順序名次（依各分類造訪次數合計）。 */
+const channelRank = computed(() => {
+	const totals = new Map<string, number>();
+	for (const row of rows.value) totals.set(row.channel, (totals.get(row.channel) ?? 0) + row.sessions);
+	const ordered = sortChannels([...totals].map(([channel, sessions]) => ({ channel, sessions })), 'sessions');
+	return new Map(ordered.map((item, index) => [item.channel, index]));
+});
 
 function toggleSort(key: ColumnKey) {
 	if (sortKey.value === key) {
@@ -120,8 +130,16 @@ function toggleSort(key: ColumnKey) {
 
 const sortedRows = computed(() => {
 	const key = sortKey.value;
+	const ranks = channelRank.value;
+	if (key === null) {
+		return [...rows.value].sort((a, b) => (ranks.get(a.channel) ?? 0) - (ranks.get(b.channel) ?? 0) || b.sessions - a.sessions || a.path.localeCompare(b.path));
+	}
 	const direction = sortDesc.value ? -1 : 1;
 	return [...rows.value].sort((a, b) => {
+		if (key === 'channel') {
+			// 入口欄也照固定順序（升冪＝固定順序，降冪＝反過來）。
+			return ((ranks.get(a.channel) ?? 0) - (ranks.get(b.channel) ?? 0)) * direction || b.sessions - a.sessions || a.path.localeCompare(b.path);
+		}
 		const left = a[key];
 		const right = b[key];
 		const result =

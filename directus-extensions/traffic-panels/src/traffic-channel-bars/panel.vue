@@ -16,6 +16,7 @@
 <script setup lang="ts">
 import { useApi } from '@directus/extensions-sdk';
 import { computed, onMounted, ref } from 'vue';
+import { sortChannels } from '../shared/channels';
 import { formatNumber } from '../shared/format';
 import { query } from '../shared/query';
 
@@ -24,8 +25,21 @@ interface Row {
 	sessions: number;
 }
 
-/** 固定排前面的分類，需與 tools/lib/traffic-sources-lib.mjs 的 PINNED_CHANNELS 一致。 */
-const PINNED = ['Google 搜尋', 'AI 搜尋'];
+const api = useApi();
+const loading = ref(true);
+const errorText = ref('');
+const rows = ref<Row[]>([]);
+const max = computed(() => Math.max(0, ...rows.value.map((row) => row.sessions)));
+
+onMounted, ref } from 'vue';
+import { sortChannels } from '../shared/channels';
+import { formatNumber } from '../shared/format';
+import { query } from '../shared/query';
+
+interface Row {
+	channel: string;
+	sessions: number;
+}
 
 const api = useApi();
 const loading = ref(true);
@@ -48,7 +62,7 @@ onMounted(async () => {
 			channel: item.channel || '其他',
 			sessions: Number(item.sum?.sessions ?? 0),
 		}));
-		rows.value = sortForDisplay(items);
+		rows.value = sortChannels(items, 'sessions');
 	} catch (error: any) {
 		errorText.value = `讀取失敗：${error?.response?.data?.errors?.[0]?.message ?? error?.message ?? error}`;
 	} finally {

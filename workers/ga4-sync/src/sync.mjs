@@ -23,7 +23,7 @@ import {
   parseGa4DailyUserRows,
   parseGa4DeviceMetrics,
 } from '../../../tools/lib/daily-views-lib.mjs';
-import { buildTodaySources, buildTrafficSourceRows, parseGa4SourceRows, parseGa4TodaySourceRows } from '../../../tools/lib/traffic-sources-lib.mjs';
+import { DIRECT_VISIT_DIMENSIONS, DIRECT_VISIT_METRICS, MEDIUM_NONE_FILTER, NON_DIRECT_FILTER, REFERRER_DIMENSIONS, REFERRER_METRICS, SESSION_START_FILTER, TODAY_REFERRER_METRICS, TODAY_SOURCE_DIMENSIONS, TODAY_SOURCE_METRICS, TRAFFIC_SOURCE_DIMENSIONS, TRAFFIC_SOURCE_METRICS, attachSessionStartReferrers, buildTodaySources, buildTrafficSourceRows, parseGa4DirectVisitRows, parseGa4ReferrerRows, parseGa4SourceRows, parseGa4TodaySourceRows } from '../../../tools/lib/traffic-sources-lib.mjs';
 import { getGoogleAccessToken } from './google-auth.mjs';
 
 const CMS = 'https://cms.aixwang.dev';
@@ -63,7 +63,7 @@ function createGa4Client({ propertyId, accessToken, fetchImpl, usage }) {
     const res = await fetchImpl(`https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...body, dimensionFilter: HOST_FILTER, returnPropertyQuota: true }),
+      body: JSON.stringify({ ...body, dimensionFilter: body.dimensionFilter ? { andGroup: { expressions: [HOST_FILTER, body.dimensionFilter] } } : HOST_FILTER, returnPropertyQuota: true }),
     });
     const text = await res.text();
     if (!res.ok) throw new Error(`GA4 runReport HTTP ${res.status}：${text.slice(0, 300)}`);
@@ -223,7 +223,7 @@ export async function runGa4Sync({ env, apply, now = new Date(), sections = SECT
   // ── 3. 每日流量、逐篇每日明細、置頂數字（tools/sync-ga4-daily-views.mjs） ──
   if (wants.has('daily')) {
     const sinceLaunch = { startDate: SITE_LAUNCH_DATE, endDate: 'today' };
-    const [gaRows, userResponse, audienceResponse, deviceResponse, todaySourceResponse] = await Promise.all([
+    const [gaRows, userResponse, audienceResponse, deviceResponse, todaySourceResponse, todayReferrerResponse] = await Promise.all([
       ga4.runPagedReport(
         {
           dateRanges: [sinceLaunch],
@@ -256,13 +256,20 @@ export async function runGa4Sync({ env, apply, now = new Date(), sections = SECT
       }),
       ga4.runReport({
         dateRanges: [{ startDate: 'today', endDate: 'today' }],
-        dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }],
-        metrics: [{ name: 'activeUsers' }],
+        dimensions: TODAY_SOURCE_DIMENSIONS.map((name) => ({ name })),
+        metrics: TODAY_SOURCE_METRICS.map((name) => ({ name })),
+        limit: PAGE_SIZE,
+      }),
+      ga4.runReport({
+        dateRanges: [{ startDate: 'today', endDate: 'today' }],
+        dimensions: REFERRER_DIMENSIONS.map((name) => ({ name })),
+        metrics: TODAY_REFERRER_METRICS.map((name) => ({ name })),
+        dimensionFilter: { andGroup: { expressions: [MEDIUM_NONE_FILTER, SESSION_START_FILTER] } },
         limit: PAGE_SIZE,
       }),
     ]);
     const syncedAt = new Date().toISOString();
-    const audienceMetrics = { ...parseGa4AudienceMetrics(audienceResponse), ...parseGa4DeviceMetrics(deviceResponse), today_sources: buildTodaySources(parseGa4TodaySourceRows(todaySourceResponse)), synced_at: syncedAt };
+    const audienceMetrics = { ...parseGa4AudienceMetrics(audienceResponse), ...parseGa4DeviceMetrics(deviceResponse), today_sources: buildTodaySources(attachSessionStartReferrers(parseGa4TodaySourceRows(todaySourceResponse), parseGa4ReferrerRows(todayReferrerResponse), ['users'])), synced_at: syncedAt };
     const rows = buildDailyViewRows({
       gaRows,
       dailyUserRows: parseGa4DailyUserRows(userResponse),
@@ -304,16 +311,20 @@ export async function runGa4Sync({ env, apply, now = new Date(), sections = SECT
 
   // ── 4. 流量入口（tools/sync-ga4-traffic-sources.mjs；本機腳本不分頁，這裡相同） ──
   if (wants.has('traffic')) {
-    const report = await ga4.runReport({
-      dateRanges: [{ startDate: SITE_LAUNCH_DATE, endDate: 'today' }],
-      dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }, { name: 'sessionCampaignName' }, { name: 'landingPagePlusQueryString' }],
-      metrics: [{ name: 'sessions' }, { name: 'screenPageViews' }],
-      limit: PAGE_SIZE,
-    });
-    if (Number(report.rowCount ?? 0) > PAGE_SIZE) {
-      console.error(`流量入口 GA4 rowCount=${report.rowCount} 超過單頁 ${PAGE_SIZE}，超出部分未同步（本機腳本同樣限制）。`);
+    // GA4 單次最多 9 個維度（篩選欄位也算）：一般造訪、直接造訪、直接造訪的進站 referrer 分三次查再合併（定義見 traffic-sources-lib.mjs）。
+    const range = [{ startDate: SITE_LAUNCH_DATE, endDate: 'today' }];
+    const [report, directReport, referrerReport] = await Promise.all([
+      ga4.runReport({ dateRanges: range, dimensions: TRAFFIC_SOURCE_DIMENSIONS.map((name) => ({ name })), metrics: TRAFFIC_SOURCE_METRICS.map((name) => ({ name })), dimensionFilter: NON_DIRECT_FILTER, limit: PAGE_SIZE }),
+      ga4.runReport({ dateRanges: range, dimensions: DIRECT_VISIT_DIMENSIONS.map((name) => ({ name })), metrics: DIRECT_VISIT_METRICS.map((name) => ({ name })), dimensionFilter: MEDIUM_NONE_FILTER, limit: PAGE_SIZE }),
+      ga4.runReport({ dateRanges: range, dimensions: REFERRER_DIMENSIONS.map((name) => ({ name })), metrics: REFERRER_METRICS.map((name) => ({ name })), dimensionFilter: { andGroup: { expressions: [MEDIUM_NONE_FILTER, SESSION_START_FILTER] } }, limit: PAGE_SIZE }),
+    ]);
+    for (const part of [report, directReport, referrerReport]) {
+      if (Number(part.rowCount ?? 0) > PAGE_SIZE) {
+        console.error(`流量入口 GA4 rowCount=${part.rowCount} 超過單頁 ${PAGE_SIZE}，超出部分未同步（本機腳本同樣限制）。`);
+      }
     }
-    const rows = buildTrafficSourceRows({ gaRows: parseGa4SourceRows(report), articleTitles, syncedAt: new Date().toISOString() });
+    const gaRows = [...parseGa4SourceRows(report), ...attachSessionStartReferrers(parseGa4DirectVisitRows(directReport), parseGa4ReferrerRows(referrerReport))];
+    const rows = buildTrafficSourceRows({ gaRows, articleTitles, syncedAt: new Date().toISOString() });
     const existing = await directus('/items/traffic_sources?fields=id,source_key&limit=-1');
     const counts = await upsertCollection({ directus, collection: 'traffic_sources', rows, existing, keyField: 'source_key', apply });
     result.sections.traffic = {

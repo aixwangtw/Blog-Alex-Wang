@@ -56,13 +56,13 @@ const PANELS = [
   },
   {
     name: '熱門入口造訪次數', icon: 'bar_chart', type: 'traffic-channel-bars',
-    note: '依入口分類加總造訪次數（分 9 類）；Google 搜尋固定第一、AI 搜尋固定第二，其餘由多到少；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
+    note: '依入口分類加總造訪次數（分 13 類）：外部來源由多到少，接著是回訪讀者、App 內建瀏覽器、站內換頁（由多到少），最後固定為其他、疑似自動程式、不明；「Facebook」含從 IG、Threads 點出、帶 fbclid 的連結；「疑似自動程式」是推論（螢幕解析度 800x600，或美國來源且完全沒有互動）；「Google 搜尋」含一般搜尋結果與 AI Overview 點擊，GA4 無法分開。',
     position_x: 1, position_y: 137, width: 60, height: 18,
     options: {},
   },
   {
     name: '流量入口與進站頁', icon: 'alt_route', type: 'traffic-source-table',
-    note: '入口、進站頁、造訪次數、觀看次數；進站頁顯示中文標題，滑鼠移上去看網址路徑。預設依造訪次數排序，點欄位標題改排序、拖拉標題右緣調整欄寬（記在這個瀏覽器）。要區分 IG 留言、YouTube 資訊欄等位置，分享連結需帶 UTM。',
+    note: '入口、進站頁、造訪次數、觀看次數；進站頁顯示中文標題，滑鼠移上去看網址路徑。預設依入口分類的固定順序排列（同分類內造訪次數多到少），點欄位標題改排序、拖拉標題右緣調整欄寬（記在這個瀏覽器）。要區分 IG 留言、YouTube 資訊欄等位置，分享連結需帶 UTM。',
     position_x: 1, position_y: 155, width: 60, height: 30,
     options: {},
   },

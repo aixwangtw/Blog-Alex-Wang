@@ -93,6 +93,7 @@
 <script setup lang="ts">
 import { useApi } from '@directus/extensions-sdk';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { sortChannels } from '../shared/channels';
 import { formatNumber, readStorage, todayIn, writeStorage } from '../shared/format';
 import { KINDS, query } from '../shared/query';
 
@@ -167,7 +168,9 @@ function stopResize() {
 
 function entryText(row: Row): string {
 	if (row.entries.length === 0 || row.entrySessions <= 0) return '—';
-	return `${row.entries[0].channel} ${Math.round(row.entryShare! * 100)}%`;
+	// 「主要入口」是造訪最多的那一類（hover 清單則依固定順序排列，所以不一定是第一列）。
+	const main = row.entries.reduce((best, entry) => (entry.sessions > best.sessions ? entry : best), row.entries[0]);
+	return `${main.channel} ${Math.round(row.entryShare! * 100)}%`;
 }
 
 const entryTip = ref<{ x: number; y: number; items: Row['entries']; total: number } | null>(null);
@@ -271,12 +274,12 @@ async function load() {
 		rows.value = (list.data.data ?? []).map((item: any): Row => {
 			// 文章的路徑規則來自 tools/sync-ga4-daily-views.mjs：/blog/<slug>/
 			const path = props.kind === 'articles' ? `/blog/${item.slug}/` : item.path;
-			const entries = (entriesByPath.get(normalizePath(path)) ?? []).sort((a, b) => b.sessions - a.sessions || a.channel.localeCompare(b.channel, 'zh-TW'));
+			const entries = sortChannels(entriesByPath.get(normalizePath(path)) ?? [], 'sessions');
 			const entrySessions = entries.reduce((sum, entry) => sum + entry.sessions, 0);
 			return {
 				entries,
 				entrySessions,
-				entryShare: entrySessions > 0 ? entries[0].sessions / entrySessions : null,
+				entryShare: entrySessions > 0 ? Math.max(...entries.map((entry) => entry.sessions)) / entrySessions : null,
 				path,
 				title: (props.kind === 'articles' ? item.title : item.name) || path,
 				today: todayByPath.get(path) ?? 0,
