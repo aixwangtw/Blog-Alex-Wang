@@ -69,7 +69,7 @@ const pages = [
     badgePrefix: '',
     badge: '一對一教學',
     title: '手把手帶你實戰',
-    subtitle: '用 Claude Opus 5.5 對話做動畫影片',
+    subtitle: '系統開發、網頁、動畫影片',
     subtitleSize: 26,
     role: '講師',
   },

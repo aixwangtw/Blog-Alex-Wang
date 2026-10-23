@@ -216,7 +216,7 @@ export const GUIDED_ENTRY_LINKS = [
   {
     href: `${SERVICE_SITE.url}/course/`,
     title: '手把手帶你實戰',
-    description: '一對一教學：用 Claude Opus 5.5 對話，做出動畫影片，看內容與上課方式。',
+    description: '一對一教學三個方案：系統開發、簡單網頁、動畫影片，用 Claude Code 對話完成。',
     analyticsKey: 'tutor',
     analyticsLabel: '手把手帶你實戰（一對一教學）',
   },

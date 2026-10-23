@@ -17,9 +17,9 @@ const schema = [
     '@type': 'Service',
     '@id': `${SERVICE_SITE.url}/course/#service`,
     name: '手把手帶你實戰',
-    serviceType: 'AI 教學 / 一對一家教',
+    serviceType: 'AI 教學 / 一對一家教 / 程式教學',
     description:
-      '付費一對一教學：用 Claude Opus 5.5 對話，做出動畫影片，使用開源工具 HyperFrames。講師 Alex 手把手帶你在自己的電腦上完成；雙北咖啡廳實體課或 Google Meet / Discord 線上課。',
+      '付費一對一教學，三個方案：用 Claude Code 開發含資料庫與自動部署的系統、寫簡單網頁、做動畫影片。講師 Alex 手把手帶你在自己的電腦上完成；雙北咖啡廳實體課或線上課，依教學項目報價。',
     provider: { '@id': AUTHOR.id },
     areaServed: ['台北市', '新北市', '線上（台灣與海外皆可）'],
     availableChannel: [
@@ -39,7 +39,7 @@ const schema = [
 
 const pageToc = [
   { id: 'course-content', label: '教學內容' },
-  { id: 'course-formats', label: '形式與費用' },
+  { id: 'course-formats', label: '上課方式與報價' },
   { id: 'faq', label: '常見問題' },
 ];
 
@@ -48,10 +48,10 @@ const courseBannerPath = new URL(courseBanner).pathname;
 ---
 
 <ServiceBase
-  title="AI 動畫影片製作一對一教學｜手把手帶你實戰"
-  description="付費一對一教學：用 Claude Opus 5.5 對話，做出動畫影片，使用開源工具 HyperFrames。講師 Alex 手把手帶你在自己的電腦上完成；雙北咖啡廳實體課或 Google Meet / Discord 線上課。"
+  title="AI 一對一教學：系統開發、網頁、動畫影片｜手把手帶你實戰"
+  description="付費一對一教學，三個方案：用 Claude Code 開發含資料庫與自動部署的系統、寫簡單網頁、做動畫影片。講師 Alex 手把手帶你在自己的電腦上完成；雙北咖啡廳實體課或線上課，依教學項目報價。"
   ogImage={courseBanner}
-  ogImageAlt="AI 動畫影片製作一對一教學｜手把手帶你實戰"
+  ogImageAlt="AI 一對一教學：系統開發、網頁、動畫影片｜手把手帶你實戰"
   schema={schema}
 >
   <div class="mx-auto w-full max-w-6xl px-5 py-8 sm:px-6 sm:py-12">
@@ -64,11 +64,11 @@ const courseBannerPath = new URL(courseBanner).pathname;
           手把手帶你實戰
         </h1>
         <p class="mt-6 max-w-[38rem] text-base leading-8 text-ink-2 sm:text-lg sm:leading-9">
-          這是付費的一對一教學服務：由我（<a href={`${SITE.url}/about/`} target="_blank" rel="noreferrer" class="font-semibold text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="font-semibold text-ink">你自己的電腦</strong>上，學會<strong class="font-semibold text-ink">用 Claude Opus 5.5 對話，做出動畫影片</strong>，工具是開源的 HyperFrames。
+          這是付費的一對一教學服務：由我（<a href={`${SITE.url}/about/`} target="_blank" rel="noreferrer" class="font-semibold text-accent underline underline-offset-4">{AUTHOR.name}</a>）手把手帶你，在<strong class="font-semibold text-ink">你自己的電腦</strong>上，用 <strong class="font-semibold text-ink">Claude Code</strong> 做出<strong class="font-semibold text-ink">一套有資料庫的系統、簡單網頁，或動畫影片</strong>。三個方案依教學項目報價。
         </p>
         <ul class="mt-7 grid gap-3 text-[15px] leading-7 text-ink sm:grid-cols-2">
           <li class="flex gap-3 border-t border-rule pt-3"><span class="font-mono text-accent" aria-hidden="true">01</span><span>雙北實體或線上教學</span></li>
-          <li class="flex gap-3 border-t border-rule pt-3"><span class="font-mono text-accent" aria-hidden="true">02</span><span>一次 3 小時，依目標安排</span></li>
+          <li class="flex gap-3 border-t border-rule pt-3"><span class="font-mono text-accent" aria-hidden="true">02</span><span>一次 3 小時，堂數依方案與程度安排</span></li>
         </ul>
         <div class="mt-8 grid gap-3 sm:flex sm:flex-wrap">
           <a href="#course-content" class="inline-flex min-h-13 items-center justify-center border border-rule-3 px-7 font-semibold text-ink no-underline transition hover:bg-paper-2">看教學內容</a>
@@ -76,24 +76,24 @@ const courseBannerPath = new URL(courseBanner).pathname;
       </div>
 
       <aside class="border border-rule-2 bg-paper-2" aria-label="課程預約摘要">
-        <img src={courseBannerPath} alt="AI 動畫影片製作一對一教學｜手把手帶你實戰" width="1200" height="630" fetchpriority="high" class="h-auto w-full border-b border-rule-2" />
+        <img src={courseBannerPath} alt="AI 一對一教學：系統開發、網頁、動畫影片｜手把手帶你實戰" width="1200" height="630" fetchpriority="high" class="h-auto w-full border-b border-rule-2" />
         <div class="p-5 sm:p-6">
           <p class="font-mono text-[11px] tracking-[0.12em] text-accent">預約摘要</p>
           <dl class="mt-4 divide-y divide-rule border-y border-rule">
             <div class="grid grid-cols-[5rem_1fr] gap-4 py-3.5">
               <dt class="text-sm text-ink-3">時間</dt>
-              <dd class="font-semibold text-ink">3 小時</dd>
+              <dd><strong class="font-semibold text-ink">一次 3 小時</strong><span class="mt-1 block text-xs leading-5 text-ink-3">堂數依方案與程度安排</span></dd>
             </div>
             <div class="grid grid-cols-[5rem_1fr] gap-4 py-3.5">
-              <dt class="text-sm text-ink-3">費用</dt>
-              <dd><strong class="font-semibold text-ink">NT$1,000／小時起</strong><span class="mt-1 block text-xs leading-5 text-ink-3">第二位起每位 NT$800／小時</span></dd>
+              <dt class="text-sm text-ink-3">報價</dt>
+              <dd><strong class="font-semibold text-ink">依教學項目報價</strong><span class="mt-1 block text-xs leading-5 text-ink-3">多人一起上有優惠</span></dd>
             </div>
             <div class="grid grid-cols-[5rem_1fr] gap-4 py-3.5">
               <dt class="text-sm text-ink-3">地點</dt>
               <dd class="text-sm leading-6 text-ink">雙北咖啡廳／線上</dd>
             </div>
           </dl>
-          <p class="mt-4 text-sm leading-6 text-ink-3">先告訴我想完成的目標，我會回覆適合的主題與堂數。</p>
+          <p class="mt-4 text-sm leading-6 text-ink-3">點右下角官方 LINE，告訴我想學什麼，我會回覆適合的方案、堂數與報價。</p>
         </div>
       </aside>
     </section>
@@ -117,7 +117,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
       <div class="max-w-3xl">
         <div>
           <p class="font-mono text-xs tracking-[0.12em] text-accent">教學內容</p>
-          <SectionHeading size="md" class="mt-3">可以一起完成的內容</SectionHeading>
+          <SectionHeading size="md" class="mt-3">三個教學方案</SectionHeading>
           <ol class="mt-6 border-t border-rule">
             {TEACHING_CONTENT.map((item, index) => (
               <li class="grid gap-3 border-b border-rule py-6 sm:grid-cols-[3rem_1fr] sm:gap-5">
@@ -125,6 +125,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
                 <div>
                   <h3 class="text-lg font-semibold leading-7 text-ink">{item.category}</h3>
                   <p class="mt-2 text-[15px] leading-7 text-ink-2">{item.detail}</p>
+                  <p class="mt-2 font-mono text-xs tracking-[0.08em] text-accent">{item.pricing}</p>
                 </div>
               </li>
             ))}
@@ -147,9 +148,9 @@ const courseBannerPath = new URL(courseBanner).pathname;
       </div>
       <div class="mt-8 grid gap-6 bg-ink p-6 text-white sm:grid-cols-[1fr_auto] sm:items-center sm:p-8">
         <div>
-          <p class="text-sm text-[#c9c5c0]">3 小時一對一教學</p>
-          <p class="mt-2 text-2xl font-semibold">NT$1,000／小時起</p>
-          <p class="mt-2 text-sm leading-6 text-[#c9c5c0]">可安排一對多；第二位起每位 NT$800／小時。</p>
+          <p class="text-sm text-[#c9c5c0]">一次 3 小時，堂數依方案與程度安排</p>
+          <p class="mt-2 text-2xl font-semibold">依教學項目報價</p>
+          <p class="mt-2 text-sm leading-6 text-[#c9c5c0]">點右下角官方 LINE，告訴我想學什麼。多人一起上有優惠。</p>
         </div>
       </div>
     </section>
@@ -161,7 +162,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
 
     <Cta
       title="想預約或先問問題？"
-      text="告訴我你的目標和目前程度，我會建議適合的上課方式與堂數。"
+      text="告訴我你想學什麼和目前程度，我會建議適合的方案、上課方式與堂數。"
       hint="有問題點右下角官方 LINE 直接問我"
       href={null}
       links={[]}

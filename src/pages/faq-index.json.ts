@@ -74,7 +74,7 @@ export async function GET() {
     a: faq.answer,
     u: `${SERVICE_SITE.url}/course/#faq${textFragment(faq.question)}`,
     p: '手把手帶你實戰（一對一教學）',
-    k: 'AI 一對一 私人家教 教學 課程 上課 手把手帶你實戰 動畫影片',
+    k: 'AI 一對一 私人家教 教學 課程 上課 手把手帶你實戰 系統開發 寫程式 動畫影片',
   }));
 
   // HOME_FAQS 剩下與課程頁不重複的題目（邀請講課或委託開發）：指向演講邀約頁

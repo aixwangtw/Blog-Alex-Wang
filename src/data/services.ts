@@ -14,14 +14,26 @@ export const CLASS_FORMATS = [
   },
 ];
 
-// 教學內容：目前一對一教學只提供「用 Claude Opus 5.5 對話做動畫影片」這一項
+// 教學內容：三個方案，一律依教學項目報價，不在站上寫金額
 export const TEACHING_CONTENT: {
   category: string;
   detail: string;
+  pricing: string;
 }[] = [
   {
-    category: '用 Claude Opus 5.5 對話，做出動畫影片',
-    detail: '學員要學的是用 Claude Opus 5.5 對話，做出動畫影片；使用的工具是開源的 HyperFrames。',
+    category: '程式進階：系統開發',
+    detail: '用 Claude Code 寫一套系統，包含資料庫、Docker、架設主機、連線 Linux 環境、自動部署。',
+    pricing: '依教學項目報價',
+  },
+  {
+    category: '程式入門：簡單網頁',
+    detail: '用 Claude Code 寫出一個簡單網頁，在自己的電腦上打開。',
+    pricing: '依教學項目報價',
+  },
+  {
+    category: 'AI 動畫影片',
+    detail: '用 Claude Code 對話，以開源工具 HyperFrames 做出動畫影片。',
+    pricing: '依教學項目報價',
   },
 ];
 

@@ -14,8 +14,8 @@ export async function GET() {
   // g 是該頁的主要關鍵字（也當同義詞用），g2 是次要關鍵字；客服搜尋依標題／g 命中 > g2／標籤 > 描述的順序排序。
   const servicePages = [
     {
-      t: '手把手帶你實戰：AI 動畫影片製作一對一教學',
-      d: '用 Claude Opus 5.5 對話，做出動畫影片，工具是 HyperFrames。雙北實體或線上一對一教學。',
+      t: '手把手帶你實戰：AI 一對一教學（系統開發、網頁、動畫影片）',
+      d: '三個方案：系統開發、簡單網頁、動畫影片，用 Claude Code 對話完成。雙北實體或線上一對一教學。',
       g: '課程 教學 一對一 上課 家教 預約 手把手 實戰',
       g2: '動畫 影片 HyperFrames Claude',
       u: `${SERVICE_SITE.url}/course/`,

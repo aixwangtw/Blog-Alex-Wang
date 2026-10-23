@@ -8,13 +8,13 @@ export interface Faq {
 const prep: Faq = {
   question: '課前需要準備什麼？',
   answer:
-    '除了教學費用，還需要付費訂閱 AI。初學者只要先準備一個月 20 美元的額度就夠了，其餘細節預約時會依你的題材一起確認。',
+    '第一步是訂閱 Claude，最少要 Pro 方案（每月 20 美元），才能用 Claude Code。學費依教學項目報價，點右下角官方 LINE 告訴我想學什麼。',
 };
 
 const noTechBackground: Faq = {
   question: '沒有技術背景可以上嗎？',
   answer:
-    '可以。這門課用意在於把原本複雜的技術門檻，優化成只要對話就能完成的工作流，任何人只要會操作電腦就能上。',
+    '可以。動畫影片和程式入門都從對話開始，只要會操作電腦就能上。程式進階會碰到資料庫、Docker、Linux，我會依你的程度安排堂數。',
 };
 
 const onlineClass: Faq = {
@@ -26,13 +26,13 @@ const onlineClass: Faq = {
 const groupClass: Faq = {
   question: '可以多人一起上課嗎？',
   answer:
-    '可以。一對多教學的第一位學員依原價計費，第二位起每位的教學費用都享八折。',
+    '可以。多人一起上有優惠，報價時一起算。點右下角官方 LINE 告訴我人數和想學的項目。',
 };
 
 const booking: Faq = {
   question: '怎麼預約或詢問費用？',
   answer:
-    '請點右下角官方 LINE 直接問我，說明你的目標（例如想用 AI 做動畫影片），我會建議適合的堂數與報價。',
+    '請點右下角官方 LINE 直接問我，說明你的目標（例如想用 AI 開發系統、做網頁或動畫影片），我會建議適合的堂數與報價。',
 };
 
 const speakingOrDevelopment: Faq = {
