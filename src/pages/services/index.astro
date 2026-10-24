@@ -64,20 +64,9 @@ const schema = [
   schema={schema}
 >
   <div class="service-router" id="quick-entry">
-    <NeedRouter location="service_need_router" headingId="service-need-router-h" />
+    <NeedRouter location="service_need_router" headingId="service-need-router-h" headingLevel="h1" kicker="客製系統開發、AI 導入｜AI 手把手教學" />
   </div>
 
-  <section class="service-hero">
-    <div class="service-hero-copy">
-      <p class="service-kicker">{SERVICE_SITE.title}</p>
-      <h1><span class="nb">客製系統開發</span><br /><span class="nb">AI 手把手教學</span></h1>
-      <p class="service-lead">我是 {AUTHOR.name}，目前全職接案。和開發夥伴承接客製系統開發與 AI 導入，談需求時先免費做簡易 Demo，看過再決定要不要簽約。也提供付費一對一教學，手把手帶你在自己的電腦上用 Claude Code 做出系統、網頁或動畫影片。</p>
-      <div class="service-hero-actions">
-        <a href="/services/development/" data-ga-button="service_home_development" data-ga-label="看系統開發服務" data-ga-location="service_home_hero" data-ga-action="navigate">看系統開發服務</a>
-        <a class="service-hero-ghost" href="/course/" data-ga-button="service_home_course" data-ga-label="看一對一教學" data-ga-location="service_home_hero" data-ga-action="navigate">看一對一教學</a>
-      </div>
-    </div>
-  </section>
 
   <section class="service-dev" id="system-development" aria-labelledby="service-dev-h">
     <p class="service-kicker">系統開發</p>
@@ -149,7 +138,7 @@ const schema = [
     .service-text-link { display:inline-block; margin-top:24px; color:var(--color-accent); font-weight:700; text-decoration:none; }
     .service-home-cta { width:min(1120px, calc(100% - 48px)); margin:80px auto 0; }
     .service-section-lead { max-width:62ch; margin-top:16px; color:var(--color-ink-2); line-height:1.85; }
-    .service-router { width:min(1120px, calc(100% - 48px)); margin:64px auto 0; }
+    .service-router { width:min(1120px, calc(100% - 48px)); margin:clamp(16px, 4vw, 56px) auto 0; }
     .service-free { display:grid; grid-template-columns:minmax(0, 1fr) minmax(280px, .9fr); gap:48px; align-items:center; }
         .service-free-media { display:block; width:100%; height:auto; border:1px solid var(--color-rule-2); }
     @media (max-width:767px) {
@@ -163,7 +152,7 @@ const schema = [
       .service-shot-row { grid-template-columns:1fr; gap:16px; }
       .service-experience, .service-home-cta { margin-top:76px; }
       .service-free { grid-template-columns:1fr; gap:28px; }
-      .service-router { width:calc(100% - 40px); margin-top:40px; }
+      .service-router { width:calc(100% - 40px); margin-top:16px; }
     }
     @media (max-width:340px) {
       .service-hero, .service-dev, .service-experience, .service-home-cta, .service-router { width:calc(100% - 32px); }
