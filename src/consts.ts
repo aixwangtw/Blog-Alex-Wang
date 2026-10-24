@@ -28,7 +28,7 @@ export const DEVELOPMENT_SERVICE = {
   caseArticle: '/blog/math-teacher-question-bank/',
   guideArticle: '/blog/custom-system-development-demo/',
   demoUrl: 'https://demo-question.aixwang.dev/admin/auth/login',
-  steps: ['先聊需求：想做什麼、預算、時程、現在用的工具', '免費做簡易 Demo，看過再決定', '確認功能後報價、簽約', '分階段開發，每個階段都讓你試用', '上線並教你怎麼用，一年保固', '保固結束後可簽維護合約'],
+  steps: ['先聊需求：想做什麼、預算、時程、現在用的工具', '免費做簡易 Demo，看過再決定', '確認功能後報價、簽約', '分階段開發，隨調隨改', '上線並教你怎麼用，一年保固', '保固結束後可簽維護合約'],
   timeline: '時程依功能多寡估算：以技術上來說，大約兩個月可以完成 5 個左右的複雜功能，我們做過的功能會更快；開發過程中需求原則上可以隨時調整。',
   payment: '開發費依功能報價，加 LINE 可以免費評估；分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。',
   hosting: '主機用 Google Cloud（GCP），帳號用你的名義申請，沒用過 GCP 會幫你申請 90 天免費試用（Google 提供 300 美元試用額度）。主機建置約新台幣 5,000 元，只收一次；試用結束、升級成付費帳戶後，基本規格每月約 500 元，規格越高費用越高，費用由你的帳號直接付給 Google。',
