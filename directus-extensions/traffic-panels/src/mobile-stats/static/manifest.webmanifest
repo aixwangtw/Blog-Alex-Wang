@@ -1,0 +1,18 @@
+{
+  "id": "/mobile-stats/",
+  "name": "Alex Wang 網站統計",
+  "short_name": "網站統計",
+  "description": "部落格流量統計與文章產出品質（手機版）",
+  "lang": "zh-Hant-TW",
+  "start_url": "/mobile-stats/",
+  "scope": "/mobile-stats/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f4f5",
+  "theme_color": "#b83b52",
+  "icons": [
+    { "src": "/mobile-stats/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/mobile-stats/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/mobile-stats/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

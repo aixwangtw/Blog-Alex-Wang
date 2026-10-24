@@ -1,6 +1,6 @@
 {
   "name": "directus-extension-traffic-panels",
-  "description": "流量統計與內容統計儀表板用的自訂面板：合併卡片、合併表格、入口長條圖、文章明細表。",
+  "description": "流量統計與內容統計儀表板用的自訂面板：合併卡片、合併表格、入口長條圖、文章明細表；另含手機版統計頁（/mobile-stats/，可安裝成 App）。",
   "icon": "extension",
   "version": "1.0.0",
   "private": true,
@@ -15,12 +15,13 @@
       { "type": "panel", "name": "traffic-content-table", "source": "src/traffic-content-table/index.ts" },
       { "type": "panel", "name": "traffic-source-table", "source": "src/traffic-source-table/index.ts" },
       { "type": "panel", "name": "traffic-channel-bars", "source": "src/traffic-channel-bars/index.ts" },
-      { "type": "panel", "name": "content-article-table", "source": "src/content-article-table/index.ts" }
+      { "type": "panel", "name": "content-article-table", "source": "src/content-article-table/index.ts" },
+      { "type": "endpoint", "name": "mobile-stats", "source": "src/mobile-stats/index.ts" }
     ],
     "host": "^11.0.0"
   },
   "scripts": {
-    "build": "directus-extension build",
+    "build": "directus-extension build && node build-mobile.mjs",
     "dev": "directus-extension build -w --no-minify",
     "link": "directus-extension link",
     "add": "directus-extension add"

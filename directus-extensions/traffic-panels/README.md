@@ -10,11 +10,20 @@
 | `traffic-channel-bars` | 熱門入口造訪次數長條圖：Google 搜尋、AI 搜尋固定前兩名 → 其餘由多到少（LINE、YouTube 為 0 也列出）→ 固定最後其他、疑似自動程式；hover AI 搜尋／其他看細項 | 無 |
 | `traffic-source-table` | 流量入口表：入口｜進站頁（中文標題，hover 顯示路徑）｜造訪次數｜觀看次數；可排序（預設依入口分類固定順序）、拖拉欄寬（localStorage `traffic-panels:widths:sources`） | 無 |
 | `content-article-table` | 已發布文章明細：標題、發布日、更新日、字數、SEO 描述字數、標籤數、FAQ 數、站內連結狀況（白話）；可排序、拖拉欄寬（localStorage `content-panels:widths:articles`） | 無 |
+| `mobile-stats`（endpoint） | 手機版統計頁 `https://cms.aixwang.dev/mobile-stats/`：單欄涵蓋「流量統計」「文章產出與品質」兩個儀表板的所有面板，可在 Android Chrome「安裝應用程式」（PWA） | 無 |
 
 - 資料來源：`audience_metrics`（key=site）、`articles`、`page_views`、`daily_content_views`、`traffic_sources`、`content_stats`、`content_stats_history`。
 - 文章與逐日明細的對應鍵是路徑 `/blog/<slug>/`（與 `tools/sync-ga4-daily-views.mjs` 一致），頁面用 `page_views.path`。
 - 「當日」以 `timezone`（預設 `Asia/Taipei`）判斷今天，需與 GA4 Property 時區一致；這點只是預設值，沒有查證 Property 實際時區。
 - 欄寬存在瀏覽器 localStorage（`traffic-panels:widths:articles`／`:pages`），清掉就回預設。
+
+### 手機版統計頁（`mobile-stats`）
+
+- 路徑：`/mobile-stats/`（頁面）、`/mobile-stats/me`（回報登入者是否為管理員）、`manifest.webmanifest`、`sw.js`、圖示（由 `public/aixwang-icon.png` 縮出 192／512／maskable）。
+- 登入走 Directus 自己的 `/auth/login`（`mode: session`，httpOnly cookie），前端不存 token；非管理員只看到「沒有權限」。
+- 數字與桌面版面板同口徑：`src/mobile-stats/client/loaders.ts` 逐一對照各 `panel.vue` 的查詢，共用 `src/shared/`。**改桌面版面板口徑時這裡也要一起改。**
+- Service worker 只快取頁面外殼（先走網路、失敗才用快取），`/items`、`/auth`、`/me` 不經快取；切回前景超過 5 分鐘自動重新載入。
+- 前端由 `build-mobile.mjs`（esbuild）打包到 `dist/mobile/`，`npm run build` 已串好；只改 `dist/mobile/` 的檔案時 `docker cp` 覆蓋即生效，不必重啟（endpoint 每次請求讀檔）。改 `src/mobile-stats/index.ts` 才要重啟。
 
 ## 建置
 
