@@ -27,7 +27,26 @@ import {
   SITE,
   pageBannerUrl,
 } from '../consts';
+import { getCollection } from 'astro:content';
+import FaqList from '../components/FaqList.astro';
+import NeedRouter from '../components/NeedRouter.astro';
 import Base from '../layouts/Base.astro';
+
+// 首頁只留三題常見問題，題目與答案一字不改取自〈系統開發、AI 導入費用怎麼算？〉文章；
+// 費用與付款那題放在系統開發服務頁。找不到就中斷建置，避免文章改題後首頁悄悄變空。
+const HOME_FAQ_QUESTIONS = [
+  '簽約前能先看到 Demo 嗎？要收費嗎？',
+  '做的過程中能不能隨時修改？',
+  '資料和原始碼歸誰？可以簽保密協議嗎？',
+];
+const guideArticle = (await getCollection('blog')).find((post) => post.id === 'custom-system-development-demo');
+const homeFaqs = HOME_FAQ_QUESTIONS.map((question) => {
+  const faq = guideArticle?.data.faqs.find((item) => item.question === question);
+  if (!faq) {
+    throw new Error(`系統開發文章找不到 FAQ「${question}」，請更新 src/pages/index.astro 的 HOME_FAQ_QUESTIONS`);
+  }
+  return faq;
+});
 
 ---
 
@@ -79,7 +98,12 @@ import Base from '../layouts/Base.astro';
     </section>
 
     <div class="home-shell">
-      <!-- 2／服務詳細介紹：服務入口的下一層資訊 -->
+      <!-- 2／需求分流：問句＋四張卡，卡片本身是連結，打字動畫只是視覺 -->
+      <div class="need-router-wrap reveal">
+        <NeedRouter location="home_need_router" />
+      </div>
+
+      <!-- 3／服務詳細介紹：服務入口的下一層資訊 -->
       <section class="service-details" aria-label="服務詳細介紹">
         <article class="service-row reveal" id="development-case">
           <div class="service-copy">
@@ -109,30 +133,12 @@ import Base from '../layouts/Base.astro';
             <ol class="development-steps">
               {DEVELOPMENT_SERVICE.steps.map((step) => <li>{step}</li>)}
             </ol>
-            <p>{DEVELOPMENT_SERVICE.payment}</p>
             <a class="service-link" href={DEVELOPMENT_SERVICE.url} data-ga-button="home_development_service" data-ga-label="了解系統開發服務" data-ga-location="home_development_process" data-ga-action="navigate">了解系統開發服務 <span aria-hidden="true">→</span></a>
           </div>
           <figure class="service-media">
             <img src="/images/blog/math-teacher-question-bank/exam-export.jpg" alt="題庫系統的出卷頁：勾選題目、排序後直接匯出考卷" width="1400" height="972" loading="lazy" decoding="async" />
           </figure>
         </article>
-
-        <section class="development-cost reveal" id="development-cost" aria-labelledby="cost-h">
-          <div class="development-cost-head">
-            <p class="service-kicker">費用怎麼算</p>
-            <h2 id="cost-h">先看 Demo，再報價</h2>
-            <p>談需求時先依你的需求免費做簡易 Demo，看過再決定要不要簽約，不適合不用付費。開發費依需要的功能報價，加 LINE 可以免費評估；確認範圍後才開始收費。</p>
-          </div>
-          <dl class="development-cost-list">
-            <div><dt>付款方式</dt><dd>分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。</dd></div>
-            <div><dt>開發時程</dt><dd>依功能多寡估算，技術上約兩個月可以完成 5 個左右的複雜功能，做過的功能更快；開發過程中需求原則上可以隨時調整。</dd></div>
-            <div><dt>主機費用</dt><dd>主機用 Google Cloud，帳號用你的名義，沒用過可以幫你申請 90 天免費試用。建置約新台幣 5,000 元（一次性），試用結束後基本規格每月約 500 元，由你的帳號直接付給 Google。</dd></div>
-            <div><dt>AI 使用費</dt><dd>依實際用量計算，評估時一起估算。以題庫系統為例，辨識一份考卷不到 1 元，AI 寫一題詳解大約 0.1 元。</dd></div>
-          </dl>
-          <div class="development-cost-actions">
-            <a class="development-cost-primary" href={DEVELOPMENT_SERVICE.url} data-ga-button="home_cost_service" data-ga-label="看系統開發服務與合作細節" data-ga-location="home_development_cost" data-ga-action="navigate">看系統開發服務與合作細節 <span aria-hidden="true">→</span></a>
-          </div>
-        </section>
 
         <section class="development-cost reveal" id="ai-tutoring" aria-labelledby="tutoring-h">
           <div class="development-cost-head">
@@ -150,30 +156,17 @@ import Base from '../layouts/Base.astro';
           </div>
         </section>
 
-        <section class="instructor-profile qb-articles reveal" aria-labelledby="instructor-h">
-          <figure class="instructor-photo">
-            <img src="/images/blog/math-teacher-question-bank/ai-generate.jpg" alt="題庫系統 Demo 的 AI 出題頁：左邊是範本題，右邊是 AI 產生的類似題，標示待老師確認" width="1400" height="968" loading="lazy" decoding="async" />
-          </figure>
-          <div class="instructor-main">
-            <p class="service-kicker">代表案例</p>
-            <h2 id="instructor-h">數學題庫系統</h2>
-            <p class="instructor-intro">幫補習班數學老師把瑣碎的出題流程自動化：AI 辨識上傳的考卷、拆成一題一題，老師對照原卷審核；AI 詳解經老師確認後才收進題庫；AI 出題是常見需求，Demo 可以先體驗，正式導入時依需求開發。Demo 免費、不用註冊。其他做過的系統還有 CRM、背書系統、健檢系統、預約系統、揪團平台等。</p>
-            <div class="instructor-actions">
-              <a class="service-link" href={DEVELOPMENT_SERVICE.caseArticle} data-ga-button="home_qb_article" data-ga-label="看題庫系統完整介紹" data-ga-location="home_qb_articles" data-ga-action="navigate">閱讀題庫系統完整介紹 <span aria-hidden="true">→</span></a>
-              <a class="service-link" href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" data-ga-button="home_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="home_qb_articles" data-ga-action="external">試用 Demo <span aria-hidden="true">↗</span></a>
-              <a class="service-link" href="/blog/" data-ga-button="home_qb_blog" data-ga-label="看全部文章" data-ga-location="home_qb_articles" data-ga-action="navigate">看全部文章 <span aria-hidden="true">→</span></a>
-            </div>
-          </div>
-          <dl class="instructor-facts">
-            <div><dt>AI 辨識</dt><dd>PDF、Word、考卷照片<br />老師對照原卷審核</dd></div>
-            <div><dt>AI 詳解</dt><dd>AI 產生詳解<br />老師確認後才收進題庫</dd></div>
-            <div><dt>AI 出題</dt><dd>Demo 可以先體驗<br />正式導入時依需求開發</dd></div>
-          </dl>
-        </section>
-
       </section>
 
-      <!-- 4／結尾 CTA -->
+      <!-- 4／常見問題：只留三題，費用與付款細節在系統開發服務頁 -->
+      <section class="home-faq reveal" aria-labelledby="home-faq-h">
+        <p class="service-kicker">常見問題</p>
+        <h2 id="home-faq-h">合作前最常問的三件事</h2>
+        <FaqList faqs={homeFaqs} />
+        <a class="service-link" href={`${DEVELOPMENT_SERVICE.url}#development-cost`} data-ga-button="home_faq_cost" data-ga-label="看時程與費用" data-ga-location="home_faq" data-ga-action="navigate">時程、付款與主機費用 <span aria-hidden="true">→</span></a>
+      </section>
+
+      <!-- 5／結尾 CTA -->
       <section class="closer" aria-labelledby="closer-h">
         <h2 class="q q--sec reveal" id="closer-h"><span class="nb">對系統有疑問嗎<span class="qt">？</span></span></h2>
         <div class="reveal" style="--d:70ms">
@@ -1570,6 +1563,27 @@ import Base from '../layouts/Base.astro';
     }
 
     /* ---------- 結尾 CTA ---------- */
+    /* ---------- 需求分流區與三題常見問題 ---------- */
+    .need-router-wrap {
+      padding-top: clamp(48px, 7vw, 88px);
+    }
+    .home-faq {
+      display: grid;
+      gap: 20px;
+      margin-top: clamp(24px, 4vw, 48px);
+      padding-top: clamp(48px, 7vw, 88px);
+      border-top: 1px solid var(--color-rule);
+    }
+    .home-faq h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.15;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+    .home-faq .service-link {
+      justify-self: start;
+    }
     .closer {
       padding-top: 76px;
     }

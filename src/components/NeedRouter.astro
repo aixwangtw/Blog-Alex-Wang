@@ -1,0 +1,305 @@
+---
+// 需求分流區：首頁 hero 後與服務站首頁共用。
+// 終端機視覺沿用首頁原本的 .cli 配色（深底、視窗列三色圓點、等寬字）。
+// 輸入列只是打字動畫的顯示，不接任何後端，也不產生回答；點卡片時把該張卡的需求句打進輸入列，再前往卡片連結。
+// 退路：沒有 JS 時卡片本身就是一般連結；prefers-reduced-motion 時不跑打字動畫、點了直接前往。
+// 卡片例子只能用站上已有的內容（服務頁、教學頁、免費資源頁、演講頁的實際名稱）。
+import { SERVICE_SITE, SITE } from '../consts';
+
+interface Props {
+  /** GA 事件的 location，區分首頁與服務站 */
+  location: string;
+  headingId?: string;
+}
+
+const { location, headingId = 'need-router-h' } = Astro.props;
+
+const needs = [
+  {
+    key: 'development',
+    need: '想把重複的工作自動化',
+    examples: ['數學題庫系統：AI 辨識考卷、AI 詳解、AI 出題', '做過 CRM、預約系統、健檢系統、揪團平台'],
+    action: '免費做 Demo',
+    href: `${SERVICE_SITE.url}/services/development/`,
+  },
+  {
+    key: 'course',
+    need: '想有人手把手帶著學 AI',
+    examples: ['用 Claude Code 做有資料庫的系統、簡單網頁、AI 動畫影片', '雙北咖啡廳實體課或線上課'],
+    action: '看教學方案',
+    href: `${SERVICE_SITE.url}/course/`,
+  },
+  {
+    key: 'resources',
+    need: '想先領取免費資源',
+    examples: ['Matt Pocock 開源 Skills（grill-me）', 'feedback-desk PM溝通工具'],
+    action: '立即領取',
+    href: `${SITE.url}/resources/`,
+  },
+  {
+    key: 'speaking',
+    need: '想找 AI 講師',
+    examples: ['主題：AI 一鍵拍片，跟 AI 對話就能完成影片', '曾受 MixerBox、TAIA 台灣人工智慧協會邀請演講'],
+    action: '邀請演講',
+    href: `${SERVICE_SITE.url}/services/speaking/`,
+  },
+];
+---
+
+<section class="need-router" aria-labelledby={headingId} data-need-router>
+  <div class="need-term">
+    <div class="need-term-bar" aria-hidden="true">
+      <span class="need-term-dots"><i></i><i></i><i></i></span>
+    </div>
+    <div class="need-term-screen">
+      <h2 id={headingId} class="need-term-q">你目前最想解決什麼問題？</h2>
+      <p class="need-term-line" aria-hidden="true">
+        <span class="need-term-prompt">&gt;</span>
+        <span class="need-term-text" data-need-text data-idle={JSON.stringify(needs.map((item) => item.need))}>從下面四項選一個</span><span class="need-term-caret"></span>
+      </p>
+    </div>
+  </div>
+
+  <ul class="need-cards">
+    {needs.map((item, index) => (
+      <li>
+        <a
+          class="need-card"
+          href={item.href}
+          data-need={item.need}
+          data-ga-button={`${location}_${item.key}`}
+          data-ga-label={item.action}
+          data-ga-location={location}
+          data-ga-action="navigate"
+        >
+          <span class="need-card-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <strong class="need-card-title">{item.need}</strong>
+          <span class="need-card-examples-label">例如</span>
+          <ul class="need-card-examples">
+            {item.examples.map((example) => <li>{example}</li>)}
+          </ul>
+          <span class="need-card-action">{item.action} <span aria-hidden="true">→</span></span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .need-router { width: 100%; }
+  .need-term {
+    border: 1px solid #3f3a37;
+    border-radius: 14px;
+    background: #181716;
+    color: #f7f3ed;
+    box-shadow: 0 26px 70px rgb(22 22 26 / 18%);
+  }
+  .need-term-bar {
+    display: flex;
+    height: 40px;
+    align-items: center;
+    padding: 0 18px;
+    border-bottom: 1px solid #3f3a37;
+    border-radius: 13px 13px 0 0;
+    background: #24211f;
+  }
+  .need-term-dots { display: flex; gap: 6px; }
+  .need-term-dots i { width: 9px; height: 9px; border-radius: 50%; }
+  .need-term-dots i:first-child { background: #d96c70; }
+  .need-term-dots i:nth-child(2) { background: #d6a34d; }
+  .need-term-dots i:last-child { background: #69aa79; }
+  .need-term-screen { padding: clamp(20px, 4vw, 40px); }
+  .need-term-q {
+    margin: 0;
+    color: #fffaf4;
+    font: 650 clamp(22px, 3.6vw, 38px)/1.3 var(--font-display);
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+  .need-term-line {
+    display: flex;
+    min-height: 52px;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0 0;
+    padding: 12px 16px;
+    border: 1px solid #403b38;
+    border-radius: 8px;
+    background: #11100f;
+    color: #fffaf4;
+    font: 400 clamp(14px, 1.8vw, 17px)/1.5 var(--font-mono);
+  }
+  .need-term-prompt { flex: none; color: #f0a6b1; font-weight: 700; }
+  .need-term-text { min-width: 0; overflow-wrap: anywhere; }
+  .need-term-caret {
+    flex: none;
+    width: 9px;
+    height: 1.2em;
+    margin-left: -8px;
+    background: #f0a6b1;
+    animation: need-caret 1s steps(1) infinite;
+  }
+  @keyframes need-caret { 50% { opacity: 0; } }
+
+  .need-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .need-cards > li { display: flex; min-width: 0; }
+  .need-card {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 20px;
+    border: 1px solid var(--color-rule-2);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: border-color 0.16s ease, transform 0.16s ease;
+  }
+  .need-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
+  .need-card:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  .need-card-index { color: var(--color-accent); font: 700 12px/1 var(--font-mono); }
+  .need-card-title { display: block; margin-top: 12px; font: 650 18px/1.45 var(--font-display); }
+  .need-card-examples-label { margin-top: 14px; color: var(--color-ink-3); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
+  .need-card-examples { margin: 6px 0 0; padding: 0 0 0 1.1em; color: var(--color-ink-2); font-size: 14px; line-height: 1.7; list-style: disc; }
+  .need-card-examples li + li { margin-top: 4px; }
+  .need-card-action {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: auto;
+    padding: 0 16px;
+    border: 1px solid var(--color-accent);
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 700;
+  }
+  .need-card-examples { margin-bottom: 18px; }
+  .need-card.is-chosen { border-color: var(--color-accent); box-shadow: 0 0 0 2px var(--color-accent); }
+
+  @media (max-width: 1023px) {
+    .need-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 599px) {
+    .need-cards { grid-template-columns: 1fr; gap: 12px; }
+    .need-card { padding: 18px 16px; }
+    .need-term-screen { padding: 18px 16px; }
+    .need-term-line { padding: 10px 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .need-term-caret { animation: none; }
+    .need-card { transition: none; }
+    .need-card:hover { transform: none; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var routers = document.querySelectorAll('[data-need-router]');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    routers.forEach(function (router) {
+      var text = router.querySelector('[data-need-text]');
+      if (!text) return;
+      var idle = [];
+      try { idle = JSON.parse(text.getAttribute('data-idle') || '[]'); } catch (e) { idle = []; }
+      var timer = null;
+      var navigating = false;
+
+      function stop() { if (timer) { clearTimeout(timer); timer = null; } }
+
+      /* 逐字打出 target，完成後呼叫 done。 */
+      function typeTo(target, speed, done) {
+        var chars = Array.from(target);
+        var i = 0;
+        text.textContent = '';
+        (function step() {
+          if (i <= chars.length) {
+            text.textContent = chars.slice(0, i).join('');
+            i += 1;
+            timer = setTimeout(step, speed);
+          } else if (done) {
+            done();
+          }
+        })();
+      }
+
+      function erase(done) {
+        var chars = Array.from(text.textContent);
+        (function step() {
+          if (chars.length) {
+            chars.pop();
+            text.textContent = chars.join('');
+            timer = setTimeout(step, 28);
+          } else {
+            done();
+          }
+        })();
+      }
+
+      /* 閒置時輪流打出四項需求，示意可以選哪些；選了卡片就停止。 */
+      function cycle(index) {
+        if (!idle.length) return;
+        typeTo(idle[index % idle.length], 70, function () {
+          timer = setTimeout(function () {
+            erase(function () { cycle(index + 1); });
+          }, 1600);
+        });
+      }
+
+      if (!reduce) {
+        if ('IntersectionObserver' in window) {
+          var started = false;
+          var io = new IntersectionObserver(function (entries) {
+            if (entries[0].isIntersecting && !started && !navigating) {
+              started = true;
+              io.disconnect();
+              cycle(0);
+            }
+          });
+          io.observe(router);
+        } else {
+          cycle(0);
+        }
+      }
+
+      router.querySelectorAll('[data-need]').forEach(function (card) {
+        card.addEventListener('click', function (event) {
+          /* 新分頁開啟、中鍵等交給瀏覽器原生行為。 */
+          if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          if (reduce) return;
+          event.preventDefault();
+          if (navigating) return;
+          navigating = true;
+          stop();
+          card.classList.add('is-chosen');
+          var href = card.href;
+          /* 手機上卡片在終端機下方，先把輸入列捲回畫面，讓人看得到打出的需求。 */
+          var line = router.querySelector('.need-term-line');
+          var box = line && line.getBoundingClientRect();
+          if (box && (box.top < 0 || box.bottom > window.innerHeight)) {
+            line.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          }
+          typeTo(card.getAttribute('data-need'), 45, function () {
+            timer = setTimeout(function () { window.location.href = href; }, 350);
+          });
+        });
+      });
+
+      /* 從下一頁按返回時（bfcache）恢復可點狀態。 */
+      window.addEventListener('pageshow', function (event) {
+        if (!event.persisted) return;
+        navigating = false;
+        stop();
+        router.querySelectorAll('.is-chosen').forEach(function (card) { card.classList.remove('is-chosen'); });
+        if (!reduce) cycle(0);
+      });
+    });
+  })();
+</script>
