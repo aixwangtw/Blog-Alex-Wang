@@ -22,6 +22,7 @@
 - 路徑：`/mobile-stats/`（頁面）、`/mobile-stats/me`（回報登入者是否為管理員）、`manifest.webmanifest`、`sw.js`、圖示（由 `public/aixwang-icon.png` 縮出 192／512／maskable）。
 - 登入走 Directus 自己的 `/auth/login`（`mode: session`，httpOnly cookie），前端不存 token；非管理員只看到「沒有權限」。
 - 數字與桌面版面板同口徑：`src/mobile-stats/client/loaders.ts` 逐一對照各 `panel.vue` 的查詢，共用 `src/shared/`。**改桌面版面板口徑時這裡也要一起改。**
+- 版面：頂部統計卡做成左右滑輪播（第一張是文章觀看），下面是統一的精簡表格（一列一筆、點欄位標題排序、每次 10 筆）；平均停留直接顯示，其他細項（入口分布、逐日明細、完整標題等）手指按住約 400ms 跳出底部彈窗，放開後保留，點外面或 ✕ 關閉。
 - Service worker 只快取頁面外殼（先走網路、失敗才用快取），`/items`、`/auth`、`/me` 不經快取；切回前景超過 5 分鐘自動重新載入。
 - 前端由 `build-mobile.mjs`（esbuild）打包到 `dist/mobile/`，`npm run build` 已串好；只改 `dist/mobile/` 的檔案時 `docker cp` 覆蓋即生效，不必重啟（endpoint 每次請求讀檔）。改 `src/mobile-stats/index.ts` 才要重啟。
 

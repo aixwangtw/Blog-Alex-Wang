@@ -142,16 +142,16 @@ async function logout() {
 
 // ── 元件 ──
 
-function section(title: string, note?: string): { el: HTMLElement; body: HTMLElement } {
+function section(title: string): { el: HTMLElement; body: HTMLElement } {
 	const body = h('div', { class: 'section-body' }, h('div', { class: 'state' }, '載入中…'));
-	const el = h('section', { class: 'panel' }, h('h2', {}, title), note ? h('p', { class: 'note' }, note) : null, body);
+	const el = h('section', { class: 'panel' }, title ? h('h2', {}, title) : null, body);
 	return { el, body };
 }
 
 async function fill(body: HTMLElement, task: () => Promise<Child | Child[]>) {
 	try {
 		const result = await task();
-		body.replaceChildren(...(Array.isArray(result) ? result : [result]).filter(Boolean) as (Node | string)[]);
+		body.replaceChildren(...((Array.isArray(result) ? result : [result]).filter(Boolean) as (Node | string)[]));
 	} catch (error: any) {
 		if (error instanceof AuthError) {
 			showLogin('登入已過期，請重新登入。');
@@ -176,247 +176,362 @@ function tipTable(tip: L.Tip): HTMLElement {
 	return table;
 }
 
-/** 可收合的細項區塊（桌面版是 hover 彈窗，手機改成點開）。 */
-function disclosure(summary: string, content: Node, open = false): HTMLElement {
-	const details = h('details', { class: 'disclosure' }, h('summary', {}, summary), content);
-	if (open) details.open = true;
-	return details;
-}
-
-function renderCard(card: L.Card): Child[] {
-	const cells = h('div', { class: `cells n${card.cells.length}` }, ...card.cells.map((cell) => h('div', { class: 'cell' }, h('div', { class: 'value' }, cell.value), h('div', { class: 'label' }, cell.label))));
-	const extras: Child[] = [];
-	for (const cell of card.cells) if (cell.tip) extras.push(disclosure(cell.tip.title, tipTable(cell.tip)));
-	if (card.detail && card.detail.rows.length > 0) extras.push(h('div', { class: 'detail' }, card.detail.title ? h('h3', {}, card.detail.title) : null, tipTable(card.detail)));
-	return [cells, ...extras];
-}
-
-/** 排序下拉選單（取代桌面版點欄位標題排序）。 */
-function sorter<T>(options: { label: string; compare: (a: T, b: T) => number }[], rows: T[], render: (rows: T[]) => Node[], storageKey: string): Child[] {
-	const list = h('div', { class: 'list' });
-	let saved = 0;
-	try {
-		saved = Number(localStorage.getItem(storageKey) ?? 0);
-	} catch {
-		saved = 0;
-	}
-	if (!(saved >= 0 && saved < options.length)) saved = 0;
-	const select = h('select', { 'aria-label': '排序方式' }, ...options.map((option, index) => h('option', { value: String(index), selected: index === saved }, option.label)));
-	// 一次只畫 PAGE 筆，避免清單太長（流量入口有上百列）；按「再顯示」往下接。
-	const PAGE = 10;
-	let shown = PAGE;
-	const more = h('button', { type: 'button', class: 'ghost more' });
-	const draw = () => {
-		const option = options[Number(select.value)] ?? options[0];
-		const sorted = [...rows].sort(option.compare);
-		list.replaceChildren(...render(sorted.slice(0, shown)));
-		const rest = sorted.length - shown;
-		more.textContent = `再顯示 ${Math.min(PAGE, rest)} 筆（已顯示 ${Math.min(shown, sorted.length)}／共 ${sorted.length} 筆）`;
-		more.hidden = rest <= 0;
-	};
-	more.addEventListener('click', () => {
-		shown += PAGE;
-		draw();
-	});
-	const apply = () => {
-		shown = PAGE;
-		draw();
-		try {
-			localStorage.setItem(storageKey, select.value);
-		} catch {
-			/* 存不進去就用預設排序 */
-		}
-	};
-	select.addEventListener('change', apply);
-	apply();
-	return [h('label', { class: 'sort' }, '排序', select), list, more];
-}
-
-const nullsLast = <T>(pick: (row: T) => number | null, desc = true) => (a: T, b: T) => {
-	const left = pick(a);
-	const right = pick(b);
-	if (left === null && right === null) return 0;
-	if (left === null) return 1;
-	if (right === null) return -1;
-	return desc ? right - left : left - right;
-};
-const byText = <T>(pick: (row: T) => string, desc = false) => (a: T, b: T) => pick(a).localeCompare(pick(b), 'zh-TW') * (desc ? -1 : 1);
-
 function stat(label: string, value: string): HTMLElement {
 	return h('div', { class: 'stat' }, h('span', { class: 'stat-label' }, label), h('span', { class: 'stat-value' }, value));
 }
 
-// ── 觀看明細卡片 ──
+// ── 長按彈窗：手指按住約 400ms 才跳出；輕點、捲動、左右滑都不會觸發 ──
 
-function contentList(kind: 'articles' | 'pages', rows: L.ContentRow[]): Child[] {
-	const render = (sorted: L.ContentRow[]) =>
-		sorted.map((row) => {
-			const dailyBox = h('div', { class: 'daily' }, h('div', { class: 'state' }, '載入逐日明細…'));
-			let loaded = false;
+const HOLD_MS = 400;
+const MOVE_TOLERANCE = 10;
+let sheetOpenedAt = 0;
+
+function closeSheet() {
+	document.getElementById('sheet-backdrop')?.remove();
+}
+
+/** 開彈窗（底部面板）。content 可以是之後才填入的容器（例如逐日明細）。 */
+function openSheet(title: string, ...content: Child[]) {
+	closeSheet();
+	sheetOpenedAt = Date.now();
+	const sheet = h('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': title }, h('div', { class: 'sheet-head' }, h('h3', {}, title), h('button', { type: 'button', class: 'ghost close', 'aria-label': '關閉', onclick: closeSheet }, '✕')), h('div', { class: 'sheet-body' }, ...content));
+	const backdrop = h('div', { id: 'sheet-backdrop', class: 'sheet-backdrop' }, sheet);
+	backdrop.addEventListener('click', (event) => {
+		// 放開手指那一下的 click 不算「點外面」。
+		if (event.target === backdrop && Date.now() - sheetOpenedAt > 350) closeSheet();
+	});
+	document.body.append(backdrop);
+}
+
+document.addEventListener('keydown', (event) => {
+	if (event.key === 'Escape') closeSheet();
+});
+
+/** 讓元素支援長按開彈窗；open 在長按成立時才呼叫。 */
+function holdable(el: HTMLElement, open: () => void): HTMLElement {
+	el.classList.add('holdable');
+	let timer = 0;
+	let start = { x: 0, y: 0 };
+	let fired = false;
+	const cancel = () => {
+		window.clearTimeout(timer);
+		timer = 0;
+		el.classList.remove('pressing');
+	};
+	el.addEventListener('pointerdown', (event) => {
+		if (event.button !== 0) return;
+		fired = false;
+		start = { x: event.clientX, y: event.clientY };
+		el.classList.add('pressing');
+		timer = window.setTimeout(() => {
+			timer = 0;
+			fired = true;
+			el.classList.remove('pressing');
+			if (navigator.vibrate) navigator.vibrate(10);
+			open();
+		}, HOLD_MS);
+	});
+	el.addEventListener('pointermove', (event) => {
+		if (timer && Math.hypot(event.clientX - start.x, event.clientY - start.y) > MOVE_TOLERANCE) cancel();
+	});
+	el.addEventListener('pointerup', cancel);
+	el.addEventListener('pointercancel', cancel);
+	el.addEventListener('pointerleave', cancel);
+	el.addEventListener('contextmenu', (event) => event.preventDefault());
+	el.addEventListener('click', (event) => {
+		if (fired) {
+			event.preventDefault();
+			event.stopPropagation();
+			fired = false;
+		}
+	});
+	return el;
+}
+
+// ── 輪播：三張統計卡左右滑（scroll-snap），下方頁碼點 ──
+
+interface Slide {
+	title: string;
+	load: () => Promise<L.Card>;
+	/** 卡片上不顯示、收進長按彈窗的說明。 */
+	note?: string;
+	/** 把細項裡的平均停留提到卡片上直接顯示（使用者要求平均停留不要收進彈窗）。 */
+	showAvg?: boolean;
+}
+
+/** 觀看卡片的 detail 只有一列「平均停留（近 30 天）」，提成第四格。 */
+function promoteAvg(card: L.Card): L.Card {
+	const row = card.detail?.rows.find((item) => item[0].startsWith('平均停留'));
+	if (!row) return card;
+	return { cells: [...card.cells, { label: '平均停留', value: row[1] }], detail: { ...card.detail!, rows: card.detail!.rows.filter((item) => item !== row) } };
+}
+
+function carousel(slides: Slide[]): HTMLElement {
+	const track = h('div', { class: 'carousel-track' });
+	const dots = h('div', { class: 'dots', role: 'tablist' });
+	slides.forEach((slide, index) => {
+		const body = h('div', { class: 'slide-body' }, h('div', { class: 'state' }, '載入中…'));
+		const el = h('div', { class: 'slide', role: 'group', 'aria-label': `${index + 1} / ${slides.length}：${slide.title}` }, h('h2', {}, slide.title), body);
+		track.append(el);
+		const dot = h('button', { type: 'button', class: index === 0 ? 'dot active' : 'dot', 'aria-label': `第 ${index + 1} 張：${slide.title}`, onclick: () => track.scrollTo({ left: el.offsetLeft - track.offsetLeft, behavior: 'smooth' }) });
+		dots.append(dot);
+		fill(body, async () => {
+			const loaded = await slide.load();
+			const card = slide.showAvg ? promoteAvg(loaded) : loaded;
+			holdable(el, () => {
+				const parts: Child[] = [];
+				if (slide.note) parts.push(h('p', { class: 'note' }, slide.note));
+				for (const cell of card.cells) if (cell.tip) parts.push(h('h4', {}, cell.tip.title), tipTable(cell.tip));
+				if (card.detail && card.detail.rows.length > 0) parts.push(card.detail.title ? h('h4', {}, card.detail.title) : null, tipTable(card.detail));
+				if (parts.length === 0) parts.push(h('p', { class: 'note' }, '沒有其他細項。'));
+				openSheet(slide.title, ...parts);
+			});
+			return h('div', { class: `cells n${card.cells.length}` }, ...card.cells.map((cell) => h('div', { class: 'cell' }, h('div', { class: 'value' }, cell.value), h('div', { class: 'label' }, cell.label))));
+		}).catch(() => undefined);
+	});
+	track.addEventListener(
+		'scroll',
+		() => {
+			const index = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+			Array.from(dots.children).forEach((dot, i) => dot.classList.toggle('active', i === index));
+		},
+		{ passive: true },
+	);
+	return h('div', { class: 'carousel' }, track, h('div', { class: 'carousel-foot' }, dots, h('span', { class: 'hint' }, '按住卡片或列看細項')));
+}
+
+// ── 統一的精簡表格：一列一筆，點欄位標題排序，整列按住看細項 ──
+
+interface Column<T> {
+	label: string;
+	/** 欄寬（px）；不給的那欄（標題）吃掉剩下的寬度並截斷成一行。 */
+	width?: number;
+	numeric?: boolean;
+	text: (row: T) => string;
+	/** 排序用；不給就依 text。 */
+	sort?: (row: T) => number | string | null;
+	/** 第一次點這欄時的方向（數字預設多到少）。 */
+	desc?: boolean;
+	/** 儲存格額外樣式（例如長條背景）。 */
+	style?: (row: T) => string | undefined;
+}
+
+interface TableOptions<T> {
+	columns: Column<T>[];
+	rows: T[];
+	/** 預設排序（不對應任何欄位時也可以用，例如固定入口順序）。 */
+	defaultSort: (a: T, b: T) => number;
+	detail: (row: T) => { title: string; content: Child[] };
+	rowClass?: (row: T) => string;
+	pageSize?: number;
+}
+
+function compareValues(left: number | string | null, right: number | string | null, desc: boolean): number {
+	if (left === null && right === null) return 0;
+	if (left === null) return 1;
+	if (right === null) return -1;
+	const result = typeof left === 'string' || typeof right === 'string' ? String(left).localeCompare(String(right), 'zh-TW') : left - right;
+	return desc ? -result : result;
+}
+
+function dataTable<T>(options: TableOptions<T>): Child[] {
+	const pageSize = options.pageSize ?? 10;
+	let shown = pageSize;
+	let sortIndex: number | null = null;
+	let sortDesc = true;
+	const table = h('table', { class: 'data' });
+	const colgroup = h('colgroup', {}, ...options.columns.map((column) => h('col', { style: column.width ? `width:${column.width}px` : undefined })));
+	const headRow = h('tr', {});
+	const tbody = h('tbody', {});
+	table.append(colgroup, h('thead', {}, headRow), tbody);
+	const more = h('button', { type: 'button', class: 'ghost more' });
+
+	const sorted = () => {
+		if (sortIndex === null) return [...options.rows].sort(options.defaultSort);
+		const column = options.columns[sortIndex];
+		const pick = column.sort ?? column.text;
+		return [...options.rows].sort((a, b) => compareValues(pick(a), pick(b), sortDesc) || options.defaultSort(a, b));
+	};
+
+	const draw = () => {
+		headRow.replaceChildren(
+			...options.columns.map((column, index) =>
+				h(
+					'th',
+					{
+						class: column.numeric ? 'num' : '',
+						'aria-sort': sortIndex === index ? (sortDesc ? 'descending' : 'ascending') : undefined,
+						onclick: () => {
+							if (sortIndex === index) sortDesc = !sortDesc;
+							else {
+								sortIndex = index;
+								sortDesc = column.desc ?? Boolean(column.numeric);
+							}
+							shown = pageSize;
+							draw();
+						},
+					},
+					column.label,
+					sortIndex === index ? (sortDesc ? ' ▼' : ' ▲') : '',
+				),
+			),
+		);
+		const list = sorted();
+		tbody.replaceChildren(
+			...list.slice(0, shown).map((row) => {
+				const tr = h('tr', { class: options.rowClass?.(row) ?? '' }, ...options.columns.map((column) => h('td', { class: column.numeric ? 'num' : 'text', style: column.style?.(row) }, column.text(row))));
+				return holdable(tr, () => {
+					const { title, content } = options.detail(row);
+					openSheet(title, ...content);
+				});
+			}),
+		);
+		if (list.length === 0) tbody.append(h('tr', {}, h('td', { colspan: options.columns.length, class: 'text muted' }, '沒有資料。')));
+		const rest = list.length - shown;
+		more.textContent = `再顯示 ${Math.min(pageSize, rest)} 筆（${Math.min(shown, list.length)}／${list.length}）`;
+		more.hidden = rest <= 0;
+	};
+	more.addEventListener('click', () => {
+		shown += pageSize;
+		draw();
+	});
+	draw();
+	return [table, more];
+}
+
+const fmtSeconds = (value: number | null) => (value === null ? '—' : `${formatNumber(value)} 秒`);
+
+// ── 文章／頁面觀看明細 ──
+
+function contentTable(kind: 'articles' | 'pages', rows: L.ContentRow[]): Child[] {
+	return dataTable<L.ContentRow>({
+		rows,
+		columns: [
+			{ label: kind === 'articles' ? '文章' : '頁面', text: (row) => row.title, desc: false },
+			{ label: '當日', width: 40, numeric: true, text: (row) => formatNumber(row.today), sort: (row) => row.today },
+			{ label: '30天', width: 46, numeric: true, text: (row) => formatNumber(row.views30d), sort: (row) => row.views30d },
+			{ label: '累積', width: 48, numeric: true, text: (row) => formatNumber(row.views), sort: (row) => row.views },
+			{ label: '停留', width: 46, numeric: true, text: (row) => (row.avg === null ? '—' : `${formatNumber(row.avg)}秒`), sort: (row) => row.avg },
+		],
+		// 同桌面版預設：累積觀看多到少。
+		defaultSort: (a, b) => b.views - a.views,
+		detail: (row) => {
+			const daily = h('div', {}, h('div', { class: 'state' }, '載入逐日明細…'));
+			fill(daily, async () => {
+				const days = await L.loadDailyDetail(get, kind, row.path);
+				if (days.length === 0) return h('div', { class: 'state' }, '沒有逐日資料（只保存有觀看的日期）。');
+				return tipTable({ title: '', head: ['日期', '觀看', '活躍', '總使用者'], rows: days.map((day) => [String(day.date).replace(/-/g, '/'), formatNumber(day.views), formatNumber(day.active_users), formatNumber(day.total_users)]) });
+			}).catch(() => undefined);
 			const entries = row.entrySessions > 0 ? row.entries : [];
-			const body = h(
-				'div',
-				{ class: 'row-extra' },
-				entries.length > 0
-					? h(
-							'div',
-							{},
-							h('h3', {}, `入口（共 ${formatNumber(row.entrySessions)} 次造訪）`),
-							tipTable({
+			return {
+				title: row.title,
+				content: [
+					h('div', { class: 'path' }, row.path),
+					h('div', { class: 'stats' }, stat('當日', formatNumber(row.today)), stat('近 30 天', formatNumber(row.views30d)), stat('累積', formatNumber(row.views)), stat('平均停留', fmtSeconds(row.avg))),
+					h('p', { class: 'item-meta' }, `主要入口：${L.entryText(row)}`, row.entrySessions > 0 ? `・入口造訪 ${formatNumber(row.entrySessions)} 次` : ''),
+					entries.length > 0
+						? tipTable({
 								title: '',
 								head: ['入口', '造訪', '占比'],
 								rows: entries.flatMap((entry) => [
 									[entry.channel, formatNumber(entry.sessions), `${Math.round((entry.sessions / row.entrySessions) * 100)}%`],
 									...(entry.details ?? []).map((detail) => [`　└ ${detail.name}`, formatNumber(detail.sessions), '']),
 								]),
-							}),
-						)
-					: null,
-				h('h3', {}, '逐日明細'),
-				dailyBox,
-			);
-			const card = h(
-				'details',
-				{ class: 'item' },
-				h(
-					'summary',
-					{},
-					h('div', { class: 'item-title' }, row.title),
-					h('div', { class: 'stats' }, stat('當日', formatNumber(row.today)), stat('近 30 天', formatNumber(row.views30d)), stat('累積', formatNumber(row.views)), stat('平均停留', row.avg === null ? '—' : `${formatNumber(row.avg)} 秒`)),
-					h('div', { class: 'item-meta' }, `主要入口：${L.entryText(row)}`, row.entrySessions > 0 ? `・入口造訪 ${formatNumber(row.entrySessions)} 次` : ''),
-				),
-				body,
-			);
-			card.addEventListener('toggle', () => {
-				if (!card.open || loaded) return;
-				loaded = true;
-				fill(dailyBox, async () => {
-					const days = await L.loadDailyDetail(get, kind, row.path);
-					if (days.length === 0) return h('div', { class: 'state' }, '沒有逐日資料（只保存有觀看的日期）。');
-					return tipTable({
-						title: '',
-						head: ['日期', '觀看', '活躍', '總使用者'],
-						rows: days.map((day) => [String(day.date).replace(/-/g, '/'), formatNumber(day.views), formatNumber(day.active_users), formatNumber(day.total_users)]),
-					});
-				}).catch(() => undefined);
-			});
-			return card;
-		});
-	return sorter<L.ContentRow>(
-		[
-			{ label: '累積觀看（多到少）', compare: nullsLast((row) => row.views) },
-			{ label: '近 30 天觀看（多到少）', compare: nullsLast((row) => row.views30d) },
-			{ label: '當日觀看（多到少）', compare: nullsLast((row) => row.today) },
-			{ label: '平均停留（長到短）', compare: nullsLast((row) => row.avg) },
-			{ label: '入口造訪次數（多到少）', compare: nullsLast((row) => row.entrySessions) },
-			{ label: '標題', compare: byText((row) => row.title) },
-		],
-		rows,
-		render,
-		`mobile-stats:sort:${kind}`,
-	);
+							})
+						: null,
+					h('h4', {}, '逐日明細'),
+					daily,
+				],
+			};
+		},
+	});
 }
 
-// ── 長條（熱門入口） ──
+// ── 熱門入口 ──
 
-function channelBars(rows: L.ChannelRow[]): Child[] {
+function channelTable(rows: L.ChannelRow[]): Child[] {
 	const max = Math.max(0, ...rows.map((row) => row.sessions));
-	return [
-		h(
-			'div',
-			{ class: 'bars' },
-			...rows.map((row) => {
-				const bar = h(
-					'div',
-					{ class: 'bar-row' },
-					h('div', { class: 'bar-head' }, h('span', {}, row.channel), h('span', { class: 'num' }, formatNumber(row.sessions))),
-					h('div', { class: 'bar-track' }, h('div', { class: 'bar-fill', style: `width:${max > 0 ? (row.sessions / max) * 100 : 0}%` })),
-				);
-				if (row.details.length === 0) return bar;
-				return h('div', {}, bar, disclosure(`「${row.channel}」的細項`, tipTable({ title: '', head: ['細項', '造訪'], rows: row.details.map((item) => [item.name, formatNumber(item.sessions)]) })));
-			}),
-		),
-	];
+	const order = new Map(rows.map((row, index) => [row.channel, index]));
+	return dataTable<L.ChannelRow>({
+		rows,
+		pageSize: 20,
+		columns: [
+			{
+				label: '入口',
+				text: (row) => row.channel,
+				desc: false,
+				style: (row) => `background-image:linear-gradient(to right,var(--accent-soft) ${max > 0 ? (row.sessions / max) * 100 : 0}%,transparent 0)`,
+			},
+			{ label: '造訪', width: 64, numeric: true, text: (row) => formatNumber(row.sessions), sort: (row) => row.sessions },
+		],
+		// 同桌面版：Google 搜尋、AI 搜尋固定前兩名 → 其餘由多到少 → 其他、疑似自動程式。
+		defaultSort: (a, b) => (order.get(a.channel) ?? 0) - (order.get(b.channel) ?? 0),
+		detail: (row) => ({
+			title: `「${row.channel}」`,
+			content: [
+				h('div', { class: 'stats two' }, stat('造訪次數', formatNumber(row.sessions))),
+				row.details.length > 0 ? tipTable({ title: '', head: ['細項', '造訪'], rows: row.details.map((item) => [item.name, formatNumber(item.sessions)]) }) : h('p', { class: 'note' }, '這個入口沒有細項。'),
+			],
+		}),
+	});
 }
 
 // ── 流量入口與進站頁 ──
 
-function sourceList(rows: L.SourceRow[]): Child[] {
+function sourceTable(rows: L.SourceRow[]): Child[] {
 	const ranks = L.channelRanks(rows);
 	const tie = (a: L.SourceRow, b: L.SourceRow) => b.sessions - a.sessions || a.path.localeCompare(b.path);
-	const byChannel = (a: L.SourceRow, b: L.SourceRow) => (ranks.get(a.channel) ?? 0) - (ranks.get(b.channel) ?? 0) || tie(a, b);
-	const render = (sorted: L.SourceRow[]) =>
-		sorted.map((row) =>
-			h(
-				'div',
-				{ class: 'item flat' },
-				h('div', { class: 'item-meta strong' }, row.channel),
-				h('div', { class: 'item-title' }, row.title),
-				row.title !== row.path ? h('div', { class: 'path' }, row.path) : null,
-				h('div', { class: 'stats two' }, stat('造訪次數', formatNumber(row.sessions)), stat('觀看次數', formatNumber(row.views))),
-				row.details.length > 0 ? disclosure('細項', tipTable({ title: '', head: ['細項', '造訪'], rows: row.details.map((item) => [item.name, formatNumber(item.sessions)]) })) : null,
-			),
-		);
-	return sorter<L.SourceRow>(
-		[
-			{ label: '入口分類（固定順序）', compare: byChannel },
-			{ label: '造訪次數（多到少）', compare: (a, b) => b.sessions - a.sessions || a.path.localeCompare(b.path) },
-			{ label: '觀看次數（多到少）', compare: (a, b) => b.views - a.views || tie(a, b) },
-			{ label: '進站頁標題', compare: (a, b) => a.title.localeCompare(b.title, 'zh-TW') || tie(a, b) },
-		],
+	return dataTable<L.SourceRow>({
 		rows,
-		render,
-		'mobile-stats:sort:sources',
-	);
+		columns: [
+			{ label: '入口', width: 84, text: (row) => row.channel, sort: (row) => ranks.get(row.channel) ?? 0, desc: false },
+			{ label: '進站頁', text: (row) => row.title, desc: false },
+			{ label: '造訪', width: 52, numeric: true, text: (row) => formatNumber(row.sessions), sort: (row) => row.sessions },
+		],
+		defaultSort: (a, b) => (ranks.get(a.channel) ?? 0) - (ranks.get(b.channel) ?? 0) || tie(a, b),
+		detail: (row) => ({
+			title: row.title,
+			content: [
+				h('div', { class: 'path' }, row.path),
+				h('p', { class: 'item-meta' }, `入口：${row.channel}`),
+				h('div', { class: 'stats two' }, stat('造訪次數', formatNumber(row.sessions)), stat('觀看次數', formatNumber(row.views))),
+				row.details.length > 0 ? tipTable({ title: '', head: ['細項', '造訪'], rows: row.details.map((item) => [item.name, formatNumber(item.sessions)]) }) : null,
+			],
+		}),
+	});
 }
 
-// ── 文章明細 ──
+// ── 文章產出明細 ──
 
-function articleList(rows: L.ArticleRow[]): Child[] {
-	const render = (sorted: L.ArticleRow[]) =>
-		sorted.map((row) =>
-			h(
-				'div',
-				{ class: `item flat${row.linkRank < 3 ? ' warn' : ''}` },
-				h('div', { class: 'item-title' }, row.title),
-				h('div', { class: 'item-meta' }, `發布 ${formatDate(row.pubDate)}・更新 ${formatDate(row.updatedDate)}`),
-				h(
-					'div',
-					{ class: 'stats' },
-					stat('字數', formatNumber(row.wordCount)),
-					stat('SEO 描述', formatNumber(row.descLen)),
-					stat('標籤', formatNumber(row.tagCount)),
-					stat('FAQ', formatNumber(row.faqCount)),
-				),
-				h('div', { class: 'item-meta' }, `站內連結：${row.linkText}`),
-			),
-		);
-	const dateDesc = (pick: (row: L.ArticleRow) => string | null) => (a: L.ArticleRow, b: L.ArticleRow) => {
-		const left = pick(a);
-		const right = pick(b);
-		if (!left && !right) return a.title.localeCompare(b.title, 'zh-TW');
-		if (!left) return 1;
-		if (!right) return -1;
-		return right.localeCompare(left) || a.title.localeCompare(b.title, 'zh-TW');
+const LINK_SHORT = ['孤立', '沒人連進', '沒連出去', '正常', '—'];
+
+function articleTable(rows: L.ArticleRow[]): Child[] {
+	const byDateDesc = (a: L.ArticleRow, b: L.ArticleRow) => {
+		if (!a.pubDate && !b.pubDate) return a.title.localeCompare(b.title, 'zh-TW');
+		if (!a.pubDate) return 1;
+		if (!b.pubDate) return -1;
+		return b.pubDate.localeCompare(a.pubDate) || a.title.localeCompare(b.title, 'zh-TW');
 	};
-	return [
-		h('p', { class: 'note' }, 'SEO 描述字數建議 40～80 字。'),
-		...sorter<L.ArticleRow>(
-			[
-				{ label: '發布日（新到舊）', compare: dateDesc((row) => row.pubDate) },
-				{ label: '更新日（新到舊）', compare: dateDesc((row) => row.updatedDate) },
-				{ label: '字數（多到少）', compare: nullsLast((row) => row.wordCount) },
-				{ label: 'SEO 描述字數（多到少）', compare: nullsLast((row) => row.descLen) },
-				{ label: '標籤數（多到少）', compare: nullsLast((row) => row.tagCount) },
-				{ label: 'FAQ 數（多到少）', compare: nullsLast((row) => row.faqCount) },
-				{ label: '站內連結狀況（嚴重的在前）', compare: (a, b) => a.linkRank - b.linkRank || a.title.localeCompare(b.title, 'zh-TW') },
-				{ label: '標題', compare: byText((row) => row.title) },
+	return dataTable<L.ArticleRow>({
+		rows,
+		columns: [
+			{ label: '文章', text: (row) => row.title, desc: false },
+			{ label: '字數', width: 56, numeric: true, text: (row) => formatNumber(row.wordCount), sort: (row) => row.wordCount },
+			{ label: '連結', width: 70, text: (row) => LINK_SHORT[row.linkRank] ?? '—', sort: (row) => row.linkRank, desc: false },
+		],
+		// 同桌面版預設：發布日新到舊。
+		defaultSort: byDateDesc,
+		rowClass: (row) => (row.linkRank < 3 ? 'warn' : ''),
+		detail: (row) => ({
+			title: row.title,
+			content: [
+				h('p', { class: 'item-meta' }, `發布 ${formatDate(row.pubDate)}・更新 ${formatDate(row.updatedDate)}`),
+				h('div', { class: 'stats' }, stat('字數', formatNumber(row.wordCount)), stat('SEO 描述', formatNumber(row.descLen)), stat('標籤', formatNumber(row.tagCount)), stat('FAQ', formatNumber(row.faqCount))),
+				h('p', { class: 'item-meta' }, `站內連結：${row.linkText}`),
+				h('p', { class: 'note' }, 'SEO 描述字數建議 40～80 字。'),
 			],
-			rows,
-			render,
-			'mobile-stats:sort:content-articles',
-		),
-	];
+		}),
+	});
 }
 
 // ── 圖表（SVG，依容器寬度縮放，不會撐出畫面） ──
@@ -477,7 +592,6 @@ function chart(points: L.Point[], options: { type: 'line' | 'bar'; format?: (val
 		wrap,
 		h('div', { class: 'axis' }, h('span', {}, lab(points[0].label)), h('span', {}, `最高 ${fmt(Math.max(...points.map((point) => point.value)))}`), h('span', {}, lab(last.label))),
 		options.type === 'bar' ? h('p', { class: 'note' }, `合計 ${fmt(total)}`) : null,
-		h('p', { class: 'note' }, '點圖表或在圖上滑動可看各點數值。'),
 	];
 }
 
@@ -506,39 +620,47 @@ function statusChart(points: L.Point[]): Child[] {
 
 // ── 組頁面 ──
 
+type Part = { title: string; task: () => Promise<Child | Child[]> };
+
 function trafficTab(): HTMLElement {
-	const parts: { title: string; note?: string; task: () => Promise<Child | Child[]> }[] = [
-		{ title: '使用者', task: async () => renderCard(await L.loadUsersCard(get)) },
-		{ title: '文章觀看', note: '只算已發布文章。', task: async () => renderCard(await L.loadViewsCard(get, 'articles')) },
-		{ title: '頁面觀看', task: async () => renderCard(await L.loadViewsCard(get, 'pages')) },
-		{ title: '文章觀看明細', note: '點一篇展開入口與逐日明細。', task: async () => contentList('articles', await L.loadContentRows(get, 'articles')) },
-		{ title: '頁面觀看明細', note: '點一頁展開入口與逐日明細。', task: async () => contentList('pages', await L.loadContentRows(get, 'pages')) },
-		{ title: '熱門入口造訪次數', task: async () => channelBars(await L.loadChannelBars(get)) },
-		{ title: '流量入口與進站頁', task: async () => sourceList(await L.loadSourceRows(get)) },
-		{ title: '每日流量趨勢', task: async () => chart(await L.loadDailySeries(get, 'daily_views', 'date', 'total_views', 'sum'), { type: 'line' }) },
-		{ title: '每日活躍使用者', task: async () => chart(await L.loadDailySeries(get, 'daily_views', 'date', 'active_users', 'sum'), { type: 'line' }) },
-	];
-	return buildTab(parts);
+	return buildTab(
+		carousel([
+			{ title: '文章觀看', note: '只算已發布文章。', showAvg: true, load: () => L.loadViewsCard(get, 'articles') },
+			{ title: '頁面觀看', showAvg: true, load: () => L.loadViewsCard(get, 'pages') },
+			{ title: '使用者', load: () => L.loadUsersCard(get) },
+		]),
+		[
+			{ title: '文章觀看明細', task: async () => contentTable('articles', await L.loadContentRows(get, 'articles')) },
+			{ title: '頁面觀看明細', task: async () => contentTable('pages', await L.loadContentRows(get, 'pages')) },
+			{ title: '熱門入口造訪次數', task: async () => channelTable(await L.loadChannelBars(get)) },
+			{ title: '流量入口與進站頁', task: async () => sourceTable(await L.loadSourceRows(get)) },
+			{ title: '每日流量趨勢', task: async () => chart(await L.loadDailySeries(get, 'daily_views', 'date', 'total_views', 'sum'), { type: 'line' }) },
+			{ title: '每日活躍使用者', task: async () => chart(await L.loadDailySeries(get, 'daily_views', 'date', 'active_users', 'sum'), { type: 'line' }) },
+		],
+	);
 }
 
 function contentTab(): HTMLElement {
-	const parts: { title: string; note?: string; task: () => Promise<Child | Child[]> }[] = [
-		{ title: '發文概況', task: async () => renderCard(await L.loadPostsCard(get)) },
-		{ title: '寫作品質', note: '只算已發布文章。', task: async () => renderCard(await L.loadQualityCard(get)) },
-		{ title: '站內連結', task: async () => renderCard(await L.loadLinksCard(get)) },
-		{ title: '發布狀態', task: async () => statusChart(await L.loadStatusCounts(get)) },
-		{ title: '每月發文數', note: '只算已發布文章。', task: async () => chart(await L.loadMonthlyPosts(get), { type: 'bar', labelFormat: (label) => label.replace('-', '/') }) },
-		{ title: '文章明細', task: async () => articleList(await L.loadArticleRows(get)) },
-		{ title: '平均字數趨勢', task: async () => chart(await L.loadDailySeries(get, 'content_stats_history', 'run_date', 'avg_word_count', 'avg'), { type: 'line', format: (value) => formatDecimal(value) }) },
-		{ title: '已發布篇數趨勢', task: async () => chart(await L.loadDailySeries(get, 'content_stats_history', 'run_date', 'article_count', 'avg'), { type: 'line', format: (value) => formatDecimal(value) }) },
-	];
-	return buildTab(parts);
+	return buildTab(
+		carousel([
+			{ title: '發文概況', load: () => L.loadPostsCard(get) },
+			{ title: '寫作品質', note: '只算已發布文章。', load: () => L.loadQualityCard(get) },
+			{ title: '站內連結', load: () => L.loadLinksCard(get) },
+		]),
+		[
+			{ title: '文章明細', task: async () => articleTable(await L.loadArticleRows(get)) },
+			{ title: '發布狀態', task: async () => statusChart(await L.loadStatusCounts(get)) },
+			{ title: '每月發文數（已發布）', task: async () => chart(await L.loadMonthlyPosts(get), { type: 'bar', labelFormat: (label) => label.replace('-', '/') }) },
+			{ title: '平均字數趨勢', task: async () => chart(await L.loadDailySeries(get, 'content_stats_history', 'run_date', 'avg_word_count', 'avg'), { type: 'line', format: (value) => formatDecimal(value) }) },
+			{ title: '已發布篇數趨勢', task: async () => chart(await L.loadDailySeries(get, 'content_stats_history', 'run_date', 'article_count', 'avg'), { type: 'line', format: (value) => formatDecimal(value) }) },
+		],
+	);
 }
 
-function buildTab(parts: { title: string; note?: string; task: () => Promise<Child | Child[]> }[]): HTMLElement {
-	const container = h('div', { class: 'tab-body' });
+function buildTab(top: HTMLElement, parts: Part[]): HTMLElement {
+	const container = h('div', { class: 'tab-body' }, top);
 	for (const part of parts) {
-		const { el, body } = section(part.title, part.note);
+		const { el, body } = section(part.title);
 		container.append(el);
 		fill(body, part.task).catch(() => undefined);
 	}
@@ -548,6 +670,7 @@ function buildTab(parts: { title: string; note?: string; task: () => Promise<Chi
 function renderDashboard() {
 	lastLoaded = Date.now();
 	const time = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+	closeSheet();
 	const content = h('main', { id: 'content' });
 	const tabButtons = TABS.map((tab) =>
 		h(
@@ -584,7 +707,7 @@ function renderDashboard() {
 		h('nav', { class: 'tabs', role: 'tablist' }, ...tabButtons),
 	);
 	content.append(currentTab === 'traffic' ? trafficTab() : contentTab());
-	content.append(h('p', { class: 'footer note' }, `${time} 載入・資料每日由排程同步，和後台儀表板同一份。`));
+	content.append(h('p', { class: 'footer note' }, `${time} 載入・按住任一列或卡片看細項`));
 	app.replaceChildren(header, content);
 }
 
