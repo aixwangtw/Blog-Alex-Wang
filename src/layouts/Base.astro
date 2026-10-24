@@ -59,7 +59,7 @@ const DROPDOWN_NAV = [
         external: true,
         eyebrow: '提升開發效率 Skill',
         title: 'Matt Pocock 開源 Skills，提升開發效率',
-        description: 'GitHub 30 萬顆星。動工前 AI 先問清楚需求，每題附建議答案，少做錯、少重工。',
+        description: 'GitHub 30 萬顆星，動工前 AI 先問清楚需求。',
         image: githubLogo.src,
         navIcon: githubLogo.src,
         cta: '領取',
@@ -69,7 +69,7 @@ const DROPDOWN_NAV = [
         href: '/blog/feedback-desk/',
         eyebrow: 'MIT 開源',
         title: 'PM高效溝通工具',
-        description: '客戶開單附截圖，AI Agent 讀單處理，客戶確認後才結案。免費部署在 Cloudflare。',
+        description: '客戶開單附截圖，AI 讀單處理，確認後才結案。',
         image: githubLogo.src,
         navIcon: githubLogo.src,
         cta: '領取',
@@ -1797,7 +1797,11 @@ const jsonLd = {
         background: #fff;
         object-fit: cover;
       }
+      /* 圖示型卡片（GitHub logo）：圖欄拉到跟文字欄同高，不留一塊空白 */
       .service-preview--icon img {
+        align-self: stretch;
+        height: 100%;
+        aspect-ratio: auto;
         padding: 5px;
         object-fit: contain;
       }

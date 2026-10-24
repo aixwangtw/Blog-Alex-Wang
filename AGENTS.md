@@ -112,6 +112,7 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
   - 正例：「發文當下近 30 萬顆星。」
 
 - 文章標題與導覽卡片（`src/layouts/Base.astro` 導覽預覽、`src/pages/resources.astro` 卡片）講同一個角度、用同一套寫法，數字寫法也要一致；改其中一邊就同步另一邊。
+- 頂部「領取」下拉的導覽卡片（`src/layouts/Base.astro`）圖文要等高：圖示型卡片（GitHub logo）的圖欄用 `align-self: stretch; height: 100%` 拉到跟文字欄同高，說明文字只寫一句重點（約 20 字內、桌機最多兩行），不把整套做法塞進去。手機版只列文字連結、不顯示圖。起因：使用者說「導覽卡 圖文高度相差太大 圖可拉高 文字不用太多」。
 - 介紹別人的工具或開源專案，文章標題要放作者名，放在標題前段（讀者常用作者名搜）。
   - 反例：「29.9 萬顆星開源 Skills，提升開發效率」，看不出是誰的 Skills。
   - 正例：「Matt Pocock 開源 Skills 怎麼用？讓 AI 寫程式先問清楚，提升開發效率」。
