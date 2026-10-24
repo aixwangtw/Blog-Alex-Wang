@@ -11,6 +11,8 @@
     "run_worker_first": [
       "/",
       "/course",
+      "/resources",
+      "/resources/",
       "/course/*",
       "/services",
       "/services/",

@@ -1,4 +1,5 @@
 ---
+import { findMarkdownAlternate } from '../lib/agent-docs';
 import { blogBannerPath } from '../lib/blog-banner';
 import FloatingLine from '../components/FloatingLine.astro';
 import ogBanner from '../assets/banner-v2.png';
@@ -144,6 +145,8 @@ const {
 } = Astro.props;
 const ogImage = pageOgImage ?? new URL(ogBanner.src, SITE.url).href;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// 主要頁面有 Markdown 版（給 AI 讀），用 <link rel="alternate"> 指過去；對照表在 src/lib/agent-docs.ts
+const markdownAlternate = findMarkdownAlternate(canonical.href);
 const serviceHostname = new URL(SERVICE_SITE.url).hostname;
 
 const jsonLd = {
@@ -399,6 +402,7 @@ const jsonLd = {
     <link rel="shortcut icon" type="image/png" href="/favicon.png?v=2" />
     <link rel="apple-touch-icon" href="/aixwang-icon.png" />
     <link rel="canonical" href={canonical} />
+    {markdownAlternate && <link rel="alternate" type="text/markdown" href={markdownAlternate} />}
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical} />

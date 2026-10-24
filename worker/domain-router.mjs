@@ -16,6 +16,44 @@ const serviceRedirects = new Map([
 // 工具測驗已於 2026-10 下架：舊網址一律 301 回服務總覽（兩個網域、有無尾斜線都接）。
 const removedQuizPaths = new Set(['/quiz', '/quiz/', '/services/tool-quiz', '/services/tool-quiz/']);
 
+// 給 AI 的 Markdown 版：請求帶 Accept: text/markdown 或 ?mode=agent 時，主要頁面改回傳 .md 檔。
+// .md 檔由 src/pages/*.md.ts 預渲染（對照表在 src/lib/agent-docs.ts），這裡只做網址對照。
+const MARKDOWN_PAGES = {
+  main: new Map([
+    ['/', '/index.md'],
+    ['/resources', '/resources.md'],
+    ['/resources/', '/resources.md'],
+  ]),
+  service: new Map([
+    ['/', '/services.md'],
+    ['/course', '/course.md'],
+    ['/course/', '/course.md'],
+    ['/services/speaking', '/services/speaking.md'],
+    ['/services/speaking/', '/services/speaking.md'],
+    ['/services/development', '/services/development.md'],
+    ['/services/development/', '/services/development.md'],
+  ]),
+};
+
+function wantsMarkdown(request, url) {
+  return url.searchParams.get('mode') === 'agent' || (request.headers.get('Accept') ?? '').includes('text/markdown');
+}
+
+async function markdownResponse(request, env, url) {
+  const pages = url.hostname === 'service.aixwang.dev' ? MARKDOWN_PAGES.service : MAIN_HOSTS.has(url.hostname) ? MARKDOWN_PAGES.main : null;
+  const markdownPath = pages?.get(url.pathname);
+  if (!markdownPath) return null;
+  const assetUrl = new URL(request.url);
+  assetUrl.pathname = markdownPath;
+  assetUrl.search = '';
+  const asset = await env.ASSETS.fetch(new Request(assetUrl, { headers: request.headers }));
+  if (!asset.ok) return null;
+  const response = new Response(asset.body, asset);
+  response.headers.set('Content-Type', 'text/markdown; charset=utf-8');
+  response.headers.set('Vary', 'Accept');
+  return response;
+}
+
 export default {
   async fetch(request, env, context) {
     const url = new URL(request.url);
@@ -26,6 +64,11 @@ export default {
 
     // sitemap-index.xml／sitemap-0.xml 是主站 Astro 產生的檔案；服務子網域不該回傳主站的網址清單，
     // 一律 301 到服務站自己的 /sitemap.xml。主站則直接取靜態檔。
+    if (wantsMarkdown(request, url)) {
+      const markdown = await markdownResponse(request, env, url);
+      if (markdown) return markdown;
+    }
+
     if (url.pathname === '/sitemap-index.xml' || url.pathname === '/sitemap-0.xml') {
       if (url.hostname === 'service.aixwang.dev') {
         return Response.redirect(`${SERVICE_ORIGIN}/sitemap.xml`, 301);

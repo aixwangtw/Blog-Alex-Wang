@@ -1,3 +1,7 @@
 # 設計原型頁（public/_preview/）不給搜尋引擎索引
 /_preview/*
   X-Robots-Tag: noindex, nofollow
+
+# 給 AI 讀的 Markdown 版頁面與 llms 檔
+/*.md
+  Content-Type: text/markdown; charset=utf-8

@@ -3,7 +3,6 @@
 // 2026-10-24 起改成通用的客製系統開發介紹，題庫系統降為代表案例。
 // 內容只寫〈系統開發、AI 導入費用怎麼算？〉文章已寫明的事實；
 // 流程、時程、付款與主機費用統一取自 consts.ts 的 DEVELOPMENT_SERVICE，不寫開發費金額。
-import { getCollection } from 'astro:content';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FaqList from '../../components/FaqList.astro';
 import Card from '../../components/Card.astro';
@@ -12,53 +11,21 @@ import Cta from '../../components/Cta.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import { AUTHOR, DEVELOPMENT_SERVICE, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, breadcrumbSchema } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
+import { DEVELOPMENT_AFTER_LAUNCH, DEVELOPMENT_CAPABILITIES, DEVELOPMENT_CASE_FEATURES } from '../../data/services';
+import { getDevelopmentFaqs } from '../../lib/development-faqs';
 import { blogBannerPath } from '../../lib/blog-banner';
 
-// 常見問題：題目與答案一字不改，取自〈系統開發、AI 導入費用怎麼算？〉文章的 7 題 FAQ。
-// 2026-10-24 前讀的是題庫文章的系統開發題；新文章的 7 題是通用版（費用、Demo、功能、修改、原始碼、維護、案例），
-// 和題庫文章那幾題講同一批事，兩邊並列會在同一個 FAQPage 出現重複題目，所以只讀新文章，題庫專屬問題連到題庫文章。
-// 找不到就中斷建置，避免文章 FAQ 改題後這裡悄悄變成空的或漂移。
-const posts = await getCollection('blog');
-const guideArticle = posts.find((post) => post.id === 'custom-system-development-demo');
-const DEVELOPMENT_FAQ_QUESTIONS = [
-  '系統開發的費用怎麼算？可以分期嗎？',
-  '簽約前能先看到 Demo 嗎？要收費嗎？',
-  '包含哪些功能？可以加 AI 嗎？',
-  '做的過程中能不能隨時修改？',
-  '資料和原始碼歸誰？可以簽保密協議嗎？',
-  '保固結束後誰來維護？',
-  '做過什麼案子？',
-];
-const developmentFaqs = DEVELOPMENT_FAQ_QUESTIONS.map((question) => {
-  const faq = guideArticle?.data.faqs.find((item) => item.question === question);
-  if (!faq) throw new Error(`系統開發文章找不到 FAQ「${question}」，請更新 services/development.astro 的題目清單`);
-  return faq;
-});
+const developmentFaqs = await getDevelopmentFaqs();
 
 const caseArticleUrl = `${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`;
 const guideArticleUrl = `${SITE.url}${DEVELOPMENT_SERVICE.guideArticle}`;
 const feedbackDeskUrl = `${SITE.url}/blog/feedback-desk/`;
 
-// 可以做什麼：取自新文章 FAQ「包含哪些功能？可以加 AI 嗎？」
-const capabilities = [
-  { title: 'AI 導入', description: '讓 AI 讀文件、整理資料、產生報告、回答常見問題。' },
-  { title: '資料管理', description: '客戶、訂單、學生、庫存這類資料的後台，可以搜尋、匯入匯出、分權限。' },
-  { title: 'API 串接', description: '接 LINE、金流、Google 服務，或你現在已經在用的系統。' },
-  { title: '隨調隨改', description: '開發過程中需求可以隨時調整，改了就更新給你看，只是微調不會另外收費；一開始用不到的可以之後再加。' },
-];
+const capabilities = DEVELOPMENT_CAPABILITIES;
 
-const caseFeatures = [
-  'AI 辨識：上傳 PDF、Word 或考卷照片，AI 拆成一題一題，老師對照原卷審核',
-  'AI 詳解：AI 產生詳解，老師確認後才收進題庫',
-  'AI 出題：常見需求，Demo 可以先體驗，正式導入時依需求開發',
-];
+const caseFeatures = DEVELOPMENT_CASE_FEATURES;
 
-// 上線之後：資料、原始碼、維護（取自新文章同名一節）
-const afterLaunch = [
-  '上線後有一年保固。保固結束後可以簽維護合約；想找其他人接手也可以，我們會配合交接。',
-  '系統和資料都放在你自己的主機上，主機帳號從一開始就是你的名義。需要的話可以簽保密協議，簽約時寫進合約。',
-  '原始碼和資料庫也可以交給你，同樣寫進合約，但交出原始碼後，就不提供一年保固。',
-];
+const afterLaunch = DEVELOPMENT_AFTER_LAUNCH;
 
 // 首屏下方三個合作重點，細節見下方各節，同取自 DEVELOPMENT_SERVICE 與新文章。
 const developmentHighlights = ['簡易 Demo 免費', '依功能報價、分三期付款', '上線後一年保固'];
