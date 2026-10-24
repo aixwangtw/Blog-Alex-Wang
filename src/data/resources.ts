@@ -1,4 +1,9 @@
-// 免費資源頁（/resources/）的項目說明單一來源：頁面、/resources.md 與 llms-full.txt 共用，避免內容漂移。
+// 免費資源項目的單一來源：免費資源頁、/resources.md、llms-full.txt、頂部「領取」導覽卡（Base.astro）
+// 與首頁／服務站的需求分流卡（NeedRouter.astro）共用。標題、一句說明、圖片、連結改這裡，全站同步。
+import githubLogo from '../assets/github-logo.svg';
+
+/** Matt Pocock Skills 在各處的標題（使用者指定寫法，30 萬顆星與導覽卡一致） */
+const MATT_POCOCK_SKILLS_TITLE = 'GitHub 30 萬顆星・提升寫程式效率的 Skills';
 export const RESOURCES_INTRO =
   '不用急著付費。先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用。做完還是卡關，可以點右下角官方 LINE 直接問我，或到 Facebook 社團發問。';
 
@@ -16,7 +21,8 @@ export const GRILL_ME_RESOURCE = {
   heading: '第二步：把 Skills 貼給 AI 安裝',
   label: '本週推薦 Skill',
   name: 'grill-me',
-  titleSuffix: '：Matt Pocock 開源 Skills，提升開發效率',
+  title: MATT_POCOCK_SKILLS_TITLE,
+  titleSuffix: `：${MATT_POCOCK_SKILLS_TITLE}`,
   descriptionBefore: '你先跟 AI 說想做什麼，它會一輪一輪問到每個細節都講清楚，才開始寫程式。安裝後在新對話輸入 ',
   command: '/grill-me',
   descriptionAfter: ' 就能開始。',
@@ -36,6 +42,16 @@ export const GRILL_ME_RESOURCE = {
   instagramUrl: 'https://www.instagram.com/reel/DbwqIJkydIQ/',
   installPrompt: '請幫我安裝這個 Skills\nhttps://github.com/mattpocock/skills',
   installNote: '貼進 Codex，確認來源後再允許安裝。',
+  /** 頂部「領取」導覽卡；文章草稿下線中，卡片暫連 IG Reel。文章重新上線時 href 改回 '/blog/matt-pocock-skills/' 並移除 external。 */
+  nav: {
+    href: 'https://www.instagram.com/reel/DbwqIJkydIQ/',
+    external: true,
+    eyebrow: '提升開發效率 Skill',
+    title: MATT_POCOCK_SKILLS_TITLE,
+    description: '動工前 AI 先問清楚需求。',
+    image: githubLogo.src,
+    cta: '領取',
+  },
 };
 
 export const FEEDBACK_DESK_RESOURCE = {
@@ -50,4 +66,17 @@ export const FEEDBACK_DESK_RESOURCE = {
   installPrompt: '請照這個 repo 的 README 幫我安裝\nhttps://github.com/aixwangtw/feedback-desk',
   installNote:
     '需要 Node.js 20 以上和一個 Cloudflare 免費帳號，不需要自己的主機；第一次部署要在瀏覽器登入 Cloudflare 一次。想自己掌控主機或需要自動處理，可以用 GitHub 上的 laravel 分支。',
+  /** 頂部「領取」導覽卡 */
+  nav: {
+    href: '/blog/feedback-desk/',
+    external: false,
+    eyebrow: 'MIT 開源',
+    title: 'PM高效溝通工具',
+    description: '客戶開單附截圖，AI 讀單處理，確認後才結案。',
+    image: githubLogo.src,
+    cta: '領取',
+  },
 };
+
+/** 需求分流卡「想先領取免費資源」列出的例子，順序即顯示順序 */
+export const RESOURCE_EXAMPLES = [GRILL_ME_RESOURCE.title, FEEDBACK_DESK_RESOURCE.nav.title, CODEX_RESOURCE.title];

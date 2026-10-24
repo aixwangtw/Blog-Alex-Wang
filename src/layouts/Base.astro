@@ -1,9 +1,9 @@
 ---
 import { findMarkdownAlternate } from '../lib/agent-docs';
 import { blogBannerPath } from '../lib/blog-banner';
+import { FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE } from '../data/resources';
 import FloatingLine from '../components/FloatingLine.astro';
 import ogBanner from '../assets/banner-v2.png';
-import githubLogo from '../assets/github-logo.svg';
 import lineBrandIcon from '../assets/line-brand-icon.png';
 import {
   AUTHOR,
@@ -54,28 +54,8 @@ const DROPDOWN_NAV = [
     href: '/resources/',
     subtitle: '免費教學影片、Skills 與學習路線',
     previews: [
-      {
-        // 文章草稿下線中：卡片暫連 IG Reel。文章重新上線時，href 改回 '/blog/matt-pocock-skills/'，並移除 external 這行
-        href: 'https://www.instagram.com/reel/DbwqIJkydIQ/',
-        external: true,
-        eyebrow: '提升開發效率 Skill',
-        title: 'Matt Pocock 開源 Skills，提升開發效率',
-        description: 'GitHub 30 萬顆星，動工前 AI 先問清楚需求。',
-        image: githubLogo.src,
-        navIcon: githubLogo.src,
-        cta: '領取',
-        repo: 'https://github.com/mattpocock/skills',
-      },
-      {
-        href: '/blog/feedback-desk/',
-        eyebrow: 'MIT 開源',
-        title: 'PM高效溝通工具',
-        description: '客戶開單附截圖，AI 讀單處理，確認後才結案。',
-        image: githubLogo.src,
-        navIcon: githubLogo.src,
-        cta: '領取',
-        repo: 'https://github.com/aixwangtw/feedback-desk',
-      },
+      { ...GRILL_ME_RESOURCE.nav, navIcon: GRILL_ME_RESOURCE.nav.image, repo: GRILL_ME_RESOURCE.repoUrl },
+      { ...FEEDBACK_DESK_RESOURCE.nav, navIcon: FEEDBACK_DESK_RESOURCE.nav.image, repo: FEEDBACK_DESK_RESOURCE.repoUrl },
     ],
   },
 ];

@@ -4,7 +4,12 @@
 // 輸入列只是打字動畫的顯示，不接任何後端，也不產生回答；點卡片時把該張卡的需求句打進輸入列，再前往卡片連結。
 // 退路：沒有 JS 時卡片本身就是一般連結；prefers-reduced-motion 時不跑打字動畫、點了直接前往。
 // 卡片例子只能用站上已有的內容（服務頁、教學頁、免費資源頁、演講頁的實際名稱）。
+import { Image } from 'astro:assets';
+import githubLogo from '../assets/github-logo.svg';
+import questionBankShot from '../assets/need-router/question-bank-import-review.jpg';
+import teachingPhoto from '../assets/teaching-one-on-one.jpg';
 import { SERVICE_SITE, SITE } from '../consts';
+import { RESOURCE_EXAMPLES } from '../data/resources';
 
 interface Props {
   /** GA 事件的 location，區分首頁與服務站 */
@@ -23,28 +28,32 @@ const needs = [
   {
     key: 'development',
     need: '想把重複的工作自動化',
-    examples: ['數學題庫系統：AI 辨識考卷、AI 詳解、AI 出題', '做過 CRM、預約系統、健檢系統、揪團平台'],
+    examples: ['數學題庫系統', '預約系統', 'CRM', '健檢系統'],
+    image: { src: questionBankShot, alt: '數學題庫系統的考卷匯入審核頁', fit: 'cover' },
     action: '免費試用 Demo',
     href: `${SERVICE_SITE.url}/services/development/`,
   },
   {
     key: 'course',
     need: '想有人手把手帶著學 AI',
-    examples: ['用 Claude Code 做有資料庫的系統、簡單網頁、AI 動畫影片', '雙北咖啡廳實體課或線上課'],
+    examples: ['Claude Code 系統開發', '簡單網頁', 'AI 動畫影片'],
+    image: { src: teachingPhoto, alt: '一對一教學上課現場：學員與 Alex 拿著筆電', fit: 'cover', position: 'center 62%' },
     action: '看教學方案',
     href: `${SERVICE_SITE.url}/course/`,
   },
   {
     key: 'resources',
     need: '想先領取免費資源',
-    examples: ['Matt Pocock 開源 Skills（grill‑me）', 'feedback-desk PM溝通工具'],
+    examples: RESOURCE_EXAMPLES,
+    image: { src: githubLogo, alt: 'GitHub 標誌', fit: 'contain' },
     action: '立即領取',
     href: `${SITE.url}/resources/`,
   },
   {
     key: 'speaking',
     need: '想找 AI 講師',
-    examples: ['主題：AI 一鍵拍片，跟 AI 對話就能完成影片', '曾受 MixerBox、TAIA 台灣人工智慧協會邀請演講'],
+    examples: ['AI 一鍵拍片', 'TAIA 台灣人工智慧協會講座', 'MixerBox 講座'],
+    image: null,
     action: '邀請演講',
     href: `${SERVICE_SITE.url}/services/speaking/`,
   },
@@ -96,6 +105,12 @@ const needs = [
           data-ga-location={location}
           data-ga-action="navigate"
         >
+          {item.image ? (
+            <span class:list={['need-card-media', `need-card-media--${item.image.fit}`]}>
+              <Image src={item.image.src} alt={item.image.alt} style={item.image.position ? `object-position:${item.image.position}` : undefined} widths={[160, 320, 560]} sizes="(min-width: 600px) 520px, 96px" loading="eager" />
+            </span>
+          ) : <span class="need-card-media need-card-media--empty" aria-hidden="true"></span>}
+          <span class="need-card-body">
           <span class="need-card-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
           <strong class="need-card-title">{item.need}</strong>
           <span class="need-card-examples-label">例如</span>
@@ -103,6 +118,7 @@ const needs = [
             {item.examples.map((example) => <li>{example}</li>)}
           </ul>
           <span class="need-card-action">{item.action} <span aria-hidden="true">→</span></span>
+          </span>
         </a>
       </li>
     ))}
@@ -214,7 +230,7 @@ const needs = [
 
   .need-cards {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
     margin: 20px 0 0;
     padding: 0;
@@ -234,6 +250,19 @@ const needs = [
   }
   .need-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
   .need-card:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  .need-card {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
+  }
+  .need-card-body { display: flex; min-width: 0; flex-direction: column; }
+  .need-card-media { display: block; overflow: hidden; border: 1px solid var(--color-rule); background: #fff; aspect-ratio: 4 / 3; align-self: start; }
+  .need-card-media :global(img) { display: block; width: 100%; height: 100%; }
+  .need-card-media--cover :global(img) { object-fit: cover; object-position: left top; }
+  .need-card-media--contain :global(img) { object-fit: contain; padding: 18%; box-sizing: border-box; }
+  .need-card-media--empty { display: none; }
+  .need-card:has(.need-card-media--empty) { grid-template-columns: minmax(0, 1fr); }
   .need-card-index { color: var(--color-accent); font: 700 12px/1 var(--font-mono); }
   .need-card-title { display: block; margin-top: 12px; font: 650 18px/1.45 var(--font-display); }
   .need-card-examples-label { margin-top: 14px; color: var(--color-ink-3); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
@@ -255,12 +284,19 @@ const needs = [
   .need-card-examples { margin-bottom: 18px; }
   .need-card.is-chosen { border-color: var(--color-accent); box-shadow: 0 0 0 2px var(--color-accent); }
 
-  @media (max-width: 1023px) {
-    .need-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (min-width: 600px) and (max-width: 900px) {
+    .need-card { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 599px) {
     .need-cards { grid-template-columns: 1fr; gap: 12px; }
-    .need-card { padding: 18px 16px; }
+    .need-card { grid-template-columns: 72px minmax(0, 1fr); gap: 14px; padding: 16px; }
+    .need-card-media { aspect-ratio: 1 / 1; }
+    .need-card-title { margin-top: 6px; font-size: 17px; }
+    .need-card-examples-label { margin-top: 8px; }
+    .need-card-examples { margin-bottom: 12px; }
+    /* 手機只顯示前兩個案例，讓首屏看得到第一張卡；完整內容在連結頁 */
+    .need-card-examples li:nth-child(n + 3) { display: none; }
+    .need-card-action { padding: 0 12px; font-size: 15px; white-space: nowrap; }
     .need-term-bar { height: 30px; }
     .need-term-screen { padding: 16px; }
     .need-term-kicker { margin-bottom: 6px; font-size: 12px; }
