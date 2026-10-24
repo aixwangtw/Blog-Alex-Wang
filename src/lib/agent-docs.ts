@@ -1,7 +1,7 @@
 // 給 AI（ChatGPT、Claude、Perplexity 等）讀的純文字內容：llms.txt、llms-full.txt 與各主要頁面的 .md 版共用。
 // 所有內容都取自 consts.ts、src/data/ 與文章 FAQ 這些頁面本身也在用的資料，不另寫一份事實；
 // 改頁面資料，這裡會跟著變。不得在這裡加入站上沒有的價格、數字或案例。
-import { AUTHOR, DEVELOPMENT_SERVICE, FREE_ENTRY_LINKS, LINKS, SERVICE_SITE, SITE } from '../consts';
+import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, SERVICE_SITE, SITE } from '../consts';
 import { EXPERIENCE } from '../data/instructor';
 import { HOME_FAQS, ONE_ON_ONE_FAQS, RESOURCES_FAQS, type Faq } from '../data/faqs';
 import {
@@ -14,6 +14,7 @@ import {
   SPEAKING_TOPICS,
   TEACHING_CONTENT,
 } from '../data/services';
+import { CODEX_RESOURCE, FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE, RESOURCES_INTRO } from '../data/resources';
 import { getDevelopmentFaqs } from './development-faqs';
 
 export interface AgentPage {
@@ -160,11 +161,49 @@ ${SPEAKING_FORMATS.map((item) => `- ${item}`).join('\n')}`;
 }
 
 function resourcesBody(): string {
-  return `不用急著付費：先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝。
+  const codex = CODEX_RESOURCE;
+  const grillMe = GRILL_ME_RESOURCE;
+  const feedbackDesk = FEEDBACK_DESK_RESOURCE;
+  const prompt = (text: string) => `\`\`\`\n${text}\n\`\`\``;
+  return `${RESOURCES_INTRO}
 
-${FREE_ENTRY_LINKS.map((item) => `- [${item.title}](${absolute(item.href)})：${item.description}`).join('\n')}
-- [Codex Windows 新手安裝教學](${SITE.url}/blog/codex-windows-wsl-install/)
-- [grill-me（mattpocock/skills）](https://github.com/mattpocock/skills)
+### ${codex.heading}
+
+${codex.intro}
+
+- [${codex.title}](${absolute(codex.articleHref)})（${codex.label}）：${codex.description}
+
+### ${grillMe.heading}
+
+**${grillMe.label}：${grillMe.name}${grillMe.titleSuffix}**
+
+${grillMe.descriptionBefore}\`${grillMe.command}\`${grillMe.descriptionAfter}
+
+${grillMe.points.map((point) => `- ${point}`).join('\n')}
+
+Instagram Reels 成效：${grillMe.stats.map((stat) => `${stat.label} ${stat.value}`).join('、')}（${grillMe.statsSource}）
+
+- Skills 原始碼：${grillMe.repoUrl}
+- Instagram：${grillMe.instagramUrl}
+
+複製這段，貼給你的 AI：
+
+${prompt(grillMe.installPrompt)}
+
+${grillMe.installNote}
+
+### ${feedbackDesk.heading}
+
+${feedbackDesk.intro}
+
+- [${feedbackDesk.title}](${absolute(feedbackDesk.articleHref)})（${feedbackDesk.label}）：${feedbackDesk.description}
+- GitHub 原始碼：${feedbackDesk.repoUrl}
+
+複製這段，貼給你的 AI：
+
+${prompt(feedbackDesk.installPrompt)}
+
+${feedbackDesk.installNote}
 
 ### 常見問題
 

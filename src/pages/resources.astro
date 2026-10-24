@@ -26,6 +26,7 @@ import SectionHeading from '../components/SectionHeading.astro';
 import { LINKS, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { RESOURCES_FAQS } from '../data/faqs';
 import Base from '../layouts/Base.astro';
+import { CODEX_RESOURCE, FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE, RESOURCES_INTRO } from '../data/resources';
 
 // 這裡原本有一段 HyperFrames（站主是該開源專案的協作者）。2026-08-06 移除，
 // 理由：這是「免費資源」頁，每一項都應該點得進去用。而站上沒有 HyperFrames 的
@@ -61,17 +62,17 @@ const schema = [
 
     <h1 class="t-h1 mt-8 font-semibold text-ink">免費資源</h1>
     <p class="mt-6 text-lg leading-8 text-ink-2">
-      不用急著付費。先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用。做完還是卡關，可以點右下角官方 LINE 直接問我，或到 Facebook 社團發問。
+      {RESOURCES_INTRO}
     </p>
 
     <!-- ---------- 第一步：Codex 安裝 ---------- -->
-    <SectionHeading size="md" class="mt-14">第一步：先安裝 Codex</SectionHeading>
+    <SectionHeading size="md" class="mt-14">{CODEX_RESOURCE.heading}</SectionHeading>
     <p class="mt-5 leading-8 text-ink-2">
-      Codex 是後面安裝 Skills、執行開源工具與處理錯誤的入口。Windows 新手先用 VS Code 官方 Codex 插件完成安裝、登入與第一次對話，不必一開始碰終端機或額外準備 Linux 環境。
+      {CODEX_RESOURCE.intro}
     </p>
     <ul class="mt-7">
       <li class="overflow-hidden border border-rule bg-white/40">
-        <a href="/blog/codex-windows-wsl-install/" class="group grid h-full items-center no-underline sm:grid-cols-2">
+        <a href={CODEX_RESOURCE.articleHref} class="group grid h-full items-center no-underline sm:grid-cols-2">
           <img
             src={blogBannerPath('codex-windows-wsl-install', '-thumb.webp')}
             alt="Codex Windows 新手安裝教學縮圖"
@@ -81,16 +82,16 @@ const schema = [
             height="360"
           />
           <span class="block p-5">
-            <span class="font-mono text-[11.5px] tracking-[0.12em] text-accent">新手先看</span>
-            <strong class="t-h3 mt-2 block font-semibold text-ink group-hover:text-accent">VS Code＋Codex 插件版</strong>
-            <span class="mt-2 block leading-7 text-ink-2">不用先碰終端機，完成安裝、登入與第一次對話。</span>
+            <span class="font-mono text-[11.5px] tracking-[0.12em] text-accent">{CODEX_RESOURCE.label}</span>
+            <strong class="t-h3 mt-2 block font-semibold text-ink group-hover:text-accent">{CODEX_RESOURCE.title}</strong>
+            <span class="mt-2 block leading-7 text-ink-2">{CODEX_RESOURCE.description}</span>
           </span>
         </a>
       </li>
     </ul>
 
     <!-- ---------- 第二步：Skills ---------- -->
-    <SectionHeading size="md" class="mt-16">第二步：把 Skills 貼給 AI 安裝</SectionHeading>
+    <SectionHeading size="md" class="mt-16">{GRILL_ME_RESOURCE.heading}</SectionHeading>
     <div class="mt-6 grid items-stretch overflow-hidden border border-rule bg-white/40 sm:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.1fr)]">
       <div class="flex min-w-0 justify-center bg-ink">
         <video
@@ -104,35 +105,33 @@ const schema = [
         />
       </div>
       <div class="flex h-full flex-col justify-center p-6 sm:p-7">
-        <p class="font-mono text-[11.5px] tracking-[0.12em] text-accent">本週推薦 Skill</p>
-        <h3 class="t-h3 mt-2 font-semibold text-ink"><code>grill-me</code>：Matt Pocock 開源 Skills，提升開發效率</h3>
+        <p class="font-mono text-[11.5px] tracking-[0.12em] text-accent">{GRILL_ME_RESOURCE.label}</p>
+        <h3 class="t-h3 mt-2 font-semibold text-ink"><code>{GRILL_ME_RESOURCE.name}</code>{GRILL_ME_RESOURCE.titleSuffix}</h3>
         <p class="mt-3 leading-7 text-ink-2">
-          你先跟 AI 說想做什麼，它會一輪一輪問到每個細節都講清楚，才開始寫程式。安裝後在新對話輸入 <code class="rounded bg-paper-2 px-1.5 py-0.5 text-sm text-ink">/grill-me</code> 就能開始。
+          {GRILL_ME_RESOURCE.descriptionBefore}<code class="rounded bg-paper-2 px-1.5 py-0.5 text-sm text-ink">{GRILL_ME_RESOURCE.command}</code>{GRILL_ME_RESOURCE.descriptionAfter}
         </p>
         <ul class="mt-3 grid gap-1.5 text-sm leading-6 text-ink-2">
-          <li>— AI 自己查得到的資料，不會丟回來問你</li>
-          <li>— 每個問題會附建議答案，可以直接按編號回覆</li>
-          <li>— 細節都談完，會先問你同不同意，才開始動工</li>
+          {GRILL_ME_RESOURCE.points.map((point) => <li>— {point}</li>)}
         </ul>
         <dl class="mt-4 grid grid-cols-4 border-y border-rule">
           <div class="py-3 pr-2">
-            <dt class="text-xs text-ink-3">觀看</dt>
-            <dd class="mt-1 font-mono text-lg font-semibold text-ink">47,649</dd>
+            <dt class="text-xs text-ink-3">{GRILL_ME_RESOURCE.stats[0].label}</dt>
+            <dd class="mt-1 font-mono text-lg font-semibold text-ink">{GRILL_ME_RESOURCE.stats[0].value}</dd>
           </div>
           <div class="border-l border-rule px-3 py-3">
-            <dt class="text-xs text-ink-3">按讚</dt>
-            <dd class="mt-1 font-mono text-lg font-semibold text-ink">950</dd>
+            <dt class="text-xs text-ink-3">{GRILL_ME_RESOURCE.stats[1].label}</dt>
+            <dd class="mt-1 font-mono text-lg font-semibold text-ink">{GRILL_ME_RESOURCE.stats[1].value}</dd>
           </div>
           <div class="border-l border-rule px-3 py-3">
-            <dt class="text-xs text-ink-3">收藏</dt>
-            <dd class="mt-1 font-mono text-lg font-semibold text-ink">1,427</dd>
+            <dt class="text-xs text-ink-3">{GRILL_ME_RESOURCE.stats[2].label}</dt>
+            <dd class="mt-1 font-mono text-lg font-semibold text-ink">{GRILL_ME_RESOURCE.stats[2].value}</dd>
           </div>
           <div class="border-l border-rule py-3 pl-3">
-            <dt class="text-xs text-ink-3">分享</dt>
-            <dd class="mt-1 font-mono text-lg font-semibold text-ink">594</dd>
+            <dt class="text-xs text-ink-3">{GRILL_ME_RESOURCE.stats[3].label}</dt>
+            <dd class="mt-1 font-mono text-lg font-semibold text-ink">{GRILL_ME_RESOURCE.stats[3].value}</dd>
           </div>
         </dl>
-        <p class="mt-2 text-xs leading-5 text-ink-3">Meta Insights，2026 年 8 月 13 日快照</p>
+        <p class="mt-2 text-xs leading-5 text-ink-3">{GRILL_ME_RESOURCE.statsSource}</p>
         <div class="mt-4 flex flex-wrap gap-3">
           {/* 文章草稿下線中，按鈕暫時隱藏。重新上線時取消註解：
           <a
@@ -141,13 +140,13 @@ const schema = [
           >看完整介紹與流程</a>
           */}
           <a
-            href="https://github.com/mattpocock/skills"
+            href={GRILL_ME_RESOURCE.repoUrl}
             target="_blank"
             rel="noreferrer"
             class="inline-flex min-h-11 items-center rounded-[3px] border border-rule-2 px-5 py-2.5 font-semibold text-ink no-underline transition hover:border-accent hover:text-accent"
           >查看 Skills 原始碼</a>
           <a
-            href="https://www.instagram.com/reel/DbwqIJkydIQ/"
+            href={GRILL_ME_RESOURCE.instagramUrl}
             target="_blank"
             rel="noreferrer"
             class="inline-flex min-h-11 items-center px-1 py-2.5 font-semibold text-accent underline underline-offset-4"
@@ -155,8 +154,7 @@ const schema = [
         </div>
         <p class="mt-5 font-semibold text-ink">複製這段，貼給你的 AI：</p>
         <div class="relative mt-3 overflow-hidden rounded-[3px] border border-rule-2 bg-paper-2">
-          <pre id="grill-me-install-prompt" class="overflow-x-auto whitespace-pre-wrap px-4 py-4 pr-20 text-sm leading-7 text-ink"><code>請幫我安裝這個 Skills
-https://github.com/mattpocock/skills</code></pre>
+          <pre id="grill-me-install-prompt" class="overflow-x-auto whitespace-pre-wrap px-4 py-4 pr-20 text-sm leading-7 text-ink"><code>{GRILL_ME_RESOURCE.installPrompt}</code></pre>
           <button
             type="button"
             class="absolute right-2 top-2 min-h-9 rounded-[3px] border border-rule-2 bg-white px-3 text-xs font-semibold text-accent"
@@ -168,17 +166,17 @@ https://github.com/mattpocock/skills</code></pre>
             aria-label="複製 grill-me 安裝提示"
           >複製</button>
         </div>
-        <p class="mt-3 text-sm leading-6 text-ink-3">貼進 Codex，確認來源後再允許安裝。</p>
+        <p class="mt-3 text-sm leading-6 text-ink-3">{GRILL_ME_RESOURCE.installNote}</p>
       </div>
     </div>
 
     <!-- ---------- 開源工具：feedback-desk ---------- -->
-    <SectionHeading size="md" class="mt-16">開源工具：feedback-desk PM溝通工具</SectionHeading>
+    <SectionHeading size="md" class="mt-16">{FEEDBACK_DESK_RESOURCE.heading}</SectionHeading>
     <p class="mt-5 leading-8 text-ink-2">
-      跟客戶、團隊夥伴溝通系統問題的回報工具：客戶開單附截圖，團隊改好後在同一張單寫調整說明，客戶確認後結案。MIT 授權，部署到自己的 Cloudflare 帳號，只用免費方案；Claude Code、Codex 可以透過 MCP 直接處理單。
+      {FEEDBACK_DESK_RESOURCE.intro}
     </p>
     <div class="mt-7 overflow-hidden border border-rule bg-white/40">
-      <a href="/blog/feedback-desk/" class="group grid h-full items-center no-underline sm:grid-cols-2">
+      <a href={FEEDBACK_DESK_RESOURCE.articleHref} class="group grid h-full items-center no-underline sm:grid-cols-2">
         <img
           src={blogBannerPath('feedback-desk', '-thumb.webp')}
           alt="feedback-desk 開源 PM溝通工具介紹文章縮圖"
@@ -188,15 +186,15 @@ https://github.com/mattpocock/skills</code></pre>
           height="360"
         />
         <span class="block p-5">
-          <span class="font-mono text-[11.5px] tracking-[0.12em] text-accent">開源 PM溝通工具</span>
-          <strong class="t-h3 mt-2 block font-semibold text-ink group-hover:text-accent">feedback-desk 介紹</strong>
-          <span class="mt-2 block leading-7 text-ink-2">開單、調整說明、客戶確認的流程與畫面。</span>
+          <span class="font-mono text-[11.5px] tracking-[0.12em] text-accent">{FEEDBACK_DESK_RESOURCE.label}</span>
+          <strong class="t-h3 mt-2 block font-semibold text-ink group-hover:text-accent">{FEEDBACK_DESK_RESOURCE.title}</strong>
+          <span class="mt-2 block leading-7 text-ink-2">{FEEDBACK_DESK_RESOURCE.description}</span>
         </span>
       </a>
       <div class="border-t border-rule p-6 sm:p-7">
         <div class="flex flex-wrap gap-3">
           <a
-            href="https://github.com/aixwangtw/feedback-desk"
+            href={FEEDBACK_DESK_RESOURCE.repoUrl}
             target="_blank"
             rel="noreferrer"
             class="inline-flex min-h-11 items-center rounded-[3px] border border-rule-2 px-5 py-2.5 font-semibold text-ink no-underline transition hover:border-accent hover:text-accent"
@@ -204,8 +202,7 @@ https://github.com/mattpocock/skills</code></pre>
         </div>
         <p class="mt-5 font-semibold text-ink">複製這段，貼給你的 AI：</p>
         <div class="relative mt-3 overflow-hidden rounded-[3px] border border-rule-2 bg-paper-2">
-          <pre id="feedback-desk-install-prompt" class="overflow-x-auto whitespace-pre-wrap break-all px-4 py-4 pr-20 text-sm leading-7 text-ink"><code>請照這個 repo 的 README 幫我安裝
-https://github.com/aixwangtw/feedback-desk</code></pre>
+          <pre id="feedback-desk-install-prompt" class="overflow-x-auto whitespace-pre-wrap break-all px-4 py-4 pr-20 text-sm leading-7 text-ink"><code>{FEEDBACK_DESK_RESOURCE.installPrompt}</code></pre>
           <button
             type="button"
             class="absolute right-2 top-2 min-h-9 rounded-[3px] border border-rule-2 bg-white px-3 text-xs font-semibold text-accent"
@@ -217,7 +214,7 @@ https://github.com/aixwangtw/feedback-desk</code></pre>
             aria-label="複製 feedback-desk 安裝提示"
           >複製</button>
         </div>
-        <p class="mt-3 text-sm leading-6 text-ink-3">需要 Node.js 20 以上和一個 Cloudflare 免費帳號，不需要自己的主機；第一次部署要在瀏覽器登入 Cloudflare 一次。想自己掌控主機或需要自動處理，可以用 GitHub 上的 laravel 分支。</p>
+        <p class="mt-3 text-sm leading-6 text-ink-3">{FEEDBACK_DESK_RESOURCE.installNote}</p>
       </div>
     </div>
 
