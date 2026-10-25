@@ -8,6 +8,7 @@ import { Image } from 'astro:assets';
 import githubLogo from '../assets/github-logo.svg';
 import questionBankShot from '../assets/need-router/question-bank-import-review.jpg';
 import teachingPhoto from '../assets/teaching-one-on-one.jpg';
+import taichungTalk from '../assets/taichung-talk.jpg';
 import { SERVICE_SITE, SITE } from '../consts';
 import { RESOURCE_EXAMPLES } from '../data/resources';
 
@@ -53,7 +54,7 @@ const needs = [
     key: 'speaking',
     need: '想找 AI 講師',
     examples: ['AI 一鍵拍片', 'TAIA 台灣人工智慧協會講座', 'MixerBox 講座'],
-    image: null,
+    image: { src: taichungTalk, alt: 'Alex 在台中演講的現場', fit: 'cover' },
     action: '邀請演講',
     href: `${SERVICE_SITE.url}/services/speaking/`,
   },
@@ -109,12 +110,10 @@ const needs = [
             <span class:list={['need-card-media', `need-card-media--${item.image.fit}`]}>
               <Image src={item.image.src} alt={item.image.alt} style={item.image.position ? `object-position:${item.image.position}` : undefined} widths={[160, 320, 560]} sizes="(min-width: 600px) 520px, 96px" loading="eager" />
             </span>
-          ) : <span class="need-card-media need-card-media--empty" aria-hidden="true"></span>}
+          ) : null}
           <span class="need-card-body">
-          <span class="need-card-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
           <strong class="need-card-title">{item.need}</strong>
-          <span class="need-card-examples-label">例如</span>
-          <ul class="need-card-examples">
+          <ul class="need-card-examples" aria-label="例子">
             {item.examples.map((example) => <li>{example}</li>)}
           </ul>
           <span class="need-card-action">{item.action} <span aria-hidden="true">→</span></span>
@@ -136,7 +135,7 @@ const needs = [
   }
   .need-term-bar {
     display: flex;
-    height: 40px;
+    height: 30px;
     align-items: center;
     padding: 0 18px;
     border-bottom: 1px solid #3f3a37;
@@ -148,7 +147,7 @@ const needs = [
   .need-term-dots i:first-child { background: #d96c70; }
   .need-term-dots i:nth-child(2) { background: #d6a34d; }
   .need-term-dots i:last-child { background: #69aa79; }
-  .need-term-screen { padding: clamp(20px, 4vw, 40px); }
+  .need-term-screen { padding: clamp(14px, 2vw, 22px) clamp(16px, 3vw, 36px); }
   .need-term-kicker {
     margin: 0 0 10px;
     color: #f0a6b1;
@@ -158,17 +157,17 @@ const needs = [
   .need-term-q {
     margin: 0;
     color: #fffaf4;
-    font: 650 clamp(22px, 3.6vw, 38px)/1.3 var(--font-display);
+    font: 650 clamp(21px, 3vw, 34px)/1.25 var(--font-display);
     letter-spacing: 0;
     overflow-wrap: anywhere;
   }
   .need-term-line {
     display: flex;
-    min-height: 52px;
+    min-height: 44px;
     align-items: center;
     gap: 10px;
-    margin: 20px 0 0;
-    padding: 12px 16px;
+    margin: 14px 0 0;
+    padding: 8px 16px;
     border: 1px solid #403b38;
     border-radius: 8px;
     background: #11100f;
@@ -231,17 +230,19 @@ const needs = [
   .need-cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    margin: 20px 0 0;
+    gap: 12px;
+    margin: 12px 0 0;
     padding: 0;
     list-style: none;
   }
   .need-cards > li { display: flex; min-width: 0; }
   .need-card {
-    display: flex;
+    display: grid;
     width: 100%;
-    flex-direction: column;
-    padding: 20px;
+    grid-template-columns: minmax(120px, 34%) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
+    padding: 14px;
     border: 1px solid var(--color-rule-2);
     background: var(--color-paper);
     color: var(--color-ink);
@@ -250,58 +251,48 @@ const needs = [
   }
   .need-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
   .need-card:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
-  .need-card {
-    display: grid;
-    grid-template-columns: 200px minmax(0, 1fr);
-    gap: 20px;
-    align-items: stretch;
-  }
+  .need-card.is-chosen { border-color: var(--color-accent); box-shadow: 0 0 0 2px var(--color-accent); }
+  /* 圖欄拉到跟文字欄同高（同領取導覽卡做法） */
+  .need-card-media { position: relative; display: block; align-self: stretch; height: 100%; min-height: 96px; overflow: hidden; border: 1px solid var(--color-rule); background: #fff; }
+  /* 圖片絕對定位，不撐高卡片；卡片高度由文字欄決定 */
+  .need-card-media :global(img) { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+  .need-card-media--cover :global(img) { object-position: left top; }
+  .need-card-media--contain :global(img) { object-fit: contain; padding: 16%; box-sizing: border-box; }
   .need-card-body { display: flex; min-width: 0; flex-direction: column; }
-  .need-card-media { display: block; overflow: hidden; border: 1px solid var(--color-rule); background: #fff; aspect-ratio: 4 / 3; align-self: start; }
-  .need-card-media :global(img) { display: block; width: 100%; height: 100%; }
-  .need-card-media--cover :global(img) { object-fit: cover; object-position: left top; }
-  .need-card-media--contain :global(img) { object-fit: contain; padding: 18%; box-sizing: border-box; }
-  .need-card-media--empty { display: none; }
-  .need-card:has(.need-card-media--empty) { grid-template-columns: minmax(0, 1fr); }
-  .need-card-index { color: var(--color-accent); font: 700 12px/1 var(--font-mono); }
-  .need-card-title { display: block; margin-top: 12px; font: 650 18px/1.45 var(--font-display); }
-  .need-card-examples-label { margin-top: 14px; color: var(--color-ink-3); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
-  .need-card-examples { margin: 6px 0 0; padding: 0 0 0 1.1em; color: var(--color-ink-2); font-size: 14px; line-height: 1.7; list-style: disc; }
-  .need-card-examples li + li { margin-top: 4px; }
+  .need-card-title { display: block; font: 650 17px/1.4 var(--font-display); }
+  .need-card-examples { margin: 6px 0 10px; padding: 0 0 0 1.1em; color: var(--color-ink-2); font-size: 13.5px; line-height: 1.55; list-style: disc; }
   .need-card-action {
     display: inline-flex;
-    min-height: 44px;
+    min-height: 40px;
     align-items: center;
     justify-content: center;
     gap: 6px;
     margin-top: auto;
-    padding: 0 16px;
+    padding: 0 12px;
     border: 1px solid var(--color-accent);
     background: var(--color-accent);
     color: #fff;
+    font-size: 15px;
     font-weight: 700;
+    white-space: nowrap;
   }
-  .need-card-examples { margin-bottom: 18px; }
-  .need-card.is-chosen { border-color: var(--color-accent); box-shadow: 0 0 0 2px var(--color-accent); }
-
-  @media (min-width: 600px) and (max-width: 900px) {
-    .need-card { grid-template-columns: minmax(0, 1fr); }
-  }
+  /* 手機：2×2 緊湊版，圖在上、只留標題與按鈕，讓首屏放得下四張卡；案例在連結頁 */
   @media (max-width: 599px) {
-    .need-cards { grid-template-columns: 1fr; gap: 12px; }
-    .need-card { grid-template-columns: 72px minmax(0, 1fr); gap: 14px; padding: 16px; }
-    .need-card-media { aspect-ratio: 1 / 1; }
-    .need-card-title { margin-top: 6px; font-size: 17px; }
-    .need-card-examples-label { margin-top: 8px; }
-    .need-card-examples { margin-bottom: 12px; }
-    /* 手機只顯示前兩個案例，讓首屏看得到第一張卡；完整內容在連結頁 */
-    .need-card-examples li:nth-child(n + 3) { display: none; }
-    .need-card-action { padding: 0 12px; font-size: 15px; white-space: nowrap; }
-    .need-term-bar { height: 30px; }
-    .need-term-screen { padding: 16px; }
-    .need-term-kicker { margin-bottom: 6px; font-size: 12px; }
-    .need-term-line { min-height: 44px; margin-top: 12px; padding: 8px 12px; }
-    .need-cards { margin-top: 14px; }
+    .need-term-bar { height: 26px; }
+    .need-term-screen { padding: 12px 14px 14px; }
+    .need-term-kicker { margin-bottom: 4px; font-size: 11.5px; }
+    .need-term-q { font-size: 21px; }
+    .need-term-line { min-height: 40px; margin-top: 10px; padding: 6px 10px; font-size: 14px; }
+    .need-cards { gap: 8px; margin-top: 10px; }
+    .need-card { grid-template-columns: 1fr; grid-template-rows: auto 1fr; gap: 8px; padding: 8px; }
+    .need-card-media { height: 64px; min-height: 0; }
+    .need-card-title { font-size: 14.5px; line-height: 1.4; }
+    .need-card-examples { display: none; }
+    .need-card-action { min-height: 36px; margin-top: 8px; padding: 0 6px; font-size: 13px; }
+  }
+  @media (max-width: 340px) {
+    .need-term-q { font-size: 19px; }
+    .need-card-title { font-size: 13.5px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .need-term-caret { animation: none; }
