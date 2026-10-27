@@ -77,8 +77,8 @@ const pageToc = [
       </ul>
     </nav>
 
-    <SectionHeading id="speaking-records" size="md" class="mt-16 scroll-mt-24">過往演講紀錄</SectionHeading>
-    <div class="mt-6 grid max-w-xl gap-5">
+    <SectionHeading id="speaking-records" size="md" class="mt-16 scroll-mt-24">過往演講紀錄（共 {SPEAKING_ENGAGEMENTS.length} 場）</SectionHeading>
+    <div class="mt-6 grid gap-5 sm:grid-cols-2">
       {SPEAKING_ENGAGEMENTS.map((item, index) => (
         <Card padded={false} class="flex h-full flex-col overflow-hidden">
           <Image src={item.image} alt={item.imageAlt} widths={[480, 720, 960]} sizes="(min-width: 640px) 50vw, 100vw" class="aspect-[4/3] h-auto w-full object-cover" />
