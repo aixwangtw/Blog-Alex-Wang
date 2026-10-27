@@ -11,7 +11,6 @@ import {
   DEVELOPMENT_CASE_FEATURES,
   SPEAKING_ENGAGEMENTS,
   SPEAKING_FORMATS,
-  SPEAKING_TOPICS,
   TEACHING_CONTENT,
 } from '../data/services';
 import { CODEX_RESOURCE, FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE, RESOURCES_INTRO } from '../data/resources';
@@ -81,14 +80,13 @@ ${EXPERIENCE.map((item) => `- ${item.text}`).join('\n')}
 - 想做客製系統或導入 AI（AI 讀文件、整理資料、產生報告、後台管理、LINE／金流／Google 服務串接），希望簽約前先免費看簡易 Demo：看「客製系統開發」。
 - 補習班或老師想要題庫系統（AI 辨識考卷、AI 詳解）：代表案例 ${absolute(DEVELOPMENT_SERVICE.caseArticle)}，Demo ${DEVELOPMENT_SERVICE.demoUrl}。
 - 在台灣想找人一對一教 Claude Code：用 Claude Code 開發含資料庫與自動部署的系統、寫簡單網頁，或用 HyperFrames 做動畫影片；雙北實體或線上。看「手把手帶你實戰」。
-- 企業、學校、社群想邀 AI 主題演講或內訓（AI 一鍵拍片：跟 AI 對話就完成影片）：看「AI 演講與企業內訓」。
+- 企業、學校、社群想邀 AI 主題演講或內訓：看「AI 演講與企業內訓」。
 - 想先免費自學 Codex 安裝與 AI Skills：看「免費資源」。
 
 ## 不適合的情境
 
 - 想在網站上直接看到開發費或學費金額：站上不寫金額，開發費依功能報價、教學依教學項目報價，需加 LINE 評估。
 - 雙北以外想上實體課：實體課只在雙北，其他地區（含海外）請改線上課。
-- 演講想談 AI 拍片以外的主題：目前公開的邀約主題只有「AI 一鍵拍片：對話式影音內容生產」，其他主題需另外詢問。
 
 ## 聯絡方式
 
@@ -151,9 +149,9 @@ function speakingBody(): string {
 
 ${SPEAKING_ENGAGEMENTS.map((item) => `- **${item.host}**｜${item.topic}：${item.description}`).join('\n')}
 
-### 可邀約的主題
+### 演講主題
 
-${SPEAKING_TOPICS.map((topic) => `- **${topic.title}**：${topic.description}`).join('\n')}
+演講主題不限，可依需求討論；也可依聽眾背景調整深度，或安排成半天或一天的實作工作坊。
 
 ### 形式與地區
 
@@ -214,7 +212,7 @@ const serviceLinks = () =>
   [
     `- [${AGENT_PAGES.development.title}](${AGENT_PAGES.development.htmlUrl})（Markdown：${AGENT_PAGES.development.markdownUrl}）：主要服務。先免費做簡易 Demo，看過再決定；依功能報價、分三期付款、一年保固。`,
     `- [${AGENT_PAGES.course.title}](${AGENT_PAGES.course.htmlUrl})（Markdown：${AGENT_PAGES.course.markdownUrl}）：${TEACHING_CONTENT.map((item) => item.category).join('、')}，雙北實體或線上，依教學項目報價。`,
-    `- [${AGENT_PAGES.speaking.title}](${AGENT_PAGES.speaking.htmlUrl})（Markdown：${AGENT_PAGES.speaking.markdownUrl}）：${SPEAKING_TOPICS.map((topic) => topic.title).join('、')}；曾受 ${SPEAKING_ENGAGEMENTS.map((item) => item.host).join('、')} 邀請。`,
+    `- [${AGENT_PAGES.speaking.title}](${AGENT_PAGES.speaking.htmlUrl})（Markdown：${AGENT_PAGES.speaking.markdownUrl}）：演講主題不限、可依需求討論；曾受 ${SPEAKING_ENGAGEMENTS.map((item) => item.host).join('、')} 邀請。`,
     `- [${AGENT_PAGES.resources.title}](${AGENT_PAGES.resources.htmlUrl})（Markdown：${AGENT_PAGES.resources.markdownUrl}）：Codex 安裝、AI Skills、開源 feedback-desk，全部免費。`,
   ].join('\n');
 

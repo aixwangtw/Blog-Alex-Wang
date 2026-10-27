@@ -44,13 +44,6 @@ export const TEACHING_CONTENT: {
   },
 ];
 
-export const SPEAKING_TOPICS = [
-  {
-    title: 'AI 一鍵拍片：對話式影音內容生產',
-    description: '以開源專案 HyperFrames 為例，展示從腳本、剪輯、配音到多平台發佈的對話式工作流。',
-  },
-];
-
 // 實際一對一教學案例（取自講師履歷）
 export const TEACHING_CASES = [
   {
