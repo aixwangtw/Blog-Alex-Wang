@@ -81,5 +81,13 @@
     "title": "Claude Code\n開發全自動化",
     "subtitle": "安裝、開發、部署一次設定好",
     "role": "講師"
+  },
+  "claude-code-install": {
+    "badge": "安裝教學",
+    "platform": "",
+    "title": "Claude Code 安裝教學\n三種裝法挑一種",
+    "subtitle": "桌面版、VS Code、終端機",
+    "badgePrefix": "系統開發",
+    "role": "工程師"
   }
 }
