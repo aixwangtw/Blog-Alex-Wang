@@ -4,7 +4,7 @@
 
 ## 自動化前的設定
 
-- **訂閱 Claude，裝 Claude Code**：月繳 20 美元的 Pro 方案就能用 Claude Code，免費方案不能用。不會寫程式也能做網站，用中文講你要什麼就好。沒用過程式工具的人裝桌面版，想邊做邊看程式碼的人裝 VS Code 擴充套件。
+- **訂閱 Claude，裝 Claude Code**：月繳 20 美元的 Pro 方案就能用 Claude Code，免費方案不能用。不會寫程式也能做網站，用中文講你要什麼就好。沒用過程式工具的人裝桌面版，想邊做邊看程式碼的人裝 VS Code 擴充套件。安裝步驟看[Claude Code 安裝教學：桌面版、VS Code、終端機三種裝法](https://aixwang.dev/blog/claude-code-install/)。
 
 - **裝 grill-me**：為了提升開發效率，一開始就讓 AI 釐清完整需求，避免 AI 理解錯誤、反覆修改。
 
