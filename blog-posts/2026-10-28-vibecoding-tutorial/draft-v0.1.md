@@ -1,0 +1,27 @@
+# Vibecoding 一對一教學會教什麼？Claude Code 安裝、開發、部署
+
+第一步，訂閱 Claude。月繳 20 美元的 Pro 方案就能用 Claude Code，免費方案不能用。
+
+第二步，裝 Claude Code。不會寫程式也能做網站，用中文講你要什麼就好。沒用過程式工具的人裝桌面版，想邊做邊看程式碼的人裝 VS Code 擴充套件。
+
+第三步，裝 grill-me。為了提升開發效率，一開始就讓 AI 釐清完整需求，避免 AI 理解錯誤、反覆修改。
+
+第四步，開始寫程式。先在本機開資料夾，從最簡單的一頁式形象網站開始，完成第一個專案。我會教：
+
+- 常用的 Debug 做法
+- 怎麼節省 Token 用量
+- 怎麼避免改 A 壞 B
+- 怎麼改善 UI/UX
+
+第五步，部署。部署完別人才打得開你的網站。一頁式網站用 Cloudflare 就好，免費；有資料庫、後台的複雜系統用 GCP，新帳號 90 天內有 300 美元額度可以免費試。
+
+第一次設定好之後，每一步都能自動化。我幫數學老師做的題庫系統，現在只要說一句「修好推上去」，Claude Code 就會改程式、跑測試、上傳，再部署到老師的網站。
+
+## 進階
+
+- Windows 想用 Linux 環境，裝 WSL：[Windows 版 Codex CLI 與 WSL2 進階安裝](https://aixwang.dev/blog/codex-cli-wsl2-windows/)
+- 想保留每次修改的紀錄、改壞能退回，申請 GitHub。
+- 用 GCP 的話，設定好 SSH 連線，主機上的部署和設定也能交給 Claude Code。
+
+上面五步和進階項目，都是一對一課程會帶著做的內容。看[教學方案](https://aixwang.dev/course/)，雙北咖啡廳或線上都可以約，用 LINE 預約：
+https://lin.ee/raoKSVR

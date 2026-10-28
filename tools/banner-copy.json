@@ -74,5 +74,12 @@
     "title": "系統開發、AI 導入\n先免費看 Demo",
     "subtitle": "依功能報價、分三期付款",
     "role": "工程師"
+  },
+  "vibecoding-tutorial": {
+    "badgePrefix": "",
+    "badge": "一對一教學",
+    "title": "Vibecoding 教學\nClaude Code 五步上手",
+    "subtitle": "安裝、開發、部署一次帶你做",
+    "role": "講師"
   }
 }
