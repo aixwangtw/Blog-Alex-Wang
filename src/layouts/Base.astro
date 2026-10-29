@@ -1,6 +1,8 @@
 ---
+import { getCollection } from 'astro:content';
 import { findMarkdownAlternate } from '../lib/agent-docs';
 import { blogBannerPath } from '../lib/blog-banner';
+import { TEACHING_CONTENT } from '../data/services';
 import { FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE } from '../data/resources';
 import FloatingLine from '../components/FloatingLine.astro';
 import ogBanner from '../assets/banner-v2.png';
@@ -30,12 +32,49 @@ const SERVICE_NAV_LINK = {
   label: '服務',
   href: `${SERVICE_SITE.url}/services/development/`,
 };
+// 文章下拉：列出所有已發布（非 unlisted）文章，依第一個標籤分組（部落格列表卡片也用第一個標籤當分類字）。
+// 分組順序依「該組最新文章」由新到舊，組內也是新到舊；沒有標籤的文章歸「其他」。
+const navPosts = (await getCollection('blog', ({ data }) => !data.unlisted)).sort(
+  (a, b) =>
+    b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
+    (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
+);
+const navArticleGroups: { name: string; items: { href: string; title: string }[] }[] = [];
+for (const post of navPosts) {
+  const name = post.data.tags[0] ?? '其他';
+  let group = navArticleGroups.find((item) => item.name === name);
+  if (!group) {
+    group = { name, items: [] };
+    navArticleGroups.push(group);
+  }
+  group.items.push({ href: `/blog/${post.id}/`, title: post.data.title });
+}
+// 服務下拉：只列站上實際存在的服務頁；一對一教學的三個方案取自教學頁的資料（TEACHING_CONTENT）
+const navServiceGroups = [
+  {
+    name: '系統開發',
+    items: [{ href: `${SERVICE_SITE.url}/services/development/`, title: '客製系統開發' }],
+  },
+  {
+    name: '一對一教學',
+    items: TEACHING_CONTENT.map((item) => ({ href: `${SERVICE_SITE.url}/course/#course-content`, title: item.category })),
+  },
+  {
+    name: '演講',
+    items: [{ href: `${SERVICE_SITE.url}/services/speaking/`, title: 'AI 演講與企業內訓' }],
+  },
+  {
+    name: '服務總覽',
+    items: [{ href: `${SERVICE_SITE.url}/`, title: '全部服務' }],
+  },
+];
 const DROPDOWN_NAV = [
   {
     key: 'articles',
     label: '文章',
     href: '/blog/',
-    subtitle: '系統開發的合作方式、案例與實作文章',
+    subtitle: `全部 ${navPosts.length} 篇，依分類列出`,
+    groups: navArticleGroups,
     previews: [
       {
         href: '/blog/math-teacher-question-bank/',
@@ -57,6 +96,15 @@ const DROPDOWN_NAV = [
       { ...GRILL_ME_RESOURCE.nav, navIcon: GRILL_ME_RESOURCE.nav.image, repo: GRILL_ME_RESOURCE.repoUrl },
       { ...FEEDBACK_DESK_RESOURCE.nav, navIcon: FEEDBACK_DESK_RESOURCE.nav.image, repo: FEEDBACK_DESK_RESOURCE.repoUrl },
     ],
+  },
+  {
+    key: 'services',
+    label: SERVICE_NAV_LINK.label,
+    href: SERVICE_NAV_LINK.href,
+    external: true,
+    accent: true,
+    subtitle: '系統開發、一對一教學與演講',
+    groups: navServiceGroups,
   },
 ];
 
@@ -501,6 +549,31 @@ const jsonLd = {
                         <span>{menu.label}</span>
                         <small>{menu.subtitle}</small>
                       </div>
+                      {'groups' in menu && (
+                        <div class="service-menu-articles">
+                          {(menu.groups ?? []).map((group) => (
+                            <section class="service-menu-group">
+                              <h3>{group.name}<small>{group.items.length}</small></h3>
+                              <ul>
+                                {group.items.map((post) => (
+                                  <li>
+                                    <a
+                                      href={post.href}
+                                      target={'external' in menu && menu.external ? '_blank' : undefined}
+                                      rel={'external' in menu && menu.external ? 'noreferrer' : undefined}
+                                      data-ga-button={`header_${menu.key}_item_${post.href.replace(/[^a-z0-9]+/gi, '_')}`}
+                                      data-ga-label={post.title}
+                                      data-ga-location={`header_${menu.key}_dropdown`}
+                                      data-ga-action="open_content"
+                                    >{post.title}</a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </section>
+                          ))}
+                        </div>
+                      )}
+                      {!('groups' in menu) && (
                       <div class="service-menu-grid">
                         {menu.previews.map((item, itemIndex) => (
                           <div
@@ -548,26 +621,12 @@ const jsonLd = {
                           </div>
                         ))}
                       </div>
+                      )}
                     </div>
                   </details>
                 </div>
               </li>
             ))}
-            <li class="service-nav-item service-nav-item--accent service-nav-item--link">
-              <div class="service-nav-shell">
-                <a
-                  class="service-nav-direct"
-                  href={SERVICE_NAV_LINK.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`${SERVICE_NAV_LINK.label}：系統開發（另開新頁籤）`}
-                  data-ga-button={`header_${SERVICE_NAV_LINK.key}`}
-                  data-ga-label={SERVICE_NAV_LINK.label}
-                  data-ga-location="header_nav"
-                  data-ga-action="navigate"
-                >{SERVICE_NAV_LINK.label}</a>
-              </div>
-            </li>
           </ul>
         </nav>
 
@@ -706,7 +765,10 @@ const jsonLd = {
               return;
             }
             // +28px 留給最後一顆連結的 :focus-visible 外框，不然 overflow:hidden 會切掉它
-            panel.style.maxHeight = open ? panel.scrollHeight + 28 + 'px' : '0px';
+            // 頁首是 sticky，展開後比視窗高（例如文章清單全部展開）就會有項目永遠捲不到；
+            // 高度以視窗高度為上限，超過的部分在面板內捲動（CSS 開啟時 overflow-y:auto）。
+            var cap = Math.max(240, window.innerHeight - 84);
+            panel.style.maxHeight = open ? Math.min(panel.scrollHeight + 28, cap) + 'px' : '0px';
           }
 
           // 開啟時把焦點送進第一個連結。原因是 DOM 順序：導覽排在工具列之前
@@ -1708,6 +1770,47 @@ const jsonLd = {
         color: var(--color-ink-3);
         font-size: 11px;
       }
+      .service-menu-articles {
+        display: grid;
+        gap: 14px;
+      }
+      .service-menu-group h3 {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin: 0;
+        padding: 6px 2px;
+        color: var(--color-accent);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .service-menu-group h3 small {
+        color: var(--color-ink-3);
+        font-size: 11px;
+        font-weight: 400;
+      }
+      .nav-js .mainnav .service-menu-group ul {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .nav-js .mainnav .service-menu-group li {
+        display: block;
+        padding: 0;
+        border: 0;
+        background: transparent;
+      }
+      .mainnav .service-menu-group li a {
+        display: block;
+        padding: 8px 2px 8px 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
       .service-menu-grid .service-preview--wide {
         grid-column: 1 / -1;
       }
@@ -1901,6 +2004,8 @@ const jsonLd = {
       .nav-js .site-header[data-open='true'] .mainnav {
         opacity: 1;
         visibility: visible;
+        overflow-y: auto;
+        overscroll-behavior: contain;
         border-top: 1px solid var(--color-rule);
         transition:
           max-height 0.3s var(--ease),
@@ -2078,6 +2183,16 @@ const jsonLd = {
         .service-menu-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 14px;
+        }
+        .service-menu:has(.service-menu-articles) {
+          max-height: calc(100vh - 110px);
+          overflow-y: auto;
+          overscroll-behavior: contain;
+        }
+        .service-menu-articles {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 18px 28px;
+          align-items: start;
         }
         .nav-js .mainnav .service-preview {
           grid-template-columns: 152px minmax(0, 1fr);
