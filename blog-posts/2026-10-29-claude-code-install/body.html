@@ -1,9 +1,9 @@
-<h2 id="這一篇要裝什麼先訂-pro再挑一種裝法">這一篇要裝什麼：先訂 Pro，再挑一種裝法</h2>
-<p>Claude Code 要付費方案才能用，Claude 免費版不含 Claude Code。訂好方案後，三種裝法挑一種就好：</p>
+<h2 id="三種裝法怎麼選">三種裝法怎麼選</h2>
+<p>Claude Code 要 Pro 以上的付費方案才能用，Claude 免費版不含。三種裝法挑一種就好，看你平常怎麼工作：</p>
 <ul>
-<li>桌面版：沒用過程式工具的人選這個，全程不用打指令。</li>
-<li>VS Code 擴充套件：想邊做邊看程式碼的人選這個。</li>
-<li>終端機一行指令：想在終端機輸入 <code>claude</code> 直接用的人選這個。</li>
+<li>不想打指令：選桌面版，全程不用打指令。</li>
+<li>平常用 VS Code：選擴充套件，邊做邊看程式碼。</li>
+<li>習慣在終端機工作：選 CLI（終端機畫面），裝好直接輸入 <code>claude</code>。</li>
 </ul>
 <p>Windows 和 Mac 都能裝。電腦要 Windows 10（1809 版）以上或 macOS 13 以上，記憶體 4 GB 以上。<a href="https://code.claude.com/docs/en/setup">Claude Code 官方安裝說明</a></p>
 <p>安裝中途卡住，把這篇文章的連結和畫面上的完整錯誤訊息一起貼給 AI：</p>
@@ -14,7 +14,7 @@
 <p>到 <a href="https://claude.com/pricing">Claude 官方價格頁</a>，選紅框標示的 <strong>Pro</strong>。發文當下月繳 20 美元，年繳平均每月 17 美元（一次付 200 美元）。用量不夠時再升級 Max，Team、Enterprise 方案也能用 Claude Code。</p>
 <p><img src="/images/blog/claude-code-install/01-claude-pricing-pro.png" alt="在 Claude 官方價格頁選擇紅框標示的 Pro 方案"></p>
 <h2 id="第二步安裝-claude-code三選一">第二步：安裝 Claude Code（三選一）</h2>
-<h3 id="桌面版不用終端機">桌面版：不用終端機</h3>
+<h3 id="桌面版">桌面版</h3>
 <ol>
 <li>到 <a href="https://claude.com/download">Claude 下載頁</a>，Windows 按紅框標示那一列的 <strong>Download</strong>；Mac 按 macOS 那一列。Windows 筆電是 ARM 處理器的，改按 Windows (arm 64)。</li>
 <li>執行下載的安裝檔。Windows 從開始選單、Mac 從「應用程式」資料夾開啟 Claude，登入你剛訂閱的帳號。</li>
@@ -22,7 +22,7 @@
 <li>在輸入框下方的環境選單選 Local 底下第一個，再按旁邊的資料夾按鈕，選 Open folder… 開啟你的專案資料夾。</li>
 </ol>
 <p><img src="/images/blog/claude-code-install/02-claude-download-windows.png" alt="在 Claude 下載頁按下紅框標示的 Windows Download"></p>
-<p>桌面版已經包含 Claude Code，不用另外裝 Node.js 或終端機版。想在終端機輸入 <code>claude</code>，要再照下面的終端機裝法裝一次。<a href="https://code.claude.com/docs/en/desktop-quickstart">官方桌面版說明</a></p>
+<p>桌面版已經包含 Claude Code，不用另外裝 Node.js 或 CLI 版。想在終端機輸入 <code>claude</code>，要再照下面的 CLI 裝法裝一次。<a href="https://code.claude.com/docs/en/desktop-quickstart">官方桌面版說明</a></p>
 <h3 id="vs-code-擴充套件">VS Code 擴充套件</h3>
 <p>VS Code 要 1.94.0 以上，還沒裝 VS Code 的話，先照 <a href="/blog/codex-windows-wsl-install/">Codex 安裝教學（上）的第一步</a>裝好。</p>
 <ol>
@@ -31,8 +31,8 @@
 <li>點左側活動列的 Claude Code 圖示打開面板，按 Sign in，在瀏覽器完成授權。</li>
 </ol>
 <p><img src="/images/blog/claude-code-install/03-vscode-marketplace-claude-code.png" alt="在擴充套件商店確認紅框標示的名稱與發行者 Anthropic"></p>
-<p>擴充套件自己帶一份 Claude Code，只給聊天面板用。想在 VS Code 的終端機輸入 <code>claude</code>，一樣要另外照下面的終端機裝法裝。<a href="https://code.claude.com/docs/en/vs-code">官方 VS Code 說明</a></p>
-<h3 id="終端機一行指令">終端機一行指令</h3>
+<p>擴充套件自己帶一份 Claude Code，只給聊天面板用。想在 VS Code 的終端機輸入 <code>claude</code>，一樣要另外照下面的 CLI 裝法裝。<a href="https://code.claude.com/docs/en/vs-code">官方 VS Code 說明</a></p>
+<h3 id="cli終端機畫面">CLI（終端機畫面）</h3>
 <p>Windows 開 Windows PowerShell（不要選後面有 x86 的那個），貼上：</p>
 <pre data-code-kind="terminal" data-code-label="終端機"><code class="language-powershell">irm https://claude.ai/install.ps1 | iex
 </code></pre>
@@ -50,9 +50,9 @@
 <pre data-code-kind="output"><code>2.1.312 (Claude Code)
 </code></pre>
 <p>出現「找不到 claude」之類的訊息，看文末的錯誤排除。</p>
-<h2 id="第三步在專案資料夾啟動並登入">第三步：在專案資料夾啟動並登入</h2>
+<h2 id="第三步啟動並登入">第三步：啟動並登入</h2>
 <p>桌面版和 VS Code 擴充套件在上一步已經登入，可以跳過這一步。</p>
-<p>終端機版要先進到專案資料夾再啟動，Claude Code 才讀得到你的檔案。資料夾名稱換成你自己的：</p>
+<p>CLI 版要先進到專案資料夾再啟動，Claude Code 才讀得到你的檔案。資料夾名稱換成你自己的：</p>
 <pre data-code-kind="terminal" data-code-label="終端機"><code class="language-bash">cd 你的專案資料夾
 claude
 </code></pre>
@@ -65,9 +65,9 @@ claude
 <pre data-code-kind="agent" data-code-label="對 AI Agent 輸入"><code class="language-agent">/login
 </code></pre>
 <p><a href="https://code.claude.com/docs/en/authentication">官方登入說明</a></p>
-<h2 id="選用windows-裝-git-for-windows">選用：Windows 裝 Git for Windows</h2>
+<h2 id="選用git-for-windows">選用：Git for Windows</h2>
 <p>官方建議 Windows 裝 <a href="https://git-scm.com/downloads/win">Git for Windows</a>，但不是必要。裝了，Claude Code 能用 Git Bash 執行指令，有些功能要靠它；沒裝，它改用 PowerShell 執行指令。Mac 不用裝。</p>
-<p>Windows 想用 Linux 環境開發，可以改在 WSL 裡用終端機裝法安裝，WSL 的裝法看 <a href="/blog/codex-cli-wsl2-windows/">Codex 安裝教學（下）：Windows 版 Codex CLI 與 WSL2 進階安裝</a>，在 WSL 裡就不需要 Git for Windows。</p>
+<p>Windows 想用 Linux 環境開發，可以改在 WSL 裡用 CLI 裝法安裝，WSL 的裝法看 <a href="/blog/codex-cli-wsl2-windows/">Codex 安裝教學（下）：Windows 版 Codex CLI 與 WSL2 進階安裝</a>，在 WSL 裡就不需要 Git for Windows。</p>
 <h2 id="安裝卡住怎麼辦">安裝卡住怎麼辦？</h2>
 <p>先對照下面的錯誤訊息。都不是的話，在終端機輸入 <code>claude doctor</code>，它會檢查安裝和設定、列出問題與建議的修法，把結果整段貼給 AI。<a href="https://code.claude.com/docs/en/troubleshoot-install">官方安裝問題排除</a></p>
 <details>
