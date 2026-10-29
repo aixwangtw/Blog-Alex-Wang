@@ -2,8 +2,12 @@
 // 與首頁／服務站的需求分流卡（NeedRouter.astro）共用。標題、一句說明、圖片、連結改這裡，全站同步。
 import githubLogo from '../assets/github-logo.svg';
 
-/** Matt Pocock Skills 在各處的標題（使用者指定寫法，30 萬顆星與導覽卡一致） */
-const MATT_POCOCK_SKILLS_TITLE = 'GitHub 30 萬顆星・提升寫程式效率的 Skills';
+/**
+ * grill-me（Matt Pocock Skills）在各處的標題（使用者指定寫法）：頁首文章彈窗、領取導覽卡、免費資源頁、需求分流卡共用。
+ * 星數查證：GitHub API mattpocock/skills stargazers_count = 305,849（2026-10-29 11:11 查詢），超過 30 萬。
+ */
+const GRILL_ME_TAGLINE = '30 萬顆星，提升開發效率';
+const MATT_POCOCK_SKILLS_TITLE = `grill-me：${GRILL_ME_TAGLINE}`;
 export const RESOURCES_INTRO =
   '不用急著付費。先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用。做完還是卡關，可以點右下角官方 LINE 直接問我，或到 Facebook 社團發問。';
 
@@ -22,7 +26,7 @@ export const GRILL_ME_RESOURCE = {
   label: '本週推薦 Skill',
   name: 'grill-me',
   title: MATT_POCOCK_SKILLS_TITLE,
-  titleSuffix: `：${MATT_POCOCK_SKILLS_TITLE}`,
+  titleSuffix: `：${GRILL_ME_TAGLINE}`,
   descriptionBefore: '你先跟 AI 說想做什麼，它會一輪一輪問到每個細節都講清楚，才開始寫程式。安裝後在新對話輸入 ',
   command: '/grill-me',
   descriptionAfter: ' 就能開始。',

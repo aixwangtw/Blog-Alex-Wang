@@ -45,7 +45,7 @@ const CLAIM_INSTALL_HINT = '貼給你的 AI Agent，說「幫我安裝」';
 const SERVICE_NAV_LINK = {
   key: 'services',
   label: '服務',
-  href: `${SERVICE_SITE.url}/services/development/`,
+  href: DEVELOPMENT_SERVICE.url,
 };
 // 文章下拉：列出已發布（非 unlisted）文章（排除清單除外），依第一個標籤分組（部落格列表卡片也用第一個標籤當分類字）。
 // 分組順序依「該組最新文章」由新到舊，組內也是新到舊；沒有標籤的文章歸「其他」。
@@ -66,9 +66,10 @@ const NAV_ICON_PATHS: Record<string, string> = {
 };
 // 不放進彈窗的文章（用 slug；文章本身與其他清單不受影響）
 const NAV_EXCLUDED_SLUGS: string[] = ['codex-cli-wsl2-windows'];
-// 額外補進某個分組的外部連結項目（另開新分頁）：開源工具補 grill-me 的 IG Reel
-const NAV_EXTRA_ITEMS: { group: string; title: string; href: string }[] = [
-  { group: '開源工具', title: GRILL_ME_RESOURCE.name, href: GRILL_ME_RESOURCE.instagramUrl },
+// 額外補進某個分組的資源項目：只寫「放進哪一組、引用哪個資源」，標題與網址一律取自 src/data/resources.ts（和領取導覽卡同一份）。
+// 之後要把其他資源放進彈窗，也在這裡加一筆。
+const NAV_EXTRA_ITEMS: { group: string; resource: { title: string; href: string; external?: boolean } }[] = [
+  { group: '開源工具', resource: GRILL_ME_RESOURCE.nav },
 ];
 const navArticleGroups: { name: string; items: { href: string; title: string; external?: boolean }[] }[] = [];
 for (const post of navPosts) {
@@ -82,14 +83,16 @@ for (const post of navPosts) {
   group.items.push({ href: `/blog/${post.id}/`, title: post.data.title });
 }
 for (const extra of NAV_EXTRA_ITEMS) {
-  navArticleGroups.find((group) => group.name === extra.group)?.items.push({ href: extra.href, title: extra.title, external: true });
+  navArticleGroups
+    .find((group) => group.name === extra.group)
+    ?.items.push({ href: extra.resource.href, title: extra.resource.title, external: extra.resource.external });
 }
 // 服務下拉（版面參考 deanlife.blog）：三張服務卡並列（系統開發、一對一教學、演講），右欄是諮詢。
 // 每張卡片只放大標題與「- 」項目清單，項目文字都取自既有頁面資料；簡單網頁、動畫影片是教學頁的方案，列在一對一教學底下。
 // 卡片圖片沿用首屏分流卡已經在用的實拍圖。
 const navServiceCards: { href: string; title: string; items: string[]; image: ImageMetadata; imageAlt: string }[] = [
   {
-    href: `${SERVICE_SITE.url}/services/development/`,
+    href: DEVELOPMENT_SERVICE.url,
     title: '系統開發',
     // 服務頁「可以做什麼」的項目（DEVELOPMENT_CAPABILITIES）
     items: DEVELOPMENT_CAPABILITIES.map((item) => item.title),
@@ -256,6 +259,7 @@ const DROPDOWN_NAV = [
                               <li>
                                 <a
                                   class="dm-row"
+                                  title={post.title}
                                   href={post.external ? post.href : withBase(post.href)}
                                   target={post.external ? '_blank' : undefined}
                                   rel={post.external ? 'noreferrer' : undefined}
@@ -265,7 +269,7 @@ const DROPDOWN_NAV = [
                                   data-ga-action="open_content"
                                 >
                                   <span class="dm-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={NAV_ICON_PATHS[NAV_GROUP_ICON[group.name] ?? 'doc']} /></span>
-                                  <span>{post.title}</span>
+                                  <span class="dm-row-text">{post.title}</span>
                                 </a>
                               </li>
                             ))}
@@ -313,7 +317,7 @@ const DROPDOWN_NAV = [
                           data-ga-location={gaLocation('header_services_dropdown')}
                           data-ga-action="contact"
                         >
-                          <LineIcon class="dm-consult-icon" />
+                          <img class="dm-consult-art" src="/images/consult-chat.svg" alt="" aria-hidden="true" width="448" height="412" loading="lazy" decoding="async" />
                           <span class="dm-consult-btn">{menu.consult.label} <span aria-hidden="true">→</span></span>
                         </a>
                       </section>
@@ -429,13 +433,14 @@ const DROPDOWN_NAV = [
   .dm-card-copy span::before { content: '- '; }
   /* 諮詢區（參考 Dean 右欄：標題下面一整塊填滿欄高，大按鈕放在裡面）：底色用 LINE 綠，沒有放圖 */
   .dm-col--consult { display: flex; flex-direction: column; }
-  .mainnav .dm-col--consult .service-menu-consult { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 4px; background: #06c755; color: #fff; white-space: normal; }
-  .dm-consult-icon { display: none; width: 72px; height: 72px; }
+  .mainnav .dm-col--consult .service-menu-consult { position: relative; display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: flex-end; gap: 12px; padding: 14px 16px; border-radius: 4px; background: #06c755; color: #fff; white-space: normal; overflow: hidden; }
+  .dm-consult-art { display: none; }
   .dm-consult-btn { display: block; width: 100%; font-size: 15px; font-weight: 700; line-height: 1.3; text-align: center; }
   @media (hover: hover) and (pointer: fine) {
     .mainnav .dm-row:hover { color: var(--color-accent); }
     .mainnav .dm-card:hover { border-color: var(--color-accent-line-2); background: var(--color-accent-tint); }
     .mainnav .dm-col--consult .service-menu-consult:hover { background: #05b34c; }
+
   }
   @media (min-width: 1024px) {
     .service-menu:has(.dm-cols) {
@@ -452,22 +457,28 @@ const DROPDOWN_NAV = [
     .service-menu:has(.dm-cols) .service-menu-head { display: none; }
     .nav-js .mainnav .dm-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 0; }
     .nav-js .mainnav .dm-cols--services { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .dm-col { padding: 12px; }
+    .dm-col { padding: 12px 12px 12px 11px; border-left: 1px solid transparent; }
     .dm-col:not(:nth-child(3n + 1)) { border-left: 1px solid var(--color-rule); }
-    .dm-cols--services .dm-col:not(:nth-child(3n + 1)) { border-left: 0; }
-    .dm-cols--services .dm-col--consult { border-left: 1px solid var(--color-rule); }
+    .dm-cols--services .dm-col:not(:nth-child(3n + 1)) { border-left-color: transparent; }
+    .dm-cols--services .dm-col--consult { border-left-color: var(--color-rule); }
     .dm-head { margin-bottom: 16px; color: var(--color-ink); font-size: 16px; font-weight: 600; line-height: 1.2; }
     .nav-js .mainnav .dm-rows { gap: 8px; }
     .mainnav .dm-row { padding: 0; font-size: 16px; }
     .dm-icon { display: flex; }
+    /* 列高固定、標題最多兩行（超過截斷，完整標題在 title 提示）：各欄同一序位的列才會落在同一條水平線，icon 也固定在每列左側 */
+    .dm-head { height: 20px; margin-bottom: 12px; line-height: 20px; }
+    .mainnav .dm-row { height: 52px; }
+    .dm-row-text { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
     .nav-js .mainnav .dm-cards { gap: 12px; }
     .mainnav .dm-card { display: flex; align-items: flex-start; gap: 16px; padding: 9px; border: 1px solid var(--color-rule-2); border-radius: 4px; }
     .dm-card-img { display: block; }
     .dm-card-copy strong { font-size: 18px; }
     .dm-card-copy span { font-size: 14px; }
-    .mainnav .dm-col--consult .service-menu-consult { min-height: 240px; padding: 24px 16px 16px; }
-    .dm-consult-icon { display: block; }
-    .dm-consult-btn { padding: 16px; border-radius: 4px; background: #fff; color: #05803a; font-size: 20px; }
+    /* 桌機：手繪 SVG 插畫（深色底）鋪滿欄高，大按鈕疊在圖底部（參考 Dean 右欄） */
+    .mainnav .dm-col--consult .service-menu-consult { min-height: 300px; padding: 16px; background: #1d1b1a; }
+    .dm-consult-art { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+    .dm-consult-btn { position: relative; padding: 16px; border-radius: 4px; background: #06c755; color: #fff; font-size: 20px; box-shadow: 0 6px 18px rgb(0 0 0 / 35%); }
+    .mainnav .dm-col--consult .service-menu-consult:hover .dm-consult-btn { background: #05b34c; }
   }
 </style>
 
