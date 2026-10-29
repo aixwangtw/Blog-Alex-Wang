@@ -9,7 +9,7 @@ import { AUTHOR, SITE, isTeachingArticle, pickArticleCta, pickAuthorIntro } from
 import ShareBar from '../../components/ShareBar.astro';
 import Base from '../../layouts/Base.astro';
 import { blogBannerPath } from '../../lib/blog-banner';
-import { relatedByCategory } from '../../lib/related-articles';
+import { moreTeachingArticles, relatedByCategory } from '../../lib/related-articles';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -28,9 +28,9 @@ const { Content } = await render(post);
 // 教學類文章文末列同分類（tags 第一個）的其他文章；其他文章維持原本的 Cta
 const isTeaching = isTeachingArticle(post.data.tags);
 const relatedCategory = post.data.tags[0];
-const relatedPosts = isTeaching
-  ? relatedByCategory(await getCollection('blog'), relatedCategory, post.id)
-  : [];
+const allPosts = isTeaching ? await getCollection('blog') : [];
+const relatedPosts = isTeaching ? relatedByCategory(allPosts, relatedCategory, post.id) : [];
+const moreTeachingPosts = isTeaching ? moreTeachingArticles(allPosts, relatedCategory, post.id) : [];
 const { title, description, pubDate, updatedDate, faqs } = post.data;
 
 const postUrl = `${SITE.url}/blog/${post.id}/`;
@@ -214,7 +214,7 @@ const updatedText = updatedDate
     </section>
 
     {isTeaching ? (
-      <RelatedArticles category={relatedCategory} posts={relatedPosts} />
+      <RelatedArticles category={relatedCategory} posts={relatedPosts} morePosts={moreTeachingPosts} />
     ) : (
       <Cta {...pickArticleCta(post.id, post.data.tags)} />
     )}
