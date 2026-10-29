@@ -1,6 +1,6 @@
 ---
 import { findMarkdownAlternate } from '../lib/agent-docs';
-import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
+import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, TEACHING_GROUP, pageBannerUrl } from '../consts';
 import SiteHeader from '../components/SiteHeader.astro';
 import FloatingLine from '../components/FloatingLine.astro';
 import '../styles/global.css';
@@ -14,11 +14,8 @@ interface Props {
   canonicalPath?: string;
   /** 教學頁用 'teaching'：頁尾改列分類文章，不放系統開發入口 */
   footerVariant?: 'service' | 'teaching';
-  /** teaching 頁尾的分類名稱與文章（由頁面依 CMS tags 算出） */
-  footerCategory?: string;
+  /** teaching 頁尾的「AI 教學」文章（由頁面依 CMS tags 算出） */
   footerArticles?: { href: string; title: string }[];
-  /** 同分類之外的其他教學文，接在後面 */
-  footerMoreArticles?: { href: string; title: string }[];
 }
 
 const {
@@ -29,9 +26,7 @@ const {
   ogImageAlt = title,
   canonicalPath = Astro.url.pathname,
   footerVariant = 'service',
-  footerCategory,
   footerArticles = [],
-  footerMoreArticles = [],
 } = Astro.props;
 
 const canonical = new URL(canonicalPath, SERVICE_SITE.url);
@@ -209,12 +204,8 @@ const jsonLd = {
             </a>
           </section>
           <section>
-            <h2>{footerCategory} 相關文章</h2>
+            <h2>{TEACHING_GROUP}</h2>
             {footerArticles.map((article) => (
-              <a href={article.href}>{article.title}</a>
-            ))}
-            {footerMoreArticles.length > 0 && <h2 class="service-footer-more">更多教學</h2>}
-            {footerMoreArticles.map((article) => (
               <a href={article.href}>{article.title}</a>
             ))}
           </section>
@@ -262,7 +253,6 @@ const jsonLd = {
       .service-footer > div { display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:48px; width:min(1120px, 100%); margin:auto; }
       .service-footer .service-brand { color:#fff; }
       .service-footer section > p { max-width:45ch; margin-top:16px; color:#bdb9b3; font-size:13px; line-height:1.8; }
-      .service-footer h2.service-footer-more { margin-top:28px; }
       .service-footer h2 { margin-bottom:14px; color:#bdb9b3; font-size:11px; letter-spacing:.14em; }
       .service-footer section > a:not(.service-brand) { display:block; margin-top:9px; color:#fff; font-size:14px; text-decoration:none; }
       .service-footer section > a.service-footer-minor { color:#bdb9b3; font-size:12px; }

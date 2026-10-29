@@ -6,7 +6,7 @@ import SectionHeading from '../components/SectionHeading.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { getCollection } from 'astro:content';
 import { AUTHOR, COURSE_ARTICLE_TAG, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
-import { moreTeachingArticles, relatedByCategory } from '../lib/related-articles';
+import { teachingArticles } from '../lib/related-articles';
 import { ONE_ON_ONE_FAQS } from '../data/faqs';
 import { CLASS_FORMATS, TEACHING_CASES, TEACHING_CONTENT } from '../data/services';
 import ServiceBase from '../layouts/ServiceBase.astro';
@@ -47,14 +47,11 @@ const pageToc = [
   { id: 'faq', label: '常見問題' },
 ];
 
-// 頁尾先列「Claude Code」分類的文章（分類來自 CMS 的 tags 第一個），再補其他教學文；文章在主站，連結帶完整網址
-const allPosts = await getCollection('blog');
-const toFooterLink = (post: (typeof allPosts)[number]) => ({
+// 頁尾列「AI 教學」清單（Claude Code 分類排前面）；文章在主站，連結帶完整網址
+const footerArticles = teachingArticles(await getCollection('blog'), COURSE_ARTICLE_TAG).map((post) => ({
   href: `${SITE.url}/blog/${post.id}/`,
   title: post.data.title,
-});
-const footerArticles = relatedByCategory(allPosts, COURSE_ARTICLE_TAG).map(toFooterLink);
-const footerMoreArticles = moreTeachingArticles(allPosts, COURSE_ARTICLE_TAG).map(toFooterLink);
+}));
 
 const courseBanner = pageBannerUrl('one-on-one');
 const courseBannerPath = new URL(courseBanner).pathname;
@@ -67,9 +64,7 @@ const courseBannerPath = new URL(courseBanner).pathname;
   ogImageAlt="AI 一對一教學：系統開發、網頁、動畫影片｜手把手帶你實戰"
   schema={schema}
   footerVariant="teaching"
-  footerCategory={COURSE_ARTICLE_TAG}
   footerArticles={footerArticles}
-  footerMoreArticles={footerMoreArticles}
 >
   <div class="mx-auto w-full max-w-6xl px-5 py-8 sm:px-6 sm:py-12">
     <Breadcrumbs items={[{ name: '服務首頁', href: `${SERVICE_SITE.url}/` }, { name: '手把手帶你實戰' }]} class="mb-7 sm:mb-10" />

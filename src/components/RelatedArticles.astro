@@ -1,43 +1,32 @@
 ---
-// 教學類文章的文末區塊：依分類（tags 第一個）列出同分類的其他文章，取代系統開發的 Cta。
-// 沒有同分類的其他文章就不顯示。
+// 教學類文章的文末區塊：單一「AI 教學」清單，取代系統開發的 Cta。
+// 清單由 src/lib/related-articles.ts 的 teachingArticles 算出，沒有其他教學文就不顯示。
 import type { CollectionEntry } from 'astro:content';
+import { TEACHING_GROUP } from '../consts';
 
 interface Props {
-  category: string;
   posts: CollectionEntry<'blog'>[];
-  /** 同分類之外的其他教學文，接在後面，標題「更多教學」 */
-  morePosts?: CollectionEntry<'blog'>[];
 }
 
-const { category, posts, morePosts = [] } = Astro.props;
+const { posts } = Astro.props;
 const formatDate = (date: Date) =>
   date.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-{(posts.length > 0 || morePosts.length > 0) && (
+{posts.length > 0 && (
   <aside class="mt-16 border-t border-rule pt-10" aria-labelledby="related-articles-h">
-    {[
-      { heading: `${category} 相關文章`, list: posts },
-      { heading: '更多教學', list: morePosts },
-    ]
-      .filter((group) => group.list.length > 0)
-      .map((group, index) => (
-        <section class={index > 0 ? 'mt-10' : ''}>
-          <h2 id={index === 0 ? 'related-articles-h' : undefined} class="text-2xl font-semibold text-ink">{group.heading}</h2>
-          <ul class="mt-6">
-            {group.list.map((post) => (
-              <li class="border-t border-rule first:border-t-0">
-                <a href={`/blog/${post.id}/`} class="group flex flex-col gap-1 py-4 md:flex-row md:items-baseline md:justify-between md:gap-6">
-                  <span class="text-lg font-medium text-ink transition-colors group-hover:text-accent">{post.data.title}</span>
-                  <time class="shrink-0 text-xs text-ink-3" datetime={post.data.pubDate.toISOString()}>
-                    {formatDate(post.data.pubDate)}
-                  </time>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
+    <h2 id="related-articles-h" class="text-2xl font-semibold text-ink">{TEACHING_GROUP}</h2>
+    <ul class="mt-6">
+      {posts.map((post) => (
+        <li class="border-t border-rule first:border-t-0">
+          <a href={`/blog/${post.id}/`} class="group flex flex-col gap-1 py-4 md:flex-row md:items-baseline md:justify-between md:gap-6">
+            <span class="text-lg font-medium text-ink transition-colors group-hover:text-accent">{post.data.title}</span>
+            <time class="shrink-0 text-xs text-ink-3" datetime={post.data.pubDate.toISOString()}>
+              {formatDate(post.data.pubDate)}
+            </time>
+          </a>
+        </li>
       ))}
+    </ul>
   </aside>
 )}

@@ -332,11 +332,19 @@ export const PERSON_SCHEMA = {
   sameAs: [LINKS.facebookGroup, LINKS.threads, LINKS.instagram, LINKS.youtube, LINKS.github],
 };
 
-// 教學類文章（tags 命中任一個）文末與教學頁頁尾，改列同分類的相關文章，不導向系統開發。
-// 分類取 tags 第一個；一對一教學頁（/course/）教的是 Claude Code，所以分類固定用下面這個 tag。
-export const TEACHING_TAGS = ['新手入門', '安裝教學', 'API 教學', 'AI 入門', '一對一教學'];
+// 文章分組對照：第一個標籤 → 分組名稱（把多個標籤合併成一組）；沒列在這裡的標籤就用標籤本身。
+// 排除的標籤不進導覽與相關文章清單。頁首彈窗、教學頁頁尾、教學文章底部共用這一份。
+export const ARTICLE_TAG_GROUP_MAP: Record<string, string> = { 'Claude Code': 'AI 教學', Codex: 'AI 教學' };
+export const ARTICLE_EXCLUDED_TAGS: string[] = ['轉職心得'];
+export const TEACHING_GROUP = 'AI 教學';
+// 一對一教學頁（/course/）頁尾的「AI 教學」清單，這個分類的文章排前面
 export const COURSE_ARTICLE_TAG = 'Claude Code';
 
+export function articleGroupName(firstTag: string | undefined): string {
+  const tag = firstTag ?? '其他';
+  return ARTICLE_TAG_GROUP_MAP[tag] ?? tag;
+}
+
 export function isTeachingArticle(tags: readonly string[]): boolean {
-  return TEACHING_TAGS.some((tag) => tags.includes(tag));
+  return !ARTICLE_EXCLUDED_TAGS.includes(tags[0] ?? '') && articleGroupName(tags[0]) === TEACHING_GROUP;
 }
