@@ -12,6 +12,11 @@ interface Props {
   ogImage?: string;
   ogImageAlt?: string;
   canonicalPath?: string;
+  /** 教學頁用 'teaching'：頁尾改列分類文章，不放系統開發入口 */
+  footerVariant?: 'service' | 'teaching';
+  /** teaching 頁尾的分類名稱與文章（由頁面依 CMS tags 算出） */
+  footerCategory?: string;
+  footerArticles?: { href: string; title: string }[];
 }
 
 const {
@@ -21,6 +26,9 @@ const {
   ogImage = pageBannerUrl('service-home'),
   ogImageAlt = title,
   canonicalPath = Astro.url.pathname,
+  footerVariant = 'service',
+  footerCategory,
+  footerArticles = [],
 } = Astro.props;
 
 const canonical = new URL(canonicalPath, SERVICE_SITE.url);
@@ -189,25 +197,48 @@ const jsonLd = {
     <main id="main"><slot /></main>
 
     <footer class="service-footer">
-      <div>
-        <section>
-          <a class="service-brand" href={serviceHomeHref}>
-            <img src="/aixwang-icon.png" width="30" height="30" alt="" />
-            <span><strong>AIX</strong><small>系統開發</small></span>
-          </a>
-        </section>
-        <section>
-          <h2>服務項目</h2>
-          <a href="/services/development/">客製系統開發</a>
-        </section>
-        <section>
-          <h2>站內導覽</h2>
-          <a href={serviceHomeHref}>服務首頁</a>
-          <a href={developmentCaseHref} data-ga-button="service_footer_case" data-ga-label="開發案例" data-ga-location="service_footer" data-ga-action="navigate">開發案例</a>
-          <a class="service-footer-minor" href="/course/" data-ga-button="service_footer_course" data-ga-label="一對一教學" data-ga-location="service_footer" data-ga-action="navigate">一對一教學</a>
-          <a class="service-footer-minor" href="/services/speaking/" data-ga-button="service_footer_speaking" data-ga-label="演講邀約" data-ga-location="service_footer" data-ga-action="navigate">演講邀約</a>
-        </section>
-      </div>
+      {footerVariant === 'teaching' ? (
+        <div>
+          <section>
+            <a class="service-brand" href={serviceHomeHref}>
+              <img src="/aixwang-icon.png" width="30" height="30" alt="" />
+              <span><strong>AIX</strong></span>
+            </a>
+          </section>
+          <section>
+            <h2>{footerCategory} 相關文章</h2>
+            {footerArticles.map((article) => (
+              <a href={article.href}>{article.title}</a>
+            ))}
+          </section>
+          <section>
+            <h2>站內導覽</h2>
+            <a href={serviceHomeHref}>服務首頁</a>
+            <a class="service-footer-minor" href="/course/">一對一教學</a>
+            <a class="service-footer-minor" href="/services/speaking/">演講邀約</a>
+          </section>
+        </div>
+      ) : (
+        <div>
+          <section>
+            <a class="service-brand" href={serviceHomeHref}>
+              <img src="/aixwang-icon.png" width="30" height="30" alt="" />
+              <span><strong>AIX</strong><small>系統開發</small></span>
+            </a>
+          </section>
+          <section>
+            <h2>服務項目</h2>
+            <a href="/services/development/">客製系統開發</a>
+          </section>
+          <section>
+            <h2>站內導覽</h2>
+            <a href={serviceHomeHref}>服務首頁</a>
+            <a href={developmentCaseHref} data-ga-button="service_footer_case" data-ga-label="開發案例" data-ga-location="service_footer" data-ga-action="navigate">開發案例</a>
+            <a class="service-footer-minor" href="/course/" data-ga-button="service_footer_course" data-ga-label="一對一教學" data-ga-location="service_footer" data-ga-action="navigate">一對一教學</a>
+            <a class="service-footer-minor" href="/services/speaking/" data-ga-button="service_footer_speaking" data-ga-label="演講邀約" data-ga-location="service_footer" data-ga-action="navigate">演講邀約</a>
+          </section>
+        </div>
+      )}
       <p>© {new Date().getFullYear()} {SERVICE_SITE.title}</p>
     </footer>
 

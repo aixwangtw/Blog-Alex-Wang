@@ -331,3 +331,12 @@ export const PERSON_SCHEMA = {
   ],
   sameAs: [LINKS.facebookGroup, LINKS.threads, LINKS.instagram, LINKS.youtube, LINKS.github],
 };
+
+// 教學類文章（tags 命中任一個）文末與教學頁頁尾，改列同分類的相關文章，不導向系統開發。
+// 分類取 tags 第一個；一對一教學頁（/course/）教的是 Claude Code，所以分類固定用下面這個 tag。
+export const TEACHING_TAGS = ['新手入門', '安裝教學', 'API 教學', 'AI 入門', '一對一教學'];
+export const COURSE_ARTICLE_TAG = 'Claude Code';
+
+export function isTeachingArticle(tags: readonly string[]): boolean {
+  return TEACHING_TAGS.some((tag) => tags.includes(tag));
+}

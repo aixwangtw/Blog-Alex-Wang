@@ -3,11 +3,13 @@ import type { CollectionEntry } from 'astro:content';
 import { getCollection, render } from 'astro:content';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Cta from '../../components/Cta.astro';
+import RelatedArticles from '../../components/RelatedArticles.astro';
 import FaqList from '../../components/FaqList.astro';
-import { AUTHOR, SITE, pickArticleCta, pickAuthorIntro } from '../../consts';
+import { AUTHOR, SITE, isTeachingArticle, pickArticleCta, pickAuthorIntro } from '../../consts';
 import ShareBar from '../../components/ShareBar.astro';
 import Base from '../../layouts/Base.astro';
 import { blogBannerPath } from '../../lib/blog-banner';
+import { relatedByCategory } from '../../lib/related-articles';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -23,6 +25,12 @@ interface Props {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+// 教學類文章文末列同分類（tags 第一個）的其他文章；其他文章維持原本的 Cta
+const isTeaching = isTeachingArticle(post.data.tags);
+const relatedCategory = post.data.tags[0];
+const relatedPosts = isTeaching
+  ? relatedByCategory(await getCollection('blog'), relatedCategory, post.id)
+  : [];
 const { title, description, pubDate, updatedDate, faqs } = post.data;
 
 const postUrl = `${SITE.url}/blog/${post.id}/`;
@@ -205,7 +213,11 @@ const updatedText = updatedDate
       </p>
     </section>
 
-    <Cta {...pickArticleCta(post.id, post.data.tags)} />
+    {isTeaching ? (
+      <RelatedArticles category={relatedCategory} posts={relatedPosts} />
+    ) : (
+      <Cta {...pickArticleCta(post.id, post.data.tags)} />
+    )}
   </article>
 
   <script is:inline>

@@ -295,70 +295,6 @@
         color: var(--color-ink-3);
         font-size: 11px;
       }
-      .service-menu-articles {
-        display: grid;
-        gap: 14px;
-      }
-      .service-menu-group h3 {
-        display: flex;
-        align-items: baseline;
-        gap: 8px;
-        margin: 0;
-        padding: 6px 2px;
-        color: var(--color-accent);
-        font-size: 13px;
-        font-weight: 700;
-      }
-      .service-menu-group h3 small {
-        color: var(--color-ink-3);
-        font-size: 11px;
-        font-weight: 400;
-      }
-      .nav-js .mainnav .service-menu-group ul {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 0;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-      .nav-js .mainnav .service-menu-group li {
-        display: block;
-        padding: 0;
-        border: 0;
-        background: transparent;
-      }
-      .mainnav .service-menu-group li a small {
-        display: block;
-        margin-top: 2px;
-        color: var(--color-ink-3);
-        font-size: 12px;
-        line-height: 1.5;
-      }
-      .service-menu-consult-panel h3 {
-        margin: 0;
-        padding: 6px 2px;
-        color: var(--color-accent);
-        font-size: 13px;
-        font-weight: 700;
-      }
-      .mainnav .service-menu-consult-panel .service-menu-consult {
-        display: block;
-        padding: 14px 16px;
-        background: var(--color-accent);
-        color: #fff;
-        font-size: 15px;
-        font-weight: 700;
-        text-align: center;
-      }
-      .mainnav .service-menu-group li a {
-        display: block;
-        padding: 8px 2px 8px 12px;
-        font-size: 14px;
-        line-height: 1.5;
-        white-space: normal;
-        overflow-wrap: anywhere;
-      }
       .service-menu-grid .service-preview--wide {
         grid-column: 1 / -1;
       }
@@ -736,33 +672,7 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 14px;
         }
-        .service-menu:has(.service-menu-articles) {
-          max-height: calc(100vh - 110px);
-          overflow-y: auto;
-          overscroll-behavior: contain;
-        }
-        .service-menu-articles {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 18px 28px;
-          align-items: start;
-        }
         /* 服務下拉（參考 deanlife.blog 桌機版）：左欄服務項目卡片，右欄諮詢區與醒目按鈕 */
-        .service-menu-articles--split {
-          grid-template-columns: minmax(0, 1fr) 280px;
-          gap: 10px 32px;
-        }
-        .service-menu-articles--split .service-menu-group {
-          grid-column: 1;
-          padding: 10px 14px;
-          border: 1px solid var(--color-rule-2);
-          background: var(--color-paper-2);
-        }
-        .service-menu-articles--split .service-menu-consult-panel {
-          grid-column: 2;
-          grid-row: 1 / span 3;
-          padding-left: 32px;
-          border-left: 1px solid var(--color-rule);
-        }
         .nav-js .mainnav .service-preview {
           grid-template-columns: 152px minmax(0, 1fr);
           column-gap: 18px;
