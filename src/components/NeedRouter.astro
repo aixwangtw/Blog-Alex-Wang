@@ -9,7 +9,7 @@ import githubLogo from '../assets/github-logo.svg';
 import questionBankShot from '../assets/need-router/question-bank-import-review.jpg';
 import teachingPhoto from '../assets/teaching-one-on-one.jpg';
 import taichungTalk from '../assets/taichung-talk.jpg';
-import { SERVICE_SITE, SITE } from '../consts';
+import { SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL } from '../consts';
 import { RESOURCE_EXAMPLES } from '../data/resources';
 
 interface Props {
@@ -40,7 +40,7 @@ const needs = [
     examples: ['Claude Code 系統開發', '簡單網頁', 'AI 動畫影片'],
     image: { src: teachingPhoto, alt: '一對一教學上課現場：學員與 Alex 拿著筆電', fit: 'cover', position: 'center 62%' },
     action: '看教學方案',
-    href: `${SERVICE_SITE.url}/course/`,
+    href: COURSE_SERVICE_URL,
   },
   {
     key: 'resources',
@@ -56,7 +56,7 @@ const needs = [
     examples: ['主題不限、可討論', 'TAIA 台灣人工智慧協會講座', 'MixerBox 講座'],
     image: { src: taichungTalk, alt: 'Alex 在台中演講的現場', fit: 'cover' },
     action: '邀請演講',
-    href: `${SERVICE_SITE.url}/services/speaking/`,
+    href: SPEAKING_SERVICE_URL,
   },
 ];
 ---

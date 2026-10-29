@@ -8,8 +8,8 @@
 import { getCollection } from 'astro:content';
 import { blogBannerPath } from '../lib/blog-banner';
 import { FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE } from '../data/resources';
-import { DEVELOPMENT_CAPABILITIES } from '../data/services';
-import { ARTICLE_EXCLUDED_TAGS, LINKS, SERVICE_SITE, SITE, articleGroupName } from '../consts';
+import { DEVELOPMENT_CAPABILITIES, ONE_ON_ONE_NAV_ITEMS, SPEAKING_KINDS } from '../data/services';
+import { ARTICLE_EXCLUDED_TAGS, COURSE_SERVICE_URL, LINE_CONSULT_LABEL, LINKS, SERVICE_SITE, SITE, SPEAKING_SERVICE_URL, articleGroupName } from '../consts';
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import LineIcon from './LineIcon.astro';
@@ -100,18 +100,18 @@ const navServiceCards: { href: string; title: string; items: string[]; image: Im
     imageAlt: '數學題庫系統的考卷匯入審核頁',
   },
   {
-    href: `${SERVICE_SITE.url}/course/`,
+    href: COURSE_SERVICE_URL,
     title: '一對一教學',
     // 「手把手完成自動化的設定，跑通後，安裝、開發、除錯、部署等都能自動化。」依原句拆開，再加教學頁的兩個方案
-    items: ['手把手完成自動化的設定', '跑通後，安裝、開發、除錯、部署等都能自動化', '簡單網頁', '動畫影片'],
+    items: ONE_ON_ONE_NAV_ITEMS,
     image: teachingPhoto,
     imageAlt: '一對一教學上課現場',
   },
   {
-    href: `${SERVICE_SITE.url}/services/speaking/`,
+    href: SPEAKING_SERVICE_URL,
     title: '演講',
     // 演講頁開頭的「公開演講／企業內訓／工作坊」
-    items: ['公開演講', '企業內訓', '工作坊'],
+    items: SPEAKING_KINDS,
     image: taichungTalk,
     imageAlt: 'Alex 在台中演講的現場',
   },
@@ -152,7 +152,7 @@ const DROPDOWN_NAV = [
     external: isMainSite,
     accent: true,
     subtitle: '系統開發、一對一教學、演講',
-    consult: { href: LINKS.line, label: 'LINE 免費諮詢' },
+    consult: { href: LINKS.line, label: LINE_CONSULT_LABEL },
     cards: navServiceCards,
   },
 ];

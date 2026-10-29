@@ -35,6 +35,11 @@ export const DEVELOPMENT_SERVICE = {
   aiCost: 'AI 費用依實際用量計算，評估時一起估算。',
 };
 
+// 服務頁網址與共用按鈕文字：頁首、頁尾、分流卡、客服索引、AI 文件都引用這裡，改這裡全站同步
+export const COURSE_SERVICE_URL = `${SERVICE_SITE.url}/course/`;
+export const SPEAKING_SERVICE_URL = `${SERVICE_SITE.url}/services/speaking/`;
+export const LINE_CONSULT_LABEL = 'LINE 免費諮詢';
+
 export const AUTHOR = {
   id: `${SITE.url}/about#person`,
   name: 'Alex',
@@ -231,7 +236,7 @@ export const LEARNING_ENTRY_LINKS = [
 
 export const GUIDED_ENTRY_LINKS = [
   {
-    href: `${SERVICE_SITE.url}/course/`,
+    href: COURSE_SERVICE_URL,
     title: '手把手帶你實戰',
     description: '一對一教學三個方案：系統開發、簡單網頁、動畫影片，用 Claude Code 對話完成。',
     analyticsKey: 'tutor',
@@ -248,7 +253,7 @@ export const COLLABORATION_ENTRY_LINKS = [
     analyticsLabel: '系統開發服務',
   },
   {
-    href: `${SERVICE_SITE.url}/services/speaking/`,
+    href: SPEAKING_SERVICE_URL,
     title: '邀請 AI 講師',
     description: '邀請 Alex 到公司、學校或社群分享。',
     analyticsKey: 'speaker',

@@ -24,25 +24,40 @@ export const CLASS_FORMATS = [
 // 教學內容：三個方案，一律依教學項目報價，不在站上寫金額
 export const TEACHING_CONTENT: {
   category: string;
+  /** 方案簡稱（頁首服務彈窗等只放短名稱的地方用） */
+  shortName: string;
   detail: string;
   pricing: string;
 }[] = [
   {
     category: '程式進階：系統開發',
+    shortName: '系統開發',
     detail: '用 Claude Code 寫一套系統，包含資料庫、Docker、架設主機、連線 Linux 環境、自動部署。',
     pricing: '依教學項目報價',
   },
   {
     category: '程式入門：簡單網頁',
+    shortName: '簡單網頁',
     detail: '用 Claude Code 寫出一個簡單網頁，在自己的電腦上打開。',
     pricing: '依教學項目報價',
   },
   {
     category: 'AI 動畫影片',
+    shortName: '動畫影片',
     detail: '用 Claude Code 對話，以開源工具 HyperFrames 做出動畫影片。',
     pricing: '依教學項目報價',
   },
 ];
+
+// 一對一教學的一句話介紹，與服務彈窗等處的條列（依原句拆成兩條，再接簡單網頁、動畫影片兩個方案）
+export const ONE_ON_ONE_POINTS = ['手把手完成自動化的設定', '跑通後，安裝、開發、除錯、部署等都能自動化'];
+export const ONE_ON_ONE_NAV_ITEMS = [
+  ...ONE_ON_ONE_POINTS,
+  ...TEACHING_CONTENT.filter((item) => item.shortName !== '系統開發').map((item) => item.shortName),
+];
+
+// 演講的三種形式：演講頁開頭與結構化資料、頁首服務彈窗共用
+export const SPEAKING_KINDS = ['公開演講', '企業內訓', '工作坊'];
 
 // 實際一對一教學案例（取自講師履歷）
 export const TEACHING_CASES = [

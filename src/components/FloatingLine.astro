@@ -1,5 +1,5 @@
 ---
-import { LINKS } from '../consts';
+import { LINKS, LINE_CONSULT_LABEL } from '../consts';
 
 interface Props {
   paired?: boolean;
@@ -13,9 +13,9 @@ const { paired = false } = Astro.props;
   href={LINKS.line}
   target="_blank"
   rel="noreferrer"
-  aria-label="加 LINE 免費諮詢（開新分頁）"
+  aria-label={`加 ${LINE_CONSULT_LABEL}（開新分頁）`}
   data-ga-button="floating_line"
-  data-ga-label="LINE 免費諮詢"
+  data-ga-label={LINE_CONSULT_LABEL}
   data-ga-location="floating_actions"
   data-ga-action="contact"
 >

@@ -1,7 +1,7 @@
 // 給 AI（ChatGPT、Claude、Perplexity 等）讀的純文字內容：llms.txt、llms-full.txt 與各主要頁面的 .md 版共用。
 // 所有內容都取自 consts.ts、src/data/ 與文章 FAQ 這些頁面本身也在用的資料，不另寫一份事實；
 // 改頁面資料，這裡會跟著變。不得在這裡加入站上沒有的價格、數字或案例。
-import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, SERVICE_SITE, SITE } from '../consts';
+import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL } from '../consts';
 import { EXPERIENCE } from '../data/instructor';
 import { HOME_FAQS, ONE_ON_ONE_FAQS, RESOURCES_FAQS, type Faq } from '../data/faqs';
 import {
@@ -45,13 +45,13 @@ export const AGENT_PAGES = {
   },
   course: {
     slug: 'course',
-    htmlUrl: `${SERVICE_SITE.url}/course/`,
+    htmlUrl: COURSE_SERVICE_URL,
     markdownUrl: `${SERVICE_SITE.url}/course.md`,
     title: '手把手帶你實戰：AI 一對一教學（Claude Code）',
   },
   speaking: {
     slug: 'services/speaking',
-    htmlUrl: `${SERVICE_SITE.url}/services/speaking/`,
+    htmlUrl: SPEAKING_SERVICE_URL,
     markdownUrl: `${SERVICE_SITE.url}/services/speaking.md`,
     title: 'AI 演講與企業內訓',
   },
@@ -90,7 +90,7 @@ ${EXPERIENCE.map((item) => `- ${item.text}`).join('\n')}
 
 ## 聯絡方式
 
-- LINE 免費諮詢（最快）：${LINKS.line}
+- ${LINE_CONSULT_LABEL}（最快）：${LINKS.line}
 - Email：${AUTHOR.email}
 - Facebook 社團：${LINKS.facebookGroup}`;
 }

@@ -6,7 +6,7 @@ import Cta from '../../components/Cta.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { AUTHOR, SERVICE_SITE, SITE, breadcrumbSchema, speakingBannerUrl } from '../../consts';
-import { SPEAKING_ENGAGEMENTS, SPEAKING_FORMATS } from '../../data/services';
+import { SPEAKING_ENGAGEMENTS, SPEAKING_FORMATS, SPEAKING_KINDS } from '../../data/services';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
 const schema = [
@@ -18,7 +18,7 @@ const schema = [
     '@type': 'Service',
     '@id': `${SERVICE_SITE.url}/services/speaking/#service`,
     name: 'AI 主題演講與企業內訓',
-    serviceType: '公開演講 / 企業內訓 / 工作坊',
+    serviceType: SPEAKING_KINDS.join(' / '),
     description:
       'Alex 提供 AI 主題的公開演講、企業內訓與實作工作坊，主題不限、可依需求討論，曾受 MixerBox、TAIA 台灣人工智慧協會等單位邀請演講。',
     provider: { '@id': AUTHOR.id },
@@ -57,7 +57,7 @@ const pageToc = [
 
     <section class="grid items-center gap-9 lg:grid-cols-[1fr_0.92fr] lg:gap-14">
       <div>
-        <p class="text-sm font-semibold text-accent">公開演講／企業內訓／工作坊</p>
+        <p class="text-sm font-semibold text-accent">{SPEAKING_KINDS.join('／')}</p>
         <h1 class="t-h1 mt-3 font-semibold text-ink">AI 演講與企業內訓邀約</h1>
         <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
           我是 <a href={`${SITE.url}/about/`} class="text-accent underline underline-offset-4">{AUTHOR.name}</a>，接受企業、學校與社群的

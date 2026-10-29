@@ -20,13 +20,7 @@
 // 2026-10：Course 結構化資料已移除（它的內容是 Agent 安裝與自動發文課程，站上不再提供）；
 // FAQPage 仍不在首頁，/faq/ 已經有了。
 // ============================================================
-import {
-  AUTHOR,
-  DEVELOPMENT_SERVICE,
-  SERVICE_SITE,
-  SITE,
-  pageBannerUrl,
-} from '../consts';
+import { AUTHOR, DEVELOPMENT_SERVICE, SERVICE_SITE, SITE, pageBannerUrl, COURSE_SERVICE_URL } from '../consts';
 import { getCollection } from 'astro:content';
 import FaqList from '../components/FaqList.astro';
 import NeedRouter from '../components/NeedRouter.astro';
@@ -113,7 +107,7 @@ const homeFaqs = HOME_FAQ_QUESTIONS.map((question) => {
             <div><dt>報價</dt><dd>依教學項目報價。</dd></div>
           </dl>
           <div class="development-cost-actions">
-            <a class="development-cost-primary" href={`${SERVICE_SITE.url}/course/`} data-ga-button="home_tutoring_course" data-ga-label="看一對一教學" data-ga-location="home_tutoring" data-ga-action="navigate">看教學內容與報價 <span aria-hidden="true">→</span></a>
+            <a class="development-cost-primary" href={COURSE_SERVICE_URL} data-ga-button="home_tutoring_course" data-ga-label="看一對一教學" data-ga-location="home_tutoring" data-ga-action="navigate">看教學內容與報價 <span aria-hidden="true">→</span></a>
           </div>
         </section>
 

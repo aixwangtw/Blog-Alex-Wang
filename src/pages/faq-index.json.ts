@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content';
-import { DEVELOPMENT_SERVICE, SERVICE_SITE } from '../consts';
+import { DEVELOPMENT_SERVICE, SERVICE_SITE, SPEAKING_SERVICE_URL } from '../consts';
 import { HOME_FAQS, ONE_ON_ONE_FAQS, RESOURCES_FAQS, type Faq } from '../data/faqs';
 
 // 右下角客服的 FAQ 索引：使用者輸入問題時，前端（public/faq-match.js）拿這份比對，
@@ -81,7 +81,7 @@ export async function GET() {
   add(HOME_FAQS, (faq) => ({
     q: faq.question,
     a: faq.answer,
-    u: `${SERVICE_SITE.url}/services/speaking/`,
+    u: SPEAKING_SERVICE_URL,
     p: '演講邀約',
     k: '演講 邀約 講課 內訓 委託 開發',
   }));
