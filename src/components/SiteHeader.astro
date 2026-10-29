@@ -64,9 +64,15 @@ const NAV_ICON_PATHS: Record<string, string> = {
   package: '<path d="M12 3 3.5 7.5v9L12 21l8.5-4.5v-9z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/>',
   doc: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
 };
-const navArticleGroups: { name: string; items: { href: string; title: string }[] }[] = [];
+// 不放進彈窗的文章（用 slug；文章本身與其他清單不受影響）
+const NAV_EXCLUDED_SLUGS: string[] = ['codex-cli-wsl2-windows'];
+// 額外補進某個分組的外部連結項目（另開新分頁）：開源工具補 grill-me 的 IG Reel
+const NAV_EXTRA_ITEMS: { group: string; title: string; href: string }[] = [
+  { group: '開源工具', title: GRILL_ME_RESOURCE.name, href: GRILL_ME_RESOURCE.instagramUrl },
+];
+const navArticleGroups: { name: string; items: { href: string; title: string; external?: boolean }[] }[] = [];
 for (const post of navPosts) {
-  if (ARTICLE_EXCLUDED_TAGS.includes(post.data.tags[0] ?? '')) continue;
+  if (ARTICLE_EXCLUDED_TAGS.includes(post.data.tags[0] ?? '') || NAV_EXCLUDED_SLUGS.includes(post.id)) continue;
   const name = articleGroupName(post.data.tags[0]);
   let group = navArticleGroups.find((item) => item.name === name);
   if (!group) {
@@ -74,6 +80,9 @@ for (const post of navPosts) {
     navArticleGroups.push(group);
   }
   group.items.push({ href: `/blog/${post.id}/`, title: post.data.title });
+}
+for (const extra of NAV_EXTRA_ITEMS) {
+  navArticleGroups.find((group) => group.name === extra.group)?.items.push({ href: extra.href, title: extra.title, external: true });
 }
 // 服務下拉（版面參考 deanlife.blog）：三張服務卡並列（系統開發、一對一教學、演講），右欄是諮詢。
 // 每張卡片只放大標題與「- 」項目清單，項目文字都取自既有頁面資料；簡單網頁、動畫影片是教學頁的方案，列在一對一教學底下。
@@ -247,7 +256,9 @@ const DROPDOWN_NAV = [
                               <li>
                                 <a
                                   class="dm-row"
-                                  href={withBase(post.href)}
+                                  href={post.external ? post.href : withBase(post.href)}
+                                  target={post.external ? '_blank' : undefined}
+                                  rel={post.external ? 'noreferrer' : undefined}
                                   data-ga-button={gaButton(`header_${menu.key}_item_${post.href.replace(/[^a-z0-9]+/gi, '_')}`)}
                                   data-ga-label={post.title}
                                   data-ga-location={gaLocation(`header_${menu.key}_dropdown`)}
@@ -412,7 +423,8 @@ const DROPDOWN_NAV = [
   .mainnav .dm-card { display: block; padding: 8px 2px; color: var(--color-ink); white-space: normal; }
   .dm-card-img { display: none; flex: none; width: 96px; height: 96px; border-radius: 4px; object-fit: cover; }
   .dm-card-copy { display: grid; min-width: 0; gap: 2px; }
-  .dm-card-copy strong { font-size: 16px; font-weight: 600; line-height: 1.4; }
+  .dm-card-copy { align-content: start; }
+  .dm-card-copy strong { margin-bottom: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; }
   .dm-card-copy span { color: var(--color-ink-3); font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
   .dm-card-copy span::before { content: '- '; }
   /* 諮詢區（參考 Dean 右欄：標題下面一整塊填滿欄高，大按鈕放在裡面）：底色用 LINE 綠，沒有放圖 */
