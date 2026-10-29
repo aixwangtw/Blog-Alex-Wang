@@ -2,7 +2,7 @@
 <p>Claude Code 要 Pro 以上的付費方案才能用，Claude 免費版不含。三種裝法挑一種就好，看你平常怎麼工作：</p>
 <ul>
 <li>不想打指令：選桌面版，全程不用打指令。</li>
-<li>平常用 VS Code：選擴充套件，邊做邊看程式碼。</li>
+<li>平常用 VS Code：選 VS Code 外掛（介面上叫「擴充功能」，英文是 extension），邊做邊看程式碼。</li>
 <li>習慣在終端機工作：選 CLI（終端機畫面），裝好直接輸入 <code>claude</code>。</li>
 </ul>
 <p>Windows 和 Mac 都能裝。電腦要 Windows 10（1809 版）以上或 macOS 13 以上，記憶體 4 GB 以上。<a href="https://code.claude.com/docs/en/setup">Claude Code 官方安裝說明</a></p>
@@ -20,17 +20,17 @@
 </ol>
 <p><img src="/images/blog/claude-code-install/02-claude-download-windows.png" alt="在 Claude 下載頁選擇作業系統並按 Download"></p>
 <p>桌面版已經包含 Claude Code，不用另外裝 Node.js 或 CLI 版。想在終端機輸入 <code>claude</code>，要再照下面的 CLI 裝法裝一次。<a href="https://code.claude.com/docs/en/desktop-quickstart">官方桌面版說明</a></p>
-<h3 id="vs-code-擴充套件">VS Code 擴充套件</h3>
+<h3 id="vs-code-外掛">VS Code 外掛</h3>
 <p>VS Code 要 1.94.0 以上。還沒裝的話，先裝好：</p>
 [[snippet:vscode-install]]
-<p>VS Code 準備好之後，安裝 Claude Code 擴充套件：</p>
+<p>VS Code 準備好之後，安裝 Claude Code 外掛：</p>
 <ol>
-<li>在 VS Code 按 <code>Ctrl + Shift + X</code>（Mac 為 <code>Cmd + Shift + X</code>）打開擴充套件，搜尋 <code>Claude Code</code>。</li>
+<li>在 VS Code 按 <code>Ctrl + Shift + X</code>（Mac 為 <code>Cmd + Shift + X</code>）打開擴充功能（Extensions）面板，搜尋 <code>Claude Code</code>。</li>
 <li>確認名稱是 Claude Code for VS Code、發行者是 <strong>Anthropic</strong> 而且有藍色驗證勾勾，再按 Install。先確認發行者，才不會裝到別人做的套件。</li>
 <li>點左側活動列的 Claude Code 圖示打開面板，按 Sign in，在瀏覽器完成授權。</li>
 </ol>
-<p><img src="/images/blog/claude-code-install/03-vscode-marketplace-claude-code.png" alt="在擴充套件商店確認紅框標示的名稱與發行者 Anthropic"></p>
-<p>擴充套件自己帶一份 Claude Code，只給聊天面板用。想在 VS Code 的終端機輸入 <code>claude</code>，一樣要另外照下面的 CLI 裝法裝。<a href="https://code.claude.com/docs/en/vs-code">官方 VS Code 說明</a></p>
+<p><img src="/images/blog/claude-code-install/03-vscode-marketplace-claude-code.png" alt="在擴充功能（Extensions）面板確認紅框標示的名稱與發行者 Anthropic"></p>
+<p>外掛自己帶一份 Claude Code，只給聊天面板用。想在 VS Code 的終端機輸入 <code>claude</code>，一樣要另外照下面的 CLI 裝法裝。<a href="https://code.claude.com/docs/en/vs-code">官方 VS Code 說明</a></p>
 <h3 id="cli終端機畫面">CLI（終端機畫面）</h3>
 <p>Windows 開 Windows PowerShell（不要選後面有 x86 的那個），貼上：</p>
 <pre data-code-kind="terminal" data-code-label="終端機"><code class="language-powershell">irm https://claude.ai/install.ps1 | iex
@@ -50,7 +50,7 @@
 </code></pre>
 <p>出現「找不到 claude」之類的訊息，照文末<a href="#安裝卡住怎麼辦">安裝卡住怎麼辦</a>，把錯誤貼給 AI。</p>
 <h2 id="第三步啟動並登入">第三步：啟動並登入</h2>
-<p>桌面版和 VS Code 擴充套件在上一步已經登入，可以跳過這一步。</p>
+<p>桌面版和 VS Code 外掛在上一步已經登入，可以跳過這一步。</p>
 <p>CLI 版要先進到專案資料夾再啟動，Claude Code 才讀得到你的檔案。資料夾名稱換成你自己的：</p>
 <pre data-code-kind="terminal" data-code-label="終端機"><code class="language-bash">cd 你的專案資料夾
 claude
@@ -72,7 +72,7 @@ claude
 <pre data-code-kind="prompt" data-code-label="提示詞"><code class="language-prompt">我在安裝 Claude Code 時卡住了，請幫我排除。
 安裝教學：https://aixwang.dev/blog/claude-code-install/
 作業系統：（Windows 10、Windows 11 或 macOS）
-安裝方式：（桌面版、VS Code 擴充套件或 CLI）
+安裝方式：（桌面版、VS Code 外掛或 CLI）
 做到哪一步：（寫你卡在哪裡）
 （在這裡貼上完整錯誤訊息）
 </code></pre>
