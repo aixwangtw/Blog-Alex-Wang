@@ -57,7 +57,7 @@ export const RESOURCES_FAQS: Faq[] = [
   {
     question: 'Windows 新手應該先安裝哪一種 Codex？',
     answer:
-      '先安裝 VS Code 與官方 Codex 插件，完成登入並開啟一個專案資料夾，就能用自然語言請 AI 協助。免費資源頁不要求先裝 CLI 或 WSL2；等真的需要終端機或 Linux 專案時再補即可。',
+      '先安裝 VS Code 與官方 Codex 外掛，完成登入並開啟一個專案資料夾，就能用自然語言請 AI 協助。免費資源頁不要求先裝 CLI 或 WSL2；等真的需要終端機或 Linux 專案時再補即可。',
   },
   {
     question: 'grill-me Skill 怎麼安裝？',

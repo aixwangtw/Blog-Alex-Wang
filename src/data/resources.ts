@@ -14,10 +14,10 @@ export const RESOURCES_INTRO =
 export const CODEX_RESOURCE = {
   heading: '第一步：先安裝 Codex',
   intro:
-    'Codex 是後面安裝 Skills、執行開源工具與處理錯誤的入口。Windows 新手先用 VS Code 官方 Codex 插件完成安裝、登入與第一次對話，不必一開始碰終端機或額外準備 Linux 環境。',
+    'Codex 是後面安裝 Skills、執行開源工具與處理錯誤的入口。Windows 新手先用 VS Code 官方 Codex 外掛完成安裝、登入與第一次對話，不必一開始碰終端機或額外準備 Linux 環境。',
   articleHref: '/blog/codex-windows-wsl-install/',
   label: '新手先看',
-  title: 'VS Code＋Codex 插件版',
+  title: 'VS Code＋Codex 外掛版',
   description: '不用先碰終端機，完成安裝、登入與第一次對話。',
 };
 
