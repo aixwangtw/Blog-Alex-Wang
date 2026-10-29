@@ -1,7 +1,7 @@
 ---
 import { findMarkdownAlternate } from '../lib/agent-docs';
-import LineIcon from '../components/LineIcon.astro';
-import { DEVELOPMENT_SERVICE, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
+import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl } from '../consts';
+import SiteHeader from '../components/SiteHeader.astro';
 import FloatingLine from '../components/FloatingLine.astro';
 import '../styles/global.css';
 
@@ -29,14 +29,6 @@ const markdownAlternate = findMarkdownAlternate(canonical.href);
 const serviceHomeHref = import.meta.env.DEV ? '/services/' : '/';
 // 開發案例＝主站的題庫系統案例文章（服務站與主站不同網域，必須帶完整網址）
 const developmentCaseHref = `${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`;
-const serviceLinks = [
-  {
-    href: '/services/development/',
-    eyebrow: '系統開發',
-    title: '客製系統開發',
-    description: 'AI 導入、資料管理、API 串接，先免費看簡易 Demo 再決定；代表案例：數學題庫系統。',
-  },
-];
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -190,132 +182,7 @@ const jsonLd = {
   <body class="min-h-screen bg-paper font-display text-ink antialiased">
     <a class="service-skip" href="#main">跳到主要內容</a>
 
-    <header class="service-header" id="service-header" data-open="false">
-      <div class="service-header-inner">
-        <a class="service-brand" href={serviceHomeHref} aria-label={`${SERVICE_SITE.title} 首頁`}>
-          <img src="/aixwang-icon.png" width="30" height="30" alt="" aria-hidden="true" />
-          <span><strong>AIX</strong><small>系統開發</small></span>
-        </a>
-
-        <button
-          class="service-menu-toggle"
-          id="service-menu-toggle"
-          type="button"
-          aria-expanded="false"
-          aria-controls="service-mainnav"
-          aria-label="開啟選單"
-          data-ga-button="service_mobile_menu"
-          data-ga-label="服務站手機選單"
-          data-ga-location="service_header"
-          data-ga-action="toggle_menu"
-        >
-          <i></i><i></i>
-        </button>
-
-        <nav class="service-mainnav" id="service-mainnav" aria-label="服務站主要導覽">
-          <a href={serviceHomeHref}>服務首頁</a>
-          <details class="service-mega" id="service-mega">
-            <summary>
-              <span>服務項目</span>
-              <span class="service-mega-cue" aria-hidden="true">▾</span>
-            </summary>
-            <div class="service-mega-panel">
-              <div class="service-mega-intro">
-                <strong>服務項目</strong>
-              </div>
-              <div class="service-mega-grid">
-                {serviceLinks.map((item, index) => (
-                  <a href={item.href}>
-                    <span class="service-mega-number">0{index + 1}</span>
-                    <span>
-                      <small>{item.eyebrow}</small>
-                      <strong>{item.title}</strong>
-                      <span>{item.description}</span>
-                    </span>
-                    <b aria-hidden="true">→</b>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </details>
-          <a href={developmentCaseHref} data-ga-button="service_header_case" data-ga-label="開發案例" data-ga-location="service_header" data-ga-action="navigate">開發案例</a>
-          <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="service_header_book" data-ga-label="聊聊需求" data-ga-location="service_header" data-ga-action="external"><LineIcon class="service-book-icon" />聊聊需求</a>
-        </nav>
-      </div>
-    </header>
-
-    <script is:inline>
-      (function () {
-        try {
-          var header = document.getElementById('service-header');
-          var toggle = document.getElementById('service-menu-toggle');
-          var nav = document.getElementById('service-mainnav');
-          var mega = document.getElementById('service-mega');
-          if (!header || !toggle || !nav || !mega) return;
-          var desktop = window.matchMedia('(min-width: 900px)');
-
-          function setOpen(open) {
-            if (desktop.matches) open = true;
-            header.dataset.open = open ? 'true' : 'false';
-            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-            toggle.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
-          }
-
-          toggle.addEventListener('click', function () {
-            setOpen(toggle.getAttribute('aria-expanded') !== 'true');
-          });
-          nav.addEventListener('click', function (event) {
-            if (!desktop.matches && event.target.closest('a')) setOpen(false);
-          });
-          var hoverMenu = window.matchMedia('(min-width: 900px) and (hover:hover) and (pointer:fine)');
-          var closeTimer;
-          var summary = mega.querySelector('summary');
-          mega.addEventListener('mouseenter', function () {
-            if (!hoverMenu.matches) return;
-            window.clearTimeout(closeTimer);
-            mega.setAttribute('open', '');
-          });
-          mega.addEventListener('mouseleave', function () {
-            if (!hoverMenu.matches) return;
-            closeTimer = window.setTimeout(function () { mega.removeAttribute('open'); }, 120);
-          });
-          summary.addEventListener('click', function (event) {
-            if (!hoverMenu.matches) return;
-            event.preventDefault();
-            mega.setAttribute('open', '');
-          });
-          mega.addEventListener('focusin', function () {
-            if (desktop.matches) mega.setAttribute('open', '');
-          });
-          mega.addEventListener('focusout', function () {
-            window.setTimeout(function () {
-              if (!mega.contains(document.activeElement)) mega.removeAttribute('open');
-            }, 0);
-          });
-          document.addEventListener('click', function (event) {
-            if (mega.open && !mega.contains(event.target)) mega.removeAttribute('open');
-            if (!desktop.matches && header.dataset.open === 'true' && !header.contains(event.target)) setOpen(false);
-          });
-          document.addEventListener('keydown', function (event) {
-            if (event.key !== 'Escape') return;
-            if (mega.open) {
-              mega.removeAttribute('open');
-              mega.querySelector('summary').focus();
-            } else if (!desktop.matches && header.dataset.open === 'true') {
-              setOpen(false);
-              toggle.focus();
-            }
-          });
-          var sync = function () { setOpen(desktop.matches); };
-          if (desktop.addEventListener) desktop.addEventListener('change', sync);
-          else desktop.addListener(sync);
-          setOpen(desktop.matches);
-          document.documentElement.classList.add('service-nav-js');
-        } catch (error) {
-          /* JavaScript 失敗時保持初始 HTML 導覽可見可用。 */
-        }
-      })();
-    </script>
+    <SiteHeader site="service" homeHref={serviceHomeHref} />
 
     <FloatingLine />
 
@@ -345,46 +212,14 @@ const jsonLd = {
     </footer>
 
     <style is:global>
-      :root { --service-header-height: 76px; }
       .service-skip { position:absolute; left:-9999px; top:0; z-index:100; padding:10px 16px; background:var(--color-ink); color:#fff; }
       .service-skip:focus { left:12px; top:12px; }
-      .service-header { position:sticky; top:0; z-index:50; border-bottom:1px solid var(--color-rule); background:rgb(247 245 241 / 94%); backdrop-filter:blur(14px); }
-      .service-header-inner { display:flex; min-height:var(--service-header-height); width:min(1200px, 100%); margin:auto; padding:0 24px; align-items:center; justify-content:space-between; gap:24px; }
       .service-brand { display:inline-flex; align-items:center; gap:10px; color:var(--color-ink); text-decoration:none; }
       .service-brand img { width:30px; height:30px; }
       .service-brand > span { display:flex; align-items:center; gap:5px; line-height:1; }
       .service-brand strong, .service-brand small { font-family:inherit; font-size:18px; font-weight:700; }
       .service-brand strong { letter-spacing:.16em; }
       .service-brand small { padding:2px 3px 1px; border:1px solid currentColor; color:inherit; line-height:1; letter-spacing:.04em; white-space:nowrap; }
-      .service-mainnav { display:flex; align-items:center; gap:30px; }
-      .service-mainnav > a, .service-mega summary { color:var(--color-ink); font-size:15px; font-weight:650; text-decoration:none; white-space:nowrap; }
-      .service-mainnav > a span { margin-left:4px; font-size:12px; }
-      .service-mega summary { display:flex; align-items:center; gap:6px; cursor:pointer; list-style:none; }
-      .service-mega summary::-webkit-details-marker { display:none; }
-      .service-mega-cue { color:var(--color-accent); font-size:15px; transition:transform .2s ease; }
-      .service-mega[open] .service-mega-cue { transform:rotate(180deg); }
-      /* 頁首按鈕：LINE 綠底白字＋LINE 圖示，連官方 LINE，邀請系統開發諮詢。
-         LineIcon 是子元件，svg 不吃本檔 scoped 樣式，所以這段放在 is:global 並固定寬高，避免圖示被 flex 壓扁變形。
-         手機版選單不放這顆，改由右下 FloatingLine 承接。 */
-      .service-mainnav > a.service-book { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 18px; border:1px solid #06c755; border-radius:6px; background:#06c755; color:#fff; transition:background-color .18s ease, border-color .18s ease; }
-      .service-book .service-book-icon { display:block; flex:none; width:18px; height:18px; }
-      .service-menu-toggle { display:none; width:44px; height:44px; border:1px solid var(--color-rule-3); border-radius:6px; background:var(--color-ink); place-items:center; position:relative; }
-      .service-menu-toggle i { position:absolute; width:16px; height:1.5px; background:var(--color-paper); transition:transform .2s ease, top .2s ease; }
-      .service-menu-toggle i:first-child { top:17px; }
-      .service-menu-toggle i:last-child { top:25px; }
-      .service-menu-toggle[aria-expanded='true'] i:first-child { top:21px; transform:rotate(45deg); }
-      .service-menu-toggle[aria-expanded='true'] i:last-child { top:21px; transform:rotate(-45deg); }
-      .service-mega-panel { position:fixed; top:var(--service-header-height); left:50%; display:grid; grid-template-columns:250px 1fr; gap:28px; width:min(920px, calc(100vw - 40px)); padding:28px; border:1px solid var(--color-rule-2); background:rgb(247 245 241 / 99%); box-shadow:0 28px 60px rgb(22 22 26 / 16%); transform:translateX(-50%); }
-      .service-mega-intro { padding:6px 20px 6px 2px; border-right:1px solid var(--color-rule); }
-      .service-mega-intro strong { display:block; font:600 23px/1.35 var(--font-serif, serif); }
-      .service-mega-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
-      .service-mega-grid > a { display:grid; grid-template-columns:32px minmax(0, 1fr) 18px; gap:10px; align-items:start; padding:18px; border:1px solid var(--color-rule-2); color:var(--color-ink); text-decoration:none; transition:background .18s ease, border-color .18s ease; }
-      .service-mega-number { color:var(--color-accent); font:700 11px/1.3 ui-monospace, monospace; }
-      .service-mega-grid a > span:nth-child(2) { display:grid; gap:5px; }
-      .service-mega-grid small { color:var(--color-accent); font-size:10px; line-height:1.4; }
-      .service-mega-grid strong { font-size:17px; line-height:1.4; }
-      .service-mega-grid a span span { color:var(--color-ink-3); font-size:12px; line-height:1.65; }
-      .service-mega-grid b { color:var(--color-accent); font-weight:400; }
       .service-footer { margin-top:96px; padding:54px 24px 28px; background:var(--color-ink); color:#fff; }
       .service-footer > div { display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:48px; width:min(1120px, 100%); margin:auto; }
       .service-footer .service-brand { color:#fff; }
@@ -393,35 +228,11 @@ const jsonLd = {
       .service-footer section > a:not(.service-brand) { display:block; margin-top:9px; color:#fff; font-size:14px; text-decoration:none; }
       .service-footer section > a.service-footer-minor { color:#bdb9b3; font-size:12px; }
       .service-footer > p { width:min(1120px, 100%); margin:38px auto 0; padding-top:18px; border-top:1px solid #3b3939; color:#8f8b86; font:11px/1.4 ui-monospace, monospace; }
-      @media (hover:hover) and (pointer:fine) {
-        .service-mainnav > a:not(.service-book):hover, .service-mega summary:hover { color:var(--color-accent); }
-        .service-mainnav > a.service-book:hover { border-color:#05b34c; background:#05b34c; color:#fff; }
-        .service-mega-grid > a:hover { border-color:var(--color-accent-line-2); background:var(--color-accent-tint); }
-      }
       @media (max-width:899px) {
-        :root { --service-header-height: 70px; }
-        .service-header { top:0; margin:12px 16px 0; border:1px solid var(--color-rule-2); border-radius:8px; background:rgb(247 245 241 / 98%); }
-        .service-header-inner { min-height:68px; flex-wrap:wrap; padding:0 12px 0 16px; gap:0; }
-        .service-menu-toggle { display:grid; }
-        .service-mainnav { flex-basis:100%; order:3; display:grid; max-height:calc(100dvh - 106px); gap:0; overflow-y:auto; overscroll-behavior:contain; padding:6px 0 16px; }
-        .service-nav-js .service-mainnav { display:none; }
-        .service-nav-js .service-header[data-open='true'] .service-mainnav { display:grid; }
-        .service-mainnav > a, .service-mega summary { display:flex; min-height:52px; align-items:center; justify-content:space-between; border-top:1px solid var(--color-rule); font-size:16px; }
-        .service-mainnav > a.service-book { display:none; }
-        .service-mega-panel { position:static; display:block; width:100%; padding:0 0 10px; border:0; box-shadow:none; transform:none; }
-        .service-mega-intro { display:none; }
-        .service-mega-grid { grid-template-columns:1fr; }
-        .service-mega-grid > a { padding:15px; }
         .service-footer > div { grid-template-columns:1fr; gap:34px; }
       }
       @media (max-width:360px) {
-        .service-header { margin-inline:12px; }
-        .service-header-inner { padding-left:14px; padding-right:10px; }
         .service-brand strong, .service-brand small { font-size:16px; }
-        .service-mega-grid > a { grid-template-columns:28px minmax(0, 1fr) 14px; gap:8px; padding:13px 10px; }
-      }
-      @media (prefers-reduced-motion:reduce) {
-        .service-menu-toggle i, .service-mega-cue { transition:none; }
       }
     </style>
   </body>

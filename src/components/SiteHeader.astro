@@ -1,0 +1,644 @@
+---
+// 共用頁首：主站（Base.astro）與服務站（ServiceBase.astro）共用同一份導覽、文章與服務彈窗。
+// 兩站差異只用 props 處理：
+// - site：'main' 主站；'service' 服務站（站內連結改成主站完整網址，服務連結不另開新分頁）
+// - showSearch：搜尋框只在主站顯示（它要搭配 Base.astro 的客服面板與搜尋腳本）
+// - homeHref：logo 連結（主站 /；服務站為服務首頁）
+// 樣式在 src/styles/site-chrome.css（含頁尾與客服面板，Base 也會引入）；導覽腳本在本檔最下方。
+import { getCollection } from 'astro:content';
+import { blogBannerPath } from '../lib/blog-banner';
+import { FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE } from '../data/resources';
+import { TEACHING_CONTENT } from '../data/services';
+import { LINKS, SERVICE_SITE, SITE } from '../consts';
+import '../styles/site-chrome.css';
+
+interface Props {
+  site?: 'main' | 'service';
+  showSearch?: boolean;
+  homeHref?: string;
+}
+
+const { site = 'main', showSearch = false, homeHref = '/' } = Astro.props;
+const isMainSite = site === 'main';
+// 服務站的站內連結要回主站網域；主站維持相對連結
+const siteBase = isMainSite ? '' : SITE.url;
+const withBase = (href: string) => (href.startsWith('/') ? `${siteBase}${href}` : href);
+
+// 頁首導覽不放「首頁」：字標本身就是回首頁的連結，重複一次是浪費連結預算。
+// 頁尾導覽（FOOTER_NAV）依同一套分類分組，「首頁」放在「關於」組。
+const HEADER_NAV = [
+  { href: '/about/', label: '關於' },
+];
+const CLAIM_INSTALL_HINT = '貼給你的 AI Agent，說「幫我安裝」';
+// 服務只剩系統開發一項，不需要下拉，頁首直接放一顆強調色連結
+const SERVICE_NAV_LINK = {
+  key: 'services',
+  label: '服務',
+  href: `${SERVICE_SITE.url}/services/development/`,
+};
+// 文章下拉：列出所有已發布（非 unlisted）文章，依第一個標籤分組（部落格列表卡片也用第一個標籤當分類字）。
+// 分組順序依「該組最新文章」由新到舊，組內也是新到舊；沒有標籤的文章歸「其他」。
+const navPosts = (await getCollection('blog', ({ data }) => !data.unlisted)).sort(
+  (a, b) =>
+    b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
+    (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
+);
+const navArticleGroups: { name: string; items: { href: string; title: string }[] }[] = [];
+for (const post of navPosts) {
+  const name = post.data.tags[0] ?? '其他';
+  let group = navArticleGroups.find((item) => item.name === name);
+  if (!group) {
+    group = { name, items: [] };
+    navArticleGroups.push(group);
+  }
+  group.items.push({ href: `/blog/${post.id}/`, title: post.data.title });
+}
+// 服務下拉：三個服務並列（系統開發、一對一教學、演講）；簡單網頁、動畫影片是教學頁的方案，放在一對一教學底下。
+// 這兩項沒有獨立頁，連到教學頁的方案清單（/course/#course-content）；說明文字取自既有資料（TEACHING_CONTENT）。
+const navServiceGroups: { name: string; items: { href: string; title: string; desc?: string }[] }[] = [
+  {
+    name: '系統開發',
+    items: [
+      { href: `${SERVICE_SITE.url}/services/development/`, title: '客製系統開發', desc: '後台管理系統、LINE LIFF 網頁、CRM 客戶管理系統、題庫系統、AI 客服與 AI 自動化。' },
+    ],
+  },
+  {
+    name: '一對一教學',
+    items: [
+      { href: `${SERVICE_SITE.url}/course/`, title: '一對一教學總覽', desc: '手把手完成自動化的設定，跑通後，安裝、開發、除錯、部署等都能自動化。' },
+      { href: `${SERVICE_SITE.url}/course/#course-content`, title: '簡單網頁', desc: TEACHING_CONTENT.find((item) => item.category.includes('簡單網頁'))?.detail },
+      { href: `${SERVICE_SITE.url}/course/#course-content`, title: '動畫影片', desc: TEACHING_CONTENT.find((item) => item.category.includes('動畫影片'))?.detail },
+    ],
+  },
+  {
+    name: '演講',
+    items: [
+      { href: `${SERVICE_SITE.url}/services/speaking/`, title: 'AI 演講與企業內訓' },
+    ],
+  },
+];
+const DROPDOWN_NAV = [
+  {
+    key: 'articles',
+    label: '文章',
+    href: '/blog/',
+    subtitle: `全部 ${navPosts.length} 篇，依分類列出`,
+    groups: navArticleGroups,
+    previews: [
+      {
+        href: '/blog/math-teacher-question-bank/',
+        eyebrow: '系統開發案例',
+        title: '數學題庫系統',
+        description: '補習班老師用的題庫系統：AI 辨識考卷、AI 詳解；AI 出題可在 Demo 體驗。',
+        image: blogBannerPath('math-teacher-question-bank'),
+        cta: '閱讀案例介紹',
+        wide: true,
+      },
+    ],
+  },
+  {
+    key: 'resources',
+    label: '領取',
+    href: '/resources/',
+    subtitle: '免費教學影片、Skills 與學習路線',
+    previews: [
+      { ...GRILL_ME_RESOURCE.nav, navIcon: GRILL_ME_RESOURCE.nav.image, repo: GRILL_ME_RESOURCE.repoUrl },
+      { ...FEEDBACK_DESK_RESOURCE.nav, navIcon: FEEDBACK_DESK_RESOURCE.nav.image, repo: FEEDBACK_DESK_RESOURCE.repoUrl },
+    ],
+  },
+  {
+    key: 'services',
+    label: SERVICE_NAV_LINK.label,
+    href: SERVICE_NAV_LINK.href,
+    external: isMainSite,
+    accent: true,
+    subtitle: '系統開發、一對一教學、演講',
+    consult: { href: LINKS.line, label: 'LINE 免費諮詢' },
+    groups: navServiceGroups,
+  },
+];
+---
+
+<header class="site-header" id="site-header" data-open="false">
+  <div class="hd-cap">
+    <a
+      class="hd-mark"
+      href={homeHref}
+      aria-label={`回首頁 — ${SITE.title}`}
+      data-ga-button="header_logo"
+      data-ga-label="Aix Logo"
+      data-ga-location="header"
+      data-ga-action="home"
+    >
+      <img class="hd-logo" src="/aixwang-icon.png" width="24" height="24" alt="" aria-hidden="true" />
+      <span class="hd-mark-t">Aix</span>
+    </a>
+
+    {showSearch && (
+    <form
+      class="nav-search-form"
+      id="search-chat-form"
+      role="search"
+      data-ga-submit="search_chat_submit"
+      data-ga-label="搜尋站內內容"
+      data-ga-location="search_chat"
+      data-ga-action="search"
+      data-ga-input="#site-search"
+    >
+      <label class="sr-only" for="site-search">搜尋文章、常見問題</label>
+      <button type="submit" class="nav-search-submit" aria-label="送出搜尋" title="送出搜尋">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
+      </button>
+      <input
+        id="site-search"
+        type="search"
+        autocomplete="off"
+        enterkeyhint="search"
+        placeholder="搜尋文章、常見問題…"
+        aria-controls="search-chat-panel"
+        aria-haspopup="dialog"
+        data-ga-button="search_chat_toggle"
+        data-ga-label="搜尋與客服"
+        data-ga-location="header_nav"
+        data-ga-action="open_search"
+      />
+    </form>
+    )}
+
+    <nav class="mainnav" id="mainnav" aria-label="主要導覽">
+      <ul>
+        {HEADER_NAV.map((item) => (
+          <li>
+            <a
+              href={withBase(item.href)}
+              data-ga-button="header_about"
+              data-ga-label={item.label}
+              data-ga-location="header_nav"
+              data-ga-action="navigate"
+            >{item.label}</a>
+          </li>
+        ))}
+        {DROPDOWN_NAV.map((menu) => (
+          <li class:list={['service-nav-item', { 'service-nav-item--accent': menu.accent }]}>
+            <div class:list={['service-nav-shell', { 'service-nav-shell--split': menu.href }]}>
+              {menu.href && (
+                <a
+                  class="service-nav-direct"
+                  href={withBase(menu.href)}
+                  target={'external' in menu && menu.external ? '_blank' : undefined}
+                  rel={'external' in menu && menu.external ? 'noreferrer' : undefined}
+                  aria-label={'external' in menu && menu.external ? `${menu.label}（另開新頁籤）` : undefined}
+                  data-ga-button={`header_${menu.key}`}
+                  data-ga-label={menu.label}
+                  data-ga-location="header_nav"
+                  data-ga-action="navigate"
+                >{menu.label}</a>
+              )}
+              <details class="service-nav nav-dropdown" id={`nav-dropdown-${menu.key}`}>
+                <summary
+                  aria-label={menu.href ? `展開${menu.label}分類` : undefined}
+                  data-ga-button={`header_${menu.key}_dropdown`}
+                  data-ga-label={`${menu.label}下拉`}
+                  data-ga-location="header_nav"
+                  data-ga-action="toggle_dropdown"
+                >
+                  <span class:list={{ 'sr-only': menu.href }}>{menu.label}</span>
+                  <span class="service-nav-mark" aria-hidden="true">▾</span>
+                </summary>
+                <div class="service-menu service-menu--featured">
+                  <div class="service-menu-head">
+                    <span>{menu.label}</span>
+                    <small>{menu.subtitle}</small>
+                  </div>
+                  {'groups' in menu && (
+                    <div class:list={['service-menu-articles', { 'service-menu-articles--split': 'consult' in menu }]}>
+                      {(menu.groups ?? []).map((group) => (
+                        <section class="service-menu-group">
+                          <h3>{group.name}<small>{group.items.length}</small></h3>
+                          <ul>
+                            {group.items.map((post) => (
+                              <li>
+                                <a
+                                  href={withBase(post.href)}
+                                  target={'external' in menu && menu.external ? '_blank' : undefined}
+                                  rel={'external' in menu && menu.external ? 'noreferrer' : undefined}
+                                  data-ga-button={`header_${menu.key}_item_${post.href.replace(/[^a-z0-9]+/gi, '_')}`}
+                                  data-ga-label={post.title}
+                                  data-ga-location={`header_${menu.key}_dropdown`}
+                                  data-ga-action="open_content"
+                                >{post.title}{'desc' in post && post.desc && <small>{post.desc}</small>}</a>
+                              </li>
+                            ))}
+                          </ul>
+                        </section>
+                      ))}
+                      {'consult' in menu && menu.consult && (
+                        <div class="service-menu-consult-panel">
+                          <h3>諮詢</h3>
+                          <a
+                            class="service-menu-consult"
+                            href={menu.consult.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            data-ga-button="header_services_consult"
+                            data-ga-label={menu.consult.label}
+                            data-ga-location="header_services_dropdown"
+                            data-ga-action="contact"
+                          >{menu.consult.label} <span aria-hidden="true">→</span></a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {!('groups' in menu) && (
+                  <div class="service-menu-grid">
+                    {menu.previews.map((item, itemIndex) => (
+                      <div
+                        class:list={['service-preview', {
+                          'service-preview--icon': 'navIcon' in item,
+                          'service-preview--wide': 'wide' in item,
+                        }]}
+                      >
+                        <a
+                          class="service-preview-main"
+                          href={withBase(item.href)}
+                          target={'external' in item && item.external ? '_blank' : undefined}
+                          rel={'external' in item && item.external ? 'noreferrer' : undefined}
+                          data-ga-button={`header_${menu.key}_card_${itemIndex + 1}`}
+                          data-ga-label={item.title}
+                          data-ga-location={`header_${menu.key}_dropdown`}
+                          data-ga-action="open_content"
+                        >
+                          <img src={item.image} alt="" width="1200" height="630" loading="lazy" />
+                          <span class="service-preview-copy">
+                            <small>{item.eyebrow}</small>
+                            <strong>{item.title}</strong>
+                            <span>{item.description}</span>
+                            {item.cta !== '領取' && (
+                              <b class="service-preview-cta">{item.cta}<span aria-hidden="true">→</span></b>
+                            )}
+                          </span>
+                        </a>
+                        {item.cta === '領取' && 'repo' in item && (
+                          <span class="service-preview-actions">
+                            <button
+                              type="button"
+                              class="service-preview-cta"
+                              data-copy-repo={item.repo}
+                              data-copy-hint={CLAIM_INSTALL_HINT}
+                              data-ga-button={`header_resources_claim_${itemIndex + 1}`}
+                              data-ga-label={item.title}
+                              data-ga-location="header_resources_dropdown"
+                              data-ga-action="copy_repo"
+                              aria-label={`複製 ${item.title} Repo 連結`}
+                            ><span class="service-preview-cta-label">領取</span><span aria-hidden="true">→</span></button>
+                            <em>{CLAIM_INSTALL_HINT}</em>
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  )}
+                </div>
+              </details>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="hd-tools">
+      <button
+        class="hd-cue"
+        id="nav-cue"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mainnav"
+        aria-label="開啟選單"
+        data-ga-button="header_mobile_menu"
+        data-ga-label="手機導覽選單"
+        data-ga-location="header"
+        data-ga-action="toggle_menu"
+      >
+        <span class="hd-cue-b" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+      /* 收合選單：獨立的 try 區塊，跟下面的搜尋互不影響。
+         關鍵順序——`nav-js` 這個 class 只在「開關確定接好」之後才加到 <html>。
+         反過來寫的話，只要下面任何一行拋例外，選單會被 CSS 收起來卻沒有東西能打開它，
+         導覽就永久消失了。沒有 JS（或 JS 爆炸）時 .nav-js 不存在，
+         導覽就是一排正常可見、可點的連結——連結一律寫在初始 HTML 裡，爬蟲讀得到。 */
+      (function () {
+        try {
+          var header = document.getElementById('site-header');
+          var cue = document.getElementById('nav-cue');
+          var panel = document.getElementById('mainnav');
+          var dropdowns = panel ? panel.querySelectorAll('.nav-dropdown') : [];
+          if (!header || !cue || !panel) return;
+
+          // 桌機導覽固定展開，手機則是「下拉面板」（用 max-height）。
+          // max-height 必須用 scrollHeight 算，所以只能在 JS 裡設；
+          // 換到桌機時要把 inline 的 max-height 清掉，免得殘值把橫排導覽壓扁。
+          var mqDesktop = window.matchMedia('(min-width:1024px)');
+
+          function applyHeight(open) {
+            if (mqDesktop.matches) {
+              panel.style.maxHeight = '';
+              return;
+            }
+            // +28px 留給最後一顆連結的 :focus-visible 外框，不然 overflow:hidden 會切掉它
+            // 頁首是 sticky，展開後比視窗高（例如文章清單全部展開）就會有項目永遠捲不到；
+            // 高度以視窗高度為上限，超過的部分在面板內捲動（CSS 開啟時 overflow-y:auto）。
+            var cap = Math.max(240, window.innerHeight - 84);
+            panel.style.maxHeight = open ? Math.min(panel.scrollHeight + 28, cap) + 'px' : '0px';
+          }
+
+          // 開啟時把焦點送進第一個連結。原因是 DOM 順序：導覽排在工具列之前
+          // （桌機膠囊的視覺順序要求如此），開關按鈕卻在工具列裡。焦點若留在按鈕上，
+          // 按 Tab 會直接跳過剛展開的六個連結跑進內文——鍵盤使用者等於打不開選單。
+          // 關閉時若焦點還在面板裡，收回按鈕上，不讓焦點掉到 body。
+          function setOpen(open, moveFocus) {
+            // 桌機版不提供收合；僅手機版的選單開關會改變狀態。
+            if (mqDesktop.matches) open = true;
+            var focusInside = panel.contains(document.activeElement);
+            header.setAttribute('data-open', open ? 'true' : 'false');
+            cue.setAttribute('aria-expanded', open ? 'true' : 'false');
+            cue.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
+            applyHeight(open);
+            if (open && moveFocus) {
+              var first = panel.querySelector('a');
+              if (first) first.focus();
+            } else if (!open && focusInside) {
+              cue.focus();
+            }
+          }
+
+          // 保留尺寸重算給舊版膠囊的漸進增強；目前 Dean 式桌機導覽使用完整容器寬。
+          // 寫死的版本（原本 636px，依五個連結算的）在 NAV 加入第六項時被
+          // overflow:hidden 直接切掉 44px，而且沒有任何警告。
+          // 量的是收合狀態下 nav 的 scrollWidth（此時 CSS 把可視寬壓成 0/384，
+          // 但 scrollWidth 仍反映內容的自然寬），加上膠囊其餘元件的固定佔用。
+          // 字型載入會改變寬度，所以等 document.fonts.ready 之後再量一次。
+          function sizeCapsule() {
+            if (!window.matchMedia('(min-width: 1024px)').matches) return;
+            var list = panel.querySelector('ul');
+            if (!list) return;
+            // 搜尋已移到右下角，這裡只保留字標、左右內距與邊框。
+            var CHROME = 66;
+            var need = Math.ceil(list.scrollWidth) + CHROME;
+            header.style.setProperty('--capw-open', need + 'px');
+          }
+          sizeCapsule();
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(sizeCapsule).catch(function () {});
+          }
+          window.addEventListener('resize', sizeCapsule);
+
+          // 斷點換邊時重算一次，避免手機展開後轉成桌機、殘留 max-height
+          var onMQ = function () {
+            sizeCapsule();
+            setOpen(mqDesktop.matches, false);
+          };
+          if (mqDesktop.addEventListener) mqDesktop.addEventListener('change', onMQ);
+          else if (mqDesktop.addListener) mqDesktop.addListener(onMQ);
+          window.addEventListener('resize', onMQ);
+
+          cue.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setOpen(cue.getAttribute('aria-expanded') !== 'true', true);
+          });
+
+          // Esc 關閉並把焦點還給開關（鍵盤使用者不會迷路）
+          document.addEventListener('keydown', function (e) {
+            if (mqDesktop.matches) return;
+            if (e.key !== 'Escape' && e.keyCode !== 27) return;
+            if (cue.getAttribute('aria-expanded') !== 'true') return;
+            setOpen(false);
+            cue.focus();
+          });
+
+          // 點面板外面關閉
+          document.addEventListener('click', function (e) {
+            if (mqDesktop.matches) return;
+            if (cue.getAttribute('aria-expanded') !== 'true') return;
+            if (panel.contains(e.target) || cue.contains(e.target)) return;
+            setOpen(false);
+          });
+
+          // 點面板裡的連結後關閉（同頁錨點時才看得出差別，但成本是零）
+          panel.addEventListener('click', function (e) {
+            if (mqDesktop.matches) return;
+            if (e.target.closest && e.target.closest('a')) setOpen(false);
+          });
+
+          // 手機版展開任一子選單後內容高度會增加，必須同步重算外層選單高度，
+          // 否則預覽卡片會被原本的 max-height 裁掉。
+          Array.prototype.forEach.call(dropdowns, function (dropdown) {
+            dropdown.addEventListener('toggle', function () {
+              if (mqDesktop.matches || header.getAttribute('data-open') !== 'true') return;
+              window.requestAnimationFrame(function () { applyHeight(true); });
+            });
+          });
+
+          setOpen(mqDesktop.matches, false);
+          document.documentElement.classList.add('nav-js'); // 全部接好了才收合
+        } catch (err) {
+          /* 沒接上就維持展開：一排正常可見、可點的導覽連結 */
+        }
+      })();
+
+      (function () {
+        // 參考 DR.DEAN：桌機游標移入即開啟，移出後稍延遲關閉；
+        // 觸控裝置維持 details 原生點擊，鍵盤則以 focus 開啟。
+        var dropdowns = Array.prototype.slice.call(document.querySelectorAll('.nav-dropdown'));
+        if (!dropdowns.length) return;
+        var hoverMenu = window.matchMedia('(min-width:1024px) and (hover:hover) and (pointer:fine)');
+        var closeTimers = new WeakMap();
+
+        function closeOthers(current) {
+          dropdowns.forEach(function (dropdown) {
+            if (dropdown !== current) dropdown.removeAttribute('open');
+          });
+        }
+
+        dropdowns.forEach(function (dropdown) {
+          var summary = dropdown.querySelector('summary');
+          // 分離式導覽的文字連結與箭頭是兄弟節點；hover 監聽要掛在整個 shell，
+          // 才能做到游標碰到文字就展開，而不是只有碰到小箭頭才有反應。
+          var hoverTarget = dropdown.closest('.service-nav-shell') || dropdown;
+          hoverTarget.addEventListener('mouseenter', function () {
+            if (!hoverMenu.matches) return;
+            window.clearTimeout(closeTimers.get(dropdown));
+            closeOthers(dropdown);
+            dropdown.setAttribute('open', '');
+          });
+          hoverTarget.addEventListener('mouseleave', function () {
+            if (!hoverMenu.matches) return;
+            closeTimers.set(dropdown, window.setTimeout(function () {
+              dropdown.removeAttribute('open');
+            }, 120));
+          });
+          summary.addEventListener('click', function (event) {
+            if (!hoverMenu.matches) return;
+            event.preventDefault();
+            closeOthers(dropdown);
+            dropdown.setAttribute('open', '');
+          });
+          dropdown.addEventListener('focusin', function () {
+            if (!window.matchMedia('(min-width:1024px)').matches) return;
+            closeOthers(dropdown);
+            dropdown.setAttribute('open', '');
+          });
+          dropdown.addEventListener('focusout', function () {
+            window.setTimeout(function () {
+              if (!dropdown.contains(document.activeElement)) dropdown.removeAttribute('open');
+            }, 0);
+          });
+          dropdown.addEventListener('toggle', function () {
+            if (dropdown.open) closeOthers(dropdown);
+          });
+        });
+
+        document.addEventListener('click', function (e) {
+          dropdowns.forEach(function (dropdown) {
+            if (dropdown.open && !dropdown.contains(e.target)) dropdown.removeAttribute('open');
+          });
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key !== 'Escape' && e.keyCode !== 27) return;
+          var openDropdown = dropdowns.find(function (dropdown) { return dropdown.open; });
+          if (!openDropdown) return;
+          openDropdown.removeAttribute('open');
+          var summary = openDropdown.querySelector('summary');
+          if (summary) summary.focus();
+        });
+      })();
+
+      (function () {
+        // 共用提示元件：window.siteToast({ title, text, link })，約 3 秒自動淡出，點擊或 Esc 可提前關閉。
+        var timer = 0;
+        var node = null;
+        function ensureStyle() {
+          if (document.getElementById('site-toast-style')) return;
+          var st = document.createElement('style');
+          st.id = 'site-toast-style';
+          st.textContent =
+            '.site-toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));z-index:2147483000;' +
+            'width:max-content;max-width:min(92vw,420px);box-sizing:border-box;padding:14px 18px;border-radius:4px;' +
+            'background:#16161a;color:#fff;border-left:4px solid #7a2e3b;box-shadow:0 8px 28px rgba(0,0,0,.28);' +
+            'font-size:15px;line-height:1.55;text-align:left;cursor:pointer;pointer-events:auto;' +
+            'transform:translate(-50%,12px);opacity:0;transition:opacity .25s ease,transform .25s ease;overflow-wrap:anywhere}' +
+            '.site-toast.is-visible{opacity:1;transform:translate(-50%,0)}' +
+            '.site-toast strong{display:block;font-weight:700}' +
+            '.site-toast span{display:block;margin-top:2px;color:#e8e4dc}' +
+            '.site-toast a{color:#fff;text-decoration:underline;word-break:break-all}' +
+            '@media (prefers-reduced-motion:reduce){.site-toast{transition:none}}';
+          document.head.appendChild(st);
+        }
+        function hide() {
+          window.clearTimeout(timer);
+          if (!node) return;
+          var n = node;
+          node = null;
+          n.classList.remove('is-visible');
+          window.setTimeout(function () { n.remove(); }, 300);
+        }
+        window.siteToast = function (opts) {
+          ensureStyle();
+          hide();
+          var el = document.createElement('div');
+          el.className = 'site-toast';
+          el.setAttribute('role', 'status');
+          el.setAttribute('aria-live', 'polite');
+          var t = document.createElement('strong');
+          t.textContent = opts.title;
+          el.appendChild(t);
+          if (opts.text) {
+            var d = document.createElement('span');
+            d.textContent = opts.text;
+            el.appendChild(d);
+          }
+          if (opts.link) {
+            var a = document.createElement('span');
+            var l = document.createElement('a');
+            l.href = opts.link;
+            l.textContent = opts.link;
+            l.target = '_blank';
+            l.rel = 'noopener';
+            l.addEventListener('click', function (e) { e.stopPropagation(); });
+            a.appendChild(l);
+            el.appendChild(a);
+          }
+          el.addEventListener('click', hide);
+          document.body.appendChild(el);
+          node = el;
+          window.requestAnimationFrame(function () { el.classList.add('is-visible'); });
+          // 使用者若已被切到新分頁，等回到本分頁才開始計時，避免提示在沒人看時就消失。
+          var wait = opts.link ? 6000 : 3000;
+          function arm() {
+            window.clearTimeout(timer);
+            timer = window.setTimeout(hide, wait);
+          }
+          if (document.hidden) {
+            var onVisible = function () {
+              if (document.hidden) return;
+              document.removeEventListener('visibilitychange', onVisible);
+              if (node === el) arm();
+            };
+            document.addEventListener('visibilitychange', onVisible);
+          } else {
+            arm();
+          }
+        };
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && node) hide(); });
+      })();
+
+      (function () {
+        // 「領取」只複製 Repo 網址；預覽卡片則保留為內容入口。
+        // 用 data attribute 共用同一套行為，新增領取項目不需再寫一份 JS。
+        var copyButtons = document.querySelectorAll('[data-copy-repo]');
+        if (!copyButtons.length) return;
+
+        function legacyCopy(text) {
+          var field = document.createElement('textarea');
+          field.value = text;
+          field.setAttribute('readonly', '');
+          field.style.position = 'fixed';
+          field.style.opacity = '0';
+          document.body.appendChild(field);
+          field.select();
+          var copied = document.execCommand('copy');
+          field.remove();
+          return copied ? Promise.resolve() : Promise.reject(new Error('copy failed'));
+        }
+
+        Array.prototype.forEach.call(copyButtons, function (button) {
+          button.addEventListener('click', function () {
+            var repo = button.getAttribute('data-copy-repo');
+            var label = button.querySelector('.service-preview-cta-label');
+            if (!repo || !label) return;
+            var copyPromise = navigator.clipboard && navigator.clipboard.writeText
+              ? navigator.clipboard.writeText(repo).catch(function () { return legacyCopy(repo); })
+              : legacyCopy(repo);
+            // 先發出複製，再於同一個 click 事件內同步開新分頁（使用者手勢仍有效，不會被彈出視窗攔截；
+            // 若等 clipboard 的 Promise 完成才開，Safari／手機會視為非手勢而擋掉）。
+            window.open(repo, '_blank', 'noopener');
+            copyPromise.then(function () {
+              label.textContent = '已複製';
+              button.setAttribute('aria-label', '已複製 Repo 連結');
+              window.setTimeout(function () {
+                label.textContent = '領取';
+                button.setAttribute('aria-label', '複製 Repo 連結');
+              }, 1800);
+              window.siteToast({ title: '已複製 GitHub 連結', text: button.getAttribute('data-copy-hint') || '' });
+            }).catch(function () {
+              label.textContent = '複製失敗';
+              window.siteToast({ title: '複製失敗，請手動複製下方連結', link: repo });
+            });
+          });
+        });
+      })();
+</script>
