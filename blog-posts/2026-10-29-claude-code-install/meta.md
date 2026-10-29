@@ -11,7 +11,7 @@ faqs:
   - question: 裝了桌面版或 VS Code 擴充套件，終端機就能輸入 claude 嗎？
     answer: 不能。桌面版和擴充套件各自帶一份 Claude Code，只在自己的視窗裡用。想在終端機輸入 claude，要再用 CLI 的安裝指令裝一次。
   - question: 輸入 claude 出現 not recognized 或 command not found 怎麼辦？
-    answer: 先關掉終端機、開一個新視窗再試。還是不行，代表安裝位置不在 PATH 裡，Windows 照本文錯誤排除那段在 PowerShell 貼兩行指令，重開終端機再輸入 claude --version。
+    answer: 先關掉終端機、開一個新視窗再試。還是不行，把完整錯誤訊息連同文末的提示詞貼給 Claude 或 ChatGPT 這類 AI，請它幫你排除。
   - question: Windows 一定要裝 Git for Windows 或 WSL 嗎？
     answer: 都不用。Git for Windows 是官方建議但非必要，沒裝時 Claude Code 改用 PowerShell 執行指令。WSL 是想用 Linux 環境開發時才需要。
   - question: 瀏覽器登入後沒有跳回終端機怎麼辦？
