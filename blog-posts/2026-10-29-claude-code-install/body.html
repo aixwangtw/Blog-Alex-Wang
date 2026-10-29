@@ -66,15 +66,15 @@ claude
 <p>官方建議 Windows 裝 <a href="https://git-scm.com/downloads/win">Git for Windows</a>，但不是必要。裝了，Claude Code 能用 Git Bash 執行指令，有些功能要靠它；沒裝，它改用 PowerShell 執行指令。Mac 不用裝。</p>
 <p>Windows 想用 Linux 環境開發，可以改在 WSL 裡用 CLI 裝法安裝，WSL 的裝法看 <a href="/blog/codex-cli-wsl2-windows/">Codex 安裝教學（下）：Windows 版 Codex CLI 與 WSL2 進階安裝</a>，在 WSL 裡就不需要 Git for Windows。</p>
 <h2 id="安裝卡住怎麼辦">安裝卡住怎麼辦？</h2>
-<p>把錯誤訊息貼給 Claude 或 ChatGPT 這類 AI，請它幫你看。貼的時候附上三樣：</p>
-<ol>
-<li>完整的錯誤文字：在終端機或安裝視窗選取整段紅字，複製後貼上，不要只寫「安裝失敗」。複製不了就截圖整個視窗。</li>
-<li>你的作業系統：Windows 10、Windows 11 或 macOS，有版本就寫版本。</li>
-<li>你用哪一種裝法（桌面版、VS Code 擴充套件、CLI），以及做到哪一步。</li>
-</ol>
-<p>再貼上這篇文章的連結，AI 才能對照本文判斷你卡在哪一步：</p>
-<pre data-code-kind="output"><code>https://aixwang.dev/blog/claude-code-install/
+<p>把錯誤訊息貼給 Claude 或 ChatGPT 這類 AI，請它幫你看。複製下面這段，括號裡的換成你的情況：</p>
+<pre data-code-kind="prompt" data-code-label="提示詞"><code class="language-prompt">我在安裝 Claude Code 時卡住了，請幫我排除。
+安裝教學：https://aixwang.dev/blog/claude-code-install/
+作業系統：（Windows 10、Windows 11 或 macOS）
+安裝方式：（桌面版、VS Code 擴充套件或 CLI）
+做到哪一步：（寫你卡在哪裡）
+（在這裡貼上完整錯誤訊息）
 </code></pre>
+<p>錯誤訊息要貼完整原文，不要只寫「安裝失敗」。在終端機或安裝視窗選取整段文字複製；複製不了就截圖整個視窗，連同這段提示詞一起傳給 AI。</p>
 <p>看不出原因，就在終端機輸入 <code>claude doctor</code>，它會檢查安裝和設定、列出問題與建議的修法，把結果整段一起貼給 AI。<a href="https://code.claude.com/docs/en/troubleshoot-install">官方安裝問題排除</a></p>
 <p>想知道一對一課程會教什麼，看<a href="/blog/vibecoding-tutorial/">Vibecoding 一對一教學：Claude Code 安裝、開發、除錯、測試、部署都能自動化</a>。</p>
 <p>安裝過程卡住了？加 LINE 把錯誤訊息貼給我，簡單問題免費幫你看。</p>
