@@ -1,6 +1,6 @@
 ---
 import { findMarkdownAlternate } from '../lib/agent-docs';
-import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, TEACHING_GROUP, pageBannerUrl } from '../consts';
+import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, TEACHING_GROUP, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath } from '../consts';
 import SiteHeader from '../components/SiteHeader.astro';
 import FloatingLine from '../components/FloatingLine.astro';
 import '../styles/global.css';
@@ -212,8 +212,8 @@ const jsonLd = {
           <section>
             <h2>站內導覽</h2>
             <a href={serviceHomeHref}>服務首頁</a>
-            <a class="service-footer-minor" href="/course/">一對一教學</a>
-            <a class="service-footer-minor" href="/services/speaking/">演講邀約</a>
+            <a class="service-footer-minor" href={servicePath(COURSE_SERVICE_URL)}>一對一教學</a>
+            <a class="service-footer-minor" href={servicePath(SPEAKING_SERVICE_URL)}>演講邀約</a>
           </section>
         </div>
       ) : (
@@ -226,14 +226,14 @@ const jsonLd = {
           </section>
           <section>
             <h2>服務項目</h2>
-            <a href="/services/development/">客製系統開發</a>
+            <a href={servicePath(DEVELOPMENT_SERVICE.url)}>客製系統開發</a>
           </section>
           <section>
             <h2>站內導覽</h2>
             <a href={serviceHomeHref}>服務首頁</a>
             <a href={developmentCaseHref} data-ga-button="service_footer_case" data-ga-label="開發案例" data-ga-location="service_footer" data-ga-action="navigate">開發案例</a>
-            <a class="service-footer-minor" href="/course/" data-ga-button="service_footer_course" data-ga-label="一對一教學" data-ga-location="service_footer" data-ga-action="navigate">一對一教學</a>
-            <a class="service-footer-minor" href="/services/speaking/" data-ga-button="service_footer_speaking" data-ga-label="演講邀約" data-ga-location="service_footer" data-ga-action="navigate">演講邀約</a>
+            <a class="service-footer-minor" href={servicePath(COURSE_SERVICE_URL)} data-ga-button="service_footer_course" data-ga-label="一對一教學" data-ga-location="service_footer" data-ga-action="navigate">一對一教學</a>
+            <a class="service-footer-minor" href={servicePath(SPEAKING_SERVICE_URL)} data-ga-button="service_footer_speaking" data-ga-label="演講邀約" data-ga-location="service_footer" data-ga-action="navigate">演講邀約</a>
           </section>
         </div>
       )}

@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content';
-import { DEVELOPMENT_SERVICE, SERVICE_SITE, SPEAKING_SERVICE_URL } from '../consts';
+import { DEVELOPMENT_SERVICE, SERVICE_SITE, SPEAKING_SERVICE_URL, COURSE_SERVICE_URL, withAnchor } from '../consts';
 import { HOME_FAQS, ONE_ON_ONE_FAQS, RESOURCES_FAQS, type Faq } from '../data/faqs';
 
 // 右下角客服的 FAQ 索引：使用者輸入問題時，前端（public/faq-match.js）拿這份比對，
@@ -72,7 +72,7 @@ export async function GET() {
   add(ONE_ON_ONE_FAQS, (faq) => ({
     q: faq.question,
     a: faq.answer,
-    u: `${SERVICE_SITE.url}/course/#faq${textFragment(faq.question)}`,
+    u: `${withAnchor(COURSE_SERVICE_URL, 'faq')}${textFragment(faq.question)}`,
     p: '手把手帶你實戰（一對一教學）',
     k: 'AI 一對一 私人家教 教學 課程 上課 手把手帶你實戰 系統開發 寫程式 動畫影片',
   }));

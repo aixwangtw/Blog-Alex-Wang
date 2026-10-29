@@ -3,20 +3,13 @@ import { Image } from 'astro:assets';
 import freeResourcesHome from '../../assets/free-resources-home-v2.png';
 import Cta from '../../components/Cta.astro';
 import NeedRouter from '../../components/NeedRouter.astro';
-import {
-  AUTHOR,
-  PERSON_SCHEMA,
-  PROFESSIONAL_SERVICE_SCHEMA,
-  SERVICE_SITE,
-  SITE,
-  pageBannerUrl,
-} from '../../consts';
+import { AUTHOR, PERSON_SCHEMA, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl, DEVELOPMENT_SERVICE, COURSE_SERVICE_URL, servicePath } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
 // 2026-10-25 起首屏改為需求分流（問句＋四張卡，與主站首頁共用 NeedRouter），取代原本的快速入口分頁與開發、教學兩區。
 const heroServiceCards = [
-  { key: 'development', href: '/services/development/', title: '系統開發' },
-  { key: 'course', href: '/course/', title: 'AI 一對一教學' },
+  { key: 'development', href: servicePath(DEVELOPMENT_SERVICE.url), title: '系統開發' },
+  { key: 'course', href: servicePath(COURSE_SERVICE_URL), title: 'AI 一對一教學' },
 ];
 
 // 系統開發區的三張真實截圖：主圖放大，另兩張當輔助。
@@ -85,7 +78,7 @@ const schema = [
       ))}
     </div>
     <p class="service-dev-links">
-      <a href="/services/development/" data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_dev" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a>
+      <a href={servicePath(DEVELOPMENT_SERVICE.url)} data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_dev" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a>
       <a href={`${SITE.url}/blog/math-teacher-question-bank/`} data-ga-button="service_home_dev_case" data-ga-label="看題庫系統完整介紹" data-ga-location="service_home_dev" data-ga-action="navigate">看題庫系統完整介紹 <span aria-hidden="true">→</span></a>
     </p>
   </section>
@@ -107,7 +100,7 @@ const schema = [
       label={'了解系統\n開發服務'}
       external={false}
       hint="有問題點右下角官方 LINE 直接問我"
-      links={[{ href: '/course/', label: '看一對一教學' }]}
+      links={[{ href: servicePath(COURSE_SERVICE_URL), label: '看一對一教學' }]}
     />
   </div>
 

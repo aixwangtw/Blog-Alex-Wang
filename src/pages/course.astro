@@ -5,7 +5,7 @@ import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { getCollection } from 'astro:content';
-import { AUTHOR, COURSE_ARTICLE_TAG, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { AUTHOR, COURSE_ARTICLE_TAG, SERVICE_SITE, SITE, breadcrumbSchema, pageBannerUrl, COURSE_SERVICE_URL, withAnchor } from '../consts';
 import { teachingArticles } from '../lib/related-articles';
 import { ONE_ON_ONE_FAQS } from '../data/faqs';
 import { CLASS_FORMATS, TEACHING_CASES, TEACHING_CONTENT } from '../data/services';
@@ -18,7 +18,7 @@ const schema = [
   ]),
   {
     '@type': 'Service',
-    '@id': `${SERVICE_SITE.url}/course/#service`,
+    '@id': withAnchor(COURSE_SERVICE_URL, 'service'),
     name: '手把手帶你實戰',
     serviceType: 'AI 教學 / 一對一家教 / 程式教學',
     description:

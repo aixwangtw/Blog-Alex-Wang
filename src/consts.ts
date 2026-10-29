@@ -39,6 +39,10 @@ export const DEVELOPMENT_SERVICE = {
 export const COURSE_SERVICE_URL = `${SERVICE_SITE.url}/course/`;
 export const SPEAKING_SERVICE_URL = `${SERVICE_SITE.url}/services/speaking/`;
 export const LINE_CONSULT_LABEL = 'LINE 免費諮詢';
+/** 網址加頁內錨點，例如 withAnchor(COURSE_SERVICE_URL, 'faq') → …/course/#faq */
+export const withAnchor = (url: string, anchor: string) => `${url}#${anchor}`;
+/** 只取路徑（服務站自己頁面內的相對連結用），例如 servicePath(COURSE_SERVICE_URL) → /course/ */
+export const servicePath = (url: string) => new URL(url).pathname;
 
 export const AUTHOR = {
   id: `${SITE.url}/about#person`,

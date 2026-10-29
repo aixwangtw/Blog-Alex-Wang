@@ -5,7 +5,7 @@ import CheckItem from '../../components/CheckItem.astro';
 import Cta from '../../components/Cta.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { AUTHOR, SERVICE_SITE, SITE, breadcrumbSchema, speakingBannerUrl } from '../../consts';
+import { AUTHOR, SERVICE_SITE, SITE, breadcrumbSchema, speakingBannerUrl, SPEAKING_SERVICE_URL, withAnchor } from '../../consts';
 import { SPEAKING_ENGAGEMENTS, SPEAKING_FORMATS, SPEAKING_KINDS } from '../../data/services';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
@@ -16,7 +16,7 @@ const schema = [
   ]),
   {
     '@type': 'Service',
-    '@id': `${SERVICE_SITE.url}/services/speaking/#service`,
+    '@id': withAnchor(SPEAKING_SERVICE_URL, 'service'),
     name: 'AI 主題演講與企業內訓',
     serviceType: SPEAKING_KINDS.join(' / '),
     description:
@@ -26,7 +26,7 @@ const schema = [
   },
   {
     '@type': 'ItemList',
-    '@id': `${SERVICE_SITE.url}/services/speaking/#engagements`,
+    '@id': withAnchor(SPEAKING_SERVICE_URL, 'engagements'),
     name: '過往演講紀錄',
     itemListElement: SPEAKING_ENGAGEMENTS.map((e, index) => ({
       '@type': 'ListItem',
