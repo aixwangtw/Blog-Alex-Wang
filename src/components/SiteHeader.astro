@@ -8,8 +8,8 @@
 import { getCollection } from 'astro:content';
 import { blogBannerPath } from '../lib/blog-banner';
 import { FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE } from '../data/resources';
-import { TEACHING_CONTENT } from '../data/services';
-import { LINKS, SERVICE_SITE, SITE } from '../consts';
+import { DEVELOPMENT_CAPABILITIES } from '../data/services';
+import { ARTICLE_EXCLUDED_TAGS, LINKS, SERVICE_SITE, SITE, articleGroupName } from '../consts';
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import LineIcon from './LineIcon.astro';
@@ -47,50 +47,59 @@ const SERVICE_NAV_LINK = {
   label: '服務',
   href: `${SERVICE_SITE.url}/services/development/`,
 };
-// 文章下拉：列出所有已發布（非 unlisted）文章，依第一個標籤分組（部落格列表卡片也用第一個標籤當分類字）。
+// 文章下拉：列出已發布（非 unlisted）文章（排除清單除外），依第一個標籤分組（部落格列表卡片也用第一個標籤當分類字）。
 // 分組順序依「該組最新文章」由新到舊，組內也是新到舊；沒有標籤的文章歸「其他」。
 const navPosts = (await getCollection('blog', ({ data }) => !data.unlisted)).sort(
   (a, b) =>
     b.data.pubDate.valueOf() - a.data.pubDate.valueOf() ||
     (b.data.cmsId ?? 0) - (a.data.cmsId ?? 0),
 );
-const navArticleGroups: { name: string; items: { href: string; title: string; thumb: string }[] }[] = [];
+// 彈窗分組設定：只影響彈窗，CMS 標籤與文章本身不動。
+// 分組對照與排除清單用 src/consts.ts 的共用設定（ARTICLE_TAG_GROUP_MAP、ARTICLE_EXCLUDED_TAGS、articleGroupName）。
+// 每組一個 icon（inline SVG，線條風格）；沒列在這裡的分組用文件 icon
+const NAV_GROUP_ICON: Record<string, string> = { 'AI 教學': 'book', 客製開發: 'code', 開源工具: 'package' };
+const NAV_ICON_PATHS: Record<string, string> = {
+  book: '<path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/>',
+  code: '<path d="m8 8-5 4 5 4"/><path d="m16 8 5 4-5 4"/><path d="m14 5-4 14"/>',
+  package: '<path d="M12 3 3.5 7.5v9L12 21l8.5-4.5v-9z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/>',
+  doc: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
+};
+const navArticleGroups: { name: string; items: { href: string; title: string }[] }[] = [];
 for (const post of navPosts) {
-  const name = post.data.tags[0] ?? '其他';
+  if (ARTICLE_EXCLUDED_TAGS.includes(post.data.tags[0] ?? '')) continue;
+  const name = articleGroupName(post.data.tags[0]);
   let group = navArticleGroups.find((item) => item.name === name);
   if (!group) {
     group = { name, items: [] };
     navArticleGroups.push(group);
   }
-  group.items.push({ href: `/blog/${post.id}/`, title: post.data.title, thumb: blogBannerPath(post.id, '-thumb.webp') });
+  group.items.push({ href: `/blog/${post.id}/`, title: post.data.title });
 }
 // 服務下拉（版面參考 deanlife.blog）：三張服務卡並列（系統開發、一對一教學、演講），右欄是諮詢。
-// 簡單網頁、動畫影片是教學頁的方案，列在一對一教學卡片底下；說明文字取自既有資料（TEACHING_CONTENT）。
+// 每張卡片只放大標題與「- 」項目清單，項目文字都取自既有頁面資料；簡單網頁、動畫影片是教學頁的方案，列在一對一教學底下。
 // 卡片圖片沿用首屏分流卡已經在用的實拍圖。
-const teachingDetail = (keyword: string) => TEACHING_CONTENT.find((item) => item.category.includes(keyword))?.detail;
-const navServiceCards: { href: string; title: string; lines: string[]; image: ImageMetadata; imageAlt: string }[] = [
+const navServiceCards: { href: string; title: string; items: string[]; image: ImageMetadata; imageAlt: string }[] = [
   {
     href: `${SERVICE_SITE.url}/services/development/`,
     title: '系統開發',
-    lines: ['後台管理系統、LINE LIFF 網頁、CRM 客戶管理系統、題庫系統、AI 客服與 AI 自動化。'],
+    // 服務頁「可以做什麼」的項目（DEVELOPMENT_CAPABILITIES）
+    items: DEVELOPMENT_CAPABILITIES.map((item) => item.title),
     image: questionBankShot,
     imageAlt: '數學題庫系統的考卷匯入審核頁',
   },
   {
     href: `${SERVICE_SITE.url}/course/`,
     title: '一對一教學',
-    lines: [
-      '手把手完成自動化的設定，跑通後，安裝、開發、除錯、部署等都能自動化。',
-      `簡單網頁：${teachingDetail('簡單網頁') ?? ''}`,
-      `動畫影片：${teachingDetail('動畫影片') ?? ''}`,
-    ],
+    // 「手把手完成自動化的設定，跑通後，安裝、開發、除錯、部署等都能自動化。」依原句拆開，再加教學頁的兩個方案
+    items: ['手把手完成自動化的設定', '跑通後，安裝、開發、除錯、部署等都能自動化', '簡單網頁', '動畫影片'],
     image: teachingPhoto,
     imageAlt: '一對一教學上課現場',
   },
   {
     href: `${SERVICE_SITE.url}/services/speaking/`,
     title: '演講',
-    lines: ['AI 演講與企業內訓，主題不限、可依需求討論。'],
+    // 演講頁開頭的「公開演講／企業內訓／工作坊」
+    items: ['公開演講', '企業內訓', '工作坊'],
     image: taichungTalk,
     imageAlt: 'Alex 在台中演講的現場',
   },
@@ -244,7 +253,7 @@ const DROPDOWN_NAV = [
                                   data-ga-location={gaLocation(`header_${menu.key}_dropdown`)}
                                   data-ga-action="open_content"
                                 >
-                                  <img class="dm-thumb" src={post.thumb} alt="" width="42" height="42" loading="lazy" decoding="async" />
+                                  <span class="dm-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={NAV_ICON_PATHS[NAV_GROUP_ICON[group.name] ?? 'doc']} /></span>
                                   <span>{post.title}</span>
                                 </a>
                               </li>
@@ -274,7 +283,7 @@ const DROPDOWN_NAV = [
                                 <Image class="dm-card-img" src={card.image} alt={card.imageAlt} width={192} height={192} loading="lazy" />
                                 <span class="dm-card-copy">
                                   <strong>{card.title}</strong>
-                                  {card.lines.map((line) => <span>{line}</span>)}
+                                  {card.items.map((item) => <span>{item}</span>)}
                                 </span>
                               </a>
                             </li>
@@ -292,7 +301,10 @@ const DROPDOWN_NAV = [
                           data-ga-label={menu.consult.label}
                           data-ga-location={gaLocation('header_services_dropdown')}
                           data-ga-action="contact"
-                        >{menu.consult.label} <span aria-hidden="true">→</span></a>
+                        >
+                          <LineIcon class="dm-consult-icon" />
+                          <span class="dm-consult-btn">{menu.consult.label} <span aria-hidden="true">→</span></span>
+                        </a>
                       </section>
                     </div>
                   )}
@@ -396,18 +408,22 @@ const DROPDOWN_NAV = [
   .nav-js .mainnav .dm-rows, .nav-js .mainnav .dm-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; }
   .nav-js .mainnav .dm-rows > li, .nav-js .mainnav .dm-cards > li { display: block; padding: 0; border: 0; background: transparent; }
   .mainnav .dm-row { display: flex; align-items: center; gap: 12px; padding: 7px 2px; color: var(--color-ink); font-size: 15px; line-height: 1.45; white-space: normal; overflow-wrap: anywhere; }
-  .dm-thumb { display: none; flex: none; width: 42px; height: 42px; border-radius: 6px; background: var(--color-paper-2); object-fit: cover; }
+  .dm-icon { display: none; flex: none; width: 42px; height: 42px; align-items: center; justify-content: center; border-radius: 6px; background: var(--color-paper-2); color: var(--color-accent); }
   .mainnav .dm-card { display: block; padding: 8px 2px; color: var(--color-ink); white-space: normal; }
   .dm-card-img { display: none; flex: none; width: 96px; height: 96px; border-radius: 4px; object-fit: cover; }
   .dm-card-copy { display: grid; min-width: 0; gap: 2px; }
   .dm-card-copy strong { font-size: 16px; font-weight: 600; line-height: 1.4; }
   .dm-card-copy span { color: var(--color-ink-3); font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
   .dm-card-copy span::before { content: '- '; }
-  .mainnav .dm-col--consult .service-menu-consult { display: block; padding: 14px 16px; border-radius: 4px; background: var(--color-accent); color: #fff; font-size: 15px; font-weight: 700; text-align: center; }
+  /* 諮詢區（參考 Dean 右欄：標題下面一整塊填滿欄高，大按鈕放在裡面）：底色用 LINE 綠，沒有放圖 */
+  .dm-col--consult { display: flex; flex-direction: column; }
+  .mainnav .dm-col--consult .service-menu-consult { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 4px; background: #06c755; color: #fff; white-space: normal; }
+  .dm-consult-icon { display: none; width: 72px; height: 72px; }
+  .dm-consult-btn { display: block; width: 100%; font-size: 15px; font-weight: 700; line-height: 1.3; text-align: center; }
   @media (hover: hover) and (pointer: fine) {
     .mainnav .dm-row:hover { color: var(--color-accent); }
     .mainnav .dm-card:hover { border-color: var(--color-accent-line-2); background: var(--color-accent-tint); }
-    .mainnav .dm-col--consult .service-menu-consult:hover { background: var(--color-accent-2, var(--color-accent)); }
+    .mainnav .dm-col--consult .service-menu-consult:hover { background: #05b34c; }
   }
   @media (min-width: 1024px) {
     .service-menu:has(.dm-cols) {
@@ -423,7 +439,7 @@ const DROPDOWN_NAV = [
     }
     .service-menu:has(.dm-cols) .service-menu-head { display: none; }
     .nav-js .mainnav .dm-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 0; }
-    .nav-js .mainnav .dm-cols--services { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+    .nav-js .mainnav .dm-cols--services { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
     .dm-col { padding: 12px; }
     .dm-col:not(:nth-child(3n + 1)) { border-left: 1px solid var(--color-rule); }
     .dm-cols--services .dm-col:not(:nth-child(3n + 1)) { border-left: 0; }
@@ -431,12 +447,15 @@ const DROPDOWN_NAV = [
     .dm-head { margin-bottom: 16px; color: var(--color-ink); font-size: 16px; font-weight: 600; line-height: 1.2; }
     .nav-js .mainnav .dm-rows { gap: 8px; }
     .mainnav .dm-row { padding: 0; font-size: 16px; }
-    .dm-thumb { display: block; }
+    .dm-icon { display: flex; }
     .nav-js .mainnav .dm-cards { gap: 12px; }
     .mainnav .dm-card { display: flex; align-items: flex-start; gap: 16px; padding: 9px; border: 1px solid var(--color-rule-2); border-radius: 4px; }
     .dm-card-img { display: block; }
     .dm-card-copy strong { font-size: 18px; }
-    .dm-card-copy span { font-size: 13px; }
+    .dm-card-copy span { font-size: 14px; }
+    .mainnav .dm-col--consult .service-menu-consult { min-height: 240px; padding: 24px 16px 16px; }
+    .dm-consult-icon { display: block; }
+    .dm-consult-btn { padding: 16px; border-radius: 4px; background: #fff; color: #05803a; font-size: 20px; }
   }
 </style>
 
