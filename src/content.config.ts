@@ -1,6 +1,27 @@
 import { defineCollection, z } from 'astro:content';
 import { marked } from 'marked';
 
+// 共用片段：文章內文（CMS）放一行 [[snippet:名稱]]（或 <!-- snippet:名稱 -->），
+// 建置時換成 src/data/snippets/名稱.html 的內容。找不到片段就讓建置失敗，不讓標記公開顯示。
+// 片段檔不能有空行，否則 marked 會把後半段當成 Markdown 重新解析。
+const snippetFiles = import.meta.glob('./data/snippets/*.html', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+function expandSnippets(body: string, slug: string): string {
+  const pattern = /(?:<p>\s*)?(?:\[\[snippet:([\w-]+)\]\]|<!--\s*snippet:([\w-]+)\s*-->)(?:\s*<\/p>)?/g;
+  return body.replace(pattern, (_match, bracketName?: string, commentName?: string) => {
+    const name = bracketName ?? commentName ?? '';
+    const html = snippetFiles[`./data/snippets/${name}.html`];
+    if (html === undefined) {
+      throw new Error(`文章「${slug}」使用了不存在的共用片段：${name}（現有：${Object.keys(snippetFiles).join(', ')}）`);
+    }
+    return `\n\n${html.trim()}\n\n`;
+  });
+}
+
 // 標題加上錨點 id（保留中文），供文章目錄與搜尋結果「跳至某段」使用
 function slugifyHeading(text: string): string {
   return text
@@ -159,7 +180,7 @@ const blog = defineCollection({
         store.set({
           id: a.slug,
           data: entry,
-          rendered: { html: openBodyLinksInNewTab(marked.parse(a.body ?? '', { async: false })) },
+          rendered: { html: openBodyLinksInNewTab(marked.parse(expandSnippets(a.body ?? '', a.slug), { async: false })) },
           digest: generateDigest(a),
         });
       }
