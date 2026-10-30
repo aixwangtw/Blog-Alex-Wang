@@ -1,0 +1,47 @@
+{
+ "id": 32,
+ "status": "published",
+ "slug": "claude-code-install",
+ "title": "Claude Code 安裝教學：桌面版、VS Code、CLI 三種裝法",
+ "description": "Claude Code 要 Pro 以上方案才能用。桌面版不用打指令，VS Code 外掛邊做邊看程式碼，CLI（終端機畫面）一行指令就裝好。Windows、Mac 步驟與常見安裝錯誤的修法都在這篇。",
+ "body": "<h2 id=\"三種裝法怎麼選\">三種裝法怎麼選</h2>\n<p>Claude Code 要 Pro 以上的付費方案才能用，Claude 免費版不含。三種裝法挑一種就好，看你平常怎麼工作：</p>\n<ul>\n<li>不想打指令：選桌面版，全程不用打指令。</li>\n<li>平常用 VS Code：選 VS Code 外掛（介面上叫「擴充功能」，英文是 extension），邊做邊看程式碼。</li>\n<li>習慣在終端機工作：選 CLI（終端機畫面），裝好直接輸入 <code>claude</code>。</li>\n</ul>\n<p>Windows 和 Mac 都能裝。電腦要 Windows 10（1809 版）以上或 macOS 13 以上，記憶體 4 GB 以上。<a href=\"https://code.claude.com/docs/en/setup\">Claude Code 官方安裝說明</a></p>\n<p>安裝中途卡住，看文末<a href=\"#安裝卡住怎麼辦\">安裝卡住怎麼辦</a>。</p>\n<h2 id=\"第一步訂閱-claude-pro\">第一步：訂閱 Claude Pro</h2>\n<p>到 <a href=\"https://claude.com/pricing\">Claude 官方價格頁</a>，選紅框標示的 <strong>Pro</strong>，訂閱時選月繳，每月 20 美元。AI 工具汰換率很高，隨時會出現更好用的，月繳才不會被綁住。用量不夠時再升級 Max，Team、Enterprise 方案也能用 Claude Code。</p>\n<p><img src=\"/images/blog/claude-code-install/01-claude-pricing-pro.png\" alt=\"在 Claude 官方價格頁選擇紅框標示的 Pro 方案\"></p>\n<h2 id=\"第二步安裝-claude-code三選一\">第二步：安裝 Claude Code（三選一）</h2>\n<h3 id=\"桌面版\">桌面版</h3>\n<ol>\n<li>到 <a href=\"https://claude.com/download\">Claude 下載頁</a>，選擇適合你的作業系統，按 <strong>Download</strong>。</li>\n<li>執行下載的安裝檔。Windows 從開始選單、Mac 從「應用程式」資料夾開啟 Claude，登入你剛訂閱的帳號。</li>\n<li>點側邊欄上方的 <strong>Code</strong> 分頁。跳出升級提示，代表這個帳號還沒有付費方案。</li>\n<li>在輸入框下方的環境選單選 Local 底下第一個，再按旁邊的資料夾按鈕，選 Open folder… 開啟你的專案資料夾。</li>\n</ol>\n<p><img src=\"/images/blog/claude-code-install/02-claude-download-windows.png\" alt=\"在 Claude 下載頁選擇作業系統並按 Download\"></p>\n<p>桌面版已經包含 Claude Code，不用另外裝 Node.js 或 CLI 版。想在終端機輸入 <code>claude</code>，要再照下面的 CLI 裝法裝一次。<a href=\"https://code.claude.com/docs/en/desktop-quickstart\">官方桌面版說明</a></p>\n<h3 id=\"vs-code-外掛\">VS Code 外掛</h3>\n<p>VS Code 要 1.94.0 以上。還沒裝的話，先裝好：</p>\n[[snippet:vscode-install]]\n<p>VS Code 準備好之後，安裝 Claude Code 外掛：</p>\n<ol>\n<li>在 VS Code 按 <code>Ctrl + Shift + X</code>（Mac 為 <code>Cmd + Shift + X</code>）打開擴充功能（Extensions）面板，搜尋 <code>Claude Code</code>。</li>\n<li>確認名稱是 Claude Code for VS Code、發行者是 <strong>Anthropic</strong> 而且有藍色驗證勾勾，再按 Install。先確認發行者，才不會裝到別人做的套件。</li>\n<li>點左側活動列的 Claude Code 圖示打開面板，按 Sign in，在瀏覽器完成授權。</li>\n</ol>\n<p><img src=\"/images/blog/claude-code-install/03-vscode-marketplace-claude-code.png\" alt=\"在擴充功能（Extensions）面板確認紅框標示的名稱與發行者 Anthropic\"></p>\n<p>外掛自己帶一份 Claude Code，只給聊天面板用。想在 VS Code 的終端機輸入 <code>claude</code>，一樣要另外照下面的 CLI 裝法裝。<a href=\"https://code.claude.com/docs/en/vs-code\">官方 VS Code 說明</a></p>\n<h3 id=\"cli終端機畫面\">CLI（終端機畫面）</h3>\n<p>Windows 開 Windows PowerShell（不要選後面有 x86 的那個），貼上：</p>\n<pre data-code-kind=\"terminal\" data-code-label=\"終端機\"><code class=\"language-powershell\">irm https://claude.ai/install.ps1 | iex\n</code></pre>\n<p>習慣用命令提示字元（CMD）的話，改貼這行：</p>\n<pre data-code-kind=\"terminal\" data-code-label=\"終端機\"><code class=\"language-bash\">curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd\n</code></pre>\n<p>Mac 開「終端機」App，貼上：</p>\n<pre data-code-kind=\"terminal\" data-code-label=\"終端機\"><code class=\"language-bash\">curl -fsSL https://claude.ai/install.sh | bash\n</code></pre>\n<p>不用系統管理員權限。下載時畫面不會顯示進度，等它跑完就好。這種裝法會在背景自動更新，之後不用自己升級。</p>\n<p>裝完<strong>關掉視窗、開一個新的終端機</strong>，輸入：</p>\n<pre data-code-kind=\"terminal\" data-code-label=\"終端機\"><code class=\"language-bash\">claude --version\n</code></pre>\n<p>看到版本號就是裝好了，例如：</p>\n<pre data-code-kind=\"output\"><code>2.1.312 (Claude Code)\n</code></pre>\n<p>出現「找不到 claude」之類的訊息，照文末<a href=\"#安裝卡住怎麼辦\">安裝卡住怎麼辦</a>，把錯誤貼給 AI。</p>\n<h2 id=\"第三步啟動並登入\">第三步：啟動並登入</h2>\n<p>桌面版和 VS Code 外掛在上一步已經登入，可以跳過這一步。</p>\n<p>CLI 版要先進到專案資料夾再啟動，Claude Code 才讀得到你的檔案。資料夾名稱換成你自己的：</p>\n<pre data-code-kind=\"terminal\" data-code-label=\"終端機\"><code class=\"language-bash\">cd 你的專案資料夾\nclaude\n</code></pre>\n<p>第一次啟動會自動開瀏覽器，用訂閱 Pro 的帳號登入、按授權，回到終端機就能開始輸入需求。</p>\n<ul>\n<li>瀏覽器沒有自己打開：在終端機按 <code>c</code> 複製登入網址，貼到瀏覽器。</li>\n<li>瀏覽器顯示一串登入碼、沒有跳回來：把登入碼貼回終端機 <code>Paste code here if prompted</code> 的地方。在 WSL 裡登入常遇到這種情況。</li>\n</ul>\n<p>之後要換帳號，在 Claude Code 裡輸入：</p>\n<pre data-code-kind=\"agent\" data-code-label=\"對 AI Agent 輸入\"><code class=\"language-agent\">/login\n</code></pre>\n<p><a href=\"https://code.claude.com/docs/en/authentication\">官方登入說明</a></p>\n<h2 id=\"選用git-for-windows\">選用：Git for Windows</h2>\n<p>官方建議 Windows 裝 <a href=\"https://git-scm.com/downloads/win\">Git for Windows</a>，但不是必要。裝了，Claude Code 能用 Git Bash 執行指令，有些功能要靠它；沒裝，它改用 PowerShell 執行指令。Mac 不用裝。</p>\n<p>Windows 想用 Linux 環境開發，可以改在 WSL 裡用 CLI 裝法安裝，WSL 的裝法看 <a href=\"/blog/codex-cli-wsl2-windows/\">Codex 安裝教學（下）：Windows 版 Codex CLI 與 WSL2 進階安裝</a>，在 WSL 裡就不需要 Git for Windows。</p>\n<h2 id=\"安裝卡住怎麼辦\">安裝卡住怎麼辦？</h2>\n<p>把錯誤訊息貼給 Claude 或 ChatGPT 這類 AI，請它幫你看。複製下面這段，括號裡的換成你的情況：</p>\n<pre data-code-kind=\"prompt\" data-code-label=\"提示詞\"><code class=\"language-prompt\">我在安裝 Claude Code 時卡住了，請幫我排除。\n安裝教學：https://aixwang.dev/blog/claude-code-install/\n作業系統：（Windows 10、Windows 11 或 macOS）\n安裝方式：（桌面版、VS Code 外掛或 CLI）\n做到哪一步：（寫你卡在哪裡）\n（在這裡貼上完整錯誤訊息）\n</code></pre>\n<p>錯誤訊息要貼完整原文，不要只寫「安裝失敗」。在終端機或安裝視窗選取整段文字複製；複製不了就截圖整個視窗，連同這段提示詞一起傳給 AI。</p>\n<p>看不出原因，就在終端機輸入 <code>claude doctor</code>，它會檢查安裝和設定、列出問題與建議的修法，把結果整段一起貼給 AI。<a href=\"https://code.claude.com/docs/en/troubleshoot-install\">官方安裝問題排除</a></p>\n<p>想知道一對一課程會教什麼，看<a href=\"/blog/vibecoding-tutorial/\">Vibecoding 一對一教學：Claude Code 安裝、開發、除錯、測試、部署都能自動化</a>。</p>\n<p>安裝過程卡住了？加 LINE 把錯誤訊息貼給我，簡單問題免費幫你看。</p>\n<p>我平常的工作是全職接案做客製系統開發，代表案例是<a href=\"/blog/math-teacher-question-bank/\">補習班數學題庫系統</a>；想把手上重複的工作做成系統，可以看<a href=\"https://service.aixwang.dev/services/development/\">客製系統開發服務</a>。</p>\n",
+ "pub_date": "2026-10-29",
+ "updated_date": null,
+ "tags": [
+  "Claude Code",
+  "VS Code",
+  "安裝教學"
+ ],
+ "faqs": [
+  {
+   "question": "Claude 免費版可以用 Claude Code 嗎？",
+   "answer": "不行。Claude Code 要 Pro、Max、Team 或 Enterprise 方案才能用。發文當下 Pro 月繳 20 美元。"
+  },
+  {
+   "question": "桌面版、VS Code 外掛、CLI 要裝哪一個？",
+   "answer": "沒用過程式工具的人裝桌面版，全程不用打指令；想邊做邊看程式碼的人裝 VS Code 外掛；想在終端機輸入 claude 直接用的人用 CLI（終端機畫面）的一行指令安裝。三種挑一種就好。"
+  },
+  {
+   "question": "裝了桌面版或 VS Code 外掛，終端機就能輸入 claude 嗎？",
+   "answer": "不能。桌面版和外掛各自帶一份 Claude Code，只在自己的視窗裡用。想在終端機輸入 claude，要再用 CLI 的安裝指令裝一次。"
+  },
+  {
+   "question": "輸入 claude 出現 not recognized 或 command not found 怎麼辦？",
+   "answer": "先關掉終端機、開一個新視窗再試。還是不行，把完整錯誤訊息連同文末的提示詞貼給 Claude 或 ChatGPT 這類 AI，請它幫你排除。"
+  },
+  {
+   "question": "Windows 一定要裝 Git for Windows 或 WSL 嗎？",
+   "answer": "都不用。Git for Windows 是官方建議但非必要，沒裝時 Claude Code 改用 PowerShell 執行指令。WSL 是想用 Linux 環境開發時才需要。"
+  },
+  {
+   "question": "瀏覽器登入後沒有跳回終端機怎麼辦？",
+   "answer": "瀏覽器顯示登入碼的話，把登入碼貼回終端機 Paste code here if prompted 的地方。瀏覽器根本沒打開，就在終端機按 c 複製登入網址，自己貼到瀏覽器。"
+  }
+ ],
+ "featured": true,
+ "sort": null,
+ "views": 3,
+ "views_30d": 3,
+ "views_synced_at": "2026-10-30T06:17:05.168Z",
+ "avg_engagement_seconds_30d": 7
+}
