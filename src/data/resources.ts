@@ -9,7 +9,7 @@ import githubLogo from '../assets/github-logo.svg';
 const GRILL_ME_TAGLINE = '30 萬顆星，提升開發效率';
 const MATT_POCOCK_SKILLS_TITLE = `grill-me：${GRILL_ME_TAGLINE}`;
 export const RESOURCES_INTRO =
-  '不用急著付費。先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用。做完還是卡關，可以點右下角官方 LINE 直接問我，或到 Facebook 社團發問。';
+  '不用急著付費。先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用。做完還是卡關，再決定要用右下角官方 LINE，還是到 Facebook 社團發問。';
 
 export const CODEX_RESOURCE = {
   heading: '第一步：先安裝 Codex',

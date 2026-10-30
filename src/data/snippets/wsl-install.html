@@ -1,0 +1,8 @@
+<p>以系統管理員身分開啟 PowerShell：</p>
+<pre data-code-kind="terminal" data-code-label="終端機"><code class="language-powershell">wsl --install
+</code></pre>
+<p>重新開機、完成 Ubuntu 使用者設定後，執行：</p>
+<pre data-code-kind="terminal" data-code-label="終端機"><code class="language-powershell">wsl --list --verbose
+</code></pre>
+<p><code>VERSION</code> 必須是 <code>2</code>。顯示 <code>1</code> 代表是較舊的 WSL，不能直接往下做。</p>
+<p>專案不要放在 <code>/mnt/c/...</code>：WSL 讀 Windows 磁碟裡的檔案比較慢，也容易遇到檔案無法修改。</p>

@@ -114,11 +114,11 @@ export function pickAuthorIntro(slug: string, tags: readonly string[]): string {
 export const CTA_VARIANTS = [
   {
     title: '想把重複的工作交給系統？',
-    text: '我和開發夥伴承接客製系統開發，可以先看題庫系統的案例；有問題點右下角官方 LINE 直接問我。',
+    text: '我和開發夥伴承接客製系統開發，可以先看題庫系統的案例；想聊你的需求時，再從右下角官方 LINE 找我。',
   },
   {
     title: '想找人幫你安裝、串接？',
-    text: '安裝、串接這類事可以交給我和開發夥伴，從需求到上線一起處理；先看題庫系統的案例，有問題點右下角官方 LINE 直接問我。',
+    text: '安裝、串接這類事可以交給我和開發夥伴處理，需求確認後一路做到系統上線；先看題庫系統的案例，覺得適合再用右下角官方 LINE 聯絡。',
   },
   {
     title: '想先看看能怎麼自動化？',
@@ -165,7 +165,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
     tags: ['系統開發'],
     cta: {
       title: '想聊你的需求嗎？',
-      text: '加 LINE 可以免費評估，點右下角官方 LINE 直接問我；服務頁整理了可以做的系統與做過的案子。',
+      text: '加 LINE 可以免費評估，有需求再從右下角官方 LINE 說明；服務頁整理了可以做的系統與做過的案子。',
       href: DEVELOPMENT_SERVICE.url,
       label: '了解系統\n開發服務',
       links: [],
@@ -175,7 +175,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
     tags: ['客製開發', 'AI 導入'],
     cta: {
       title: '對系統有疑問嗎？',
-      text: '看系統開發服務的合作流程與費用怎麼算，也可以先看題庫系統的完整介紹；有問題點右下角官方 LINE 直接問我。',
+      text: '看系統開發服務的合作流程與費用怎麼算，也可以先看題庫系統的完整介紹；想問細節，右下角有官方 LINE。',
       href: DEVELOPMENT_SERVICE.url,
       label: '了解系統\n開發服務',
       links: [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],
@@ -187,7 +187,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
     tags: ['講師故事', '演講'],
     cta: {
       title: '想把重複的工作交給系統？',
-      text: '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；有問題點右下角官方 LINE 直接問我。',
+      text: '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；覺得有需要，右下角官方 LINE 可以找我。',
       href: DEVELOPMENT_SERVICE.url,
       label: '了解系統\n開發服務',
       links: [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],
@@ -197,7 +197,7 @@ export const CTA_RULES: { tags: string[]; cta: ArticleCta }[] = [
     tags: ['新手入門', '安裝教學', 'API 教學', 'AI 入門'],
     cta: {
       title: '想把重複的工作交給系統？',
-      text: '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；有問題點右下角官方 LINE 直接問我。',
+      text: '我和開發夥伴承接客製系統開發。可以先看題庫系統的案例，再看合作流程與費用怎麼算；還有疑問的話，右下角官方 LINE 都能問。',
       href: DEVELOPMENT_SERVICE.url,
       label: '了解系統\n開發服務',
       links: [{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }],

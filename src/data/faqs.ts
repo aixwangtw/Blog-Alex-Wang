@@ -32,7 +32,7 @@ const groupClass: Faq = {
 const booking: Faq = {
   question: '怎麼預約或詢問費用？',
   answer:
-    '請點右下角官方 LINE 直接問我，說明你的目標（例如想用 AI 開發系統、做網頁或動畫影片），我會建議適合的堂數與報價。',
+    '想知道適合的方案，可以在右下角官方 LINE 說明你的目標（例如想用 AI 開發系統、做網頁或動畫影片），我會建議適合的堂數與報價。',
 };
 
 const speakingOrDevelopment: Faq = {
@@ -72,10 +72,10 @@ export const RESOURCES_FAQS: Faq[] = [
   {
     question: '只靠免費資源能學會 AI 自動化嗎？',
     answer:
-      '可以先完成 Codex 安裝並試用 Skills。差別在時間：自學卡關要自己試錯。建議先用免費資源開始，真的卡住可以點右下角官方 LINE 問我。',
+      '可以先完成 Codex 安裝並試用 Skills。差別在時間：自學卡關要自己試錯。建議先用免費資源開始，真的卡住再從右下角官方 LINE 問我就好。',
   },
   {
     question: '看影片有問題可以問你嗎？',
-    answer: '可以，歡迎點右下角官方 LINE 直接問我，或到我的 Facebook 社團發問。',
+    answer: '可以。右下角官方 LINE 和我的 Facebook 社團都能發問，挑你方便的。',
   },
 ];
