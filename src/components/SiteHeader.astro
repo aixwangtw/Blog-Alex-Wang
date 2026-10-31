@@ -442,7 +442,8 @@ const DROPDOWN_NAV = DROPDOWN_NAV_ALL;
     .nav-js .mainnav .dm-cards { gap: 12px; }
     .mainnav .dm-card { display: flex; align-items: flex-start; gap: 16px; padding: 9px; border: 1px solid var(--color-rule-2); border-radius: 4px; }
     /* 三張服務卡同列等寬等高：li 撐滿格子、卡片填滿 li（說明長短不同也不會高低不齊） */
-    .nav-js .mainnav .dm-cards > li { display: flex; }
+    .nav-js .mainnav .dm-cards { align-items: stretch; }
+    .nav-js .mainnav .dm-cards > li { display: flex; align-self: stretch; }
     .nav-js .mainnav .dm-cards > li > .dm-card { flex: 1 1 auto; min-width: 0; }
     .dm-card-img { display: block; }
     .dm-card-copy strong { font-size: 18px; }
