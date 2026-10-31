@@ -91,7 +91,7 @@ export const DEV_CASES: DevCase[] = [
     categories: ['admin'],
     tags: ['客戶管理', '權限管理', 'LINE 串接'],
     image: '/images/cases/crm.webp',
-    imageAlt: 'CRM 客戶管理系統的客戶清單：客戶數統計、來源管道、承辦業務與諮詢項目（示範資料）',
+    imageAlt: 'CRM 客戶管理系統的客戶清單（含側邊選單）：客戶數統計、來源管道、承辦業務與諮詢項目（示範資料，姓名已遮罩）',
     link: { href: lineCategoryUrl('後台管理系統'), label: 'LINE 聊聊需求', external: true },
   },
   {
