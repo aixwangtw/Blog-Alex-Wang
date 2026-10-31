@@ -195,7 +195,7 @@ export const DEV_CASES: DevCase[] = [
   {
     key: 'ai_question_generation',
     title: 'AI 出題與詳解',
-    summary: 'AI 依範本題產生類似題，也能替題目寫出答案與解題步驟，老師審核後才收進題庫。AI 出題可以先在 Demo 體驗，正式導入時依需求開發。',
+    summary: 'AI 產生類似題與解題步驟，老師審核後收進題庫；AI 出題可先在 Demo 體驗，正式導入依需求開發。',
     summaryShort: 'AI 出題與 AI 詳解；AI 出題可以先在 Demo 體驗，正式導入時依需求開發。',
     categories: ['ai'],
     images: [
