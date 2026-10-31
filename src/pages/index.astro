@@ -1577,7 +1577,7 @@ const latestPosts = allPosts.slice(0, 5);
 
     .dev-more { padding: clamp(28px, 4vw, 44px) 0; border-top: 1px solid var(--color-rule); }
     .dev-more-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
-    @media (max-width: 767px) { .dev-more-list { grid-template-columns: minmax(0, 1fr); gap: 12px; } }
+    @media (max-width: 767px) { .dev-more-list { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1fr; gap: 12px; } }
     .dev-more-list > li { display: flex; min-width: 0; }
     .dev-more-list a { display: flex; flex: 1; flex-direction: column; gap: 6px; min-width: 0; padding: 18px 20px; border: 1px solid var(--color-rule-2); border-radius: 8px; color: var(--color-ink); text-decoration: none; }
     @media (hover: hover) and (pointer: fine) { .dev-more-list a:hover { border-color: var(--color-accent); } }
