@@ -201,6 +201,6 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 - 服務下拉在手機為單欄文字清單（無卡片框），桌機為三欄等寬等高卡片。
 - 兩欄卡片在手機單欄時，grid 必須明確寫 `grid-cols-[minmax(0,1fr)]`，否則欄寬被內容（影片、程式碼區、四欄數字）撐大，卡片右側會被 `overflow-hidden` 切掉；直式影片放進固定高度的欄位用 `object-contain`，不得用 `object-cover` 裁掉畫面兩側的文字。適用：`src/pages/resources.astro` 的 grill-me 卡。
 - 首屏類別卡（2026-10-31 起，`src/components/DevCategoryPicker.astro`，主站首頁與服務站首頁共用，取代 `NeedRouter.astro` 的「你目前最想解決什麼問題？」）：問句固定「你想做什麼系統？」；六類別依序為網頁、內部管理系統、APP、題庫管理系統、揪團平台、LINE LIFF。格線桌機 3×2、767px 以下 2×3（`repeat(2, minmax(0, 1fr))`），不改單欄；卡片內容固定為 icon（28px 線條 SVG）＋類別名＋去處說明，去處說明 `margin-top: auto` 貼底，所有卡同高（桌機最小 148px、手機 132px）；360px 以下縮字級與內距，確保「題庫管理系統」不換行。
-- 類別卡去處：站上有真實案例頁的類別連案例頁（目前只有題庫管理系統 → 題庫系統文章）；其他類別開官方 LINE 並預填訊息（`https://line.me/R/oaMessage/@438efvtl/?<編碼文字>`，lin.ee 追蹤短網址不支援預填）。新增真實案例頁後才把該類別改連案例頁，不得編造案例、客戶、數字或截圖。
+- 類別卡去處：有可試用 Demo 的類別直接連 Demo（目前只有題庫管理系統 → `https://demo-question.aixwang.dev`，2026-10-31 使用者指示「卡片先連結demo就好」）；首頁與服務站的題庫案例卡也只連 Demo，題庫文章連結暫時拿掉，放哪裡等使用者確認；其他類別開官方 LINE 並預填訊息（`https://line.me/R/oaMessage/@438efvtl/?<編碼文字>`，lin.ee 追蹤短網址不支援預填）。其他類別要有真實案例頁或 Demo 才改連過去，不得編造案例、客戶、數字或截圖。
 - 案例區不放大截圖：每個真實案例一張卡片，縮圖固定 16:10（`aspect-ratio: 16 / 10; object-fit: cover; object-position: left top`），桌機縮圖與文字左右 5:7、767px 以下上下排；按鈕列 `margin-top: auto` 貼底。多個案例時改為等寬等高的卡片格線，縮圖比例不變。
 - 首頁與服務站首頁的「教學／演講／開源工具」為三張等寬等高小卡（桌機 3 欄、767px 以下單欄），每張：標題、一句說明、貼底的連結文字。手機單欄時三張也必須等高（`grid-auto-rows: 1fr`），連結文字貼底。

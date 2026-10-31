@@ -1,26 +1,24 @@
 ---
 // 首屏「你想做什麼系統？」＋六個類別卡（主站首頁與服務站首頁共用，2026-10-31 取代 NeedRouter）。
-// 去處規則：站上有真實案例頁的類別連案例頁（目前只有題庫管理系統）；其他類別開官方 LINE 聊天，
+// 去處規則：有可試用 Demo 的類別直接連 Demo（目前只有題庫管理系統）；其他類別開官方 LINE 聊天，
 // 用 LINE URL scheme 的 oaMessage 帶入「我想做：<類別>」預填訊息（lin.ee 追蹤短網址不支援預填）。
 // 不可為了填滿卡片編造案例、客戶或截圖；新增真實案例頁後，把該類別的 href 改過去。
 import LineIcon from './LineIcon.astro';
-import { DEVELOPMENT_SERVICE, LINKS, SITE } from '../consts';
+import { LINKS } from '../consts';
 
 interface Props {
   /** GA 事件的 location，區分首頁與服務站 */
   location: string;
   headingId?: string;
   kicker?: string;
-  /** 服務站的站內連結要帶主站網域 */
-  absoluteLinks?: boolean;
 }
 
-const { location, headingId = 'dev-pick-h', kicker = '客製系統開發｜AI 導入', absoluteLinks = false } = Astro.props;
+const { location, headingId = 'dev-pick-h', kicker = '客製系統開發｜AI 導入'} = Astro.props;
 
 const LINE_OA_ID = '@438efvtl';
 const lineWithText = (category: string) =>
   `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(`我想做：${category}，想先聊聊需求`)}`;
-const caseHref = absoluteLinks ? `${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}` : DEVELOPMENT_SERVICE.caseArticle;
+const DEMO_URL = 'https://demo-question.aixwang.dev';
 
 const icons: Record<string, string> = {
   web: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><circle cx="6.5" cy="6.5" r=".6"/><circle cx="9" cy="6.5" r=".6"/>',
@@ -35,7 +33,7 @@ const categories = [
   { key: 'web', title: '網頁', href: lineWithText('網頁'), external: true },
   { key: 'admin', title: '內部管理系統', href: lineWithText('內部管理系統'), external: true },
   { key: 'app', title: 'APP', href: lineWithText('APP'), external: true },
-  { key: 'bank', title: '題庫管理系統', href: caseHref, external: false },
+  { key: 'bank', title: '題庫管理系統', href: DEMO_URL, external: true, label: '試用 Demo' },
   { key: 'group', title: '揪團平台', href: lineWithText('揪團平台'), external: true },
   { key: 'liff', title: 'LINE LIFF', href: lineWithText('LINE LIFF'), external: true },
 ];
@@ -44,7 +42,7 @@ const categories = [
 <section class="dev-pick" aria-labelledby={headingId}>
   <p class="dev-pick-kicker">{kicker}</p>
   <h1 id={headingId}>你想做什麼系統？</h1>
-  <p class="dev-pick-lead">題庫管理系統有完整案例和 Demo 可以先看；其他類別點下去會開 LINE，訊息已經填好類別，送出就能開始聊。</p>
+  <p class="dev-pick-lead">題庫管理系統可以直接試用 Demo；其他類別點下去會開 LINE，訊息已經填好類別，送出就能開始聊。</p>
   <ul class="dev-pick-grid">
     {categories.map((item) => (
       <li>
@@ -60,7 +58,7 @@ const categories = [
         >
           <svg class="dev-pick-icon" viewBox="0 0 24 24" aria-hidden="true" set:html={icons[item.key]} />
           <strong>{item.title}</strong>
-          <span class="dev-pick-go">{item.external ? 'LINE 聊這個' : '看案例與 Demo'} <span aria-hidden="true">→</span></span>
+          <span class="dev-pick-go">{item.label ?? 'LINE 聊這個'} <span aria-hidden="true">→</span></span>
         </a>
       </li>
     ))}

@@ -48,7 +48,7 @@ const schema = [
   schema={schema}
 >
   <div class="service-router" id="quick-entry">
-    <DevCategoryPicker location="service_hero" headingId="service-hero-h" kicker="客製系統開發、AI 導入｜AI 手把手教學" absoluteLinks />
+    <DevCategoryPicker location="service_hero" headingId="service-hero-h" kicker="客製系統開發、AI 導入｜AI 手把手教學" />
     <ul class="service-more" aria-label="其他服務與工具">
       <li><a href={servicePath(COURSE_SERVICE_URL)} data-ga-button="service_more_course" data-ga-label="一對一教學" data-ga-location="service_more" data-ga-action="navigate"><strong>AI 一對一教學</strong><span>Claude Code 系統開發、簡單網頁、AI 動畫影片。</span><em>看教學方案 →</em></a></li>
       <li><a href={servicePath(SPEAKING_SERVICE_URL)} data-ga-button="service_more_speaking" data-ga-label="演講邀約" data-ga-location="service_more" data-ga-action="navigate"><strong>演講邀約</strong><span>公開演講、企業內訓、工作坊，主題可以討論。</span><em>邀請演講 →</em></a></li>
@@ -68,7 +68,7 @@ const schema = [
         <p>AI 辨識審核、AI 詳解、AI 出題。AI 出題可以先在 Demo 體驗，正式導入時依需求開發。</p>
         <p class="service-dev-links">
           <a href={servicePath(DEVELOPMENT_SERVICE.url)} data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_dev" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a>
-          <a href={`${SITE.url}/blog/math-teacher-question-bank/`} data-ga-button="service_home_dev_case" data-ga-label="看題庫系統完整介紹" data-ga-location="service_home_dev" data-ga-action="navigate">看題庫系統完整介紹 <span aria-hidden="true">→</span></a>
+          <a href="https://demo-question.aixwang.dev" target="_blank" rel="noreferrer" data-ga-button="service_home_dev_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="service_home_dev" data-ga-action="external">試用 Demo，免費不用註冊 <span aria-hidden="true">↗</span></a>
         </p>
       </div>
     </article>
