@@ -9,7 +9,7 @@ import githubLogo from '../assets/github-logo.svg';
 import questionBankShot from '../assets/need-router/question-bank-import-review.jpg';
 import teachingPhoto from '../assets/teaching-one-on-one.jpg';
 import taichungTalk from '../assets/taichung-talk.jpg';
-import { SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL } from '../consts';
+import { SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, SECTION_NAMES } from '../consts';
 import { RESOURCE_EXAMPLES } from '../data/resources';
 
 interface Props {
@@ -44,10 +44,10 @@ const needs = [
   },
   {
     key: 'resources',
-    need: '想先試開源工具',
+    need: `想先試${SECTION_NAMES.openSource}`,
     examples: RESOURCE_EXAMPLES,
     image: { src: githubLogo, alt: 'GitHub 標誌', fit: 'contain' },
-    action: '看開源工具',
+    action: `看${SECTION_NAMES.openSource}`,
     href: `${SITE.url}/resources/`,
   },
   {

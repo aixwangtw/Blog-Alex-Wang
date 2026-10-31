@@ -4,7 +4,7 @@ import SiteHeader from '../components/SiteHeader.astro';
 import FloatingLine from '../components/FloatingLine.astro';
 import ogBanner from '../assets/banner-v2.png';
 import lineBrandIcon from '../assets/line-brand-icon.png';
-import { COLLABORATION_ENTRY_LINKS, FREE_ENTRY_LINKS, GUIDED_ENTRY_LINKS, LEARNING_ENTRY_LINKS, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL } from '../consts';
+import { COLLABORATION_ENTRY_LINKS, FREE_ENTRY_LINKS, GUIDED_ENTRY_LINKS, LEARNING_ENTRY_LINKS, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL, SECTION_NAMES } from '../consts';
 import '../styles/global.css';
 import '../styles/site-chrome.css';
 
@@ -22,7 +22,7 @@ const FOOTER_NAV = [
     ],
   },
   {
-    label: '開源工具',
+    label: SECTION_NAMES.openSource,
     links: [
       { href: '/resources/', label: '免費資源' },
       { href: '/blog/feedback-desk/', label: 'feedback-desk PM溝通工具' },

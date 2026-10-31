@@ -20,7 +20,7 @@
 // 2026-10：Course 結構化資料已移除（它的內容是 Agent 安裝與自動發文課程，站上不再提供）；
 // FAQPage 仍不在首頁，/faq/ 已經有了。
 // ============================================================
-import { DEVELOPMENT_SERVICE, LINKS, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL } from '../consts';
+import { DEVELOPMENT_SERVICE, LINKS, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, SECTION_NAMES } from '../consts';
 import DevCategoryPicker from '../components/DevCategoryPicker.astro';
 import { DEVELOPMENT_CAPABILITIES, DEVELOPMENT_CASE_FEATURES } from '../data/services';
 import LineIcon from '../components/LineIcon.astro';
@@ -64,7 +64,7 @@ const latestPosts = allPosts.slice(0, 5);
 
       <!-- 2／開發案例：只放站上已有的真實案例，一案一張同比例卡片，不放大圖 -->
       <section class="dev-case reveal" id="development-case" aria-labelledby="case-h">
-        <p class="service-kicker">開發案例</p>
+        <p class="service-kicker">{SECTION_NAMES.cases}</p>
         <h2 id="case-h">做過的系統</h2>
         <ul class="case-cards">
           <li>
@@ -135,7 +135,7 @@ const latestPosts = allPosts.slice(0, 5);
         <ul class="dev-more-list">
           <li><a href={COURSE_SERVICE_URL} data-ga-button="home_more_course" data-ga-label="一對一教學" data-ga-location="home_more" data-ga-action="navigate"><strong>AI 一對一教學</strong><span>用 Claude Code 寫系統、做網頁、做動畫影片，方案在服務站。</span><em>看教學方案 →</em></a></li>
           <li><a href={SPEAKING_SERVICE_URL} data-ga-button="home_more_speaking" data-ga-label="演講邀約" data-ga-location="home_more" data-ga-action="navigate"><strong>演講邀約</strong><span>公開演講、企業內訓、工作坊。</span><em>看演講經歷 →</em></a></li>
-          <li><a href="/resources/" data-ga-button="home_more_opensource" data-ga-label="開源工具" data-ga-location="home_more" data-ga-action="navigate"><strong>開源工具</strong><span>feedback-desk 問題回報系統、grill-me Skill。</span><em>看開源工具 →</em></a></li>
+          <li><a href="/resources/" data-ga-button="home_more_opensource" data-ga-label={SECTION_NAMES.openSource} data-ga-location="home_more" data-ga-action="navigate"><strong>{SECTION_NAMES.openSource}</strong><span>feedback-desk 問題回報系統、grill-me Skill。</span><em>看開源工具 →</em></a></li>
         </ul>
       </section>
 

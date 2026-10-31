@@ -44,7 +44,7 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 - 舊規則「LINE 入口只留右下角與服務站頁首」已於 2026-10-31 作廢。
 - 主站首頁 Hero 與結尾、服務站頁首、系統開發服務頁 Hero 的「聊聊需求」LINE 入口是使用者明確要求，不得移除。
 - 2026-10-31 更新：按鈕不再用 LINE 綠色，改用站上一般主按鈕色（var(--color-accent)）；「服務」下拉裡的 LINE 免費諮詢入口已移除，不要加回。
-- 導覽（主站與服務站）都要有「開源工具」，連 /resources/。
+- 導覽（主站與服務站）都要有「開源」（`SECTION_NAMES.openSource`），連 /resources/。
 - 首頁、服務頁、CTA 附近要寫「聊完需求可以先提供試用 Demo」。
 
 ## Git 提交規則（必須遵守）
@@ -193,6 +193,9 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 
 ## 排版規則（必須遵守）
 
+- 全站並列元素一律對齊（2026-10-31 使用者：「任何都要對齊」）：同列卡片內同類元素（圖、標題、說明起點、標籤、按鈕／連結）top 一致，不只卡片等高；標籤不得跟著說明長短上下浮動，固定在卡片內固定位置（例如與連結一起放進 `margin-top: auto` 的底部區塊）；導覽項目基線一致、按鈕列與篩選按鈕對齊、表單欄位與頁尾分欄左緣一致、圖示與文字垂直置中。驗證時用程式量測各元素 top／left 值（1440、768、390、320），並原尺寸逐張檢視。
+- 區塊名稱一律引用 `src/consts.ts` 的 `SECTION_NAMES`（`cases: '案例'`、`openSource: '開源'`），導覽、頁尾、頁面 title、麵包屑、H1、描述與 Markdown／llms 產生內容都不寫死；改名只改這一處。CMS 文章內文不受此規則。
+
 - 任何 UI 改動（包含刪除元素，例如拿掉服務下拉的 LINE 入口導致卡片排版變動）都必須在 1440、390、320 px 重新截圖，原尺寸逐張檢視受影響的區塊與其所在容器（等寬等高、對齊、切邊、留白、溢出），確認沒問題才算完成；回報中要列出檢視過的畫面。部署後須對線上版重截重驗。
 - 同一列卡片必須等寬等高：用 grid／flex 讓 `li` 撐滿格子、卡片填滿 `li`（`display: flex` + `flex: 1`），說明長短不同也不得高低不齊；有按鈕的卡片，按鈕貼底對齊（`margin-top: auto`）。適用：`src/components/SiteHeader.astro` 的 `.dm-cards`／`.dm-card`（服務下拉）、首頁與服務首頁的類別卡與小卡、資源頁工具卡。
 - 頁首「聊聊需求」按鈕（`SiteHeader.astro` 的 `.service-book`）：桌機最小高度 44px、padding 10px 22px、icon 20px、icon 與文字間距 8px、使用站上主按鈕色（`--color-accent`）；小於 1024px（選單內）改為滿版寬、padding 12px 20px。其他 CTA 按鈕最小高度 44px（觸控目標），icon 與文字不得貼邊或被切邊。
@@ -207,7 +210,7 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 
 ## 開發案例頁規則（必須遵守，2026-10-31 起）
 
-- 導覽（主站與服務站共用 `SiteHeader.astro`）有「開發案例」，比照 service.deanlife.blog 的「品牌案例」直接連主站 `/cases/`（`src/pages/cases.astro`），不做下拉；不得因此刪掉「開源工具」等既有項目，擠的話調間距或字級。
+- 導覽（主站與服務站共用 `SiteHeader.astro`）有「案例」（`SECTION_NAMES.cases`），比照 service.deanlife.blog 的「品牌案例」直接連主站 `/cases/`（`src/pages/cases.astro`），不做下拉；不得因此刪掉「開源」等既有項目，擠的話調間距或字級。
 - 版型比照 joinx.co/case-studies/：頁首標籤篩選（「全部」預設，純前端，無 JS 時隱藏按鈕列、卡片全部顯示）＋卡片格線，桌機（≥1024px）3 欄、768–1023px 2 欄、767px 以下 1 欄，一律 `minmax(0, 1fr)`。
 - 每張卡：截圖、案例名稱、一句說明、標籤、貼底連結（`margin-top: auto`）。所有卡片等寬等高（`li` 用 flex、卡片 `flex: 1`）。
 - 截圖統一 16:10：用 1440×900 視窗拍，顯示時 `aspect-ratio: 16 / 10; object-fit: cover; object-position: left top`，存 `public/images/cases/<案例>.webp`。

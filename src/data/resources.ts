@@ -1,3 +1,4 @@
+import { SECTION_NAMES } from '../consts';
 // 免費資源項目的單一來源：免費資源頁、/resources.md、llms-full.txt、頂部「領取」導覽卡（Base.astro）
 // 與首頁／服務站的需求分流卡（NeedRouter.astro）共用。標題、一句說明、圖片、連結改這裡，全站同步。
 import githubLogo from '../assets/github-logo.svg';
@@ -76,7 +77,7 @@ export const GRILL_ME_RESOURCE = {
 };
 
 export const FEEDBACK_DESK_RESOURCE = {
-  heading: '開源工具：feedback-desk PM溝通工具',
+  heading: `${SECTION_NAMES.openSource}：feedback-desk PM溝通工具`,
   intro:
     '跟客戶、團隊夥伴溝通系統問題的回報工具：客戶開單附截圖，團隊改好後在同一張單寫調整說明，客戶確認後結案。MIT 授權，部署到自己的 Cloudflare 帳號，只用免費方案；Claude Code、Codex 可以透過 MCP 直接處理單。',
   articleHref: '/blog/feedback-desk/',

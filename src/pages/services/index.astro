@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import freeResourcesHome from '../../assets/free-resources-home-v2.png';
 import Cta from '../../components/Cta.astro';
 import DevCategoryPicker from '../../components/DevCategoryPicker.astro';
-import { PERSON_SCHEMA, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl, DEVELOPMENT_SERVICE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath } from '../../consts';
+import { PERSON_SCHEMA, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl, DEVELOPMENT_SERVICE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath, SECTION_NAMES } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
 // 2026-10-31 起首屏改為「你想做什麼系統？」六類別（與主站首頁共用 DevCategoryPicker）；教學、演講、開源工具改放首屏下方三張小卡。
@@ -52,7 +52,7 @@ const schema = [
     <ul class="service-more" aria-label="其他服務與工具">
       <li><a href={servicePath(COURSE_SERVICE_URL)} data-ga-button="service_more_course" data-ga-label="一對一教學" data-ga-location="service_more" data-ga-action="navigate"><strong>AI 一對一教學</strong><span>Claude Code 系統開發、簡單網頁、AI 動畫影片。</span><em>看教學方案 →</em></a></li>
       <li><a href={servicePath(SPEAKING_SERVICE_URL)} data-ga-button="service_more_speaking" data-ga-label="演講邀約" data-ga-location="service_more" data-ga-action="navigate"><strong>演講邀約</strong><span>公開演講、企業內訓、工作坊，主題可以討論。</span><em>邀請演講 →</em></a></li>
-      <li><a href={`${SITE.url}/resources/`} data-ga-button="service_more_opensource" data-ga-label="開源工具" data-ga-location="service_more" data-ga-action="navigate"><strong>開源工具</strong><span>feedback-desk 問題回報系統、grill-me Skill。</span><em>看開源工具 →</em></a></li>
+      <li><a href={`${SITE.url}/resources/`} data-ga-button="service_more_opensource" data-ga-label={SECTION_NAMES.openSource} data-ga-location="service_more" data-ga-action="navigate"><strong>{SECTION_NAMES.openSource}</strong><span>feedback-desk 問題回報系統、grill-me Skill。</span><em>看開源工具 →</em></a></li>
     </ul>
   </div>
 
@@ -78,10 +78,10 @@ const schema = [
     <div class="service-free-copy">
       <p class="service-kicker">先自己試試看</p>
       <h2>免費資源</h2>
-      <p class="service-section-lead">整理了免費教學文章、影片與開源工具，點選你需要的主題就能查看。</p>
+      <p class="service-section-lead">整理了免費教學文章、影片與{SECTION_NAMES.openSource}，點選你需要的主題就能查看。</p>
 <a class="service-text-link" href={`${SITE.url}/resources/`} data-ga-button="service_home_free_resources" data-ga-label="查看免費資源" data-ga-location="service_home_free" data-ga-action="navigate">查看免費資源 →</a>
     </div>
-    <Image src={freeResourcesHome} alt="教學影片、開源工具與實作指南組成的免費 AI 學習資源" widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" class="service-free-media" />
+    <Image src={freeResourcesHome} alt={`教學影片、${SECTION_NAMES.openSource}與實作指南組成的免費 AI 學習資源`} widths={[560, 880]} sizes="(min-width: 768px) 45vw, 100vw" class="service-free-media" />
   </section>
 
   <div class="service-home-cta">

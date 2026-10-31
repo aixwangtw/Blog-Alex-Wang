@@ -7,7 +7,7 @@
 // - 截圖統一 16:10（1440×900 拍），資料用 Demo 站或本機偽真資料，不得有真實個資或老師資料。
 // - 標籤只寫真實屬性（產業／系統類型／技術特色），篩選按鈕由案例標籤自動產生。
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { DEVELOPMENT_SERVICE, SITE, breadcrumbSchema } from '../consts';
+import { DEVELOPMENT_SERVICE, SECTION_NAMES, SITE, breadcrumbSchema } from '../consts';
 import Base from '../layouts/Base.astro';
 
 interface DevelopmentCase {
@@ -101,10 +101,10 @@ const EMPTY_NOTES: Record<string, string> = {
 const EMPTY_CATEGORIES = CATEGORIES.filter((category) => !CASES.some((item) => item.category === category));
 
 const schema = [
-  breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '開發案例' }]),
+  breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: SECTION_NAMES.cases }]),
   {
     '@type': 'ItemList',
-    name: '開發案例',
+    name: SECTION_NAMES.cases,
     itemListElement: CASES.map((item, index) => ({
       '@type': 'ListItem',
       position: index + 1,
@@ -116,14 +116,14 @@ const schema = [
 ---
 
 <Base
-  title="開發案例｜Aix 系統開發做過的系統"
+  title={`${SECTION_NAMES.cases}｜Aix 系統開發做過的系統`}
   description="Aix 系統開發做過的系統，每個案例附真實系統畫面，可依產業與系統類型篩選；數學題庫系統可以直接試用 Demo。"
   schema={schema}
 >
   <div class="cases-page">
-    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '開發案例' }]} />
+    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: SECTION_NAMES.cases }]} />
 
-    <h1 class="t-h1 mt-8 font-semibold text-ink">開發案例</h1>
+    <h1 class="t-h1 mt-8 font-semibold text-ink">{SECTION_NAMES.cases}</h1>
     <p class="cases-lead">每個案例附系統的真實畫面。需要登入的後台用示範資料拍，公開網站直接拍線上畫面；可以試用或已上線的系統附連結。</p>
 
     <div class="cases-filter" role="group" aria-label="依標籤篩選案例" hidden data-cases-filter>
@@ -141,6 +141,7 @@ const schema = [
             <div class="cases-card-body">
               <h2>{item.title}</h2>
               <p>{item.summary}</p>
+              <div class="cases-card-foot">
               <ul class="cases-tags" aria-label="標籤">
                 <li class="is-category">{item.category}</li>
                 {item.tags.map((tag) => <li>{tag}</li>)}
@@ -155,6 +156,7 @@ const schema = [
                 data-ga-location="cases_grid"
                 data-ga-action={item.link.external ? 'external' : 'navigate'}
               >{item.link.label} <span aria-hidden="true">{item.link.external ? '↗' : '→'}</span></a>
+              </div>
             </div>
           </article>
         </li>
@@ -204,11 +206,13 @@ const schema = [
   .cases-card-body { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 20px 22px 22px; }
   .cases-card-body h2 { font-size: 20px; font-weight: 700; color: var(--color-ink); }
   .cases-card-body > p { margin-top: 8px; line-height: 1.75; color: var(--color-ink-2); }
-  .cases-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .cases-card-foot { display: flex; flex-direction: column; margin-top: auto; padding-top: 14px; }
+  .cases-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
   .cases-tags li { padding: 3px 10px; border-radius: 999px; background: rgb(0 0 0 / 5%); font-size: 13px; color: var(--color-ink-2); }
-  .cases-card-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: auto; padding-top: 16px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
+  .cases-card-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 12px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
   .cases-tags li.is-category { background: var(--color-ink); color: var(--color-bg, #fff); }
   .cases-card--empty { border-style: dashed; }
+  .cases-card--empty .cases-card-link { margin-top: auto; }
   .cases-card-placeholder { display: flex; align-items: center; justify-content: center; background: rgb(0 0 0 / 3%); font-size: 22px; font-weight: 600; color: var(--color-ink-3); }
   .cases-more { margin-top: 32px; font-size: 15px; color: var(--color-ink-3); }
   @media (max-width: 767px) { .cases-page { padding: 32px 16px 48px; } }

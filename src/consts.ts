@@ -343,7 +343,10 @@ export const PERSON_SCHEMA = {
 
 // 文章分組對照：第一個標籤 → 分組名稱（把多個標籤合併成一組）；沒列在這裡的標籤就用標籤本身。
 // 排除的標籤不進導覽與相關文章清單。頁首彈窗、教學頁頁尾、教學文章底部共用這一份。
-export const ARTICLE_TAG_GROUP_MAP: Record<string, string> = { 'Claude Code': 'AI 教學', Codex: 'AI 教學' };
+/** 站上區塊名稱：導覽、頁尾、頁面標題、麵包屑一律引用，不寫死（2026-10-31 使用者指示簡稱「案例」「開源」） */
+export const SECTION_NAMES = { cases: '案例', openSource: '開源' } as const;
+
+export const ARTICLE_TAG_GROUP_MAP: Record<string, string> = { 'Claude Code': 'AI 教學', Codex: 'AI 教學', 開源工具: SECTION_NAMES.openSource };
 export const ARTICLE_EXCLUDED_TAGS: string[] = ['轉職心得'];
 export const TEACHING_GROUP = 'AI 教學';
 // 一對一教學頁（/course/）頁尾的「AI 教學」清單，這個分類的文章排前面

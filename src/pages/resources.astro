@@ -23,7 +23,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Cta from '../components/Cta.astro';
 import FaqList from '../components/FaqList.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import { LINKS, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { LINKS, SECTION_NAMES, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
 import { RESOURCES_FAQS } from '../data/faqs';
 import Base from '../layouts/Base.astro';
 import { CODEX_RESOURCE, FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE, RESOURCES_INTRO } from '../data/resources';
@@ -51,10 +51,10 @@ const schema = [
 ---
 
 <Base
-  title="免費資源｜Claude Code、Codex 安裝教學與開源工具"
+  title={`免費資源｜Claude Code、Codex 安裝教學與${SECTION_NAMES.openSource}`}
   description="Claude Code、Codex 兩個工具都有安裝教學，再免費取得可直接交給 AI 安裝的 Skills。先自己動手做，卡關再來問。"
   ogImage={pageBannerUrl('resources')}
-  ogImageAlt="免費資源：Claude Code、Codex 安裝教學與開源工具"
+  ogImageAlt={`免費資源：Claude Code、Codex 安裝教學與${SECTION_NAMES.openSource}`}
   schema={schema}
 >
   <div class="mx-auto max-w-3xl px-6 py-12">
