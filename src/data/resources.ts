@@ -32,11 +32,8 @@ export const CODEX_RESOURCE = {
       name: 'Codex',
       thumbSlug: 'codex-windows-wsl-install',
       alt: 'Codex 安裝教學縮圖',
-      description: '上篇是 VS Code 外掛版，不用碰終端機；下篇是 Windows 版 CLI 與 WSL2，需要終端機時再看。',
-      links: [
-        { slug: 'codex-windows-wsl-install', label: 'Codex 安裝教學（上）' },
-        { slug: 'codex-cli-wsl2-windows', label: 'Codex 安裝教學（下）' },
-      ],
+      description: 'VS Code 外掛版，不用碰終端機；需要終端機時，文末有進階安裝篇。',
+      links: [{ slug: 'codex-windows-wsl-install', label: 'Codex 安裝教學' }],
     },
   ],
 };
