@@ -9,7 +9,8 @@ import Card from '../../components/Card.astro';
 import CheckItem from '../../components/CheckItem.astro';
 import Cta from '../../components/Cta.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { AUTHOR, DEVELOPMENT_SERVICE, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, breadcrumbSchema } from '../../consts';
+import LineIcon from '../../components/LineIcon.astro';
+import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, breadcrumbSchema } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 import { DEVELOPMENT_AFTER_LAUNCH, DEVELOPMENT_CAPABILITIES, DEVELOPMENT_CASE_FEATURES } from '../../data/services';
 import { getDevelopmentFaqs } from '../../lib/development-faqs';
@@ -85,7 +86,9 @@ const schema = [
       <p class="mt-6 text-base leading-8 text-ink sm:text-lg sm:leading-9">
         第一次聊，我們會先了解你的需求。接著依你的需求免費做一個簡易 Demo，讓你看系統大概長什麼樣子、流程對不對；看完覺得不適合，不用付任何費用。
       </p>
-      <div class="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+      <p class="mt-3 text-base font-semibold leading-8 text-ink sm:text-lg">聊完需求，可以先提供試用 Demo。</p>
+      <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <a href={LINKS.line} target="_blank" rel="noreferrer" class="inline-flex min-h-12 items-center justify-center gap-2.5 rounded-md bg-[#06c755] px-7 font-semibold text-white no-underline" data-ga-button="development_hero_line" data-ga-label="聊聊需求" data-ga-location="development_hero" data-ga-action="external"><LineIcon class="h-5 w-5 shrink-0" />聊聊需求</a>
         <a href={guideArticleUrl} class="inline-flex min-h-12 items-center border border-rule-2 px-6 font-semibold text-ink no-underline" data-ga-button="development_hero_guide" data-ga-label="看費用與合作方式" data-ga-location="development_hero" data-ga-action="navigate">看費用與合作方式</a>
       </div>
     </section>
@@ -181,7 +184,7 @@ const schema = [
 
     <Cta
       title="對系統有疑問嗎？"
-      text="加 LINE 可以免費評估。想先看做好的系統長什麼樣子，可以試用題庫系統的 Demo，免費、不用註冊。"
+      text="加 LINE 可以免費評估，聊完需求可以先提供試用 Demo。想先看做好的系統長什麼樣子，可以試用題庫系統的 Demo，免費、不用註冊。"
       hint="覺得這樣的合作方式適合，再從右下角官方 LINE 說你的需求"
       href={DEVELOPMENT_SERVICE.demoUrl}
       label={'試用\n題庫 Demo'}
