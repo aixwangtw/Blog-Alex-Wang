@@ -5,32 +5,16 @@
 // 不可為了填滿卡片編造案例、客戶或截圖；新增真實案例頁後，把該類別的 href 改過去。
 import LineIcon from './LineIcon.astro';
 import { HERO_INTRO, LINKS, PAYMENT_TERMS } from '../consts';
-import { DEV_CASES, DEV_CATEGORIES, FEATURE_TAGS, devCategoryTitle } from '../data/cases';
-import CaseCarousel from './CaseCarousel.astro';
+import { DEV_CATEGORIES } from '../data/cases';
 
 interface Props {
   /** GA 事件的 location，區分首頁與服務站 */
   location: string;
   headingId?: string;
   kicker?: string;
-  /** 首屏自動輪播所有案例截圖（主站首頁才開；服務站先不放） */
-  showCarousel?: boolean;
 }
 
-const { location, headingId = 'dev-pick-h', kicker = '客製系統開發｜AI 導入', showCarousel = false } = Astro.props;
-// 首屏輪播：所有案例的截圖，標系統名＋功能標籤，點擊連到該案例類別篩選後的案例頁
-// 同一張圖可能被多個案例引用（例如 AI 截圖同時在題庫卡），首屏一輪只出現一次
-const seenHeroImages = new Set<string>();
-const heroSlides = DEV_CASES.flatMap((item) =>
-  item.images.map((image) => ({
-    src: image.src,
-    alt: image.alt,
-    label: `${item.title}・${FEATURE_TAGS[image.featureTag]}`,
-    href: `/cases/?tag=${encodeURIComponent(devCategoryTitle(item.categories[0]))}`,
-    group: item.key,
-  })),
-).filter((slide) => (seenHeroImages.has(slide.src) ? false : (seenHeroImages.add(slide.src), true)));
-
+const { location, headingId = 'dev-pick-h', kicker = '客製系統開發｜AI 導入' } = Astro.props;
 const categories = DEV_CATEGORIES.map((item) => ({
   key: item.key,
   title: item.title,
@@ -42,14 +26,9 @@ const icons: Record<string, string> = Object.fromEntries(DEV_CATEGORIES.map((ite
 ---
 
 <section class="dev-pick" aria-labelledby={headingId}>
-  <div class:list={['dev-pick-head', { 'dev-pick-head--carousel': showCarousel }]}>
-    <div>
-      <p class="dev-pick-kicker">{kicker}</p>
-      <h1 id={headingId}>你想做什麼系統？</h1>
-      <p class="dev-pick-lead">{HERO_INTRO.lead}<strong>{HERO_INTRO.demoStrong}</strong>{HERO_INTRO.demoTail}<strong>{PAYMENT_TERMS.text}</strong>。</p>
-    </div>
-    {showCarousel && <div class="dev-pick-carousel"><CaseCarousel slides={heroSlides} groupKey="hero" gaLocation={`${location}_carousel`} autoplay random eager /></div>}
-  </div>
+  <p class="dev-pick-kicker">{kicker}</p>
+  <h1 id={headingId}>你想做什麼系統？</h1>
+  <p class="dev-pick-lead">{HERO_INTRO.lead}<strong>{HERO_INTRO.demoStrong}</strong>{HERO_INTRO.demoTail}<strong>{PAYMENT_TERMS.text}</strong>。</p>
   <ul class="dev-pick-grid">
     {categories.map((item) => (
       <li>
@@ -78,17 +57,6 @@ const icons: Record<string, string> = Object.fromEntries(DEV_CATEGORIES.map((ite
 
 <style>
   .dev-pick { padding: clamp(28px, 5vw, 64px) 0 clamp(40px, 6vw, 72px); }
-  .dev-pick-head--carousel { display: grid; gap: 20px; }
-  .dev-pick-carousel { width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--color-rule-2); border-radius: 8px; }
-  @media (min-width: 1024px) { .dev-pick-head--carousel { grid-template-columns: minmax(0, 1fr) minmax(0, 400px); align-items: end; gap: 32px; } }
-  /* 767px 以下：輪播移到類別卡與「聊聊需求」下方，讓主要按鈕留在前面 */
-  @media (max-width: 767px) {
-    .dev-pick:has(.dev-pick-head--carousel) { display: flex; flex-direction: column; }
-    .dev-pick-head--carousel { display: contents; }
-    .dev-pick-head--carousel .dev-pick-carousel { order: 3; margin-top: 24px; }
-    .dev-pick:has(.dev-pick-head--carousel) .dev-pick-grid { order: 1; }
-    .dev-pick:has(.dev-pick-head--carousel) .dev-pick-actions { order: 2; }
-  }
   .dev-pick-kicker { color: var(--color-accent); font-size: 13px; font-weight: 700; letter-spacing: .08em; }
   .dev-pick h1 { margin-top: 14px; font-family: var(--font-serif, serif); font-size: clamp(32px, 4.6vw, 56px); line-height: 1.2; font-weight: 600; color: var(--color-ink); }
   .dev-pick-lead { margin-top: 16px; max-width: 60ch; font-size: 16px; line-height: 1.85; color: var(--color-ink-2); }

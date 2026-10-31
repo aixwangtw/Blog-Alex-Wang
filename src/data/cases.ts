@@ -291,4 +291,21 @@ export const DEV_CASES: DevCase[] = [
 export const caseFeatureTags = (item: DevCase): FeatureTagKey[] =>
   [...new Set(item.images.map((image) => image.featureTag))].slice(0, Math.max(2, Math.min(4, 5 - item.categories.length)));
 
+/** 首頁首屏自動輪播：所有案例的截圖（同一張圖只出現一次），標系統名＋功能標籤，點擊連到該案例類別篩選後的案例頁 */
+export const heroCarouselSlides = () => {
+  const seen = new Set<string>();
+  return DEV_CASES.flatMap((item) =>
+    item.images.map((image) => ({
+      src: image.src,
+      alt: image.alt,
+      label: `${item.title}・${FEATURE_TAGS[image.featureTag]}`,
+      href: `/cases/?tag=${encodeURIComponent(devCategoryTitle(item.categories[0]))}`,
+      group: item.key,
+      featureKey: image.featureTag,
+      featureLabel: FEATURE_TAGS[image.featureTag],
+      caseTitle: item.title,
+    })),
+  ).filter((slide) => (seen.has(slide.src) ? false : (seen.add(slide.src), true)));
+};
+
 export const FEATURED_CASE = DEV_CASES.find((item) => item.featured) ?? DEV_CASES[0];

@@ -7,6 +7,9 @@ export const CASES_BEYOND_NOTE = {
   text: '案例以外的系統也可以做，聊完需求一樣可以先提供試用 Demo。',
 } as const;
 
+/** 首屏「聊聊需求」按鈕下方說明（與首屏介紹句不重複） */
+export const HERO_CTA_NOTE = '說說你想做的系統，我們先做 Demo 給你試用。';
+
 /** 首屏介紹句（主站首頁與服務站首頁共用的類別卡區）：strong 段加粗；分期文字另引用 PAYMENT_TERMS */
 export const HERO_INTRO = {
   lead: '客製化系統開發，需求可以隨調隨改。',

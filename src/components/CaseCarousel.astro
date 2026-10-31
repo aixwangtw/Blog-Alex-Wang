@@ -17,6 +17,10 @@ export interface CarouselSlide {
   href?: string;
   /** 同案例不連續出現用 */
   group?: string;
+  /** 自動模式：功能標籤按鈕（連到 /cases/?feature=<key>）與「點看案例」提示用 */
+  featureKey?: string;
+  featureLabel?: string;
+  caseTitle?: string;
 }
 
 interface Props {
@@ -51,9 +55,11 @@ const { slides, groupKey, gaLocation, autoplay = false, random = false, eager = 
             class="cc-link"
             href={slide.href}
             data-ga-button={`${gaLocation}_slide`}
-            data-ga-label={slide.label}
+            data-ga-label={slide.caseTitle ?? slide.label}
             data-ga-location={gaLocation}
             data-ga-action="navigate"
+            data-hero-case={slide.group}
+            data-hero-index={index + 1}
           >
             <img
               class="cc-img"
@@ -80,7 +86,23 @@ const { slides, groupKey, gaLocation, autoplay = false, random = false, eager = 
             loading={index === 0 && eager ? 'eager' : 'lazy'}
           />
         )}
-        <span class="cc-tag">{slide.label}</span>
+        {autoplay && slide.featureKey ? (
+          <div class="cc-overlay">
+            <a
+              class="cc-tag cc-tag-btn"
+              href={`/cases/?feature=${slide.featureKey}`}
+              data-feature-key={slide.featureKey}
+              data-ga-button={`${gaLocation}_feature`}
+              data-ga-label={slide.featureLabel}
+              data-ga-location={gaLocation}
+              data-ga-action="navigate"
+            ><span>{slide.featureLabel}</span></a>
+            <a class="cc-hint" href={slide.href} tabindex="-1" aria-hidden="true" data-hero-case={slide.group} data-hero-index={index + 1}>{slide.caseTitle}｜點看案例 ›</a>
+          </div>
+        ) : (
+          <span class="cc-tag">{slide.label}</span>
+        )}
+        {autoplay && <span class="cc-progress" aria-hidden="true"><span class="cc-progress-bar"></span></span>}
       </div>
     ))}
   </div>
@@ -126,9 +148,27 @@ const { slides, groupKey, gaLocation, autoplay = false, random = false, eager = 
   .case-carousel--auto .cc-track { position: relative; display: block; overflow: hidden; scroll-snap-type: none; }
   .case-carousel--auto .cc-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0s linear 0.6s; }
   .case-carousel--auto .cc-slide.is-active { opacity: 1; visibility: visible; transition: opacity 0.6s ease; }
+  .case-carousel--auto.cc-ready .cc-slide:not(.is-active), .case-carousel--auto.cc-ready .cc-slide:not(.is-active) * { pointer-events: none !important; }
   .case-carousel--auto:not(.cc-ready) .cc-slide:first-child { opacity: 1; visibility: visible; }
   .case-carousel--auto .lightbox-hint, .case-carousel--auto .cc-dots { display: none; }
   @media (prefers-reduced-motion: reduce) { .case-carousel--auto .cc-slide { transition: none; } }
+  /* 首屏：左上角功能標籤按鈕＋「點看案例」提示（同一列、位置固定），按鈕觸控區 ≥ 44px */
+  .cc-overlay { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 6px; padding: 0 8px; height: 44px; pointer-events: none; }
+  .cc-overlay .cc-tag { position: static; }
+  .cc-tag-btn { position: relative; pointer-events: auto; text-decoration: underline; text-underline-offset: 2px; }
+  .cc-tag-btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0; background: transparent; }
+  .cc-tag-btn span { padding: 3px 9px; border-radius: 999px; background: rgb(22 22 26 / 78%); }
+  .cc-tag-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .cc-hint { position: relative; z-index: 1; pointer-events: auto; overflow: hidden; text-decoration: none; padding: 3px 9px; border-radius: 999px; background: rgb(255 255 255 / 90%); color: #16161a; font-size: 12px; line-height: 1.5; white-space: nowrap; text-overflow: ellipsis; }
+  /* 停留時間進度條：隨 4.5 秒填滿，暫停時停住 */
+  .cc-progress { position: absolute; right: 0; bottom: 0; left: 0; height: 3px; background: rgb(22 22 26 / 15%); }
+  .cc-progress-bar { display: block; width: 100%; height: 100%; background: var(--color-accent); transform: scaleX(0); transform-origin: left center; }
+  .case-carousel--auto .cc-slide.is-active .cc-progress-bar.is-running { animation: cc-progress 4.5s linear forwards; }
+  .case-carousel--auto.is-paused .cc-progress-bar { animation-play-state: paused !important; }
+  @keyframes cc-progress { to { transform: scaleX(1); } }
+  /* 首次進站滑動提示 */
+  .case-carousel--auto .cc-track.is-nudging { animation: cc-nudge 0.4s ease-in-out; }
+  @keyframes cc-nudge { 40% { transform: translateX(-20px); } 100% { transform: translateX(0); } }
 </style>
 
 <script>
@@ -202,12 +242,30 @@ const { slides, groupKey, gaLocation, autoplay = false, random = false, eager = 
       // 只預載下一張
       loadImage(slides[(index + 1) % slides.length]);
     };
-    const stop = () => { if (timer) window.clearInterval(timer); timer = undefined; };
-    const start = () => {
-      stop();
-      if (userPaused || hoverPaused || document.hidden) return;
-      timer = window.setInterval(() => show(index + 1), INTERVAL);
+    const bars = () => root.querySelectorAll<HTMLElement>('.cc-progress-bar');
+    const restartBar = () => {
+      bars().forEach((bar) => bar.classList.remove('is-running'));
+      const bar = slides[index]?.querySelector<HTMLElement>('.cc-progress-bar');
+      if (!bar || userPaused) return;
+      void bar.offsetWidth;
+      bar.classList.add('is-running');
     };
+    let remaining = INTERVAL;
+    let startedAt = 0;
+    const stop = () => {
+      if (timer) { window.clearTimeout(timer); remaining = Math.max(0, remaining - (Date.now() - startedAt)); }
+      timer = undefined;
+      root.classList.add('is-paused');
+    };
+    const start = () => {
+      if (timer) window.clearTimeout(timer);
+      timer = undefined;
+      if (userPaused || hoverPaused || document.hidden) { root.classList.add('is-paused'); return; }
+      root.classList.remove('is-paused');
+      startedAt = Date.now();
+      timer = window.setTimeout(() => { remaining = INTERVAL; show(index + 1); restartBar(); start(); }, remaining);
+    };
+    const jump = (next: number) => { show(next); remaining = INTERVAL; restartBar(); start(); };
     const renderToggle = () => {
       if (!toggle) return;
       toggle.textContent = userPaused ? '▶' : '❚❚';
@@ -217,12 +275,42 @@ const { slides, groupKey, gaLocation, autoplay = false, random = false, eager = 
     root.classList.add('cc-ready');
     show(0);
     renderToggle();
+    restartBar();
     start();
 
-    root.querySelector('[data-cc-prev]')?.addEventListener('click', () => { show(index - 1); start(); });
-    root.querySelector('[data-cc-next]')?.addEventListener('click', () => { show(index + 1); start(); });
-    dots.forEach((dot, i) => dot.addEventListener('click', () => { show(slides.indexOf(slides[i])); start(); }));
-    toggle?.addEventListener('click', () => { userPaused = !userPaused; renderToggle(); start(); });
+    // 首次進站一次性滑動提示（減少動態效果時不做）
+    if (!reduced) {
+      let seen = false;
+      try { seen = window.localStorage.getItem('aixwang_hero_nudge') === '1'; } catch (e) {}
+      if (!seen) {
+        const img = slides[0]?.querySelector('img');
+        const nudge = () => {
+          track.classList.add('is-nudging');
+          track.addEventListener('animationend', () => track.classList.remove('is-nudging'), { once: true });
+          try { window.localStorage.setItem('aixwang_hero_nudge', '1'); } catch (e) {}
+        };
+        if (img && !img.complete) img.addEventListener('load', () => window.setTimeout(nudge, 300), { once: true });
+        else window.setTimeout(nudge, 300);
+      }
+    }
+
+    // GA：首屏輪播點擊與功能標籤點擊（只送案例 key、圖序、功能 key，不含個資）
+    const gtag = (name: string, params: Record<string, string | number>) => {
+      const fn = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+      if (typeof fn === 'function') fn('event', name, params);
+    };
+    root.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      const tag = target.closest<HTMLElement>('[data-feature-key]');
+      if (tag) { gtag('feature_tag_click', { feature_key: tag.dataset.featureKey ?? '', link_location: 'home_hero_carousel' }); return; }
+      const link = target.closest<HTMLElement>('[data-hero-case]');
+      if (link) gtag('hero_carousel_click', { case_key: link.dataset.heroCase ?? '', image_index: Number(link.dataset.heroIndex ?? 0) });
+    });
+
+    root.querySelector('[data-cc-prev]')?.addEventListener('click', () => jump(index - 1));
+    root.querySelector('[data-cc-next]')?.addEventListener('click', () => jump(index + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => jump(i)));
+    toggle?.addEventListener('click', () => { userPaused = !userPaused; renderToggle(); if (userPaused) { stop(); } else { restartBar(); start(); } });
     root.addEventListener('mouseenter', () => { hoverPaused = true; stop(); });
     root.addEventListener('mouseleave', () => { hoverPaused = false; start(); });
     root.addEventListener('focusin', () => { hoverPaused = true; stop(); });

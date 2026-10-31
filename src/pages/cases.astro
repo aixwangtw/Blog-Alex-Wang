@@ -44,16 +44,17 @@ const schema = [
     <h1 class="t-h1 mt-8 font-semibold text-ink">{SECTION_NAMES.cases}</h1>
     <p class="cases-lead">每個案例附系統的真實畫面。需要登入的後台用示範資料拍，公開網站直接拍線上畫面；可以試用或已上線的系統附連結。<CasesBeyondNote /></p>
 
-    <div class="cases-filter" role="group" aria-label="依標籤篩選案例" hidden data-cases-filter>
+    <div class="cases-filter" role="group" aria-label="依標籤篩選案例" hidden data-cases-filter data-feature-names={JSON.stringify(FEATURE_TAGS)}>
       <button type="button" class="cases-pill" aria-pressed="true" data-tag="" data-ga-button="cases_filter_all" data-ga-label="篩選：全部" data-ga-location="cases_filter" data-ga-action="filter">全部</button>
       {CATEGORIES.map((tag) => (
         <button type="button" class="cases-pill" aria-pressed="false" data-tag={tag} data-ga-button={`cases_filter_${tag}`} data-ga-label={`篩選：${tag}`} data-ga-location="cases_filter" data-ga-action="filter">{tag}</button>
       ))}
     </div>
 
+    <p class="cases-feature" hidden data-cases-feature>功能篩選：<strong data-cases-feature-label></strong><a href="/cases/" data-cases-feature-clear data-ga-button="cases_feature_clear" data-ga-label="清除功能篩選" data-ga-location="cases_filter" data-ga-action="filter">清除</a></p>
     <ul class="cases-grid" data-cases-grid>
       {CASES.map((item) => (
-        <li data-tags={item.categories.map(devCategoryTitle).join('|')}>
+        <li data-tags={item.categories.map(devCategoryTitle).join('|')} data-features={[...new Set(item.images.map((image) => image.featureTag))].join('|')}>
           <article class="cases-card">
             <CaseCarousel class="cases-card-thumb" groupKey={item.key} gaLocation="cases_grid" slides={item.images.map((image) => ({ src: image.src, alt: image.alt, label: FEATURE_TAGS[image.featureTag] }))} />
             <div class="cases-card-body">
@@ -131,6 +132,9 @@ const schema = [
   .cases-card-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 12px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
   .cases-tags li.is-category { background: var(--color-ink); color: var(--color-bg, #fff); }
   .cases-card--empty { border-style: dashed; }
+  .cases-feature { margin-top: 16px; font-size: 15px; color: var(--color-ink-2); }
+  .cases-feature[hidden] { display: none; }
+  .cases-feature a { display: inline-flex; align-items: center; min-height: 44px; margin-left: 12px; color: var(--color-accent); }
   .cases-card--empty .cases-card-link { margin-top: auto; }
   .cases-card-placeholder { display: flex; align-items: center; justify-content: center; background: rgb(0 0 0 / 3%); font-size: 22px; font-weight: 600; color: var(--color-ink-3); }
   @media (max-width: 767px) { .cases-page { padding: 32px 16px 48px; } }
@@ -165,5 +169,18 @@ const schema = [
       ? [...filter.querySelectorAll<HTMLButtonElement>('button[data-tag]')].find((button) => button.dataset.tag === initialTag)
       : undefined;
     if (initialButton) applyTag(initialButton);
+    // 網址帶 ?feature=<功能 key> 時，只顯示含該功能截圖的案例（首頁輪播的功能標籤用；可與類別篩選並存）
+    const featureKey = new URLSearchParams(location.search).get('feature');
+    const featureNames: Record<string, string> = JSON.parse(filter.dataset.featureNames ?? '{}');
+    if (featureKey && featureNames[featureKey]) {
+      const note = document.querySelector<HTMLElement>('[data-cases-feature]');
+      const label = document.querySelector<HTMLElement>('[data-cases-feature-label]');
+      if (note && label) { label.textContent = featureNames[featureKey]; note.hidden = false; }
+      const applyFeature = () => items.forEach((item) => {
+        if (!item.hidden && !(item.dataset.features ?? '').split('|').includes(featureKey)) item.hidden = true;
+      });
+      applyFeature();
+      filter.addEventListener('click', () => window.setTimeout(applyFeature, 0));
+    }
   }
 </script>

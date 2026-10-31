@@ -1,0 +1,71 @@
+---
+// 主站首頁首屏（2026-11-01 起取代 DevCategoryPicker 類別卡）：左欄文字＋「聊聊需求」，右欄案例截圖自動輪播。
+// 手機由上而下：文字 → 輪播 → 聊聊需求。主站首頁不放類別卡（使用者指示「類別卡整個拿掉」）。
+// 介紹句與分期文字引用 HERO_INTRO、PAYMENT_TERMS；輪播圖片取自 src/data/cases.ts。
+import CaseCarousel from './CaseCarousel.astro';
+import LineIcon from './LineIcon.astro';
+import { HERO_CTA_NOTE, HERO_INTRO, LINKS, PAYMENT_TERMS } from '../consts';
+import { heroCarouselSlides } from '../data/cases';
+
+interface Props {
+  /** GA 事件的 location */
+  location: string;
+  headingId?: string;
+  kicker?: string;
+}
+
+const { location, headingId = 'home-hero-h', kicker = '客製系統開發｜AI 導入' } = Astro.props;
+const slides = heroCarouselSlides();
+---
+
+<section class="home-hero" aria-labelledby={headingId}>
+  <div class="home-hero-text">
+    <p class="home-hero-kicker">{kicker}</p>
+    <h1 id={headingId}>你想做什麼系統？</h1>
+    <p class="home-hero-lead">{HERO_INTRO.lead}<strong>{HERO_INTRO.demoStrong}</strong>{HERO_INTRO.demoTail}<strong>{PAYMENT_TERMS.text}</strong>。</p>
+  </div>
+  <div class="home-hero-carousel">
+    <CaseCarousel slides={slides} groupKey="hero" gaLocation={`${location}_carousel`} autoplay random eager />
+  </div>
+  <div class="home-hero-actions">
+    <a class="home-hero-btn" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button={`${location}_line`} data-ga-label="聊聊需求" data-ga-location={location} data-ga-action="external"><LineIcon class="home-hero-btn-icon" /><span>聊聊需求</span></a>
+    <p class="home-hero-note">{HERO_CTA_NOTE}</p>
+  </div>
+</section>
+
+<style>
+  .home-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'text' 'carousel' 'actions';
+    gap: 24px;
+    padding: clamp(28px, 5vw, 64px) 0 clamp(40px, 6vw, 72px);
+  }
+  .home-hero-text { grid-area: text; min-width: 0; }
+  .home-hero-carousel { grid-area: carousel; min-width: 0; overflow: hidden; border: 1px solid var(--color-rule-2); border-radius: 8px; }
+  .home-hero-actions { grid-area: actions; }
+  /* 桌機：左欄文字＋按鈕、右欄輪播，兩欄頂端對齊 */
+  @media (min-width: 1024px) {
+    .home-hero {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 580px);
+      grid-template-rows: auto 1fr;
+      grid-template-areas: 'text carousel' 'actions carousel';
+      align-items: start;
+      column-gap: 48px;
+      row-gap: 28px;
+    }
+  }
+  .home-hero-kicker { color: var(--color-accent); font-size: 13px; font-weight: 700; letter-spacing: .08em; }
+  .home-hero h1 { margin-top: 14px; font-family: var(--font-serif, serif); font-size: clamp(32px, 4.6vw, 56px); line-height: 1.2; font-weight: 600; color: var(--color-ink); }
+  .home-hero-lead { margin-top: 16px; max-width: 34em; font-size: 17px; line-height: 1.85; color: var(--color-ink-2); }
+  .home-hero-lead strong { color: var(--color-ink); }
+  .home-hero-note { margin-top: 10px; font-size: 14px; line-height: 1.7; color: var(--color-ink-3); }
+  @media (min-width: 1024px) { .home-hero h1 { font-size: clamp(40px, 3.4vw, 50px); white-space: nowrap; } }
+  .home-hero-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 28px; border-radius: 6px; background: var(--color-accent); color: #fff; font-size: 17px; font-weight: 650; line-height: 1.2; white-space: nowrap; text-decoration: none; }
+  :global(.home-hero-btn-icon) { display: block; flex: none; width: 22px; height: 22px; }
+  @media (max-width: 767px) {
+    .home-hero { gap: 20px; }
+    .home-hero-lead { font-size: 16px; }
+    .home-hero-btn { width: 100%; }
+  }
+</style>
