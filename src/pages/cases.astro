@@ -9,7 +9,7 @@
 import CasesBeyondNote from '../components/CasesBeyondNote.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { CASES_BEYOND_NOTE, SECTION_NAMES, SITE, breadcrumbSchema, lineCategoryUrl } from '../consts';
-import { DEV_CASES, DEV_CATEGORIES, devCategoryTitle } from '../data/cases';
+import { DEV_CASES, DEV_CATEGORIES, FEATURE_TAGS, devCategoryTitle } from '../data/cases';
 import Base from '../layouts/Base.astro';
 import ImageLightbox from '../components/ImageLightbox.astro';
 
@@ -62,7 +62,7 @@ const schema = [
               <div class="cases-card-foot">
               <ul class="cases-tags" aria-label="標籤">
                 {item.categories.map((key) => <li class="is-category">{devCategoryTitle(key)}</li>)}
-                {item.tags.map((tag) => <li>{tag}</li>)}
+                {item.tags.map((tag) => <li>{FEATURE_TAGS[tag]}</li>)}
               </ul>
               <a
                 class="cases-card-link"
