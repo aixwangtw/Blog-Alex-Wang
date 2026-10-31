@@ -190,3 +190,12 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 - 首頁或服務入口呈現「新手教學」時，視覺素材必須優先使用真實教學案例，並搭配案例實際使用的 Claude Code、Codex、Hermes、OpenClaw 等工具 Logo。
 - 不得以一般人物合照、純裝飾照片或與案例無關的形象照作為新手教學的主要圖片。
 - 案例與工具 Logo 無法使用時，才可改用能清楚看出操作成果的課程實作畫面；素材仍須與該段文案直接對應。
+
+## 排版規則（必須遵守）
+
+- 任何 UI 改動（包含刪除元素，例如拿掉服務下拉的 LINE 入口導致卡片排版變動）都必須在 1440、390、320 px 重新截圖，原尺寸逐張檢視受影響的區塊與其所在容器（等寬等高、對齊、切邊、留白、溢出），確認沒問題才算完成；回報中要列出檢視過的畫面。部署後須對線上版重截重驗。
+- 同一列卡片必須等寬等高：用 grid／flex 讓 `li` 撐滿格子、卡片填滿 `li`（`display: flex` + `flex: 1`），說明長短不同也不得高低不齊；有按鈕的卡片，按鈕貼底對齊（`margin-top: auto`）。適用：`src/components/SiteHeader.astro` 的 `.dm-cards`／`.dm-card`（服務下拉）、首頁與服務首頁分流卡、資源頁工具卡。
+- CTA 按鈕最小高度 44px、左右內距 22px、icon 20px，icon 與文字之間留間距，不得貼邊或被切邊；「聊聊需求」使用站上主按鈕色。適用：`SiteHeader.astro` 的 `.service-book`、各頁 Hero CTA。
+- 小螢幕（手機）頁尾要預留 LINE 浮動按鈕空間 72px，避免遮住頁尾連結。適用：`src/components/FloatingLine.astro`、頁尾。
+- 導覽列：主站搜尋框固定在頁首導覽列（`SiteHeader.astro` 的 `.nav-search-form`，`showSearch`），不放在首屏 Hero；服務站不顯示搜尋框。手機版導覽放進選單展開內，且不得擠壓導覽項目。
+- 服務下拉在手機為單欄文字清單（無卡片框），桌機為三欄等寬等高卡片。
