@@ -1,10 +1,12 @@
 ---
+import CasesBeyondNote from '../../components/CasesBeyondNote.astro';
 import { Image } from 'astro:assets';
 import freeResourcesHome from '../../assets/free-resources-home-v2.png';
 import Cta from '../../components/Cta.astro';
 import DevCategoryPicker from '../../components/DevCategoryPicker.astro';
 import { FEATURED_CASE } from '../../data/cases';
-import { PERSON_SCHEMA, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl, DEVELOPMENT_SERVICE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath, SECTION_NAMES } from '../../consts';
+import ImageLightbox from '../../components/ImageLightbox.astro';
+import { PERSON_SCHEMA, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl, DEVELOPMENT_SERVICE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath, SECTION_NAMES, CASES_BEYOND_NOTE } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
 // 2026-10-31 起首屏改為「你想做什麼系統？」六類別（與主站首頁共用 DevCategoryPicker）；教學、演講、開源工具改放首屏下方三張小卡。
@@ -60,9 +62,9 @@ const schema = [
   <section class="service-dev" id="system-development" aria-labelledby="service-dev-h">
     <p class="service-kicker">系統開發</p>
     <h2 id="service-dev-h">客製系統開發、AI 導入</h2>
-    <p class="service-section-lead">AI 導入、資料管理、API 串接是我們團隊的強項：讓 AI 讀文件、整理資料、產生報告，做客戶、訂單、庫存這類資料的後台，或接 LINE、金流、Google 服務。做過的系統有 CRM、健檢系統、預約系統、揪團平台等。</p>
+    <p class="service-section-lead">AI 導入、資料管理、API 串接是我們團隊的強項：讓 AI 讀文件、整理資料、產生報告，做客戶、訂單、庫存這類資料的後台，或接 LINE、金流、Google 服務。<CasesBeyondNote /></p>
     <article class="service-case">
-      <img class="service-case-thumb" src={FEATURED_CASE.image} alt={FEATURED_CASE.imageAlt} width="1440" height="900" loading="lazy" decoding="async" />
+      <ImageLightbox src={FEATURED_CASE.image} alt={FEATURED_CASE.imageAlt} width={1440} height={900} imgClass="service-case-thumb" gaLocation="service_home_case" gaKey={FEATURED_CASE.key} />
       <div class="service-case-body">
         <p class="service-kicker">代表案例</p>
         <h3>{FEATURED_CASE.title}</h3>

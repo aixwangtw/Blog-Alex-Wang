@@ -1,4 +1,12 @@
 // 全站共用的品牌與聯絡資訊：改這裡就能同步更新所有頁面與 JSON-LD
+/** 案例區介紹句：案例以外的系統也接。頁面用 <CasesBeyondNote />（strong 段加粗），純文字處用 .text */
+export const CASES_BEYOND_NOTE = {
+  lead: '案例以外的系統也可以做，聊完需求一樣可以先',
+  strong: '提供試用 Demo',
+  tail: '。',
+  text: '案例以外的系統也可以做，聊完需求一樣可以先提供試用 Demo。',
+} as const;
+
 export const SITE = {
   title: 'Aix 系統開發',
   titleEn: 'Aix System Development',
@@ -23,6 +31,13 @@ export const SERVICE_SITE = {
 
 // 系統開發服務頁與首頁共用的事實（流程、時程、付款、主機），內容取自
 // 〈系統開發、AI 導入費用怎麼算？〉文章（guideArticle），且不得與題庫文章 FAQ 矛盾；不得寫開發費金額。
+/** 系統開發付款條件（服務頁、描述、結構化資料、.md 共用）。CMS 文章內文無法引用，改動時要手動同步（清單見 AGENTS.md） */
+export const PAYMENT_TERMS = {
+  maxInstallments: 36,
+  interestFree: true,
+  text: '可分期，最多 36 期，零利率',
+} as const;
+
 export const DEVELOPMENT_SERVICE = {
   url: `${SERVICE_SITE.url}/services/development/`,
   caseArticle: '/blog/math-teacher-question-bank/',
@@ -31,7 +46,7 @@ export const DEVELOPMENT_SERVICE = {
   demoUrl: 'https://demo-question.aixwang.dev',
   steps: ['先聊需求', '免費做簡易 Demo，看過再決定', 'Demo 符合需求後，談預算、時程、報價與簽約', '分階段開發，隨調隨改', '上線並教你怎麼用，一年保固', '保固結束後可簽維護合約'],
   timeline: '時程依功能多寡估算：以技術上來說，大約兩個月可以完成 5 個左右的複雜功能，我們做過的功能會更快；開發過程中需求原則上可以隨時調整。',
-  payment: '開發費依功能報價，加 LINE 可以免費評估；分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。',
+  payment: `開發費依功能報價，加 LINE 可以免費評估；${PAYMENT_TERMS.text}。`,
   hosting: '主機用 Google Cloud（GCP），帳號用你的名義申請，沒用過 GCP 會幫你申請 90 天免費試用（Google 提供 300 美元試用額度）。主機建置約新台幣 5,000 元，只收一次；試用結束、升級成付費帳戶後，基本規格每月約 500 元，規格越高費用越高，費用由你的帳號直接付給 Google。',
   aiCost: 'AI 費用依實際用量計算，評估時一起估算。',
 };
@@ -316,7 +331,7 @@ export const PROFESSIONAL_SERVICE_SCHEMA = {
   '@id': `${SERVICE_SITE.url}/#professionalservice`,
   name: SITE.title,
   url: `${SERVICE_SITE.url}/`,
-  description: '客製系統開發與 AI 導入：AI 導入、資料管理、API 串接（LINE、金流、Google 服務、既有系統），做過數學題庫系統、CRM、健檢系統、預約系統、揪團平台等。另提供 AI 一對一教學。',
+  description: `客製系統開發與 AI 導入：AI 導入、資料管理、API 串接（LINE、金流、Google 服務、既有系統），代表案例是數學題庫系統。${CASES_BEYOND_NOTE.text}另提供 AI 一對一教學。`,
   image: `${SITE.url}/aixwang-icon.png`,
   address: { '@type': 'PostalAddress', addressCountry: 'TW' },
   areaServed: { '@type': 'Country', name: '台灣' },

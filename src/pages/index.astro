@@ -20,9 +20,11 @@
 // 2026-10：Course 結構化資料已移除（它的內容是 Agent 安裝與自動發文課程，站上不再提供）；
 // FAQPage 仍不在首頁，/faq/ 已經有了。
 // ============================================================
-import { DEVELOPMENT_SERVICE, LINKS, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, SECTION_NAMES } from '../consts';
+import CasesBeyondNote from '../components/CasesBeyondNote.astro';
+import { DEVELOPMENT_SERVICE, LINKS, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, SECTION_NAMES, CASES_BEYOND_NOTE } from '../consts';
 import DevCategoryPicker from '../components/DevCategoryPicker.astro';
 import { FEATURED_CASE } from '../data/cases';
+import ImageLightbox from '../components/ImageLightbox.astro';
 import { DEVELOPMENT_CAPABILITIES, DEVELOPMENT_CASE_FEATURES } from '../data/services';
 import LineIcon from '../components/LineIcon.astro';
 import { getCollection } from 'astro:content';
@@ -67,10 +69,11 @@ const latestPosts = allPosts.slice(0, 5);
       <section class="dev-case reveal" id="development-case" aria-labelledby="case-h">
         <p class="service-kicker">{SECTION_NAMES.cases}</p>
         <h2 id="case-h">做過的系統</h2>
+        <p class="dev-case-more"><CasesBeyondNote /><a href="/cases/" data-ga-button="home_case_all" data-ga-label="看全部案例" data-ga-location="home_case" data-ga-action="navigate">看全部案例 →</a></p>
         <ul class="case-cards">
           <li>
             <article class="case-card">
-              <img class="case-card-thumb" src={FEATURED_CASE.image} alt={FEATURED_CASE.imageAlt} width="1440" height="900" loading="lazy" decoding="async" />
+              <ImageLightbox src={FEATURED_CASE.image} alt={FEATURED_CASE.imageAlt} width={1440} height={900} imgClass="case-card-thumb" gaLocation="home_case" gaKey={FEATURED_CASE.key} />
               <div class="case-card-body">
                 <h3>{FEATURED_CASE.title}</h3>
                 <p>{FEATURED_CASE.summaryShort}</p>
@@ -84,7 +87,6 @@ const latestPosts = allPosts.slice(0, 5);
             </article>
           </li>
         </ul>
-        <p class="dev-case-more">另外做過健檢系統、預約系統等。<a href="/cases/" data-ga-button="home_case_all" data-ga-label="看全部案例" data-ga-location="home_case" data-ga-action="navigate">看全部案例 →</a></p>
       </section>
 
       <!-- 3／能做什麼 -->
@@ -1547,7 +1549,7 @@ const latestPosts = allPosts.slice(0, 5);
     .dev-list { display: grid; gap: 10px; margin-top: 18px; padding: 0; list-style: none; font-size: 15px; line-height: 1.7; color: var(--color-ink-2); }
     .dev-list li { position: relative; padding-left: 18px; }
     .dev-list li::before { content: '—'; position: absolute; left: 0; color: var(--color-accent); }
-    .dev-case-more { margin-top: 18px; font-size: 14px; color: var(--color-ink-3); }
+    .dev-case-more { margin-top: 12px; font-size: 14px; color: var(--color-ink-3); }
     .dev-case-more a { margin-left: 8px; font-weight: 600; color: var(--color-accent); text-decoration: none; white-space: nowrap; }
     .dev-case-video { display: block; width: min(100%, 280px); height: auto; aspect-ratio: 9 / 16; justify-self: center; background: var(--color-ink); border: 1px solid var(--color-rule-2); }
     .dev-case-shots { display: grid; gap: 20px; margin-top: 32px; }
@@ -1563,7 +1565,7 @@ const latestPosts = allPosts.slice(0, 5);
     .dev-scope-list dd { margin: 0; font-size: 15px; line-height: 1.8; color: var(--color-ink-2); }
     @media (min-width: 768px) { .dev-scope-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 40px; } }
 
-    .dev-flow-list { display: grid; gap: 14px; margin: 24px 0 0; padding: 0; list-style: none; }
+    .dev-flow-list { display: grid; grid-auto-rows: 1fr; gap: 14px; margin: 24px 0 0; padding: 0; list-style: none; }
     @media (min-width: 900px) { .dev-flow-list { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     .dev-flow-list li { display: grid; align-content: start; gap: 8px; padding: 20px; border: 1px solid var(--color-rule-2); background: rgb(255 255 255 / 34%); }
     .dev-flow-no { font-family: var(--font-mono); font-size: 12px; color: var(--color-accent); }

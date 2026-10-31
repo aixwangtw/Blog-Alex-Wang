@@ -1,7 +1,7 @@
 // 給 AI（ChatGPT、Claude、Perplexity 等）讀的純文字內容：llms.txt、llms-full.txt 與各主要頁面的 .md 版共用。
 // 所有內容都取自 consts.ts、src/data/ 與文章 FAQ 這些頁面本身也在用的資料，不另寫一份事實；
 // 改頁面資料，這裡會跟著變。不得在這裡加入站上沒有的價格、數字或案例。
-import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL, SECTION_NAMES } from '../consts';
+import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL, SECTION_NAMES, PAYMENT_TERMS } from '../consts';
 import { EXPERIENCE } from '../data/instructor';
 import { HOME_FAQS, ONE_ON_ONE_FAQS, RESOURCES_FAQS, type Faq } from '../data/faqs';
 import {
@@ -211,14 +211,14 @@ ${faqMarkdown(RESOURCES_FAQS).replace(/^### /gm, '#### ')}`;
 /** 主站首頁 .md：系統開發為主；教學與演講只留一句話加服務站連結 */
 const mainServiceLinks = () =>
   [
-    `- [${AGENT_PAGES.development.title}](${AGENT_PAGES.development.htmlUrl})（Markdown：${AGENT_PAGES.development.markdownUrl}）：主要服務。聊完需求可先提供試用 Demo，看過再決定；依功能報價、分三期付款、一年保固。`,
+    `- [${AGENT_PAGES.development.title}](${AGENT_PAGES.development.htmlUrl})（Markdown：${AGENT_PAGES.development.markdownUrl}）：主要服務。聊完需求可先提供試用 Demo，看過再決定；依功能報價，${PAYMENT_TERMS.text}，一年保固。`,
     `- 一對一教學與演講的介紹放在服務站：${SERVICE_SITE.url}/`,
     `- [${AGENT_PAGES.resources.title}](${AGENT_PAGES.resources.htmlUrl})（Markdown：${AGENT_PAGES.resources.markdownUrl}）：${SECTION_NAMES.openSource}與 Claude Code、Codex 安裝教學，全部免費。`,
   ].join('\n');
 
 const serviceLinks = () =>
   [
-    `- [${AGENT_PAGES.development.title}](${AGENT_PAGES.development.htmlUrl})（Markdown：${AGENT_PAGES.development.markdownUrl}）：主要服務。先免費做簡易 Demo，看過再決定；依功能報價、分三期付款、一年保固。`,
+    `- [${AGENT_PAGES.development.title}](${AGENT_PAGES.development.htmlUrl})（Markdown：${AGENT_PAGES.development.markdownUrl}）：主要服務。先免費做簡易 Demo，看過再決定；依功能報價，${PAYMENT_TERMS.text}，一年保固。`,
     `- [${AGENT_PAGES.course.title}](${AGENT_PAGES.course.htmlUrl})（Markdown：${AGENT_PAGES.course.markdownUrl}）：${TEACHING_CONTENT.map((item) => item.category).join('、')}，雙北實體或線上，依教學項目報價。`,
     `- [${AGENT_PAGES.speaking.title}](${AGENT_PAGES.speaking.htmlUrl})（Markdown：${AGENT_PAGES.speaking.markdownUrl}）：演講主題不限、可依需求討論；曾受 ${SPEAKING_ENGAGEMENTS.map((item) => item.host).join('、')} 邀請。`,
     `- [${AGENT_PAGES.resources.title}](${AGENT_PAGES.resources.htmlUrl})（Markdown：${AGENT_PAGES.resources.markdownUrl}）：Codex 安裝、AI Skills、開源 feedback-desk，全部免費。`,

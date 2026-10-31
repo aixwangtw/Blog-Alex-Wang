@@ -39,6 +39,11 @@ S334 講課照片改名「講課紀錄」、移至講師介紹下方、改雙欄
 Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
 
+## 通用規則（必須遵守，2026-10-31 起）
+
+- 需要同步修改的內容（文字、網址、數值、樣式、元件）出現兩處以上，一律抽共用（常數、資料檔、CSS 變數或元件）；改動前先搜尋所有出現處；無法抽共用的（如 CMS 文章內文）列入手動同步清單。
+- 手動同步清單：付款條件（`PAYMENT_TERMS`）改動時，CMS 文章 `custom-system-development-demo`（id 30，內文兩處＋FAQ「系統開發的費用怎麼算？可以分期嗎？」）與 `math-teacher-question-bank`（id 27，內文三處）要手動同步。
+
 ## LINE 入口規則（必須遵守）
 
 - 舊規則「LINE 入口只留右下角與服務站頁首」已於 2026-10-31 作廢。
@@ -195,6 +200,8 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 
 - 全站並列元素一律對齊（2026-10-31 使用者：「任何都要對齊」）：同列卡片內同類元素（圖、標題、說明起點、標籤、按鈕／連結）top 一致，不只卡片等高；標籤不得跟著說明長短上下浮動，固定在卡片內固定位置（例如與連結一起放進 `margin-top: auto` 的底部區塊）；導覽項目基線一致、按鈕列與篩選按鈕對齊、表單欄位與頁尾分欄左緣一致、圖示與文字垂直置中。驗證時用程式量測各元素 top／left 值（1440、768、390、320），並原尺寸逐張檢視。
 - 案例、類別、網址、LINE、GA ID 一律從 `src/data/cases.ts` 與 `src/consts.ts` 引用，不寫死（案例與類別：`DEV_CASES`、`DEV_CATEGORIES`；LINE 預填：`lineCategoryUrl()`；Demo：`DEVELOPMENT_SERVICE.demoUrl`；題庫文章：`DEVELOPMENT_SERVICE.caseArticle`；GA：`GA_MEASUREMENT_ID`；LINE 綠：CSS 變數 `--color-line`；網域：`SITE.url`／`SERVICE_SITE.url`）。
+- 卡片群組全頁一致尺寸（不只同列）：`/cases/` 案例卡（不論篩選狀態、同列或跨列）、首頁與服務站的類別卡、小卡、流程卡，每張寬高相同（`grid-auto-rows: 1fr`，必要時標題／說明用固定行數與 line-clamp），卡內 icon、標題、說明、標籤、連結距卡片頂部的 offset 每張相同；驗證時在 1440、768、390、320（與每個篩選狀態）量測每張寬高與卡內元素 offsetTop，必須完全一致。
+- 案例截圖一律可點擊放大預覽，使用共用元件 `src/components/ImageLightbox.astro`（無 JS 時連到原圖）；網頁類別（本站官網）案例排在最後。
 - 區塊名稱一律引用 `src/consts.ts` 的 `SECTION_NAMES`（`cases: '案例'`、`openSource: '開源'`），導覽、頁尾、頁面 title、麵包屑、H1、描述與 Markdown／llms 產生內容都不寫死；改名只改這一處。CMS 文章內文不受此規則。
 
 - 任何 UI 改動（包含刪除元素，例如拿掉服務下拉的 LINE 入口導致卡片排版變動）都必須在 1440、390、320 px 重新截圖，原尺寸逐張檢視受影響的區塊與其所在容器（等寬等高、對齊、切邊、留白、溢出），確認沒問題才算完成；回報中要列出檢視過的畫面。部署後須對線上版重截重驗。
@@ -216,9 +223,29 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 - 每張卡：截圖、案例名稱、一句說明、標籤、貼底連結（`margin-top: auto`）。所有卡片等寬等高（`li` 用 flex、卡片 `flex: 1`）。
 - 截圖統一 16:10：用 1440×900 視窗拍，顯示時 `aspect-ratio: 16 / 10; object-fit: cover; object-position: left top`，存 `public/images/cases/<案例>.webp`。
 - 截圖必須是真實系統畫面。需要登入的後台用 Demo 站或本機偽真資料拍：常見姓名組合、合理數字與日期，不得有真實個資、真實客戶或老師資料，也不要明顯假（「測試123」「AAA」）；偽資料只寫在本機或 Demo 沙盒，用完還原。題庫一律用 Demo 站，不得用正式站或 staging。公開網站且無隱私問題的（例如重策桌遊揪團平台）直接拍線上畫面、直接連真實網址，不另造偽資料。
-- 篩選類別固定六個：網頁、後台管理系統、APP、題庫管理系統、社群平台、AI 應用（與首頁類別卡同一套），每個案例只屬一個類別；卡片另可列特色標籤（只顯示不篩選），只寫真實屬性，不寫「教育」「桌遊社群」這類泛標籤。
-- 沒有可公開案例的類別（目前網頁、APP）被點選時，顯示和案例卡等寬等高的「LINE 聊聊需求」卡，只寫站上既有事實（APP：做過 LINE LIFF 應用），不編案例或截圖；「全部」不顯示這些卡。
+- 篩選類別固定六個：網頁、後台管理系統、APP、題庫管理系統、社群平台、AI 應用（與首頁類別卡同一套）。案例可屬多個類別（`categories` 陣列，例如題庫同屬題庫管理系統與後台管理系統），篩選任一類別都要出現。功能標籤只寫功能或系統特性（例如會員管理、LIFF、LINE 串接、權限管理、出卷、揪團報名），每個都要能在該系統程式或畫面找到；不寫技術框架（Astro 等）或客群／產業（補習班等）。
+- 沒有可公開案例的類別（目前六類都有案例）被點選時，顯示和案例卡等寬等高的「LINE 聊聊需求」卡，只寫站上既有事實，不編案例或截圖；「全部」不顯示這些卡。
 - 網址 `?tag=<類別>` 可直接帶入篩選。
 - AI 應用類別放題庫系統的三個真實功能（AI 影像辨識、AI 出題、AI 詳解）各一張卡，截圖取自 Demo 站，在 Demo 沙盒操作後要按「還原 Demo 預設資料」。
-- 客戶案例：2026-10-31 使用者同意客戶案例都可以公開，截圖一律偽真資料。背書系統不列案例，也不出現在「做過…」的文字裡。健檢、預約系統沒有程式可截圖，只留在「另外做過…」文字，不做卡片。CRM（原始碼 github.com/aixwangtw/FinanceCRM-Zeabur）是融資業務用的系統，案例卡不得出現「融資、貸款、撥款、送件」等字樣：截圖只拍客戶清單主內容（避開含系統名稱與送件選單的側欄），資料用本機一次性資料庫的偽真資料，拍完刪除；卡片連 LINE 聊聊需求，不放網址。
+- 客戶案例：2026-10-31 使用者同意客戶案例都可以公開，截圖一律偽真資料。LIFF 學習輔助專案（~/projects/LineLiff-book）分兩張卡：APP 卡用前台使用者畫面（手機直式畫面合成在 16:10 淺底圖上，不裁切），後台卡歸後台管理系統、用後台畫面；不另立背書系統分類或標籤，內文可照實提到背書；站上不再列「另外做過…」清單。網頁類別案例是本站官網（名稱引用 `SITE.title`）。健檢、預約系統沒有程式可截圖，不做卡片也不另列；案例區介紹句統一用 `CASES_BEYOND_NOTE`（案例以外的系統也可以做、可先試用 Demo），放在案例區標題下的介紹段，卡片格線下方不放文字。CRM（原始碼 github.com/aixwangtw/FinanceCRM-Zeabur）是融資業務用的系統，案例卡不得出現「融資、貸款、撥款、送件」等字樣：截圖只拍客戶清單主內容（避開含系統名稱與送件選單的側欄），資料用本機一次性資料庫的偽真資料，拍完刪除；卡片連 LINE 聊聊需求，不放網址。
 - 首頁「做過的系統」附「看全部案例」連到 `/cases/`；首頁案例卡維持上面的案例區規則。
+
+## 案例 Demo 規則（必須遵守，2026-10-31 起）
+
+從題庫 Demo（https://demo-question.aixwang.dev）實際做法歸納，之後每個案例做公開試用站都照這份做。標「建議」的是題庫還沒做過、只是推薦的做法。
+
+1. **分支**：Demo 程式放在原 repo 的 `demo` 分支，用獨立 worktree 或獨立 clone 工作，永不合併回 main；正式站的 main 不加任何 Demo 程式。同步原系統新功能時由 main 合進 demo，不可反向。
+2. **開關**：所有 Demo 行為由 `.env` 的 `DEMO_MODE=true` 開啟，設定集中在 `config/demo.php`；沒開就跟原系統一樣。會清資料的指令（`demo:reset`）要有第二道防護（題庫比對 `DEMO_DB_DATABASE`），不是 Demo 資料庫就拒絕執行。
+3. **外部服務一律關閉或模擬**：不連真實 AI、第三方 API、寄信、LINE 推播、線上資料庫。題庫用 `DEMO_AI_SIMULATED=true` 回傳 `database/seeders/demo-ai/` 預寫內容並加 2 到 4 秒等待；需要真實外部服務的入口直接封鎖。資料庫用 SQLite。
+4. **偽真資料**：常見姓名組合、合理公司名、合理金額與日期（以重置當天往前排），不得有真實個資、真實客戶或老師資料，也不要明顯假（「測試123」「AAA」）。客戶品牌名、業務敏感字眼（例如 CRM 的融資業務用語）不可出現在畫面與資料。資料由 seeder 產生（題庫：`DemoSeeder` 與 `database/seeders/demo-*`）。
+5. **公開帳密**：登入頁公開顯示並預填 Demo 帳密（題庫 `DEMO_SHOW_CREDENTIALS=true`）。Demo 密碼不可與任何正式站相同。
+6. **敏感頁封鎖**：帳號、角色、權限、選單、擴充、系統設定、通用上傳、需要真實外部服務的端點，在 Demo 模式由 middleware 回 403 與中文說明（題庫 `RestrictDemoAdminAreas` ＋ `DemoRestrictedAreas`），選單同步隱藏。
+7. **個人沙盒**：每個瀏覽器一份資料，大家共用同一組帳密但互相看不到（題庫：cookie `demo_sandbox` → `storage/app/demo-sandboxes/<key>/` 的 SQLite 與檔案）。限制每 IP 每小時建立數、全站沙盒上限、最低剩餘磁碟；閒置 7 天由 timer 每小時清除。未登入只能讀乾淨範本，不替爬蟲建沙盒。
+8. **定時重置**：每日 04:00（Asia/Taipei）用 systemd timer 跑 `php artisan demo:reset`（主機沒裝 cron），以 www-data 執行並寫 log。
+9. **網頁層防護（nginx）**：安全標頭（X-Frame-Options、nosniff、Referrer-Policy、Permissions-Policy、CSP frame-ancestors）與 `X-Robots-Tag: noindex, nofollow`；`server_tokens off`；擋 `/build/*manifest.json`、`*.map`、`storage` 下的 PHP、所有點開頭檔案（`.git`、`.env`）；依 Cloudflare 的 `CF-Connecting-IP` 對登入、上傳、AI 等 POST 限流，另加全站 PHP 請求防洪；應用程式只在來源是本機 tunnel 時才信任這個 header。
+10. **不洩漏原始碼與設定**：`APP_ENV=production`、`APP_DEBUG=false`；nginx root 指向 `public/`；不上傳 source map；除錯、測試、診斷路由在 Demo 模式封鎖；`.env` 權限 640、群組 www-data（用 sed 改過要重設）。建議：部署後用 curl 實測 `/.git/HEAD`、`/.env`、`*.map`、除錯路由都回 403/404。
+11. **子網域**：`demo-<案例>.aixwang.dev`（題庫為歷史命名 `demo-question`），經 Cloudflare tunnel 對外，nginx 只允許 127.0.0.1。
+12. **介紹文章連結**：Demo 登入頁與站內橫幅放案例介紹文章連結（`DEMO_ARTICLE_URL`）；部落格的案例卡片連 Demo，文章連結放在 Demo 站內。
+13. **部署**：本機 push demo 分支 → 主機 `git pull --ff-only origin demo` → `migrate --force`、`optimize` →（必要時）`demo:reset` → 重啟 worker。`public/build` 不進版控，前端改動在本機 build 後傳上去。部署 Demo 不得動正式站目錄。
+14. **還原與關站**：改 nginx 前備份到主機 `/root/nginx-backup-<日期>/`；關站用 `artisan down --render=<關站頁>` 並停 worker 與 timer；重開反向操作。
+15. **隔離（建議）**：題庫 Demo 與正式站共用 php-fpm pool 與 www-data，Demo 目錄的 www-data 可取 GCE metadata（2026-10-19 查證，使用者 10/21 決定先不改）。新 Demo 建議用獨立系統帳號與獨立 php-fpm pool、目錄權限互不可讀，並封鎖 169.254.169.254。

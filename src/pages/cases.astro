@@ -6,15 +6,17 @@
 // - 只放有真實系統截圖、而且可以公開的案例；客戶的系統要客戶同意才放。
 // - 截圖統一 16:10（1440×900 拍），資料用 Demo 站或本機偽真資料，不得有真實個資或老師資料。
 // - 標籤只寫真實屬性（產業／系統類型／技術特色），篩選按鈕由案例標籤自動產生。
+import CasesBeyondNote from '../components/CasesBeyondNote.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { SECTION_NAMES, SITE, breadcrumbSchema, lineCategoryUrl } from '../consts';
+import { CASES_BEYOND_NOTE, SECTION_NAMES, SITE, breadcrumbSchema, lineCategoryUrl } from '../consts';
 import { DEV_CASES, DEV_CATEGORIES, devCategoryTitle } from '../data/cases';
 import Base from '../layouts/Base.astro';
+import ImageLightbox from '../components/ImageLightbox.astro';
 
 const CASES = DEV_CASES;
 // 篩選用類別名稱（與首頁類別卡同一套）；沒有案例的類別點選時顯示「聊聊需求」卡
 const CATEGORIES = DEV_CATEGORIES.map((item) => item.title);
-const EMPTY_CATEGORIES = DEV_CATEGORIES.filter((category) => !CASES.some((item) => item.category === category.key));
+const EMPTY_CATEGORIES = DEV_CATEGORIES.filter((category) => !CASES.some((item) => item.categories.includes(category.key)));
 
 const schema = [
   breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: SECTION_NAMES.cases }]),
@@ -33,14 +35,14 @@ const schema = [
 
 <Base
   title={`${SECTION_NAMES.cases}｜Aix 系統開發做過的系統`}
-  description="Aix 系統開發做過的系統，每個案例附真實系統畫面，可依產業與系統類型篩選；數學題庫系統可以直接試用 Demo。"
+  description="Aix 系統開發做過的系統，每個案例附真實系統畫面，可依系統類型篩選；數學題庫系統可以直接試用 Demo。"
   schema={schema}
 >
   <div class="cases-page">
     <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: SECTION_NAMES.cases }]} />
 
     <h1 class="t-h1 mt-8 font-semibold text-ink">{SECTION_NAMES.cases}</h1>
-    <p class="cases-lead">每個案例附系統的真實畫面。需要登入的後台用示範資料拍，公開網站直接拍線上畫面；可以試用或已上線的系統附連結。</p>
+    <p class="cases-lead">每個案例附系統的真實畫面。需要登入的後台用示範資料拍，公開網站直接拍線上畫面；可以試用或已上線的系統附連結。<CasesBeyondNote /></p>
 
     <div class="cases-filter" role="group" aria-label="依標籤篩選案例" hidden data-cases-filter>
       <button type="button" class="cases-pill" aria-pressed="true" data-tag="" data-ga-button="cases_filter_all" data-ga-label="篩選：全部" data-ga-location="cases_filter" data-ga-action="filter">全部</button>
@@ -51,15 +53,15 @@ const schema = [
 
     <ul class="cases-grid" data-cases-grid>
       {CASES.map((item) => (
-        <li data-tags={devCategoryTitle(item.category)}>
+        <li data-tags={item.categories.map(devCategoryTitle).join('|')}>
           <article class="cases-card">
-            <img class="cases-card-thumb" src={item.image} alt={item.imageAlt} width="1440" height="900" loading="lazy" decoding="async" />
+            <ImageLightbox src={item.image} alt={item.imageAlt} width={1440} height={900} imgClass="cases-card-thumb" gaLocation="cases_grid" gaKey={item.key} />
             <div class="cases-card-body">
               <h2>{item.title}</h2>
               <p>{item.summary}</p>
               <div class="cases-card-foot">
               <ul class="cases-tags" aria-label="標籤">
-                <li class="is-category">{devCategoryTitle(item.category)}</li>
+                {item.categories.map((key) => <li class="is-category">{devCategoryTitle(key)}</li>)}
                 {item.tags.map((tag) => <li>{tag}</li>)}
               </ul>
               <a
@@ -100,7 +102,6 @@ const schema = [
       ))}
     </ul>
 
-    <p class="cases-more">另外做過健檢系統、預約系統等。聊完需求可以先提供試用 Demo。</p>
   </div>
 </Base>
 
@@ -120,17 +121,18 @@ const schema = [
   .cases-card { display: flex; flex: 1; flex-direction: column; overflow: hidden; border: 1px solid var(--color-rule-2); border-radius: 8px; background: rgb(255 255 255 / 40%); }
   .cases-card-thumb { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; border-bottom: 1px solid var(--color-rule-2); }
   .cases-card-body { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 20px 22px 22px; }
-  .cases-card-body h2 { font-size: 20px; font-weight: 700; color: var(--color-ink); }
-  .cases-card-body > p { margin-top: 8px; line-height: 1.75; color: var(--color-ink-2); }
+  /* 全頁卡片同尺寸：標題固定 2 行、說明固定行數（line-clamp），標籤與連結在貼底區塊，卡內元素相對位置每張相同 */
+  .cases-card-body h2 { display: -webkit-box; height: calc(1.4em * 2); overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: 20px; line-height: 1.4; font-weight: 700; color: var(--color-ink); }
+  .cases-card-body > p { --desc-lines: 3; display: -webkit-box; height: calc(1.75em * var(--desc-lines)); margin-top: 8px; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: var(--desc-lines); line-height: 1.75; color: var(--color-ink-2); }
+  @media (max-width: 1023px) and (min-width: 768px), (max-width: 360px) { .cases-card-body > p { --desc-lines: 4; } }
   .cases-card-foot { display: flex; flex-direction: column; margin-top: auto; padding-top: 14px; }
-  .cases-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-  .cases-tags li { padding: 3px 10px; border-radius: 999px; background: rgb(0 0 0 / 5%); font-size: 13px; color: var(--color-ink-2); }
+  .cases-tags { display: flex; flex-wrap: wrap; align-content: flex-start; height: 62px; overflow: hidden; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .cases-tags li { flex: none; white-space: nowrap; padding: 3px 10px; border-radius: 999px; background: rgb(0 0 0 / 5%); font-size: 13px; color: var(--color-ink-2); }
   .cases-card-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 12px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
   .cases-tags li.is-category { background: var(--color-ink); color: var(--color-bg, #fff); }
   .cases-card--empty { border-style: dashed; }
   .cases-card--empty .cases-card-link { margin-top: auto; }
   .cases-card-placeholder { display: flex; align-items: center; justify-content: center; background: rgb(0 0 0 / 3%); font-size: 22px; font-weight: 600; color: var(--color-ink-3); }
-  .cases-more { margin-top: 32px; font-size: 15px; color: var(--color-ink-3); }
   @media (max-width: 767px) { .cases-page { padding: 32px 16px 48px; } }
 </style>
 
@@ -150,7 +152,7 @@ const schema = [
         if (item.hasAttribute('data-empty-card') && caseHeight) item.style.minHeight = `${caseHeight}px`;
         const isEmptyCard = item.hasAttribute('data-empty-card');
         // 「全部」只列真實案例；聊聊需求卡只在點到沒有案例的類別時出現
-        item.hidden = tag ? item.dataset.tags !== tag : isEmptyCard;
+        item.hidden = tag ? !(item.dataset.tags ?? '').split('|').includes(tag) : isEmptyCard;
       }
     };
     filter.addEventListener('click', (event) => {

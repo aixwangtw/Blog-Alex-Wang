@@ -3,6 +3,7 @@
 // 2026-10-24 起改成通用的客製系統開發介紹，題庫系統降為代表案例。
 // 內容只寫〈系統開發、AI 導入費用怎麼算？〉文章已寫明的事實；
 // 流程、時程、付款與主機費用統一取自 consts.ts 的 DEVELOPMENT_SERVICE，不寫開發費金額。
+import CasesBeyondNote from '../../components/CasesBeyondNote.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FaqList from '../../components/FaqList.astro';
 import Card from '../../components/Card.astro';
@@ -10,7 +11,7 @@ import CheckItem from '../../components/CheckItem.astro';
 import Cta from '../../components/Cta.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import LineIcon from '../../components/LineIcon.astro';
-import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, breadcrumbSchema } from '../../consts';
+import { AUTHOR, DEVELOPMENT_SERVICE, LINKS, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, breadcrumbSchema, PAYMENT_TERMS, CASES_BEYOND_NOTE } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 import { DEVELOPMENT_AFTER_LAUNCH, DEVELOPMENT_CAPABILITIES, DEVELOPMENT_CASE_FEATURES } from '../../data/services';
 import { getDevelopmentFaqs } from '../../lib/development-faqs';
@@ -29,7 +30,7 @@ const caseFeatures = DEVELOPMENT_CASE_FEATURES;
 const afterLaunch = DEVELOPMENT_AFTER_LAUNCH;
 
 // 首屏下方三個合作重點，細節見下方各節，同取自 DEVELOPMENT_SERVICE 與新文章。
-const developmentHighlights = ['簡易 Demo 免費', '依功能報價、分三期付款', '上線後一年保固'];
+const developmentHighlights = ['簡易 Demo 免費', PAYMENT_TERMS.text, '上線後一年保固'];
 
 const pageToc = [
   { id: 'development-scope', label: '可以做什麼' },
@@ -51,7 +52,7 @@ const schema = [
     name: '客製系統開發',
     serviceType: '系統開發 / AI 導入 / 資料管理 / API 串接',
     description:
-      'Alex 和開發夥伴承接客製系統開發與 AI 導入。談需求時先免費做簡易 Demo，看過再決定要不要簽約；開發費依功能報價、分三期付款，上線後一年保固。代表案例是補習班數學老師用的題庫系統。',
+      `Alex 和開發夥伴承接客製系統開發與 AI 導入。談需求時先免費做簡易 Demo，看過再決定要不要簽約；開發費依功能報價，${PAYMENT_TERMS.text}，上線後一年保固。代表案例是補習班數學老師用的題庫系統。`,
     provider: { '@id': AUTHOR.id },
     areaServed: '台灣',
   },
@@ -72,7 +73,7 @@ const schema = [
 
 <ServiceBase
   title="系統開發、AI 導入｜客製系統開發服務，先免費看 Demo 再簽約"
-  description="客製系統開發與 AI 導入：談需求時先免費做簡易 Demo，看過再決定要不要簽約。開發費依功能報價、分三期付款，主機帳號用你的名義，一年保固、可簽保密協議。代表案例：數學題庫系統。"
+  description={`客製系統開發與 AI 導入：談需求時先免費做簡易 Demo，看過再決定要不要簽約。開發費依功能報價，${PAYMENT_TERMS.text}，主機帳號用你的名義，一年保固、可簽保密協議。代表案例：數學題庫系統。`}
   ogImage={`${SITE.url}${blogBannerPath('custom-system-development-demo')}`}
   ogImageAlt="系統開發、AI 導入：先免費看 Demo 再簽約"
   schema={schema}
@@ -146,7 +147,7 @@ const schema = [
     </ul>
 
     <SectionHeading id="development-case" size="md" class="mt-16 scroll-mt-24">做過的案子</SectionHeading>
-    <p class="mt-4 max-w-3xl leading-8 text-ink-2">做過的系統有 CRM、健檢系統、預約系統、揪團平台等，代表案例是幫補習班老師做的數學題庫系統。</p>
+    <p class="mt-4 max-w-3xl leading-8 text-ink-2">代表案例是幫補習班老師做的數學題庫系統。<CasesBeyondNote /></p>
     <div class="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-14">
       <div>
         <h3 class="text-xl font-semibold text-ink">代表案例：數學題庫系統</h3>

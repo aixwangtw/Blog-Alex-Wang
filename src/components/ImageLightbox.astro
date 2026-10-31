@@ -1,0 +1,89 @@
+---
+// 共用圖片放大預覽：案例截圖（/cases/、首頁、服務站）一律用這個元件。
+// 無 JS 時就是一個連到原圖的連結；有 JS 時點擊開 <dialog> 顯示原圖，Esc、點背景、關閉鈕都能關，開啟時鎖住頁面捲動。
+// 放大顯示的是 1440×900 原檔，手機可用瀏覽器雙指縮放。
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /** 套在 <img> 上的 class（沿用各頁原本的縮圖樣式） */
+  imgClass?: string;
+  class?: string;
+  /** GA 事件 location 與按鈕代號 */
+  gaLocation: string;
+  gaKey: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const { src, alt, width, height, imgClass, class: className, gaLocation, gaKey, loading = 'lazy' } = Astro.props;
+---
+
+<a
+  class:list={['lightbox-trigger', className]}
+  href={src}
+  data-lightbox
+  aria-label={`放大預覽：${alt}`}
+  data-ga-button={`${gaLocation}_zoom_${gaKey}`}
+  data-ga-label={`放大預覽：${alt}`}
+  data-ga-location={gaLocation}
+  data-ga-action="zoom"
+>
+  <img class={imgClass} src={src} alt={alt} width={width} height={height} loading={loading} decoding="async" />
+  <span class="lightbox-hint" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5M11 8v6M8 11h6" /></svg>
+  </span>
+</a>
+
+<style is:global>
+  .lightbox-trigger { position: relative; display: block; cursor: zoom-in; }
+  .lightbox-trigger:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  .lightbox-hint { position: absolute; right: 10px; bottom: 10px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: rgb(22 22 26 / 72%); opacity: 0.85; pointer-events: none; }
+  .lightbox-hint svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; }
+  .lightbox-dialog { position: fixed; inset: 0; margin: auto; height: fit-content; width: min(96vw, 1440px); max-width: none; max-height: 94vh; padding: 0; border: 0; background: transparent; overflow: visible; }
+  .lightbox-dialog::backdrop { background: rgb(10 10 12 / 82%); }
+  .lightbox-dialog img { display: block; width: 100%; height: auto; max-height: 90vh; object-fit: contain; border-radius: 6px; background: #fff; }
+  .lightbox-close { position: absolute; top: -14px; right: -6px; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: #16161a; font-size: 24px; line-height: 1; cursor: pointer; box-shadow: 0 4px 14px rgb(0 0 0 / 30%); }
+  @media (max-width: 767px) { .lightbox-close { top: -52px; right: 0; } }
+  html.lightbox-open { overflow: hidden; }
+</style>
+
+<script>
+  // 全站只綁一次（Astro 會把同一支 script 去重）
+  let dialog: HTMLDialogElement | null = null;
+  let image: HTMLImageElement | null = null;
+
+  function ensureDialog() {
+    if (dialog) return;
+    dialog = document.createElement('dialog');
+    dialog.className = 'lightbox-dialog';
+    dialog.setAttribute('aria-label', '圖片放大預覽');
+    image = document.createElement('img');
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'lightbox-close';
+    close.setAttribute('aria-label', '關閉預覽');
+    close.textContent = '×';
+    close.addEventListener('click', () => dialog?.close());
+    dialog.append(image, close);
+    // 點背景（dialog 本體以外的 backdrop 區）關閉
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog?.close();
+    });
+    dialog.addEventListener('close', () => document.documentElement.classList.remove('lightbox-open'));
+    document.body.appendChild(dialog);
+  }
+
+  document.addEventListener('click', (event) => {
+    const trigger = (event.target as HTMLElement).closest<HTMLAnchorElement>('a[data-lightbox]');
+    if (!trigger || event.metaKey || event.ctrlKey || event.shiftKey) return;
+    event.preventDefault();
+    ensureDialog();
+    const thumb = trigger.querySelector('img');
+    if (!dialog || !image) return;
+    image.src = trigger.href;
+    image.alt = thumb?.alt ?? '';
+    document.documentElement.classList.add('lightbox-open');
+    dialog.showModal();
+  });
+</script>
