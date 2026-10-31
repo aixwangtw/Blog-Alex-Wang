@@ -1388,7 +1388,7 @@
         }
       }
 
-/* 小螢幕：右下角有固定的 LINE 浮動按鈕，頁面底部留出按鈕的高度，頁尾最後一行才不會被壓住 */
+/* 小螢幕：右下角有固定的 LINE 浮動按鈕，頁尾底部留出按鈕的高度，最後一行才不會被壓住（加在頁尾上，底色才會連續） */
 @media (max-width: 767px) {
-  body { padding-bottom: 72px; }
+  .site-footer, .service-footer { padding-bottom: 72px; }
 }
