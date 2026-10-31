@@ -195,7 +195,8 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 
 - 任何 UI 改動（包含刪除元素，例如拿掉服務下拉的 LINE 入口導致卡片排版變動）都必須在 1440、390、320 px 重新截圖，原尺寸逐張檢視受影響的區塊與其所在容器（等寬等高、對齊、切邊、留白、溢出），確認沒問題才算完成；回報中要列出檢視過的畫面。部署後須對線上版重截重驗。
 - 同一列卡片必須等寬等高：用 grid／flex 讓 `li` 撐滿格子、卡片填滿 `li`（`display: flex` + `flex: 1`），說明長短不同也不得高低不齊；有按鈕的卡片，按鈕貼底對齊（`margin-top: auto`）。適用：`src/components/SiteHeader.astro` 的 `.dm-cards`／`.dm-card`（服務下拉）、首頁與服務首頁分流卡、資源頁工具卡。
-- CTA 按鈕最小高度 44px、左右內距 22px、icon 20px，icon 與文字之間留間距，不得貼邊或被切邊；「聊聊需求」使用站上主按鈕色。適用：`SiteHeader.astro` 的 `.service-book`、各頁 Hero CTA。
-- 小螢幕（手機）頁尾要預留 LINE 浮動按鈕空間 72px，避免遮住頁尾連結。適用：`src/components/FloatingLine.astro`、頁尾。
+- 頁首「聊聊需求」按鈕（`SiteHeader.astro` 的 `.service-book`）：桌機最小高度 44px、padding 10px 22px、icon 20px、icon 與文字間距 8px、使用站上主按鈕色（`--color-accent`）；小於 1024px（選單內）改為滿版寬、padding 12px 20px。其他 CTA 按鈕最小高度 44px（觸控目標），icon 與文字不得貼邊或被切邊。
+- 寬度 767px 以下，`.site-footer`、`.service-footer` 的 `padding-bottom` 為 72px，替右下角 LINE 浮動按鈕留空間，避免遮住頁尾最後一行（寫在 `src/styles/site-chrome.css`）。
 - 導覽列：主站搜尋框固定在頁首導覽列（`SiteHeader.astro` 的 `.nav-search-form`，`showSearch`），不放在首屏 Hero；服務站不顯示搜尋框。手機版導覽放進選單展開內，且不得擠壓導覽項目。
 - 服務下拉在手機為單欄文字清單（無卡片框），桌機為三欄等寬等高卡片。
+- 兩欄卡片在手機單欄時，grid 必須明確寫 `grid-cols-[minmax(0,1fr)]`，否則欄寬被內容（影片、程式碼區、四欄數字）撐大，卡片右側會被 `overflow-hidden` 切掉；直式影片放進固定高度的欄位用 `object-contain`，不得用 `object-cover` 裁掉畫面兩側的文字。適用：`src/pages/resources.astro` 的 grill-me 卡。
