@@ -194,6 +194,7 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 ## 排版規則（必須遵守）
 
 - 全站並列元素一律對齊（2026-10-31 使用者：「任何都要對齊」）：同列卡片內同類元素（圖、標題、說明起點、標籤、按鈕／連結）top 一致，不只卡片等高；標籤不得跟著說明長短上下浮動，固定在卡片內固定位置（例如與連結一起放進 `margin-top: auto` 的底部區塊）；導覽項目基線一致、按鈕列與篩選按鈕對齊、表單欄位與頁尾分欄左緣一致、圖示與文字垂直置中。驗證時用程式量測各元素 top／left 值（1440、768、390、320），並原尺寸逐張檢視。
+- 案例、類別、網址、LINE、GA ID 一律從 `src/data/cases.ts` 與 `src/consts.ts` 引用，不寫死（案例與類別：`DEV_CASES`、`DEV_CATEGORIES`；LINE 預填：`lineCategoryUrl()`；Demo：`DEVELOPMENT_SERVICE.demoUrl`；題庫文章：`DEVELOPMENT_SERVICE.caseArticle`；GA：`GA_MEASUREMENT_ID`；LINE 綠：CSS 變數 `--color-line`；網域：`SITE.url`／`SERVICE_SITE.url`）。
 - 區塊名稱一律引用 `src/consts.ts` 的 `SECTION_NAMES`（`cases: '案例'`、`openSource: '開源'`），導覽、頁尾、頁面 title、麵包屑、H1、描述與 Markdown／llms 產生內容都不寫死；改名只改這一處。CMS 文章內文不受此規則。
 
 - 任何 UI 改動（包含刪除元素，例如拿掉服務下拉的 LINE 入口導致卡片排版變動）都必須在 1440、390、320 px 重新截圖，原尺寸逐張檢視受影響的區塊與其所在容器（等寬等高、對齊、切邊、留白、溢出），確認沒問題才算完成；回報中要列出檢視過的畫面。部署後須對線上版重截重驗。

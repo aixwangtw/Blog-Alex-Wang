@@ -1,6 +1,6 @@
 ---
 import { findMarkdownAlternate } from '../lib/agent-docs';
-import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, TEACHING_GROUP, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath, SECTION_NAMES } from '../consts';
+import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, TEACHING_GROUP, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath, SECTION_NAMES, GA_MEASUREMENT_ID } from '../consts';
 import SiteHeader from '../components/SiteHeader.astro';
 import FloatingLine from '../components/FloatingLine.astro';
 import '../styles/global.css';
@@ -78,7 +78,7 @@ const jsonLd = {
     <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    <script is:inline>
+    <script is:inline define:vars={{ gaId: GA_MEASUREMENT_ID, serviceHostname: new URL(SERVICE_SITE.url).hostname, demoHostname: new URL(DEVELOPMENT_SERVICE.demoUrl).hostname }}>
       // 與主站共用內部流量排除 Cookie：在任一子網域開 ?analytics=off 即可停用。
       var analyticsControl = new URLSearchParams(window.location.search).get('analytics');
       if (analyticsControl === 'off') {
@@ -123,7 +123,7 @@ const jsonLd = {
           document.body.appendChild(notice);
         });
       }
-      if (window.location.hostname === 'service.aixwang.dev' && !analyticsOptedOut && !analyticsAutomation) {
+      if (window.location.hostname === serviceHostname && !analyticsOptedOut && !analyticsAutomation) {
         window.dataLayer = window.dataLayer || [];
         window.gtag = function () { window.dataLayer.push(arguments); };
         window.gtag('js', new Date());
@@ -133,16 +133,16 @@ const jsonLd = {
           if (gaUrl.searchParams.get('s') === 'line') {
             gaUrl.searchParams.delete('s');
             gaConfig = { campaign_source: 'line', campaign_medium: 'social', campaign_name: 'article_share', page_location: gaUrl.href };
-            window.gtag('config', 'G-91Z2F673C0', gaConfig);
+            window.gtag('config', gaId, gaConfig);
             window.history.replaceState(window.history.state, '', gaUrl.pathname + gaUrl.search + gaUrl.hash);
             gaConfig = null;
           }
         } catch (e) {}
-        if (gaConfig) window.gtag('config', 'G-91Z2F673C0');
+        if (gaConfig) window.gtag('config', gaId);
         window.addEventListener('load', function () {
           var script = document.createElement('script');
           script.async = true;
-          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-91Z2F673C0';
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
           document.head.appendChild(script);
         });
 
@@ -191,7 +191,7 @@ const jsonLd = {
           try { window.localStorage.setItem('aixwang_demo_clicked', '1'); } catch (e) {}
         }
         function isDemoHref(href) {
-          try { return new URL(href, location.href).hostname === 'demo-question.aixwang.dev'; } catch (e) { return false; }
+          try { return new URL(href, location.href).hostname === demoHostname; } catch (e) { return false; }
         }
         function isLineHref(href) {
           return href.indexOf('line.me') !== -1 || href.indexOf('lin.ee') !== -1;

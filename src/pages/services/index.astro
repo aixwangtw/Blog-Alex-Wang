@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import freeResourcesHome from '../../assets/free-resources-home-v2.png';
 import Cta from '../../components/Cta.astro';
 import DevCategoryPicker from '../../components/DevCategoryPicker.astro';
+import { FEATURED_CASE } from '../../data/cases';
 import { PERSON_SCHEMA, PROFESSIONAL_SERVICE_SCHEMA, SERVICE_SITE, SITE, pageBannerUrl, DEVELOPMENT_SERVICE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath, SECTION_NAMES } from '../../consts';
 import ServiceBase from '../../layouts/ServiceBase.astro';
 
@@ -61,14 +62,14 @@ const schema = [
     <h2 id="service-dev-h">客製系統開發、AI 導入</h2>
     <p class="service-section-lead">AI 導入、資料管理、API 串接是我們團隊的強項：讓 AI 讀文件、整理資料、產生報告，做客戶、訂單、庫存這類資料的後台，或接 LINE、金流、Google 服務。做過的系統有 CRM、健檢系統、預約系統、揪團平台等。</p>
     <article class="service-case">
-      <img class="service-case-thumb" src="/images/blog/math-teacher-question-bank/import-review.jpg" alt="題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目" width="1400" height="875" loading="lazy" decoding="async" />
+      <img class="service-case-thumb" src={FEATURED_CASE.image} alt={FEATURED_CASE.imageAlt} width="1440" height="900" loading="lazy" decoding="async" />
       <div class="service-case-body">
         <p class="service-kicker">代表案例</p>
-        <h3>數學題庫系統</h3>
+        <h3>{FEATURED_CASE.title}</h3>
         <p>AI 辨識審核、AI 詳解、AI 出題。AI 出題可以先在 Demo 體驗，正式導入時依需求開發。</p>
         <p class="service-dev-links">
           <a href={servicePath(DEVELOPMENT_SERVICE.url)} data-ga-button="service_home_dev_detail" data-ga-label="看合作流程與費用" data-ga-location="service_home_dev" data-ga-action="navigate">看合作流程與費用 <span aria-hidden="true">→</span></a>
-          <a href="https://demo-question.aixwang.dev" target="_blank" rel="noreferrer" data-ga-button="service_home_dev_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="service_home_dev" data-ga-action="external">試用 Demo，免費不用註冊 <span aria-hidden="true">↗</span></a>
+          <a href={FEATURED_CASE.link.href} target="_blank" rel="noreferrer" data-ga-button="service_home_dev_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="service_home_dev" data-ga-action="external">試用 Demo，免費不用註冊 <span aria-hidden="true">↗</span></a>
         </p>
       </div>
     </article>

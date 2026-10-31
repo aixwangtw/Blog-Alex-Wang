@@ -17,6 +17,7 @@ import questionBankShot from '../assets/need-router/question-bank-import-review.
 import teachingPhoto from '../assets/teaching-one-on-one.jpg';
 import taichungTalk from '../assets/taichung-talk.jpg';
 import { DEVELOPMENT_SERVICE } from '../consts';
+import { FEATURED_CASE } from '../data/cases';
 import '../styles/site-chrome.css';
 
 interface Props {
@@ -128,9 +129,9 @@ const DROPDOWN_NAV_ALL = [
     groups: navArticleGroups,
     previews: [
       {
-        href: '/blog/math-teacher-question-bank/',
+        href: DEVELOPMENT_SERVICE.caseArticle,
         eyebrow: '系統開發案例',
-        title: '數學題庫系統',
+        title: FEATURED_CASE.title,
         description: '補習班老師用的題庫系統：AI 辨識考卷、AI 詳解；AI 出題可在 Demo 體驗。',
         image: blogBannerPath('math-teacher-question-bank'),
         cta: '閱讀案例介紹',

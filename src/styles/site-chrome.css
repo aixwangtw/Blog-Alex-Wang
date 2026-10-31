@@ -1064,7 +1064,7 @@
         gap: 12px;
         margin-bottom: 16px;
         padding: 9px 12px;
-        border: 2px solid #06c755;
+        border: 2px solid var(--color-line);
         border-radius: 4px;
         background: var(--color-paper);
         color: var(--color-ink);
@@ -1248,8 +1248,8 @@
       }
       /* 與右下角浮動鈕同色：LINE 綠圓底、白色標誌 */
       .ft-social a.ft-line {
-        border-color: #06c755;
-        background: #06c755;
+        border-color: var(--color-line);
+        background: var(--color-line);
         color: #fff;
       }
       .ft-social a.ft-line:hover {

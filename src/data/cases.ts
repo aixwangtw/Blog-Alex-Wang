@@ -1,0 +1,143 @@
+// 案例與系統類別的單一來源：/cases/、首頁與服務站首頁的「你想做什麼系統？」類別卡、
+// 首頁／服務站的代表案例卡、頁首文章下拉的案例預覽卡都從這裡取。改名稱、說明、截圖、連結只改這裡。
+// 規則見 AGENTS.md「開發案例頁規則」：只放真實系統截圖，偽真資料，不編案例或數字。
+import { DEVELOPMENT_SERVICE, SECTION_NAMES, SITE, lineCategoryUrl } from '../consts';
+
+export type DevCategoryKey = 'web' | 'admin' | 'app' | 'bank' | 'group' | 'ai';
+
+export interface DevLink {
+  href: string;
+  label: string;
+  external: boolean;
+}
+
+/** 線條 icon（24×24 viewBox 的 SVG 內容） */
+const ICONS: Record<DevCategoryKey, string> = {
+  web: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><circle cx="6.5" cy="6.5" r=".6"/><circle cx="9" cy="6.5" r=".6"/>',
+  admin: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  app: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+  bank: '<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/>',
+  group: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 15.5c2.8 0 6 1.5 6 4.5"/>',
+  ai: '<path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/>',
+};
+
+const lineLink = (title: string): DevLink => ({ href: lineCategoryUrl(title), label: 'LINE 聊這個', external: true });
+
+/** 重策桌遊揪團平台（公開網站，無隱私問題，2026-10-31 使用者指示直接連） */
+export const HEAVY_BOARD_GAMES_URL = 'https://heavyboardgames.aixwang.dev/';
+
+/**
+ * 系統類別：/cases/ 篩選與首頁類別卡同一套（LIFF 屬於 APP）。
+ * defaultLink 是類別卡的去處；emptyNote 是 /cases/ 該類別沒有案例時「聊聊需求」卡的說明（只寫站上既有事實）。
+ */
+export const DEV_CATEGORIES = [
+  { key: 'web', title: '網頁', icon: ICONS.web, defaultLink: lineLink('網頁'), emptyNote: '目前沒有可以公開的網頁案例畫面。' },
+  { key: 'admin', title: '後台管理系統', icon: ICONS.admin, defaultLink: lineLink('後台管理系統'), emptyNote: '' },
+  { key: 'app', title: 'APP', icon: ICONS.app, defaultLink: lineLink('APP'), emptyNote: '做過 LINE LIFF 應用，目前沒有可以公開的畫面。' },
+  { key: 'bank', title: '題庫管理系統', icon: ICONS.bank, defaultLink: { href: DEVELOPMENT_SERVICE.demoUrl, label: '試用 Demo', external: true }, emptyNote: '' },
+  { key: 'group', title: '社群平台', icon: ICONS.group, defaultLink: { href: HEAVY_BOARD_GAMES_URL, label: '看實際網站', external: true }, emptyNote: '' },
+  {
+    key: 'ai',
+    title: 'AI 應用',
+    icon: ICONS.ai,
+    // 用完整網址，服務站的類別卡才會連回主站
+    defaultLink: { href: `${SITE.url}/cases/?tag=${encodeURIComponent('AI 應用')}`, label: `看 AI ${SECTION_NAMES.cases}`, external: false },
+    emptyNote: '',
+  },
+] as const satisfies readonly { key: DevCategoryKey; title: string; icon: string; defaultLink: DevLink; emptyNote: string }[];
+
+export const devCategoryTitle = (key: DevCategoryKey): string =>
+  DEV_CATEGORIES.find((item) => item.key === key)?.title ?? key;
+
+export interface DevCase {
+  key: string;
+  title: string;
+  /** /cases/ 卡片的一句說明 */
+  summary: string;
+  /** 首頁、服務站、頁首下拉等較短處用的說明 */
+  summaryShort: string;
+  category: DevCategoryKey;
+  /** 功能特色標籤（只顯示，不篩選） */
+  tags: string[];
+  /** 16:10 截圖（1440×900） */
+  image: string;
+  imageAlt: string;
+  link: DevLink;
+  /** 首頁／服務站代表案例 */
+  featured?: boolean;
+}
+
+const demoLink: DevLink = { href: DEVELOPMENT_SERVICE.demoUrl, label: '試用 Demo', external: true };
+
+export const DEV_CASES: DevCase[] = [
+  {
+    key: 'math_question_bank',
+    title: '數學題庫系統',
+    summary: '補習班數學老師用來把考卷收進題庫、出卷，AI 辨識考卷、產生詳解。',
+    summaryShort: '補習班數學老師用來把考卷收進題庫、出卷。',
+    category: 'bank',
+    tags: ['補習班'],
+    image: '/images/cases/math-question-bank.webp',
+    imageAlt: '數學題庫系統 Demo 站的題目管理頁：題目列表、難易度與單元標籤、審核與啟用開關',
+    link: demoLink,
+    featured: true,
+  },
+  {
+    key: 'crm',
+    title: 'CRM 客戶管理系統',
+    summary: '業務團隊管理客戶名單、來源管道與承辦人，網站表單和官方 LINE 進來的客戶集中在同一份清單。',
+    summaryShort: '業務團隊集中管理客戶名單、來源管道與承辦人。',
+    category: 'admin',
+    tags: ['LINE 串接'],
+    image: '/images/cases/crm.webp',
+    imageAlt: 'CRM 客戶管理系統的客戶清單：客戶數統計、來源管道、承辦業務與諮詢項目（示範資料）',
+    link: { href: lineCategoryUrl('後台管理系統'), label: 'LINE 聊聊需求', external: true },
+  },
+  // 以下三張是題庫系統裡的 AI 功能，畫面取自 Demo 站（Demo 的 AI 結果為事先寫好的模擬內容）
+  {
+    key: 'ai_image_recognition',
+    title: 'AI 影像辨識',
+    summary: '上傳手機拍的考卷照片，AI 把題目拆成一題一題，左邊對照原卷審核。',
+    summaryShort: '上傳考卷照片，AI 拆成一題一題，老師對照原卷審核。',
+    category: 'ai',
+    tags: ['題庫系統'],
+    image: '/images/cases/ai-image-recognition.webp',
+    imageAlt: '題庫系統 Demo 的考卷匯入結果：左邊是手機拍的考卷照片，右邊是 AI 辨識出的題目',
+    link: demoLink,
+  },
+  {
+    key: 'ai_question_generation',
+    title: 'AI 出題',
+    summary: '從題庫挑範本題，AI 照出法產生類似題。Demo 可以先體驗，正式導入時依需求開發。',
+    summaryShort: 'AI 出題可以先在 Demo 體驗，正式導入時依需求開發。',
+    category: 'ai',
+    tags: ['題庫系統'],
+    image: '/images/cases/ai-question-generation.webp',
+    imageAlt: '題庫系統 Demo 的 AI 出題頁：選範本、設定、產生與審核三個步驟',
+    link: demoLink,
+  },
+  {
+    key: 'ai_explanation',
+    title: 'AI 詳解',
+    summary: '按一下替題目寫出答案、解題步驟與核心觀念，老師審閱後再收進題庫。',
+    summaryShort: 'AI 產生詳解，老師確認後才收進題庫。',
+    category: 'ai',
+    tags: ['題庫系統'],
+    image: '/images/cases/ai-explanation.webp',
+    imageAlt: '題庫系統 Demo 的 AI 詳解頁：一元二次方程式題目下方顯示答案、解題步驟與核心觀念',
+    link: demoLink,
+  },
+  {
+    key: 'heavy_board_games',
+    title: '重策桌遊揪團平台',
+    summary: '重度策略桌遊玩家找桌遊、找牌友、開團跟團的社群網站。',
+    summaryShort: '桌遊玩家找牌友、開團跟團的社群網站。',
+    category: 'group',
+    tags: ['揪團'],
+    image: '/images/cases/heavy-board-games.webp',
+    imageAlt: '重策桌遊揪團平台的揪團列表：每團的桌遊、地點、報名人數與費用',
+    link: { href: HEAVY_BOARD_GAMES_URL, label: '看實際網站', external: true },
+  },
+];
+
+export const FEATURED_CASE = DEV_CASES.find((item) => item.featured) ?? DEV_CASES[0];

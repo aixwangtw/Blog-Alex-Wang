@@ -2,9 +2,10 @@
 import { findMarkdownAlternate } from '../lib/agent-docs';
 import SiteHeader from '../components/SiteHeader.astro';
 import FloatingLine from '../components/FloatingLine.astro';
+import LineIcon from '../components/LineIcon.astro';
 import ogBanner from '../assets/banner-v2.png';
 import lineBrandIcon from '../assets/line-brand-icon.png';
-import { COLLABORATION_ENTRY_LINKS, FREE_ENTRY_LINKS, GUIDED_ENTRY_LINKS, LEARNING_ENTRY_LINKS, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL, SECTION_NAMES } from '../consts';
+import { COLLABORATION_ENTRY_LINKS, FREE_ENTRY_LINKS, GUIDED_ENTRY_LINKS, LEARNING_ENTRY_LINKS, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL, SECTION_NAMES, DEVELOPMENT_SERVICE, GA_MEASUREMENT_ID } from '../consts';
 import '../styles/global.css';
 import '../styles/site-chrome.css';
 
@@ -15,7 +16,7 @@ const FOOTER_NAV = [
     links: [
       { href: '/blog/', label: '全部文章' },
       { href: '/blog/custom-system-development-demo/', label: '系統開發費用與 Demo' },
-      { href: '/blog/math-teacher-question-bank/', label: '題庫系統案例' },
+      { href: DEVELOPMENT_SERVICE.caseArticle, label: '題庫系統案例' },
       { href: '/blog/vibecoding-tutorial/', label: 'Vibecoding 一對一教學' },
       { href: '/blog/claude-code-install/', label: 'Claude Code 安裝教學' },
       { href: '/faq/', label: '常見問題' },
@@ -110,11 +111,11 @@ const jsonLd = {
     <!-- Google Analytics（GA4）流量統計：gtag.js 延到頁面載入完才注入，避免佔用首次渲染的主執行緒；
          事件在此之前先排入 dataLayer，載入後照樣送出。
          noindex 頁面（草稿／不公開頁）完全不輸出 GA 腳本，不會被統計 -->
-    {!noindex && <script is:inline>
+    {!noindex && <script is:inline define:vars={{ gaId: GA_MEASUREMENT_ID, mainHostname: new URL(SITE.url).hostname, demoHostname: new URL(DEVELOPMENT_SERVICE.demoUrl).hostname }}>
       // 只統計正式網站；localhost、區域網路 IP 與其他預覽網址完全不載入 GA4。
       // 自用裝置開一次 ?analytics=off 會寫入跨子網域 Cookie；?analytics=on 可恢復。
       // 一般不執行 JavaScript 的爬蟲本來就不會送 GA；自動化瀏覽器則額外排除。
-      var analyticsHosts = ['aixwang.dev', 'www.aixwang.dev'];
+      var analyticsHosts = [mainHostname, 'www.' + mainHostname];
       var analyticsControl = new URLSearchParams(window.location.search).get('analytics');
       if (analyticsControl === 'off') {
         document.cookie = 'aixwang_ga_opt_out=1; Max-Age=315360000; Path=/; Domain=.aixwang.dev; SameSite=Lax; Secure';
@@ -176,17 +177,17 @@ const jsonLd = {
           if (gaUrl.searchParams.get('s') === 'line') {
             gaUrl.searchParams.delete('s');
             gaConfig = { campaign_source: 'line', campaign_medium: 'social', campaign_name: 'article_share', page_location: gaUrl.href };
-            window.gtag('config', 'G-91Z2F673C0', gaConfig);
+            window.gtag('config', gaId, gaConfig);
             window.history.replaceState(window.history.state, '', gaUrl.pathname + gaUrl.search + gaUrl.hash);
             gaConfig = null;
           }
         } catch (e) {}
-        if (gaConfig) window.gtag('config', 'G-91Z2F673C0');
+        if (gaConfig) window.gtag('config', gaId);
 
         window.addEventListener('load', function () {
           var s = document.createElement('script');
           s.async = true;
-          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-91Z2F673C0';
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
           document.head.appendChild(s);
         });
 
@@ -284,7 +285,7 @@ const jsonLd = {
           try { window.localStorage.setItem('aixwang_demo_clicked', '1'); } catch (e) {}
         }
         function isDemoHref(href) {
-          try { return new URL(href, location.href).hostname === 'demo-question.aixwang.dev'; } catch (e) { return false; }
+          try { return new URL(href, location.href).hostname === demoHostname; } catch (e) { return false; }
         }
         function isLineHref(href) {
           return href.indexOf('line.me') !== -1 || href.indexOf('lin.ee') !== -1;
@@ -878,7 +879,7 @@ const jsonLd = {
           <div>
             <p class="ft-h">找得到我</p>
             <ul class="ft-social" aria-label="社群與聯絡方式">
-              <li><a class="ft-line" href={LINKS.line} target="_blank" rel="noreferrer" aria-label={LINE_CONSULT_LABEL}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 9.9c.3 0 .6.3.6.6s-.3.6-.6.6h-1.8v1.1h1.8c.3 0 .6.3.6.6s-.3.6-.6.6H17c-.3 0-.6-.3-.6-.6V8.1c0-.3.3-.6.6-.6h2.4c.3 0 .6.3.6.6s-.3.6-.6.6h-1.8v1.1h1.8zm-3.9 3c0 .3-.2.5-.4.6h-.2c-.2 0-.4-.1-.5-.3l-2.4-3.3v2.9c0 .3-.3.6-.6.6s-.6-.3-.6-.6V8.1c0-.3.2-.5.4-.6h.2c.2 0 .4.1.5.3l2.5 3.3V8.1c0-.3.3-.6.6-.6s.6.3.6.6v4.8zm-5.7 0c0 .3-.3.6-.6.6s-.6-.3-.6-.6V8.1c0-.3.3-.6.6-.6s.6.3.6.6v4.8zm-2.5.6H4.9c-.3 0-.6-.3-.6-.6V8.1c0-.3.3-.6.6-.6s.6.3.6.6v4.1h1.8c.3 0 .6.3.6.6s-.3.7-.6.7M24 10.3C24 4.9 18.6.6 12 .6S0 4.9 0 10.3c0 4.8 4.3 8.8 10 9.6.4.1.9.3 1.1.6.1.3.1.8 0 1.1l-.2 1c0 .3-.2 1.2 1 .6 1.3-.5 6.9-4.1 9.4-7 1.9-2.1 2.7-4 2.7-5.9" /></svg><span class="sr-only">{LINE_CONSULT_LABEL}</span></a></li>
+              <li><a class="ft-line" href={LINKS.line} target="_blank" rel="noreferrer" aria-label={LINE_CONSULT_LABEL}><LineIcon class="" /><span class="sr-only">{LINE_CONSULT_LABEL}</span></a></li>
               <li><a href={LINKS.email} aria-label="Email 聯絡"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m3.5 7 8.5 6 8.5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="sr-only">Email 聯絡</span></a></li>
               <li><a href={LINKS.threads} target="_blank" rel="me noreferrer" aria-label="Threads"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.2 2.5c-5.2 0-8.7 3.5-8.7 9.4 0 6 3.5 9.6 8.9 9.6 4.8 0 8.1-2.8 8.1-6.8 0-3-1.8-5-4.6-5.6-.5-2.3-2-3.5-4.1-3.5-2.2 0-3.7 1.2-4.1 3.1l2 .5c.2-1.1.9-1.7 2.1-1.7 1.1 0 1.8.6 2.1 1.5h-1.2c-3.4 0-5.4 1.5-5.4 4.1 0 2.3 1.8 3.9 4.4 3.9 2.7 0 4.5-1.6 4.5-4.2v-1.6c1.5.6 2.3 1.8 2.3 3.5 0 2.9-2.3 4.8-6 4.8-4.3 0-6.9-2.8-6.9-7.6 0-4.7 2.5-7.4 6.6-7.4 3.1 0 5.3 1.5 6.2 4.2l1.9-.7c-1.2-3.5-4.1-5.5-8.1-5.5zm1.9 9.8c0 1.8-.8 2.8-2.4 2.8-1.4 0-2.3-.8-2.3-1.9 0-1.4 1.1-2.1 3.3-2.1h1.4v1.2z" /></svg><span class="sr-only">Threads</span></a></li>
               <li><a href={LINKS.instagram} target="_blank" rel="me noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1" /></svg><span class="sr-only">Instagram</span></a></li>

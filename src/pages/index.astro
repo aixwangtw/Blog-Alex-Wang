@@ -22,6 +22,7 @@
 // ============================================================
 import { DEVELOPMENT_SERVICE, LINKS, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, SECTION_NAMES } from '../consts';
 import DevCategoryPicker from '../components/DevCategoryPicker.astro';
+import { FEATURED_CASE } from '../data/cases';
 import { DEVELOPMENT_CAPABILITIES, DEVELOPMENT_CASE_FEATURES } from '../data/services';
 import LineIcon from '../components/LineIcon.astro';
 import { getCollection } from 'astro:content';
@@ -69,21 +70,21 @@ const latestPosts = allPosts.slice(0, 5);
         <ul class="case-cards">
           <li>
             <article class="case-card">
-              <img class="case-card-thumb" src="/images/blog/math-teacher-question-bank/import-review.jpg" alt="題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目" width="1400" height="875" loading="lazy" decoding="async" />
+              <img class="case-card-thumb" src={FEATURED_CASE.image} alt={FEATURED_CASE.imageAlt} width="1440" height="900" loading="lazy" decoding="async" />
               <div class="case-card-body">
-                <h3>數學題庫系統</h3>
-                <p>補習班數學老師用來把考卷收進題庫、出卷。</p>
+                <h3>{FEATURED_CASE.title}</h3>
+                <p>{FEATURED_CASE.summaryShort}</p>
                 <ul class="dev-list">
                   {DEVELOPMENT_CASE_FEATURES.map((item) => <li>{item}</li>)}
                 </ul>
                 <div class="case-card-actions">
-                  <a class="service-link" href="https://demo-question.aixwang.dev" target="_blank" rel="noreferrer" data-ga-button="home_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="home_case" data-ga-action="external">試用 Demo，免費不用註冊 <span aria-hidden="true">↗</span></a>
+                  <a class="service-link" href={FEATURED_CASE.link.href} target="_blank" rel="noreferrer" data-ga-button="home_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="home_case" data-ga-action="external">試用 Demo，免費不用註冊 <span aria-hidden="true">↗</span></a>
                 </div>
               </div>
             </article>
           </li>
         </ul>
-        <p class="dev-case-more">另外做過 CRM、健檢系統、預約系統、揪團平台等。<a href="/cases/" data-ga-button="home_case_all" data-ga-label="看全部案例" data-ga-location="home_case" data-ga-action="navigate">看全部案例 →</a></p>
+        <p class="dev-case-more">另外做過健檢系統、預約系統等。<a href="/cases/" data-ga-button="home_case_all" data-ga-label="看全部案例" data-ga-location="home_case" data-ga-action="navigate">看全部案例 →</a></p>
       </section>
 
       <!-- 3／能做什麼 -->

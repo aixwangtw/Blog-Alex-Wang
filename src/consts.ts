@@ -27,7 +27,8 @@ export const DEVELOPMENT_SERVICE = {
   url: `${SERVICE_SITE.url}/services/development/`,
   caseArticle: '/blog/math-teacher-question-bank/',
   guideArticle: '/blog/custom-system-development-demo/',
-  demoUrl: 'https://demo-question.aixwang.dev/admin/auth/login',
+  /** Demo 站根網址（未登入會自動轉登入頁） */
+  demoUrl: 'https://demo-question.aixwang.dev',
   steps: ['先聊需求', '免費做簡易 Demo，看過再決定', 'Demo 符合需求後，談預算、時程、報價與簽約', '分階段開發，隨調隨改', '上線並教你怎麼用，一年保固', '保固結束後可簽維護合約'],
   timeline: '時程依功能多寡估算：以技術上來說，大約兩個月可以完成 5 個左右的複雜功能，我們做過的功能會更快；開發過程中需求原則上可以隨時調整。',
   payment: '開發費依功能報價，加 LINE 可以免費評估；分三次付款：簽約時 40%、期中 30%、驗收時 30%，需要分更多期可以再詳談。',
@@ -343,6 +344,14 @@ export const PERSON_SCHEMA = {
 
 // 文章分組對照：第一個標籤 → 分組名稱（把多個標籤合併成一組）；沒列在這裡的標籤就用標籤本身。
 // 排除的標籤不進導覽與相關文章清單。頁首彈窗、教學頁頁尾、教學文章底部共用這一份。
+/** 官方 LINE 帳號 ID。預填訊息要用 oaMessage 網址；lin.ee 追蹤短網址（LINKS.line）不支援預填。 */
+export const LINE_OA_ID = '@438efvtl';
+/** 開官方 LINE 並預填「我想做：<類別>，想先聊聊需求」 */
+export const lineCategoryUrl = (category: string): string =>
+  `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(`我想做：${category}，想先聊聊需求`)}`;
+/** GA4 測量 ID（主站與服務站共用） */
+export const GA_MEASUREMENT_ID = 'G-91Z2F673C0';
+
 /** 站上區塊名稱：導覽、頁尾、頁面標題、麵包屑一律引用，不寫死（2026-10-31 使用者指示簡稱「案例」「開源」） */
 export const SECTION_NAMES = { cases: '案例', openSource: '開源' } as const;
 

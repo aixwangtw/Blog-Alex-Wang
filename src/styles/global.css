@@ -74,6 +74,8 @@
    顏色只定義在這裡，各頁面一律用語意化 utility（text-ink / bg-paper / border-rule …），
    不要在 .astro 裡寫死色碼。 */
 @theme {
+  /* LINE 品牌綠（浮動按鈕、頁尾 LINE 圓鈕、客服面板外框共用） */
+  --color-line: #06c755;
   /* 三套字型對應原型定義的三種聲音：
      display（無襯線）＝內文與回答、serif＝提問與區塊標題、mono＝路徑／標籤／指令。
      全部自架，見檔案開頭的 @import。 */
