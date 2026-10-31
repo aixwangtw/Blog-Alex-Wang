@@ -1,0 +1,158 @@
+---
+// /cases/ — 開發案例列表（2026-10-31 新增）
+// 導覽「開發案例」比照 service.deanlife.blog 的「品牌案例」直接連到這一頁；
+// 版型比照 joinx.co/case-studies/ 的卡片列表：頁首標籤篩選＋等寬等高卡片格線（桌機 3 欄、平板 2 欄、手機 1 欄）。
+// 規則（AGENTS.md「開發案例頁」）：
+// - 只放有真實系統截圖、而且可以公開的案例；客戶的系統要客戶同意才放。
+// - 截圖統一 16:10（1440×900 拍），資料用 Demo 站或本機偽真資料，不得有真實個資或老師資料。
+// - 標籤只寫真實屬性（產業／系統類型／技術特色），篩選按鈕由案例標籤自動產生。
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { DEVELOPMENT_SERVICE, SITE, breadcrumbSchema } from '../consts';
+import Base from '../layouts/Base.astro';
+
+interface DevelopmentCase {
+  key: string;
+  title: string;
+  summary: string;
+  tags: string[];
+  image: string;
+  imageAlt: string;
+  link: { href: string; label: string; external: boolean };
+}
+
+const CASES: DevelopmentCase[] = [
+  {
+    key: 'math_question_bank',
+    title: '數學題庫系統',
+    summary: '補習班數學老師用來把考卷收進題庫、出卷，AI 辨識考卷、產生詳解。',
+    tags: ['教育', '題庫管理系統', 'AI 應用'],
+    image: '/images/cases/math-question-bank.webp',
+    imageAlt: '數學題庫系統 Demo 站的題目管理頁：題目列表、難易度與單元標籤、審核與啟用開關',
+    link: { href: DEVELOPMENT_SERVICE.demoUrl, label: '試用 Demo', external: true },
+  },
+  {
+    key: 'heavy_board_games',
+    title: '重策桌遊揪團平台',
+    summary: '重度策略桌遊玩家找桌遊、找牌友、開團跟團的社群網站。',
+    tags: ['桌遊社群', '揪團平台'],
+    image: '/images/cases/heavy-board-games.webp',
+    imageAlt: '重策桌遊揪團平台的揪團列表：每團的桌遊、地點、報名人數與費用',
+    link: { href: 'https://heavyboardgames.aixwang.dev/', label: '看實際網站', external: true },
+  },
+];
+
+const ALL_TAGS = [...new Set(CASES.flatMap((item) => item.tags))];
+
+const schema = [
+  breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '開發案例' }]),
+  {
+    '@type': 'ItemList',
+    name: '開發案例',
+    itemListElement: CASES.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.title,
+      url: item.link.href,
+    })),
+  },
+];
+---
+
+<Base
+  title="開發案例｜Aix 系統開發做過的系統"
+  description="Aix 系統開發做過的系統，每個案例附真實系統畫面，可依產業與系統類型篩選；數學題庫系統可以直接試用 Demo。"
+  schema={schema}
+>
+  <div class="cases-page">
+    <Breadcrumbs items={[{ name: '首頁', href: '/' }, { name: '開發案例' }]} />
+
+    <h1 class="t-h1 mt-8 font-semibold text-ink">開發案例</h1>
+    <p class="cases-lead">每個案例附系統的真實畫面。需要登入的後台用示範資料拍，公開網站直接拍線上畫面；可以試用或已上線的系統附連結。</p>
+
+    <div class="cases-filter" role="group" aria-label="依標籤篩選案例" hidden data-cases-filter>
+      <button type="button" class="cases-pill" aria-pressed="true" data-tag="" data-ga-button="cases_filter_all" data-ga-label="篩選：全部" data-ga-location="cases_filter" data-ga-action="filter">全部</button>
+      {ALL_TAGS.map((tag) => (
+        <button type="button" class="cases-pill" aria-pressed="false" data-tag={tag} data-ga-button={`cases_filter_${tag}`} data-ga-label={`篩選：${tag}`} data-ga-location="cases_filter" data-ga-action="filter">{tag}</button>
+      ))}
+    </div>
+
+    <ul class="cases-grid" data-cases-grid>
+      {CASES.map((item) => (
+        <li data-tags={item.tags.join('|')}>
+          <article class="cases-card">
+            <img class="cases-card-thumb" src={item.image} alt={item.imageAlt} width="1440" height="900" loading="lazy" decoding="async" />
+            <div class="cases-card-body">
+              <h2>{item.title}</h2>
+              <p>{item.summary}</p>
+              <ul class="cases-tags" aria-label="標籤">
+                {item.tags.map((tag) => <li>{tag}</li>)}
+              </ul>
+              <a
+                class="cases-card-link"
+                href={item.link.href}
+                target={item.link.external ? '_blank' : undefined}
+                rel={item.link.external ? 'noreferrer' : undefined}
+                data-ga-button={`cases_${item.key}`}
+                data-ga-label={`${item.title}：${item.link.label}`}
+                data-ga-location="cases_grid"
+                data-ga-action={item.link.external ? 'external' : 'navigate'}
+              >{item.link.label} <span aria-hidden="true">{item.link.external ? '↗' : '→'}</span></a>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
+    <p class="cases-empty" hidden data-cases-empty>這個標籤目前沒有案例。</p>
+
+    <p class="cases-more">另外做過 CRM、健檢系統、預約系統等。聊完需求可以先提供試用 Demo。</p>
+  </div>
+</Base>
+
+<style>
+  .cases-page { max-width: 1200px; margin: 0 auto; padding: 48px 24px 64px; }
+  .cases-lead { margin-top: 20px; max-width: 48rem; font-size: 17px; line-height: 1.8; color: var(--color-ink-2); }
+  .cases-filter { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .cases-filter[hidden] { display: none; }
+  .cases-pill { min-height: 40px; padding: 8px 18px; border: 1px solid var(--color-rule-2); border-radius: 999px; background: transparent; font-size: 15px; color: var(--color-ink-2); cursor: pointer; }
+  .cases-pill:hover { border-color: var(--color-ink-3); }
+  .cases-pill[aria-pressed='true'] { border-color: var(--color-ink); background: var(--color-ink); color: var(--color-bg, #fff); }
+  .cases-grid { display: grid; grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1fr; gap: 24px; margin: 28px 0 0; padding: 0; list-style: none; }
+  @media (min-width: 768px) { .cases-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .cases-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .cases-grid > li { display: flex; min-width: 0; }
+  .cases-grid > li[hidden] { display: none; }
+  .cases-card { display: flex; flex: 1; flex-direction: column; overflow: hidden; border: 1px solid var(--color-rule-2); border-radius: 8px; background: rgb(255 255 255 / 40%); }
+  .cases-card-thumb { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; border-bottom: 1px solid var(--color-rule-2); }
+  .cases-card-body { display: flex; flex: 1; flex-direction: column; min-width: 0; padding: 20px 22px 22px; }
+  .cases-card-body h2 { font-size: 20px; font-weight: 700; color: var(--color-ink); }
+  .cases-card-body > p { margin-top: 8px; line-height: 1.75; color: var(--color-ink-2); }
+  .cases-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .cases-tags li { padding: 3px 10px; border-radius: 999px; background: rgb(0 0 0 / 5%); font-size: 13px; color: var(--color-ink-2); }
+  .cases-card-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: auto; padding-top: 16px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
+  .cases-empty { margin-top: 24px; color: var(--color-ink-3); }
+  .cases-more { margin-top: 32px; font-size: 15px; color: var(--color-ink-3); }
+  @media (max-width: 767px) { .cases-page { padding: 32px 16px 48px; } }
+</style>
+
+<script>
+  // 標籤篩選：無 JS 時按鈕列維持 hidden、卡片全部顯示
+  const filter = document.querySelector<HTMLElement>('[data-cases-filter]');
+  const items = [...document.querySelectorAll<HTMLElement>('[data-cases-grid] > li')];
+  const empty = document.querySelector<HTMLElement>('[data-cases-empty]');
+  if (filter) {
+    filter.hidden = false;
+    filter.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-tag]');
+      if (!button) return;
+      const tag = button.dataset.tag ?? '';
+      filter.querySelectorAll('button').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      let shown = 0;
+      for (const item of items) {
+        const match = !tag || (item.dataset.tags ?? '').split('|').includes(tag);
+        item.hidden = !match;
+        if (match) shown += 1;
+      }
+      if (empty) empty.hidden = shown > 0;
+    });
+  }
+</script>

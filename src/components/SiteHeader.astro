@@ -39,6 +39,8 @@ const withBase = (href: string) => (href.startsWith('/') ? `${siteBase}${href}` 
 // 頁尾導覽（FOOTER_NAV）依同一套分類分組，「首頁」放在「關於」組。
 const HEADER_NAV = [
   { href: '/about/', label: '關於' },
+  // 比照 service.deanlife.blog 的「品牌案例」：直接連案例列表頁，不做下拉
+  { href: '/cases/', label: '開發案例' },
 ];
 const CLAIM_INSTALL_HINT = '貼給你的 AI Agent，說「幫我安裝」';
 // 服務只剩系統開發一項，不需要下拉，頁首直接放一顆強調色連結

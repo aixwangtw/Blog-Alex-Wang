@@ -200,7 +200,18 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 - 導覽列：主站搜尋框固定在頁首導覽列（`SiteHeader.astro` 的 `.nav-search-form`，`showSearch`），不放在首屏 Hero；服務站不顯示搜尋框。手機版導覽放進選單展開內，且不得擠壓導覽項目。
 - 服務下拉在手機為單欄文字清單（無卡片框），桌機為三欄等寬等高卡片。
 - 兩欄卡片在手機單欄時，grid 必須明確寫 `grid-cols-[minmax(0,1fr)]`，否則欄寬被內容（影片、程式碼區、四欄數字）撐大，卡片右側會被 `overflow-hidden` 切掉；直式影片放進固定高度的欄位用 `object-contain`，不得用 `object-cover` 裁掉畫面兩側的文字。適用：`src/pages/resources.astro` 的 grill-me 卡。
-- 首屏類別卡（2026-10-31 起，`src/components/DevCategoryPicker.astro`，主站首頁與服務站首頁共用，取代 `NeedRouter.astro` 的「你目前最想解決什麼問題？」）：問句固定「你想做什麼系統？」；六類別依序為網頁、內部管理系統、APP、題庫管理系統、揪團平台、LINE LIFF。格線桌機 3×2、767px 以下 2×3（`repeat(2, minmax(0, 1fr))`），不改單欄；卡片內容固定為 icon（28px 線條 SVG）＋類別名＋去處說明，去處說明 `margin-top: auto` 貼底，所有卡同高（桌機最小 148px、手機 132px）；360px 以下縮字級與內距，確保「題庫管理系統」不換行。
-- 類別卡去處：有可試用 Demo 的類別直接連 Demo（目前只有題庫管理系統 → `https://demo-question.aixwang.dev`，2026-10-31 使用者指示「卡片先連結demo就好」）；首頁與服務站的題庫案例卡也只連 Demo，題庫文章連結放在 Demo 站內（登入頁與 Demo 橫幅），網站卡片只連 Demo；其他類別開官方 LINE 並預填訊息（`https://line.me/R/oaMessage/@438efvtl/?<編碼文字>`，lin.ee 追蹤短網址不支援預填）。其他類別要有真實案例頁或 Demo 才改連過去，不得編造案例、客戶、數字或截圖。
+- 首屏類別卡（2026-10-31 起，`src/components/DevCategoryPicker.astro`，主站首頁與服務站首頁共用，取代 `NeedRouter.astro` 的「你目前最想解決什麼問題？」）：問句固定「你想做什麼系統？」；2026-10-31 起五類別依序為網頁、內部管理系統、APP、題庫管理系統、揪團平台（LINE LIFF 類別已拿掉，LIFF 歸在 APP，不要加回）。格線桌機 3 欄、767px 以下 2 欄（`repeat(2, minmax(0, 1fr))`），不改單欄；卡片內容固定為 icon（28px 線條 SVG）＋類別名＋去處說明，去處說明 `margin-top: auto` 貼底，所有卡同高（桌機最小 148px、手機 132px）；360px 以下縮字級與內距，確保「題庫管理系統」不換行。
+- 類別卡去處：有可試用 Demo 的類別直接連 Demo（題庫管理系統 → `https://demo-question.aixwang.dev`，2026-10-31 使用者指示「卡片先連結demo就好」；揪團平台 → 真實網站 `https://heavyboardgames.aixwang.dev/`）；首頁與服務站的題庫案例卡也只連 Demo，題庫文章連結放在 Demo 站內（登入頁與 Demo 橫幅），網站卡片只連 Demo；其他類別開官方 LINE 並預填訊息（`https://line.me/R/oaMessage/@438efvtl/?<編碼文字>`，lin.ee 追蹤短網址不支援預填）。其他類別要有真實案例頁或 Demo 才改連過去，不得編造案例、客戶、數字或截圖。
 - 案例區不放大截圖：每個真實案例一張卡片，縮圖固定 16:10（`aspect-ratio: 16 / 10; object-fit: cover; object-position: left top`），桌機縮圖與文字左右 5:7、767px 以下上下排；按鈕列 `margin-top: auto` 貼底。多個案例時改為等寬等高的卡片格線，縮圖比例不變。
 - 首頁與服務站首頁的「教學／演講／開源工具」為三張等寬等高小卡（桌機 3 欄、767px 以下單欄），每張：標題、一句說明、貼底的連結文字。手機單欄時三張也必須等高（`grid-auto-rows: 1fr`），連結文字貼底。
+
+## 開發案例頁規則（必須遵守，2026-10-31 起）
+
+- 導覽（主站與服務站共用 `SiteHeader.astro`）有「開發案例」，比照 service.deanlife.blog 的「品牌案例」直接連主站 `/cases/`（`src/pages/cases.astro`），不做下拉；不得因此刪掉「開源工具」等既有項目，擠的話調間距或字級。
+- 版型比照 joinx.co/case-studies/：頁首標籤篩選（「全部」預設，純前端，無 JS 時隱藏按鈕列、卡片全部顯示）＋卡片格線，桌機（≥1024px）3 欄、768–1023px 2 欄、767px 以下 1 欄，一律 `minmax(0, 1fr)`。
+- 每張卡：截圖、案例名稱、一句說明、標籤、貼底連結（`margin-top: auto`）。所有卡片等寬等高（`li` 用 flex、卡片 `flex: 1`）。
+- 截圖統一 16:10：用 1440×900 視窗拍，顯示時 `aspect-ratio: 16 / 10; object-fit: cover; object-position: left top`，存 `public/images/cases/<案例>.webp`。
+- 截圖必須是真實系統畫面。需要登入的後台用 Demo 站或本機偽真資料拍：常見姓名組合、合理數字與日期，不得有真實個資、真實客戶或老師資料，也不要明顯假（「測試123」「AAA」）；偽資料只寫在本機或 Demo 沙盒，用完還原。題庫一律用 Demo 站，不得用正式站或 staging。公開網站且無隱私問題的（例如重策桌遊揪團平台）直接拍線上畫面、直接連真實網址，不另造偽資料。
+- 標籤只寫真實屬性（產業、系統類型、技術特色），篩選按鈕由案例標籤自動產生；不為了湊分類編標籤。
+- 客戶案例：2026-10-31 使用者同意客戶案例都可以公開，截圖一律偽真資料。背書系統不列案例，也不出現在「做過…」的文字裡。
+- 首頁「做過的系統」附「看全部案例」連到 `/cases/`；首頁案例卡維持上面的案例區規則。

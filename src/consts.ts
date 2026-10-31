@@ -315,7 +315,7 @@ export const PROFESSIONAL_SERVICE_SCHEMA = {
   '@id': `${SERVICE_SITE.url}/#professionalservice`,
   name: SITE.title,
   url: `${SERVICE_SITE.url}/`,
-  description: '客製系統開發與 AI 導入：AI 導入、資料管理、API 串接（LINE、金流、Google 服務、既有系統），做過數學題庫系統、CRM、背書系統、健檢系統、預約系統、揪團平台等。另提供 AI 一對一教學。',
+  description: '客製系統開發與 AI 導入：AI 導入、資料管理、API 串接（LINE、金流、Google 服務、既有系統），做過數學題庫系統、CRM、健檢系統、預約系統、揪團平台等。另提供 AI 一對一教學。',
   image: `${SITE.url}/aixwang-icon.png`,
   address: { '@type': 'PostalAddress', addressCountry: 'TW' },
   areaServed: { '@type': 'Country', name: '台灣' },
