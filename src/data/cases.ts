@@ -236,7 +236,10 @@ export const DEV_CASES: DevCase[] = [
     summaryShort: '本站：文章、站內搜尋、案例頁與服務站分流。',
     categories: ['web'],
     images: [
-      { src: '/images/cases/aixwang-site.webp', alt: `${SITE.title}官網首頁：「你想做什麼系統？」六個類別卡`, featureTag: 'search' },
+      { src: '/images/cases/site-home.webp', alt: `${SITE.title}官網首頁：站內搜尋、案例輪播與「你想做什麼系統？」類別卡`, featureTag: 'search' },
+      { src: '/images/cases/site-cases.webp', alt: `${SITE.title}官網案例頁：依系統類別篩選案例`, featureTag: 'filter' },
+      { src: '/images/cases/site-blog.webp', alt: `${SITE.title}官網部落格：置頂案例文章與精選文章`, featureTag: 'browse' },
+      { src: '/images/cases/site-resources.webp', alt: `${SITE.title}官網免費資源頁：安裝教學與開源工具`, featureTag: 'browse' },
     ],
     link: { href: `${SITE.url}/`, label: '看實際網站', external: false },
   },
