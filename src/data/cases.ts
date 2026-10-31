@@ -1,7 +1,7 @@
 // 案例與系統類別的單一來源：/cases/、首頁與服務站首頁的「你想做什麼系統？」類別卡、
 // 首頁／服務站的代表案例卡、頁首文章下拉的案例預覽卡都從這裡取。改名稱、說明、截圖、連結只改這裡。
 // 規則見 AGENTS.md「開發案例頁規則」：只放真實系統截圖，偽真資料，不編案例或數字。
-import { DEVELOPMENT_SERVICE, SECTION_NAMES, SITE, lineCategoryUrl } from '../consts';
+import { CRM_DEMO_URL, DEVELOPMENT_SERVICE, SECTION_NAMES, SITE, lineCategoryUrl } from '../consts';
 
 export type DevCategoryKey = 'web' | 'admin' | 'app' | 'bank' | 'group' | 'ai';
 
@@ -121,7 +121,7 @@ export const DEV_CASES: DevCase[] = [
     tags: ['customer', 'permission', 'line'],
     image: '/images/cases/crm.webp',
     imageAlt: 'CRM 客戶管理系統的客戶清單（含側邊選單）：客戶數統計、來源管道、承辦業務與諮詢項目（示範資料，姓名已遮罩）',
-    link: { href: lineCategoryUrl('後台管理系統'), label: 'LINE 聊聊需求', external: true },
+    link: { href: CRM_DEMO_URL, label: '試用 Demo', external: true },
   },
   {
     key: 'line_liff_app',

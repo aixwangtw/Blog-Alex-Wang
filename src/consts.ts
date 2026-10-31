@@ -52,6 +52,11 @@ export const DEVELOPMENT_SERVICE = {
 };
 
 // 服務頁網址與共用按鈕文字：頁首、頁尾、分流卡、客服索引、AI 文件都引用這裡，改這裡全站同步
+/** CRM 客戶管理系統 Demo 站 */
+export const CRM_DEMO_URL = 'https://demo-crm.aixwang.dev';
+/** 所有 Demo 站網域（GA demo_click 判斷用，新增 Demo 站要加進來） */
+export const DEMO_HOSTNAMES = [new URL(DEVELOPMENT_SERVICE.demoUrl).hostname, new URL(CRM_DEMO_URL).hostname];
+
 export const COURSE_SERVICE_URL = `${SERVICE_SITE.url}/course/`;
 export const SPEAKING_SERVICE_URL = `${SERVICE_SITE.url}/services/speaking/`;
 export const LINE_CONSULT_LABEL = 'LINE 免費諮詢';

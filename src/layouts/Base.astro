@@ -5,7 +5,7 @@ import FloatingLine from '../components/FloatingLine.astro';
 import LineIcon from '../components/LineIcon.astro';
 import ogBanner from '../assets/banner-v2.png';
 import lineBrandIcon from '../assets/line-brand-icon.png';
-import { COLLABORATION_ENTRY_LINKS, FREE_ENTRY_LINKS, GUIDED_ENTRY_LINKS, LEARNING_ENTRY_LINKS, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL, SECTION_NAMES, DEVELOPMENT_SERVICE, GA_MEASUREMENT_ID } from '../consts';
+import { COLLABORATION_ENTRY_LINKS, FREE_ENTRY_LINKS, GUIDED_ENTRY_LINKS, LEARNING_ENTRY_LINKS, LINKS, PERSON_SCHEMA, SERVICE_SITE, SITE, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, LINE_CONSULT_LABEL, SECTION_NAMES, DEVELOPMENT_SERVICE, GA_MEASUREMENT_ID, DEMO_HOSTNAMES } from '../consts';
 import '../styles/global.css';
 import '../styles/site-chrome.css';
 
@@ -111,7 +111,7 @@ const jsonLd = {
     <!-- Google Analytics（GA4）流量統計：gtag.js 延到頁面載入完才注入，避免佔用首次渲染的主執行緒；
          事件在此之前先排入 dataLayer，載入後照樣送出。
          noindex 頁面（草稿／不公開頁）完全不輸出 GA 腳本，不會被統計 -->
-    {!noindex && <script is:inline define:vars={{ gaId: GA_MEASUREMENT_ID, mainHostname: new URL(SITE.url).hostname, demoHostname: new URL(DEVELOPMENT_SERVICE.demoUrl).hostname }}>
+    {!noindex && <script is:inline define:vars={{ gaId: GA_MEASUREMENT_ID, mainHostname: new URL(SITE.url).hostname, demoHostnames: DEMO_HOSTNAMES }}>
       // 只統計正式網站；localhost、區域網路 IP 與其他預覽網址完全不載入 GA4。
       // 自用裝置開一次 ?analytics=off 會寫入跨子網域 Cookie；?analytics=on 可恢復。
       // 一般不執行 JavaScript 的爬蟲本來就不會送 GA；自動化瀏覽器則額外排除。
@@ -285,7 +285,7 @@ const jsonLd = {
           try { window.localStorage.setItem('aixwang_demo_clicked', '1'); } catch (e) {}
         }
         function isDemoHref(href) {
-          try { return new URL(href, location.href).hostname === demoHostname; } catch (e) { return false; }
+          try { return demoHostnames.indexOf(new URL(href, location.href).hostname) !== -1; } catch (e) { return false; }
         }
         function isLineHref(href) {
           return href.indexOf('line.me') !== -1 || href.indexOf('lin.ee') !== -1;

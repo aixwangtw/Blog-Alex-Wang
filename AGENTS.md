@@ -199,7 +199,7 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 ## 排版規則（必須遵守）
 
 - 全站並列元素一律對齊（2026-10-31 使用者：「任何都要對齊」）：同列卡片內同類元素（圖、標題、說明起點、標籤、按鈕／連結）top 一致，不只卡片等高；標籤不得跟著說明長短上下浮動，固定在卡片內固定位置（例如與連結一起放進 `margin-top: auto` 的底部區塊）；導覽項目基線一致、按鈕列與篩選按鈕對齊、表單欄位與頁尾分欄左緣一致、圖示與文字垂直置中。驗證時用程式量測各元素 top／left 值（1440、768、390、320），並原尺寸逐張檢視。
-- 案例、類別、網址、LINE、GA ID 一律從 `src/data/cases.ts` 與 `src/consts.ts` 引用，不寫死（案例與類別：`DEV_CASES`、`DEV_CATEGORIES`；LINE 預填：`lineCategoryUrl()`；Demo：`DEVELOPMENT_SERVICE.demoUrl`；題庫文章：`DEVELOPMENT_SERVICE.caseArticle`；GA：`GA_MEASUREMENT_ID`；LINE 綠：CSS 變數 `--color-line`；網域：`SITE.url`／`SERVICE_SITE.url`）。
+- 案例、類別、網址、LINE、GA ID 一律從 `src/data/cases.ts` 與 `src/consts.ts` 引用，不寫死（案例與類別：`DEV_CASES`、`DEV_CATEGORIES`；LINE 預填：`lineCategoryUrl()`；Demo：`DEVELOPMENT_SERVICE.demoUrl`；題庫文章：`DEVELOPMENT_SERVICE.caseArticle`；GA：`GA_MEASUREMENT_ID`；Demo 網域清單（GA demo_click）：`DEMO_HOSTNAMES`；LINE 綠：CSS 變數 `--color-line`；網域：`SITE.url`／`SERVICE_SITE.url`）。
 - 卡片群組全頁一致尺寸（不只同列）：`/cases/` 案例卡（不論篩選狀態、同列或跨列）、首頁與服務站的類別卡、小卡、流程卡，每張寬高相同（`grid-auto-rows: 1fr`，必要時標題／說明用固定行數與 line-clamp），卡內 icon、標題、說明、標籤、連結距卡片頂部的 offset 每張相同；驗證時在 1440、768、390、320（與每個篩選狀態）量測每張寬高與卡內元素 offsetTop，必須完全一致。
 - 案例截圖一律可點擊放大預覽，使用共用元件 `src/components/ImageLightbox.astro`（無 JS 時連到原圖）；網頁類別（本站官網）案例排在最後。
 - 區塊名稱一律引用 `src/consts.ts` 的 `SECTION_NAMES`（`cases: '案例'`、`openSource: '開源'`），導覽、頁尾、頁面 title、麵包屑、H1、描述與 Markdown／llms 產生內容都不寫死；改名只改這一處。CMS 文章內文不受此規則。
@@ -228,7 +228,7 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 - 沒有可公開案例的類別（目前六類都有案例）被點選時，顯示和案例卡等寬等高的「LINE 聊聊需求」卡，只寫站上既有事實，不編案例或截圖；「全部」不顯示這些卡。
 - 網址 `?tag=<類別>` 可直接帶入篩選。
 - AI 應用類別放題庫系統的三個真實功能（AI 影像辨識、AI 出題、AI 詳解）各一張卡，截圖取自 Demo 站，在 Demo 沙盒操作後要按「還原 Demo 預設資料」。
-- 客戶案例：2026-10-31 使用者同意客戶案例都可以公開，截圖一律偽真資料。LIFF 學習輔助專案（~/projects/LineLiff-book）分兩張卡：APP 卡用前台使用者畫面（手機直式畫面合成在 16:10 淺底圖上，不裁切），後台卡歸後台管理系統、用後台畫面（桌遊揪團平台同理：前台卡歸社群平台、後台卡歸後台管理系統）；不另立背書系統分類或標籤，內文可照實提到背書；站上不再列「另外做過…」清單。網頁類別案例是本站官網（名稱引用 `SITE.title`）。健檢、預約系統沒有程式可截圖，不做卡片也不另列；案例區介紹句統一用 `CASES_BEYOND_NOTE`（案例以外的系統也可以做、可先試用 Demo），放在案例區標題下的介紹段，卡片格線下方不放文字。CRM（原始碼 github.com/aixwangtw/FinanceCRM-Zeabur）是融資業務用的系統，案例卡與截圖不得出現「融資、貸款、撥款、送件、核准、利率、額度」等字樣：截圖用 CRM Demo（本機 ~/projects/FinanceCRM-demo demo 分支或上線後的 demo-crm.aixwang.dev）含側欄的完整畫面，拍後用程式掃描畫面文字確認無融資字眼與未遮罩個資。
+- 客戶案例：2026-10-31 使用者同意客戶案例都可以公開，截圖一律偽真資料。LIFF 學習輔助專案（~/projects/LineLiff-book）分兩張卡：APP 卡用前台使用者畫面（手機直式畫面合成在 16:10 淺底圖上，不裁切），後台卡歸後台管理系統、用後台畫面（桌遊揪團平台同理：前台卡歸社群平台、後台卡歸後台管理系統）；不另立背書系統分類或標籤，內文可照實提到背書；站上不再列「另外做過…」清單。網頁類別案例是本站官網（名稱引用 `SITE.title`）。健檢、預約系統沒有程式可截圖，不做卡片也不另列；案例區介紹句統一用 `CASES_BEYOND_NOTE`（案例以外的系統也可以做、可先試用 Demo），放在案例區標題下的介紹段，卡片格線下方不放文字。CRM（原始碼 github.com/aixwangtw/FinanceCRM-Zeabur）是融資業務用的系統，案例卡與截圖不得出現「融資、貸款、撥款、送件、核准、利率、額度」等字樣：截圖用 CRM Demo（`CRM_DEMO_URL`，https://demo-crm.aixwang.dev）含側欄的完整畫面，卡片連「試用 Demo」，拍後用程式掃描畫面文字確認無融資字眼與未遮罩個資。
 - 首頁「做過的系統」附「看全部案例」連到 `/cases/`；首頁案例卡維持上面的案例區規則。
 
 ## 案例 Demo 規則（必須遵守，2026-10-31 起）

@@ -1,6 +1,6 @@
 ---
 import { findMarkdownAlternate } from '../lib/agent-docs';
-import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, TEACHING_GROUP, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath, SECTION_NAMES, GA_MEASUREMENT_ID } from '../consts';
+import { DEVELOPMENT_SERVICE, PERSON_SCHEMA, SERVICE_SITE, SITE, TEACHING_GROUP, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, servicePath, SECTION_NAMES, GA_MEASUREMENT_ID, DEMO_HOSTNAMES } from '../consts';
 import SiteHeader from '../components/SiteHeader.astro';
 import FloatingLine from '../components/FloatingLine.astro';
 import '../styles/global.css';
@@ -78,7 +78,7 @@ const jsonLd = {
     <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    <script is:inline define:vars={{ gaId: GA_MEASUREMENT_ID, serviceHostname: new URL(SERVICE_SITE.url).hostname, demoHostname: new URL(DEVELOPMENT_SERVICE.demoUrl).hostname }}>
+    <script is:inline define:vars={{ gaId: GA_MEASUREMENT_ID, serviceHostname: new URL(SERVICE_SITE.url).hostname, demoHostnames: DEMO_HOSTNAMES }}>
       // 與主站共用內部流量排除 Cookie：在任一子網域開 ?analytics=off 即可停用。
       var analyticsControl = new URLSearchParams(window.location.search).get('analytics');
       if (analyticsControl === 'off') {
@@ -191,7 +191,7 @@ const jsonLd = {
           try { window.localStorage.setItem('aixwang_demo_clicked', '1'); } catch (e) {}
         }
         function isDemoHref(href) {
-          try { return new URL(href, location.href).hostname === demoHostname; } catch (e) { return false; }
+          try { return demoHostnames.indexOf(new URL(href, location.href).hostname) !== -1; } catch (e) { return false; }
         }
         function isLineHref(href) {
           return href.indexOf('line.me') !== -1 || href.indexOf('lin.ee') !== -1;
