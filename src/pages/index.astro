@@ -23,8 +23,8 @@
 import CasesBeyondNote from '../components/CasesBeyondNote.astro';
 import { DEVELOPMENT_SERVICE, LINKS, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL, SECTION_NAMES, CASES_BEYOND_NOTE } from '../consts';
 import DevCategoryPicker from '../components/DevCategoryPicker.astro';
-import { FEATURED_CASE } from '../data/cases';
-import ImageLightbox from '../components/ImageLightbox.astro';
+import { FEATURED_CASE, FEATURE_TAGS } from '../data/cases';
+import CaseCarousel from '../components/CaseCarousel.astro';
 import { DEVELOPMENT_CAPABILITIES, DEVELOPMENT_CASE_FEATURES } from '../data/services';
 import LineIcon from '../components/LineIcon.astro';
 import { getCollection } from 'astro:content';
@@ -63,7 +63,7 @@ const latestPosts = allPosts.slice(0, 5);
 
     <div class="home-shell">
       <!-- 1／首屏：直接問想做什麼系統，六個類別卡＋「聊聊需求」主按鈕（DevCategoryPicker 與服務站共用） -->
-      <DevCategoryPicker location="home_hero" headingId="hero-h" />
+      <DevCategoryPicker location="home_hero" headingId="hero-h" showCarousel />
 
       <!-- 2／開發案例：只放站上已有的真實案例，一案一張同比例卡片，不放大圖 -->
       <section class="dev-case reveal" id="development-case" aria-labelledby="case-h">
@@ -73,7 +73,7 @@ const latestPosts = allPosts.slice(0, 5);
         <ul class="case-cards">
           <li>
             <article class="case-card">
-              <ImageLightbox src={FEATURED_CASE.image} alt={FEATURED_CASE.imageAlt} width={1440} height={900} imgClass="case-card-thumb" gaLocation="home_case" gaKey={FEATURED_CASE.key} />
+              <CaseCarousel class="case-card-thumb" groupKey={FEATURED_CASE.key} gaLocation="home_case" slides={FEATURED_CASE.images.map((image) => ({ src: image.src, alt: image.alt, label: FEATURE_TAGS[image.featureTag] }))} />
               <div class="case-card-body">
                 <h3>{FEATURED_CASE.title}</h3>
                 <p>{FEATURED_CASE.summaryShort}</p>

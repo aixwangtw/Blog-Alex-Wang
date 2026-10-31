@@ -1,0 +1,238 @@
+---
+// 共用案例截圖輪播：案例卡（手動）與首頁首屏（autoplay＋random）共用。
+// - 圖片區固定 16:10；每張左上角顯示該圖的通用功能標籤（FEATURE_TAGS），位置各張一致。
+// - 手動模式：左右箭頭＋圓點、觸控滑動（scroll-snap）、鍵盤左右鍵；無 JS 時仍可橫向捲動看每張。
+// - 點圖開共用放大預覽（ImageLightbox 的 dialog），預覽內可左右切換同一組的所有圖。
+// - 自動模式（首頁）：淡入切換、每張 4.5 秒、滑鼠移入／鍵盤聚焦暫停、暫停／播放鈕、
+//   prefers-reduced-motion 不自動播放、分頁不可見暫停、只預載下一張；隨機順序且同案例不連續。
+// 圖片資料一律來自 src/data/cases.ts，不另存。
+import ImageLightbox from './ImageLightbox.astro';
+
+export interface CarouselSlide {
+  src: string;
+  alt: string;
+  /** 圖上的小標籤（功能標籤，首頁會加系統名） */
+  label: string;
+  /** 自動模式點擊的去處；手動模式點擊開放大預覽 */
+  href?: string;
+  /** 同案例不連續出現用 */
+  group?: string;
+}
+
+interface Props {
+  slides: CarouselSlide[];
+  /** 放大預覽分組與 GA 代號 */
+  groupKey: string;
+  gaLocation: string;
+  autoplay?: boolean;
+  random?: boolean;
+  /** 首張是否 eager 載入 */
+  eager?: boolean;
+  class?: string;
+}
+
+const { slides, groupKey, gaLocation, autoplay = false, random = false, eager = false, class: className } = Astro.props;
+---
+
+<div
+  class:list={['case-carousel', { 'case-carousel--auto': autoplay }, className]}
+  data-carousel
+  data-autoplay={autoplay ? '' : undefined}
+  data-random={random ? '' : undefined}
+  role="region"
+  aria-roledescription="輪播"
+  aria-label={autoplay ? '案例截圖自動輪播' : '案例截圖'}
+>
+  <div class="cc-track" data-cc-track tabindex={autoplay ? undefined : 0}>
+    {slides.map((slide, index) => (
+      <div class="cc-slide" data-cc-slide data-group={slide.group} aria-roledescription="投影片" aria-label={`第 ${index + 1} 張，共 ${slides.length} 張：${slide.label}`}>
+        {autoplay ? (
+          <a
+            class="cc-link"
+            href={slide.href}
+            data-ga-button={`${gaLocation}_slide`}
+            data-ga-label={slide.label}
+            data-ga-location={gaLocation}
+            data-ga-action="navigate"
+          >
+            <img
+              class="cc-img"
+              src={index === 0 ? slide.src : undefined}
+              data-src={slide.src}
+              alt={slide.alt}
+              width="1440"
+              height="900"
+              loading={index === 0 && eager ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </a>
+        ) : (
+          <ImageLightbox
+            src={slide.src}
+            alt={slide.alt}
+            width={1440}
+            height={900}
+            imgClass="cc-img"
+            gaLocation={gaLocation}
+            gaKey={`${groupKey}_${index + 1}`}
+            group={groupKey}
+            caption={slide.label}
+            loading={index === 0 && eager ? 'eager' : 'lazy'}
+          />
+        )}
+        <span class="cc-tag">{slide.label}</span>
+      </div>
+    ))}
+  </div>
+  {slides.length > 1 && (
+    <div class="cc-controls" data-cc-controls hidden>
+      <button type="button" class="cc-btn cc-prev" data-cc-prev aria-label="上一張" data-ga-button={`${gaLocation}_prev`} data-ga-label="輪播上一張" data-ga-location={gaLocation} data-ga-action="carousel">‹</button>
+      <div class="cc-dots" data-cc-dots>
+        {slides.map((slide, index) => (
+          <button type="button" class="cc-dot" data-cc-dot={index} aria-label={`第 ${index + 1} 張：${slide.label}`} aria-current={index === 0 ? 'true' : undefined} data-ga-button={`${gaLocation}_dot`} data-ga-label="輪播圓點" data-ga-location={gaLocation} data-ga-action="carousel"></button>
+        ))}
+      </div>
+      {autoplay && (
+        <button type="button" class="cc-btn cc-toggle" data-cc-toggle aria-label="暫停輪播" data-ga-button={`${gaLocation}_toggle`} data-ga-label="輪播暫停／播放" data-ga-location={gaLocation} data-ga-action="carousel">❚❚</button>
+      )}
+      <button type="button" class="cc-btn cc-next" data-cc-next aria-label="下一張" data-ga-button={`${gaLocation}_next`} data-ga-label="輪播下一張" data-ga-location={gaLocation} data-ga-action="carousel">›</button>
+    </div>
+  )}
+</div>
+
+<style is:global>
+  .case-carousel { position: relative; display: block; width: 100%; }
+  .cc-track { display: flex; width: 100%; aspect-ratio: 16 / 10; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .cc-track::-webkit-scrollbar { display: none; }
+  .cc-track:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  .cc-slide { position: relative; flex: 0 0 100%; width: 100%; height: 100%; scroll-snap-align: start; }
+  .cc-slide .lightbox-trigger, .cc-link { display: block; width: 100%; height: 100%; }
+  .cc-img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+  .cc-tag { position: absolute; top: 8px; left: 8px; max-width: calc(100% - 16px); overflow: hidden; padding: 3px 9px; border-radius: 999px; background: rgb(22 22 26 / 78%); color: #fff; font-size: 12px; line-height: 1.5; white-space: nowrap; text-overflow: ellipsis; pointer-events: none; }
+  /* 箭頭固定在左右下角、圓點置中，張數不同時箭頭位置也一致 */
+  .cc-controls { position: absolute; right: 8px; bottom: 8px; left: 8px; height: 32px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .cc-prev { position: absolute; left: 0; top: 0; }
+  .cc-next { position: absolute; right: 0; top: 0; }
+  .cc-toggle { position: absolute; right: 40px; top: 0; }
+  .cc-controls[hidden] { display: none; }
+  .cc-btn { display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgb(22 22 26 / 72%); color: #fff; font-size: 18px; line-height: 1; cursor: pointer; pointer-events: auto; }
+  .cc-toggle { font-size: 10px; letter-spacing: -1px; }
+  .lightbox-hint { display: none; }
+  .cc-btn:focus-visible, .cc-dot:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .cc-dots { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 999px; background: rgb(22 22 26 / 55%); pointer-events: auto; }
+  .cc-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgb(255 255 255 / 55%); cursor: pointer; }
+  .cc-dot[aria-current='true'] { background: #fff; }
+  /* 自動模式：疊放、淡入切換 */
+  .case-carousel--auto .cc-track { position: relative; display: block; overflow: hidden; scroll-snap-type: none; }
+  .case-carousel--auto .cc-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0s linear 0.6s; }
+  .case-carousel--auto .cc-slide.is-active { opacity: 1; visibility: visible; transition: opacity 0.6s ease; }
+  .case-carousel--auto:not(.cc-ready) .cc-slide:first-child { opacity: 1; visibility: visible; }
+  .case-carousel--auto .lightbox-hint, .case-carousel--auto .cc-dots { display: none; }
+  @media (prefers-reduced-motion: reduce) { .case-carousel--auto .cc-slide { transition: none; } }
+</style>
+
+<script>
+  const INTERVAL = 4500;
+
+  function shuffleNoConsecutive(slides: HTMLElement[]): HTMLElement[] {
+    const pool = [...slides].sort(() => Math.random() - 0.5);
+    const result: HTMLElement[] = [];
+    while (pool.length) {
+      const last = result[result.length - 1]?.dataset.group;
+      let index = pool.findIndex((slide) => slide.dataset.group !== last);
+      if (index === -1) index = 0;
+      result.push(pool.splice(index, 1)[0]);
+    }
+    return result;
+  }
+
+  function loadImage(slide: HTMLElement | undefined) {
+    const img = slide?.querySelector<HTMLImageElement>('img[data-src]');
+    if (img && !img.getAttribute('src')) img.src = img.dataset.src ?? '';
+  }
+
+  function setupManual(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>('[data-cc-track]')!;
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-cc-slide]')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-cc-dot]')];
+    const current = () => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+    const go = (index: number) => {
+      const target = (index + slides.length) % slides.length;
+      track.scrollTo({ left: target * track.clientWidth, behavior: 'smooth' });
+    };
+    const sync = () => {
+      const index = current();
+      dots.forEach((dot, i) => dot.setAttribute('aria-current', i === index ? 'true' : 'false'));
+    };
+    track.addEventListener('scroll', () => window.requestAnimationFrame(sync), { passive: true });
+    root.querySelector('[data-cc-prev]')?.addEventListener('click', () => go(current() - 1));
+    root.querySelector('[data-cc-next]')?.addEventListener('click', () => go(current() + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
+    track.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') { event.preventDefault(); go(current() - 1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); go(current() + 1); }
+    });
+    sync();
+  }
+
+  function setupAuto(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>('[data-cc-track]')!;
+    let slides = [...root.querySelectorAll<HTMLElement>('[data-cc-slide]')];
+    if (root.hasAttribute('data-random')) {
+      slides = shuffleNoConsecutive(slides);
+      slides.forEach((slide) => track.appendChild(slide));
+    }
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-cc-dot]')];
+    const toggle = root.querySelector<HTMLButtonElement>('[data-cc-toggle]');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let index = 0;
+    let userPaused = reduced;
+    let hoverPaused = false;
+    let timer: number | undefined;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      loadImage(slides[index]);
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === index);
+        slide.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+        slide.querySelectorAll('a').forEach((a) => (i === index ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
+      });
+      dots.forEach((dot, i) => dot.setAttribute('aria-current', i === index ? 'true' : 'false'));
+      // 只預載下一張
+      loadImage(slides[(index + 1) % slides.length]);
+    };
+    const stop = () => { if (timer) window.clearInterval(timer); timer = undefined; };
+    const start = () => {
+      stop();
+      if (userPaused || hoverPaused || document.hidden) return;
+      timer = window.setInterval(() => show(index + 1), INTERVAL);
+    };
+    const renderToggle = () => {
+      if (!toggle) return;
+      toggle.textContent = userPaused ? '▶' : '❚❚';
+      toggle.setAttribute('aria-label', userPaused ? '播放輪播' : '暫停輪播');
+    };
+
+    root.classList.add('cc-ready');
+    show(0);
+    renderToggle();
+    start();
+
+    root.querySelector('[data-cc-prev]')?.addEventListener('click', () => { show(index - 1); start(); });
+    root.querySelector('[data-cc-next]')?.addEventListener('click', () => { show(index + 1); start(); });
+    dots.forEach((dot, i) => dot.addEventListener('click', () => { show(slides.indexOf(slides[i])); start(); }));
+    toggle?.addEventListener('click', () => { userPaused = !userPaused; renderToggle(); start(); });
+    root.addEventListener('mouseenter', () => { hoverPaused = true; stop(); });
+    root.addEventListener('mouseleave', () => { hoverPaused = false; start(); });
+    root.addEventListener('focusin', () => { hoverPaused = true; stop(); });
+    root.addEventListener('focusout', (event) => { if (!root.contains(event.relatedTarget as Node)) { hoverPaused = false; start(); } });
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+    root.querySelector<HTMLElement>('[data-cc-controls]')?.removeAttribute('hidden');
+    if (root.hasAttribute('data-autoplay')) setupAuto(root);
+    else setupManual(root);
+  });
+</script>

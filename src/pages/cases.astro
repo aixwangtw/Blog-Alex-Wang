@@ -9,9 +9,9 @@
 import CasesBeyondNote from '../components/CasesBeyondNote.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { CASES_BEYOND_NOTE, SECTION_NAMES, SITE, breadcrumbSchema, lineCategoryUrl } from '../consts';
-import { DEV_CASES, DEV_CATEGORIES, FEATURE_TAGS, devCategoryTitle } from '../data/cases';
+import { DEV_CASES, DEV_CATEGORIES, FEATURE_TAGS, caseFeatureTags, devCategoryTitle } from '../data/cases';
 import Base from '../layouts/Base.astro';
-import ImageLightbox from '../components/ImageLightbox.astro';
+import CaseCarousel from '../components/CaseCarousel.astro';
 
 const CASES = DEV_CASES;
 // 篩選用類別名稱（與首頁類別卡同一套）；沒有案例的類別點選時顯示「聊聊需求」卡
@@ -55,14 +55,14 @@ const schema = [
       {CASES.map((item) => (
         <li data-tags={item.categories.map(devCategoryTitle).join('|')}>
           <article class="cases-card">
-            <ImageLightbox src={item.image} alt={item.imageAlt} width={1440} height={900} imgClass="cases-card-thumb" gaLocation="cases_grid" gaKey={item.key} />
+            <CaseCarousel class="cases-card-thumb" groupKey={item.key} gaLocation="cases_grid" slides={item.images.map((image) => ({ src: image.src, alt: image.alt, label: FEATURE_TAGS[image.featureTag] }))} />
             <div class="cases-card-body">
               <h2>{item.title}</h2>
               <p>{item.summary}</p>
               <div class="cases-card-foot">
               <ul class="cases-tags" aria-label="標籤">
                 {item.categories.map((key) => <li class="is-category">{devCategoryTitle(key)}</li>)}
-                {item.tags.map((tag) => <li>{FEATURE_TAGS[tag]}</li>)}
+                {caseFeatureTags(item).map((tag) => <li>{FEATURE_TAGS[tag]}</li>)}
               </ul>
               <a
                 class="cases-card-link"

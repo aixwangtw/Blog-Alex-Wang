@@ -73,10 +73,22 @@ export const FEATURE_TAGS = {
   message: '站內訊息',
   content: '內容管理',
   auditLog: '操作紀錄',
+  dashboard: '儀表板',
+  issueReport: '問題回報',
+  emailQueue: '郵件通知',
+  browse: '內容瀏覽',
+  favorites: '收藏清單',
   search: '站內搜尋',
   filter: '分類篩選',
 } as const;
 export type FeatureTagKey = keyof typeof FEATURE_TAGS;
+
+export interface CaseImage {
+  /** 16:10 截圖（1440×900，webp） */
+  src: string;
+  alt: string;
+  featureTag: FeatureTagKey;
+}
 
 export interface DevCase {
   key: string;
@@ -87,11 +99,11 @@ export interface DevCase {
   summaryShort: string;
   /** 所屬系統類別，可多選（篩選任一類別都會出現） */
   categories: DevCategoryKey[];
-  /** 功能標籤：只寫功能或系統特性（要能在程式或畫面找到），不寫技術框架或客群；只顯示，不篩選 */
-  tags: FeatureTagKey[];
-  /** 16:10 截圖（1440×900） */
-  image: string;
-  imageAlt: string;
+  /**
+   * 截圖（輪播用）：每張一個通用功能標籤 featureTag。後台系統側欄主要功能頁各一張，前台主要功能頁各一張。
+   * 卡片下方的功能標籤由各圖 featureTag 去重後取前 4 個產生（見 caseFeatureTags），確保標籤都對得上圖。
+   */
+  images: CaseImage[];
   link: DevLink;
   /** 首頁／服務站代表案例 */
   featured?: boolean;
@@ -106,9 +118,9 @@ export const DEV_CASES: DevCase[] = [
     summary: '補習班數學老師用來把考卷收進題庫、出卷，AI 辨識考卷、產生詳解。',
     summaryShort: '補習班數學老師用來把考卷收進題庫、出卷。',
     categories: ['bank', 'admin'],
-    tags: ['fileImport', 'fileExport', 'review'],
-    image: '/images/cases/math-question-bank.webp',
-    imageAlt: '數學題庫系統 Demo 站的題目管理頁：題目列表、難易度與單元標籤、審核與啟用開關',
+    images: [
+      { src: '/images/cases/math-question-bank.webp', alt: `數學題庫系統 Demo 站的題目管理頁：題目列表、難易度與單元標籤、審核與啟用開關`, featureTag: 'content' },
+    ],
     link: demoLink,
     featured: true,
   },
@@ -118,9 +130,9 @@ export const DEV_CASES: DevCase[] = [
     summary: '業務團隊管理客戶名單、來源管道與承辦人，網站表單和官方 LINE 進來的客戶集中在同一份清單。',
     summaryShort: '業務團隊集中管理客戶名單、來源管道與承辦人。',
     categories: ['admin'],
-    tags: ['customer', 'permission', 'line'],
-    image: '/images/cases/crm.webp',
-    imageAlt: 'CRM 客戶管理系統的客戶清單（含側邊選單）：客戶數統計、來源管道、承辦業務與諮詢項目（示範資料，姓名已遮罩）',
+    images: [
+      { src: '/images/cases/crm.webp', alt: `CRM 客戶管理系統的客戶清單（含側邊選單）：客戶數統計、來源管道、承辦業務與諮詢項目（示範資料）`, featureTag: 'customer' },
+    ],
     link: { href: CRM_DEMO_URL, label: '試用 Demo', external: true },
   },
   {
@@ -129,9 +141,12 @@ export const DEV_CASES: DevCase[] = [
     summary: '在 LINE 裡開啟的經典跟讀與背書練習：依段落背誦、調整字級、加入書櫃，每日簽到收集籤卡。',
     summaryShort: '在 LINE 裡跟讀、背書練習，記錄背誦進度。',
     categories: ['app'],
-    tags: ['liff', 'report', 'checkin'],
-    image: '/images/cases/line-liff-app.webp',
-    imageAlt: 'LINE LIFF 學習輔助 APP 的使用者畫面：左邊是主選單，右邊是經典逐段背誦頁（示範帳號）',
+    images: [
+      { src: '/images/cases/liff-app-home.webp', alt: `LINE LIFF 學習輔助 APP 主選單：簽到月曆、連續登入天數與功能入口（示範帳號）`, featureTag: 'checkin' },
+      { src: '/images/cases/liff-app-classics.webp', alt: `LINE LIFF 學習輔助 APP 藏經閣：依分類瀏覽經典`, featureTag: 'browse' },
+      { src: '/images/cases/liff-app-practice.webp', alt: `LINE LIFF 學習輔助 APP 背書頁：經文逐段顯示，可調整字級`, featureTag: 'browse' },
+      { src: '/images/cases/liff-app-bookshelf.webp', alt: `LINE LIFF 學習輔助 APP 我的書櫃：收藏的經典與進度`, featureTag: 'favorites' },
+    ],
     link: { href: lineCategoryUrl('APP'), label: 'LINE 聊聊需求', external: true },
   },
   {
@@ -140,9 +155,14 @@ export const DEV_CASES: DevCase[] = [
     summary: '管理經典內容與會員，查看每位會員的背誦次數、背過段數，並從後台發 LINE 推播。',
     summaryShort: '管理經典與會員、看背誦統計、發 LINE 推播。',
     categories: ['admin'],
-    tags: ['member', 'report', 'push', 'backup'],
-    image: '/images/cases/line-liff-admin.webp',
-    imageAlt: 'LINE LIFF 學習輔助後台的背誦統計：每位會員的經典、背誦次數、背過段數與最近背誦時間（示範資料）',
+    images: [
+      { src: '/images/cases/liff-admin-classics.webp', alt: `LINE LIFF 學習輔助後台：經典書籍管理`, featureTag: 'content' },
+      { src: '/images/cases/liff-admin-users.webp', alt: `LINE LIFF 學習輔助後台：用戶列表與 LINE 綁定（示範資料）`, featureTag: 'member' },
+      { src: '/images/cases/liff-admin-sessions.webp', alt: `LINE LIFF 學習輔助後台：練習場次與使用時間（示範資料）`, featureTag: 'report' },
+      { src: '/images/cases/liff-admin-stats.webp', alt: `LINE LIFF 學習輔助後台：每位會員的背誦統計（示範資料）`, featureTag: 'report' },
+      { src: '/images/cases/liff-admin-bookshelf-log.webp', alt: `LINE LIFF 學習輔助後台：用戶加入書櫃的操作紀錄（示範資料）`, featureTag: 'auditLog' },
+      { src: '/images/cases/liff-admin-push-log.webp', alt: `LINE LIFF 學習輔助後台：LINE 推播歷史（示範資料）`, featureTag: 'push' },
+    ],
     link: { href: lineCategoryUrl('後台管理系統'), label: 'LINE 聊聊需求', external: true },
   },
   // 以下三張是題庫系統裡的 AI 功能，畫面取自 Demo 站（Demo 的 AI 結果為事先寫好的模擬內容）
@@ -152,9 +172,9 @@ export const DEV_CASES: DevCase[] = [
     summary: '上傳手機拍的考卷照片，AI 把題目拆成一題一題，左邊對照原卷審核。',
     summaryShort: '上傳考卷照片，AI 拆成一題一題，老師對照原卷審核。',
     categories: ['ai'],
-    tags: ['fileImport', 'review'],
-    image: '/images/cases/ai-image-recognition.webp',
-    imageAlt: '題庫系統 Demo 的考卷匯入結果：左邊是手機拍的考卷照片，右邊是 AI 辨識出的題目',
+    images: [
+      { src: '/images/cases/ai-image-recognition.webp', alt: `題庫系統 Demo 的考卷匯入結果：左邊是手機拍的考卷照片，右邊是 AI 辨識出的題目`, featureTag: 'fileImport' },
+    ],
     link: demoLink,
   },
   {
@@ -163,9 +183,9 @@ export const DEV_CASES: DevCase[] = [
     summary: '從題庫挑範本題，AI 照出法產生類似題。Demo 可以先體驗，正式導入時依需求開發。',
     summaryShort: 'AI 出題可以先在 Demo 體驗，正式導入時依需求開發。',
     categories: ['ai'],
-    tags: ['contentGen', 'review'],
-    image: '/images/cases/ai-question-generation.webp',
-    imageAlt: '題庫系統 Demo 的 AI 出題頁：選範本、設定、產生與審核三個步驟',
+    images: [
+      { src: '/images/cases/ai-question-generation.webp', alt: `題庫系統 Demo 的 AI 出題頁：選範本、設定、產生與審核三個步驟`, featureTag: 'contentGen' },
+    ],
     link: demoLink,
   },
   {
@@ -174,9 +194,9 @@ export const DEV_CASES: DevCase[] = [
     summary: '按一下替題目寫出答案、解題步驟與核心觀念，老師審閱後再收進題庫。',
     summaryShort: 'AI 產生詳解，老師確認後才收進題庫。',
     categories: ['ai'],
-    tags: ['contentGen', 'review'],
-    image: '/images/cases/ai-explanation.webp',
-    imageAlt: '題庫系統 Demo 的 AI 詳解頁：一元二次方程式題目下方顯示答案、解題步驟與核心觀念',
+    images: [
+      { src: '/images/cases/ai-explanation.webp', alt: `題庫系統 Demo 的 AI 詳解頁：一元二次方程式題目下方顯示答案、解題步驟與核心觀念`, featureTag: 'contentGen' },
+    ],
     link: demoLink,
   },
   {
@@ -185,9 +205,10 @@ export const DEV_CASES: DevCase[] = [
     summary: '重度策略桌遊玩家找桌遊、找牌友、開團跟團的社群網站。',
     summaryShort: '桌遊玩家找牌友、開團跟團的社群網站。',
     categories: ['group'],
-    tags: ['event', 'message'],
-    image: '/images/cases/heavy-board-games.webp',
-    imageAlt: '重策桌遊揪團平台的揪團列表：每團的桌遊、地點、報名人數與費用（他人名稱與頭像已替換）',
+    images: [
+      { src: '/images/cases/hbg-front-events.webp', alt: `重策桌遊揪團平台的揪團列表：每團的桌遊、地點、報名人數與費用（他人名稱與頭像已替換）`, featureTag: 'event' },
+      { src: '/images/cases/hbg-front-games.webp', alt: `重策桌遊揪團平台的桌遊清單：依熱門度瀏覽、收藏、開團`, featureTag: 'browse' },
+    ],
     link: { href: HEAVY_BOARD_GAMES_URL, label: '看實際網站', external: true },
   },
   {
@@ -196,9 +217,15 @@ export const DEV_CASES: DevCase[] = [
     summary: '站務管理會員、揪團活動與桌遊資料，處理未到回報，查看郵件佇列與管理紀錄。',
     summaryShort: '管理會員、揪團活動與桌遊資料。',
     categories: ['admin'],
-    tags: ['member', 'eventAdmin', 'content', 'auditLog'],
-    image: '/images/cases/heavy-board-games-admin.webp',
-    imageAlt: '重策桌遊揪團後台的活動清單（含側邊選單）：標題、團主、遊戲、狀態、城市與建立時間（示範資料，姓名已遮罩）',
+    images: [
+      { src: '/images/cases/hbg-admin-dashboard.webp', alt: `重策桌遊揪團後台主控台：會員數、待辦中心與系統健康`, featureTag: 'dashboard' },
+      { src: '/images/cases/hbg-admin-users.webp', alt: `重策桌遊揪團後台會員清單（示範資料）`, featureTag: 'member' },
+      { src: '/images/cases/hbg-admin-events.webp', alt: `重策桌遊揪團後台活動清單（示範資料）`, featureTag: 'eventAdmin' },
+      { src: '/images/cases/hbg-admin-reports.webp', alt: `重策桌遊揪團後台未到回報（示範資料）`, featureTag: 'issueReport' },
+      { src: '/images/cases/hbg-admin-games.webp', alt: `重策桌遊揪團後台桌遊資料管理`, featureTag: 'content' },
+      { src: '/images/cases/hbg-admin-outbox.webp', alt: `重策桌遊揪團後台郵件佇列（示範資料）`, featureTag: 'emailQueue' },
+      { src: '/images/cases/hbg-admin-audits.webp', alt: `重策桌遊揪團後台管理紀錄`, featureTag: 'auditLog' },
+    ],
     link: { href: lineCategoryUrl('後台管理系統'), label: 'LINE 聊聊需求', external: true },
   },
   // 網頁類別（本站官網）固定排最後（2026-10-31 使用者指示）
@@ -208,11 +235,14 @@ export const DEV_CASES: DevCase[] = [
     summary: '本站：文章、站內搜尋、案例頁依類別篩選，並把系統開發與教學服務分流到服務站。',
     summaryShort: '本站：文章、站內搜尋、案例頁與服務站分流。',
     categories: ['web'],
-    tags: ['search', 'filter', 'content'],
-    image: '/images/cases/aixwang-site.webp',
-    imageAlt: `${SITE.title}官網首頁：「你想做什麼系統？」六個類別卡`,
+    images: [
+      { src: '/images/cases/aixwang-site.webp', alt: `${SITE.title}官網首頁：「你想做什麼系統？」六個類別卡`, featureTag: 'search' },
+    ],
     link: { href: `${SITE.url}/`, label: '看實際網站', external: false },
   },
 ];
+
+/** 卡片下方的功能標籤：各圖 featureTag 去重後取前 4 個 */
+export const caseFeatureTags = (item: DevCase): FeatureTagKey[] => [...new Set(item.images.map((image) => image.featureTag))].slice(0, 4);
 
 export const FEATURED_CASE = DEV_CASES.find((item) => item.featured) ?? DEV_CASES[0];
