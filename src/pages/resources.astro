@@ -87,7 +87,7 @@ const schema = [
               <p class="mt-2 leading-7 text-ink-2">{tool.description}</p>
               <ul class="mt-3 grid gap-1">
                 {tool.links.map((link) => (
-                  <li><a href={`/blog/${link.slug}/`} class="inline-flex min-h-11 items-center font-semibold text-accent underline underline-offset-4" data-ga-button={`resources_install_${link.slug}`} data-ga-label={link.label} data-ga-location="resources_install" data-ga-action="navigate">{link.label} <span aria-hidden="true">&nbsp;→</span></a></li>
+                  <li><a href={`/blog/${link.slug}/`} class="inline-block py-2.5 font-semibold text-accent underline underline-offset-4" data-ga-button={`resources_install_${link.slug}`} data-ga-label={link.label} data-ga-location="resources_install" data-ga-action="navigate">{link.label}<span aria-hidden="true"> →</span></a></li>
                 ))}
               </ul>
             </div>
