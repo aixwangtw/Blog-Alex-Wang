@@ -1,10 +1,10 @@
 ---
-// 首屏「你想做什麼系統？」＋五個類別卡（2026-10-31 拿掉 LINE LIFF，LIFF 歸在 APP）（主站首頁與服務站首頁共用，2026-10-31 取代 NeedRouter）。
+// 首屏「你想做什麼系統？」＋六個類別卡（網頁、後台管理系統、APP、題庫管理系統、社群平台、AI 應用；LIFF 歸在 APP）（主站首頁與服務站首頁共用，2026-10-31 取代 NeedRouter）。
 // 去處規則：有可試用 Demo 的類別直接連 Demo（目前只有題庫管理系統）；其他類別開官方 LINE 聊天，
 // 用 LINE URL scheme 的 oaMessage 帶入「我想做：<類別>」預填訊息（lin.ee 追蹤短網址不支援預填）。
 // 不可為了填滿卡片編造案例、客戶或截圖；新增真實案例頁後，把該類別的 href 改過去。
 import LineIcon from './LineIcon.astro';
-import { LINKS } from '../consts';
+import { LINKS, SITE } from '../consts';
 
 interface Props {
   /** GA 事件的 location，區分首頁與服務站 */
@@ -19,7 +19,7 @@ const LINE_OA_ID = '@438efvtl';
 const lineWithText = (category: string) =>
   `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(`我想做：${category}，想先聊聊需求`)}`;
 const DEMO_URL = 'https://demo-question.aixwang.dev';
-// 揪團平台的真實案例：重策桌遊揪團平台（公開網站，無隱私問題，2026-10-31 使用者指示直接連）
+// 社群平台的真實案例：重策桌遊揪團平台（公開網站，無隱私問題，2026-10-31 使用者指示直接連）
 const HEAVY_BOARD_GAMES_URL = 'https://heavyboardgames.aixwang.dev/';
 
 const icons: Record<string, string> = {
@@ -28,22 +28,23 @@ const icons: Record<string, string> = {
   app: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
   bank: '<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h3"/>',
   group: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 15.5c2.8 0 6 1.5 6 4.5"/>',
-  liff: '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>',
+  ai: '<path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/>',
 };
 
 const categories = [
   { key: 'web', title: '網頁', href: lineWithText('網頁'), external: true },
-  { key: 'admin', title: '內部管理系統', href: lineWithText('內部管理系統'), external: true },
+  { key: 'admin', title: '後台管理系統', href: lineWithText('後台管理系統'), external: true },
   { key: 'app', title: 'APP', href: lineWithText('APP'), external: true },
   { key: 'bank', title: '題庫管理系統', href: DEMO_URL, external: true, label: '試用 Demo' },
-  { key: 'group', title: '揪團平台', href: HEAVY_BOARD_GAMES_URL, external: true, label: '看實際網站' },
+  { key: 'group', title: '社群平台', href: HEAVY_BOARD_GAMES_URL, external: true, label: '看實際網站' },
+  { key: 'ai', title: 'AI 應用', href: `${SITE.url}/cases/?tag=${encodeURIComponent('AI 應用')}`, external: false, label: '看 AI 案例' },
 ];
 ---
 
 <section class="dev-pick" aria-labelledby={headingId}>
   <p class="dev-pick-kicker">{kicker}</p>
   <h1 id={headingId}>你想做什麼系統？</h1>
-  <p class="dev-pick-lead">題庫管理系統可以直接試用 Demo，揪團平台可以看實際網站；其他類別點下去會開 LINE，訊息已經填好類別，送出就能開始聊。</p>
+  <p class="dev-pick-lead">題庫管理系統可以直接試用 Demo，社群平台可以看實際網站，AI 應用可以看案例；其他類別點下去會開 LINE，訊息已經填好類別，送出就能開始聊。</p>
   <ul class="dev-pick-grid">
     {categories.map((item) => (
       <li>

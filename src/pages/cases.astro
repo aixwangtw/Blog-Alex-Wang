@@ -14,34 +14,91 @@ interface DevelopmentCase {
   key: string;
   title: string;
   summary: string;
+  /** 系統類別（篩選用），必須是 CATEGORIES 之一 */
+  category: string;
+  /** 功能特色標籤（只顯示，不篩選） */
   tags: string[];
   image: string;
   imageAlt: string;
   link: { href: string; label: string; external: boolean };
 }
 
+const LINE_OA_ID = '@438efvtl';
+const lineWithText = (category: string) =>
+  `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(`我想做：${category}，想先聊聊需求`)}`;
+
 const CASES: DevelopmentCase[] = [
   {
     key: 'math_question_bank',
     title: '數學題庫系統',
     summary: '補習班數學老師用來把考卷收進題庫、出卷，AI 辨識考卷、產生詳解。',
-    tags: ['教育', '題庫管理系統', 'AI 應用'],
+    category: '題庫管理系統',
+    tags: ['補習班'],
     image: '/images/cases/math-question-bank.webp',
     imageAlt: '數學題庫系統 Demo 站的題目管理頁：題目列表、難易度與單元標籤、審核與啟用開關',
+    link: { href: DEVELOPMENT_SERVICE.demoUrl, label: '試用 Demo', external: true },
+  },
+  {
+    key: 'crm',
+    title: 'CRM 客戶管理系統',
+    summary: '業務團隊管理客戶名單、來源管道與承辦人，網站表單和官方 LINE 進來的客戶集中在同一份清單。',
+    category: '後台管理系統',
+    tags: ['LINE 串接'],
+    image: '/images/cases/crm.webp',
+    imageAlt: 'CRM 客戶管理系統的客戶清單：客戶數統計、來源管道、承辦業務與諮詢項目（示範資料）',
+    link: { href: lineWithText('後台管理系統'), label: 'LINE 聊聊需求', external: true },
+  },
+  // 以下三張是題庫系統裡的 AI 功能，畫面取自 Demo 站（Demo 的 AI 結果為事先寫好的模擬內容）
+  {
+    key: 'ai_image_recognition',
+    title: 'AI 影像辨識',
+    summary: '上傳手機拍的考卷照片，AI 把題目拆成一題一題，左邊對照原卷審核。',
+    category: 'AI 應用',
+    tags: ['題庫系統'],
+    image: '/images/cases/ai-image-recognition.webp',
+    imageAlt: '題庫系統 Demo 的考卷匯入結果：左邊是手機拍的考卷照片，右邊是 AI 辨識出的題目',
+    link: { href: DEVELOPMENT_SERVICE.demoUrl, label: '試用 Demo', external: true },
+  },
+  {
+    key: 'ai_question_generation',
+    title: 'AI 出題',
+    summary: '從題庫挑範本題，AI 照出法產生類似題，老師審核通過才收進題庫。',
+    category: 'AI 應用',
+    tags: ['題庫系統'],
+    image: '/images/cases/ai-question-generation.webp',
+    imageAlt: '題庫系統 Demo 的 AI 出題頁：選範本、設定、產生與審核三個步驟',
+    link: { href: DEVELOPMENT_SERVICE.demoUrl, label: '試用 Demo', external: true },
+  },
+  {
+    key: 'ai_explanation',
+    title: 'AI 詳解',
+    summary: '按一下替題目寫出答案、解題步驟與核心觀念，老師審閱後再收進題庫。',
+    category: 'AI 應用',
+    tags: ['題庫系統'],
+    image: '/images/cases/ai-explanation.webp',
+    imageAlt: '題庫系統 Demo 的 AI 詳解頁：一元二次方程式題目下方顯示答案、解題步驟與核心觀念',
     link: { href: DEVELOPMENT_SERVICE.demoUrl, label: '試用 Demo', external: true },
   },
   {
     key: 'heavy_board_games',
     title: '重策桌遊揪團平台',
     summary: '重度策略桌遊玩家找桌遊、找牌友、開團跟團的社群網站。',
-    tags: ['桌遊社群', '揪團平台'],
+    category: '社群平台',
+    tags: ['揪團'],
     image: '/images/cases/heavy-board-games.webp',
     imageAlt: '重策桌遊揪團平台的揪團列表：每團的桌遊、地點、報名人數與費用',
     link: { href: 'https://heavyboardgames.aixwang.dev/', label: '看實際網站', external: true },
   },
 ];
 
-const ALL_TAGS = [...new Set(CASES.flatMap((item) => item.tags))];
+// 系統類別：與首頁「你想做什麼系統？」類別卡同一套（LIFF 屬於 APP）。
+// 沒有可公開案例的類別，點選時顯示「聊聊需求」卡，只寫站上既有事實，不編案例或截圖。
+const CATEGORIES = ['網頁', '後台管理系統', 'APP', '題庫管理系統', '社群平台', 'AI 應用'];
+const EMPTY_NOTES: Record<string, string> = {
+  網頁: '目前沒有可以公開的網頁案例畫面。',
+  APP: '做過 LINE LIFF 應用，目前沒有可以公開的畫面。',
+};
+const EMPTY_CATEGORIES = CATEGORIES.filter((category) => !CASES.some((item) => item.category === category));
 
 const schema = [
   breadcrumbSchema([{ name: '首頁', item: `${SITE.url}/` }, { name: '開發案例' }]),
@@ -71,20 +128,21 @@ const schema = [
 
     <div class="cases-filter" role="group" aria-label="依標籤篩選案例" hidden data-cases-filter>
       <button type="button" class="cases-pill" aria-pressed="true" data-tag="" data-ga-button="cases_filter_all" data-ga-label="篩選：全部" data-ga-location="cases_filter" data-ga-action="filter">全部</button>
-      {ALL_TAGS.map((tag) => (
+      {CATEGORIES.map((tag) => (
         <button type="button" class="cases-pill" aria-pressed="false" data-tag={tag} data-ga-button={`cases_filter_${tag}`} data-ga-label={`篩選：${tag}`} data-ga-location="cases_filter" data-ga-action="filter">{tag}</button>
       ))}
     </div>
 
     <ul class="cases-grid" data-cases-grid>
       {CASES.map((item) => (
-        <li data-tags={item.tags.join('|')}>
+        <li data-tags={item.category}>
           <article class="cases-card">
             <img class="cases-card-thumb" src={item.image} alt={item.imageAlt} width="1440" height="900" loading="lazy" decoding="async" />
             <div class="cases-card-body">
               <h2>{item.title}</h2>
               <p>{item.summary}</p>
               <ul class="cases-tags" aria-label="標籤">
+                <li class="is-category">{item.category}</li>
                 {item.tags.map((tag) => <li>{tag}</li>)}
               </ul>
               <a
@@ -101,10 +159,30 @@ const schema = [
           </article>
         </li>
       ))}
+      {EMPTY_CATEGORIES.map((category) => (
+        <li data-tags={category} data-empty-card hidden>
+          <article class="cases-card cases-card--empty">
+            <div class="cases-card-thumb cases-card-placeholder" aria-hidden="true">{category}</div>
+            <div class="cases-card-body">
+              <h2>{category}</h2>
+              <p>{EMPTY_NOTES[category]}聊聊需求，聊完可以先提供試用 Demo。</p>
+              <a
+                class="cases-card-link"
+                href={lineWithText(category)}
+                target="_blank"
+                rel="noreferrer"
+                data-ga-button={`cases_empty_${category}`}
+                data-ga-label={`${category}：聊聊需求`}
+                data-ga-location="cases_grid"
+                data-ga-action="external"
+              >LINE 聊聊需求 <span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+        </li>
+      ))}
     </ul>
-    <p class="cases-empty" hidden data-cases-empty>這個標籤目前沒有案例。</p>
 
-    <p class="cases-more">另外做過 CRM、健檢系統、預約系統等。聊完需求可以先提供試用 Demo。</p>
+    <p class="cases-more">另外做過健檢系統、預約系統等。聊完需求可以先提供試用 Demo。</p>
   </div>
 </Base>
 
@@ -129,7 +207,9 @@ const schema = [
   .cases-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
   .cases-tags li { padding: 3px 10px; border-radius: 999px; background: rgb(0 0 0 / 5%); font-size: 13px; color: var(--color-ink-2); }
   .cases-card-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: auto; padding-top: 16px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
-  .cases-empty { margin-top: 24px; color: var(--color-ink-3); }
+  .cases-tags li.is-category { background: var(--color-ink); color: var(--color-bg, #fff); }
+  .cases-card--empty { border-style: dashed; }
+  .cases-card-placeholder { display: flex; align-items: center; justify-content: center; background: rgb(0 0 0 / 3%); font-size: 22px; font-weight: 600; color: var(--color-ink-3); }
   .cases-more { margin-top: 32px; font-size: 15px; color: var(--color-ink-3); }
   @media (max-width: 767px) { .cases-page { padding: 32px 16px 48px; } }
 </style>
@@ -138,21 +218,30 @@ const schema = [
   // 標籤篩選：無 JS 時按鈕列維持 hidden、卡片全部顯示
   const filter = document.querySelector<HTMLElement>('[data-cases-filter]');
   const items = [...document.querySelectorAll<HTMLElement>('[data-cases-grid] > li')];
-  const empty = document.querySelector<HTMLElement>('[data-cases-empty]');
   if (filter) {
     filter.hidden = false;
-    filter.addEventListener('click', (event) => {
-      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-tag]');
-      if (!button) return;
+    const applyTag = (button: HTMLButtonElement) => {
       const tag = button.dataset.tag ?? '';
       filter.querySelectorAll('button').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
-      let shown = 0;
+      // 聊聊需求卡要和案例卡等高：顯示前先量一張可見案例卡的高度
+      const sample = items.find((item) => !item.hidden && !item.hasAttribute('data-empty-card'));
+      const caseHeight = sample ? sample.getBoundingClientRect().height : 0;
       for (const item of items) {
-        const match = !tag || (item.dataset.tags ?? '').split('|').includes(tag);
-        item.hidden = !match;
-        if (match) shown += 1;
+        if (item.hasAttribute('data-empty-card') && caseHeight) item.style.minHeight = `${caseHeight}px`;
+        const isEmptyCard = item.hasAttribute('data-empty-card');
+        // 「全部」只列真實案例；聊聊需求卡只在點到沒有案例的類別時出現
+        item.hidden = tag ? item.dataset.tags !== tag : isEmptyCard;
       }
-      if (empty) empty.hidden = shown > 0;
+    };
+    filter.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-tag]');
+      if (button) applyTag(button);
     });
+    // 網址帶 ?tag=<類別> 時直接篩選（首頁「AI 應用」類別卡用）
+    const initialTag = new URLSearchParams(location.search).get('tag');
+    const initialButton = initialTag
+      ? [...filter.querySelectorAll<HTMLButtonElement>('button[data-tag]')].find((button) => button.dataset.tag === initialTag)
+      : undefined;
+    if (initialButton) applyTag(initialButton);
   }
 </script>

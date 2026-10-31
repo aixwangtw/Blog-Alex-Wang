@@ -200,8 +200,8 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 - 導覽列：主站搜尋框固定在頁首導覽列（`SiteHeader.astro` 的 `.nav-search-form`，`showSearch`），不放在首屏 Hero；服務站不顯示搜尋框。手機版導覽放進選單展開內，且不得擠壓導覽項目。
 - 服務下拉在手機為單欄文字清單（無卡片框），桌機為三欄等寬等高卡片。
 - 兩欄卡片在手機單欄時，grid 必須明確寫 `grid-cols-[minmax(0,1fr)]`，否則欄寬被內容（影片、程式碼區、四欄數字）撐大，卡片右側會被 `overflow-hidden` 切掉；直式影片放進固定高度的欄位用 `object-contain`，不得用 `object-cover` 裁掉畫面兩側的文字。適用：`src/pages/resources.astro` 的 grill-me 卡。
-- 首屏類別卡（2026-10-31 起，`src/components/DevCategoryPicker.astro`，主站首頁與服務站首頁共用，取代 `NeedRouter.astro` 的「你目前最想解決什麼問題？」）：問句固定「你想做什麼系統？」；2026-10-31 起五類別依序為網頁、內部管理系統、APP、題庫管理系統、揪團平台（LINE LIFF 類別已拿掉，LIFF 歸在 APP，不要加回）。格線桌機 3 欄、767px 以下 2 欄（`repeat(2, minmax(0, 1fr))`），不改單欄；卡片內容固定為 icon（28px 線條 SVG）＋類別名＋去處說明，去處說明 `margin-top: auto` 貼底，所有卡同高（桌機最小 148px、手機 132px）；360px 以下縮字級與內距，確保「題庫管理系統」不換行。
-- 類別卡去處：有可試用 Demo 的類別直接連 Demo（題庫管理系統 → `https://demo-question.aixwang.dev`，2026-10-31 使用者指示「卡片先連結demo就好」；揪團平台 → 真實網站 `https://heavyboardgames.aixwang.dev/`）；首頁與服務站的題庫案例卡也只連 Demo，題庫文章連結放在 Demo 站內（登入頁與 Demo 橫幅），網站卡片只連 Demo；其他類別開官方 LINE 並預填訊息（`https://line.me/R/oaMessage/@438efvtl/?<編碼文字>`，lin.ee 追蹤短網址不支援預填）。其他類別要有真實案例頁或 Demo 才改連過去，不得編造案例、客戶、數字或截圖。
+- 首屏類別卡（2026-10-31 起，`src/components/DevCategoryPicker.astro`，主站首頁與服務站首頁共用，取代 `NeedRouter.astro` 的「你目前最想解決什麼問題？」）：問句固定「你想做什麼系統？」；2026-10-31 起六類別依序為網頁、後台管理系統、APP、題庫管理系統、社群平台、AI 應用（與 `/cases/` 篩選同一套；LINE LIFF 歸在 APP，不另立類別）。格線桌機 3×2、767px 以下 2×3（`repeat(2, minmax(0, 1fr))`），不改單欄；卡片內容固定為 icon（28px 線條 SVG）＋類別名＋去處說明，去處說明 `margin-top: auto` 貼底，所有卡同高（桌機最小 148px、手機 132px）；360px 以下縮字級與內距，確保「題庫管理系統」不換行。
+- 類別卡去處：有可試用 Demo 的類別直接連 Demo（題庫管理系統 → `https://demo-question.aixwang.dev`，2026-10-31 使用者指示「卡片先連結demo就好」；社群平台 → 真實網站 `https://heavyboardgames.aixwang.dev/`；AI 應用 → `/cases/?tag=AI 應用`）；首頁與服務站的題庫案例卡也只連 Demo，題庫文章連結放在 Demo 站內（登入頁與 Demo 橫幅），網站卡片只連 Demo；其他類別開官方 LINE 並預填訊息（`https://line.me/R/oaMessage/@438efvtl/?<編碼文字>`，lin.ee 追蹤短網址不支援預填）。其他類別要有真實案例頁或 Demo 才改連過去，不得編造案例、客戶、數字或截圖。
 - 案例區不放大截圖：每個真實案例一張卡片，縮圖固定 16:10（`aspect-ratio: 16 / 10; object-fit: cover; object-position: left top`），桌機縮圖與文字左右 5:7、767px 以下上下排；按鈕列 `margin-top: auto` 貼底。多個案例時改為等寬等高的卡片格線，縮圖比例不變。
 - 首頁與服務站首頁的「教學／演講／開源工具」為三張等寬等高小卡（桌機 3 欄、767px 以下單欄），每張：標題、一句說明、貼底的連結文字。手機單欄時三張也必須等高（`grid-auto-rows: 1fr`），連結文字貼底。
 
@@ -212,6 +212,9 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 - 每張卡：截圖、案例名稱、一句說明、標籤、貼底連結（`margin-top: auto`）。所有卡片等寬等高（`li` 用 flex、卡片 `flex: 1`）。
 - 截圖統一 16:10：用 1440×900 視窗拍，顯示時 `aspect-ratio: 16 / 10; object-fit: cover; object-position: left top`，存 `public/images/cases/<案例>.webp`。
 - 截圖必須是真實系統畫面。需要登入的後台用 Demo 站或本機偽真資料拍：常見姓名組合、合理數字與日期，不得有真實個資、真實客戶或老師資料，也不要明顯假（「測試123」「AAA」）；偽資料只寫在本機或 Demo 沙盒，用完還原。題庫一律用 Demo 站，不得用正式站或 staging。公開網站且無隱私問題的（例如重策桌遊揪團平台）直接拍線上畫面、直接連真實網址，不另造偽資料。
-- 標籤只寫真實屬性（產業、系統類型、技術特色），篩選按鈕由案例標籤自動產生；不為了湊分類編標籤。
-- 客戶案例：2026-10-31 使用者同意客戶案例都可以公開，截圖一律偽真資料。背書系統不列案例，也不出現在「做過…」的文字裡。健檢、預約系統沒有程式可截圖，只留在「另外做過…」文字，不做卡片。CRM（`~/projects/archive/FinanceCRM-Zeabur`）本機只剩 storage 記錄與 `.nuxt` 建置快取、沒有原始碼，拿到原始碼才能用偽真資料跑起來截圖上架。首頁類別卡 5 張、最後一列空一格是使用者接受的排法。
+- 篩選類別固定六個：網頁、後台管理系統、APP、題庫管理系統、社群平台、AI 應用（與首頁類別卡同一套），每個案例只屬一個類別；卡片另可列特色標籤（只顯示不篩選），只寫真實屬性，不寫「教育」「桌遊社群」這類泛標籤。
+- 沒有可公開案例的類別（目前網頁、APP）被點選時，顯示和案例卡等寬等高的「LINE 聊聊需求」卡，只寫站上既有事實（APP：做過 LINE LIFF 應用），不編案例或截圖；「全部」不顯示這些卡。
+- 網址 `?tag=<類別>` 可直接帶入篩選。
+- AI 應用類別放題庫系統的三個真實功能（AI 影像辨識、AI 出題、AI 詳解）各一張卡，截圖取自 Demo 站，在 Demo 沙盒操作後要按「還原 Demo 預設資料」。
+- 客戶案例：2026-10-31 使用者同意客戶案例都可以公開，截圖一律偽真資料。背書系統不列案例，也不出現在「做過…」的文字裡。健檢、預約系統沒有程式可截圖，只留在「另外做過…」文字，不做卡片。CRM（原始碼 github.com/aixwangtw/FinanceCRM-Zeabur）是融資業務用的系統，案例卡不得出現「融資、貸款、撥款、送件」等字樣：截圖只拍客戶清單主內容（避開含系統名稱與送件選單的側欄），資料用本機一次性資料庫的偽真資料，拍完刪除；卡片連 LINE 聊聊需求，不放網址。
 - 首頁「做過的系統」附「看全部案例」連到 `/cases/`；首頁案例卡維持上面的案例區規則。
