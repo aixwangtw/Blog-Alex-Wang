@@ -4,7 +4,7 @@
 // 用 LINE URL scheme 的 oaMessage 帶入「我想做：<類別>」預填訊息（lin.ee 追蹤短網址不支援預填）。
 // 不可為了填滿卡片編造案例、客戶或截圖；新增真實案例頁後，把該類別的 href 改過去。
 import LineIcon from './LineIcon.astro';
-import { LINKS } from '../consts';
+import { HERO_INTRO, LINKS, PAYMENT_TERMS } from '../consts';
 import { DEV_CASES, DEV_CATEGORIES, FEATURE_TAGS, devCategoryTitle } from '../data/cases';
 import CaseCarousel from './CaseCarousel.astro';
 
@@ -46,7 +46,7 @@ const icons: Record<string, string> = Object.fromEntries(DEV_CATEGORIES.map((ite
     <div>
       <p class="dev-pick-kicker">{kicker}</p>
       <h1 id={headingId}>你想做什麼系統？</h1>
-      <p class="dev-pick-lead">題庫管理系統可以直接試用 Demo，社群平台可以看實際網站，AI 應用可以看案例；其他類別點下去會開 LINE，訊息已經填好類別，送出就能開始聊。</p>
+      <p class="dev-pick-lead">{HERO_INTRO.lead}<strong>{HERO_INTRO.demoStrong}</strong>{HERO_INTRO.demoTail}<strong>{PAYMENT_TERMS.text}</strong>。</p>
     </div>
     {showCarousel && <div class="dev-pick-carousel"><CaseCarousel slides={heroSlides} groupKey="hero" gaLocation={`${location}_carousel`} autoplay random eager /></div>}
   </div>

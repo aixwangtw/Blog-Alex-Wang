@@ -7,6 +7,13 @@ export const CASES_BEYOND_NOTE = {
   text: '案例以外的系統也可以做，聊完需求一樣可以先提供試用 Demo。',
 } as const;
 
+/** 首屏介紹句（主站首頁與服務站首頁共用的類別卡區）：strong 段加粗；分期文字另引用 PAYMENT_TERMS */
+export const HERO_INTRO = {
+  lead: '客製化系統開發，需求可以隨調隨改。',
+  demoStrong: '每一類都可以提供試用 Demo',
+  demoTail: '，站上還沒有的類型，聊過需求後提供。',
+} as const;
+
 export const SITE = {
   title: 'Aix 系統開發',
   titleEn: 'Aix System Development',
