@@ -116,7 +116,8 @@ const navServiceCards: { href: string; title: string; items: string[]; image: Im
     imageAlt: 'Alex 在台中演講的現場',
   },
 ];
-const DROPDOWN_NAV = [
+// 服務站導覽比照 deanlife.blog 精簡：關於／文章／服務＋一顆 CTA，不放「領取」（主站才有）
+const DROPDOWN_NAV_ALL = [
   {
     key: 'articles',
     label: '文章',
@@ -150,12 +151,13 @@ const DROPDOWN_NAV = [
     label: SERVICE_NAV_LINK.label,
     href: SERVICE_NAV_LINK.href,
     external: isMainSite,
-    accent: true,
+    accent: isMainSite,
     subtitle: '系統開發、一對一教學、演講',
     consult: { href: LINKS.line, label: LINE_CONSULT_LABEL },
     cards: navServiceCards,
   },
 ];
+const DROPDOWN_NAV = isMainSite ? DROPDOWN_NAV_ALL : DROPDOWN_NAV_ALL.filter((menu) => menu.key !== 'resources');
 ---
 
 <header class="site-header" id="site-header" data-open="false">
@@ -378,15 +380,6 @@ const DROPDOWN_NAV = [
           </li>
         ))}
         {!isMainSite && (
-          <li>
-            <a
-              href={`${SITE.url}${DEVELOPMENT_SERVICE.caseArticle}`}
-              data-ga-button="service_header_case"
-              data-ga-label="開發案例"
-              data-ga-location="service_header"
-              data-ga-action="navigate"
-            >開發案例</a>
-          </li>
           <li class="hd-book-item">
             <a class="service-book" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="service_header_book" data-ga-label="聊聊需求" data-ga-location="service_header" data-ga-action="external"><LineIcon class="service-book-icon" />聊聊需求</a>
           </li>
@@ -483,14 +476,17 @@ const DROPDOWN_NAV = [
 </style>
 
 <style is:global>
-  /* 服務站專用：頁首「聊聊需求」LINE 綠按鈕（樣式沿用服務站原本的 .service-book），手機版不放，改由右下浮動 LINE 鈕承接 */
-  .mainnav .service-book { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 18px; border: 1px solid #06c755; border-radius: 6px; background: #06c755; color: #fff; font-size: 15px; font-weight: 650; white-space: nowrap; transition: background-color .18s ease, border-color .18s ease; }
-  .service-book .service-book-icon { display: block; flex: none; width: 18px; height: 18px; }
+  /* 服務站專用：頁首唯一的 CTA「聊聊需求」LINE 綠按鈕。
+     .nav-js .mainnav a 會把所有導覽連結的左右內距歸零、字級設 18px，所以這裡選擇器要更具體，
+     否則圖示與文字會貼到按鈕邊緣。桌機用固定 44px 高，手機展開選單時整列寬度撐滿。 */
+  .nav-js .mainnav .service-book, .mainnav .service-book { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 22px; border: 1px solid #06c755; border-radius: 6px; background: #06c755; color: #fff; font-size: 16px; font-weight: 650; line-height: 1.2; white-space: nowrap; transition: background-color .18s ease, border-color .18s ease; }
+  .service-book .service-book-icon { display: block; flex: none; width: 20px; height: 20px; }
   @media (hover: hover) and (pointer: fine) {
     .mainnav .service-book:hover { border-color: #05b34c; background: #05b34c; color: #fff; }
   }
   @media (max-width: 1023px) {
-    .mainnav .hd-book-item { display: none; }
+    .nav-js .mainnav .hd-book-item { padding: 12px 0 14px; }
+    .nav-js .mainnav .service-book { display: flex; width: 100%; padding: 12px 20px; }
   }
 </style>
 
