@@ -3,6 +3,8 @@
 export interface Faq {
   question: string;
   answer: string;
+  /** 答案下方的站內連結（只在畫面顯示，不進 FAQPage 結構化資料） */
+  links?: { label: string; href: string }[];
 }
 
 const prep: Faq = {
@@ -55,9 +57,13 @@ export const ONE_ON_ONE_FAQS: Faq[] = [onlineClass, groupClass, prep, noTechBack
 // 該篇改寫成常設頁面後搬到這裡；2026-08 再依頁面新順序補上 Codex、grill-me。畫面與 FAQPage schema 都使用這一份資料，避免兩邊答案不同步。
 export const RESOURCES_FAQS: Faq[] = [
   {
-    question: 'Windows 新手應該先安裝哪一種 Codex？',
+    question: 'Windows 新手該先裝 Claude Code 還是 Codex？',
     answer:
-      '先安裝 VS Code 與官方 Codex 外掛，完成登入並開啟一個專案資料夾，就能用自然語言請 AI 協助。免費資源頁不要求先裝 CLI 或 WSL2；等真的需要終端機或 Linux 專案時再補即可。',
+      '兩個都可以，擇一安裝就能往下做。Claude Code 有桌面版、VS Code、CLI 三種裝法；Codex 先裝 VS Code 與官方外掛，登入後開一個專案資料夾就能用。免費資源頁不要求先裝 CLI 或 WSL2，真的需要終端機再補。',
+    links: [
+      { label: 'Claude Code 安裝教學', href: '/blog/claude-code-install/' },
+      { label: 'Codex 安裝教學', href: '/blog/codex-windows-wsl-install/' },
+    ],
   },
   {
     question: 'grill-me Skill 怎麼安裝？',

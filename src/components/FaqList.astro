@@ -7,7 +7,7 @@
 // 指示符從 ▾ 換成 +／×（展開時旋轉 45°）：▾ 是「下拉選單」的語彙，
 // 這裡的動作是「展開一段內容」。+ 用等寬字，跟站上其他的 → 記號同一套。
 interface Props {
-  faqs: { question: string; answer: string }[];
+  faqs: { question: string; answer: string; links?: { label: string; href: string }[] }[];
 }
 
 const { faqs } = Astro.props;
@@ -26,6 +26,11 @@ const { faqs } = Astro.props;
       </summary>
       <div class="pb-6 text-[15.5px] leading-8 text-ink-2 md:pr-10">
         {item.answer}
+        {item.links && (
+          <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1">
+            {item.links.map((link) => <a href={link.href} class="font-semibold text-accent underline underline-offset-4">{link.label} →</a>)}
+          </p>
+        )}
       </div>
     </details>
   ))}

@@ -42,7 +42,9 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 ## LINE 入口規則（必須遵守）
 
 - 舊規則「LINE 入口只留右下角與服務站頁首」已於 2026-10-31 作廢。
-- 主站首頁 Hero 與結尾、服務站頁首、系統開發服務頁 Hero 的綠色（#06c755）「聊聊需求」LINE 按鈕是使用者明確要求，不得移除或改回非 LINE 按鈕。
+- 主站首頁 Hero 與結尾、服務站頁首、系統開發服務頁 Hero 的「聊聊需求」LINE 入口是使用者明確要求，不得移除。
+- 2026-10-31 更新：按鈕不再用 LINE 綠色，改用站上一般主按鈕色（var(--color-accent)）；「服務」下拉裡的 LINE 免費諮詢入口已移除，不要加回。
+- 導覽（主站與服務站）都要有「開源工具」，連 /resources/。
 - 首頁、服務頁、CTA 附近要寫「聊完需求可以先提供試用 Demo」。
 
 ## Git 提交規則（必須遵守）

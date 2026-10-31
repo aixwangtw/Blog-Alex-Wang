@@ -9,7 +9,7 @@ import { getCollection } from 'astro:content';
 import { blogBannerPath } from '../lib/blog-banner';
 import { FEEDBACK_DESK_RESOURCE, GRILL_ME_RESOURCE } from '../data/resources';
 import { DEVELOPMENT_CAPABILITIES, ONE_ON_ONE_NAV_ITEMS, SPEAKING_KINDS } from '../data/services';
-import { ARTICLE_EXCLUDED_TAGS, COURSE_SERVICE_URL, LINE_CONSULT_LABEL, LINKS, SERVICE_SITE, SITE, SPEAKING_SERVICE_URL, articleGroupName } from '../consts';
+import { ARTICLE_EXCLUDED_TAGS, COURSE_SERVICE_URL, LINKS, SERVICE_SITE, SITE, SPEAKING_SERVICE_URL, articleGroupName } from '../consts';
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import LineIcon from './LineIcon.astro';
@@ -116,7 +116,7 @@ const navServiceCards: { href: string; title: string; items: string[]; image: Im
     imageAlt: 'Alex 在台中演講的現場',
   },
 ];
-// 服務站導覽比照 deanlife.blog 精簡：關於／文章／服務＋一顆 CTA，不放「領取」（主站才有）
+// 服務站導覽比照 deanlife.blog 精簡：關於／文章／開源工具／服務＋一顆「聊聊需求」CTA；開源工具連回主站 /resources/
 const DROPDOWN_NAV_ALL = [
   {
     key: 'articles',
@@ -153,11 +153,10 @@ const DROPDOWN_NAV_ALL = [
     external: isMainSite,
     accent: isMainSite,
     subtitle: '系統開發、一對一教學、演講',
-    consult: { href: LINKS.line, label: LINE_CONSULT_LABEL },
     cards: navServiceCards,
   },
 ];
-const DROPDOWN_NAV = isMainSite ? DROPDOWN_NAV_ALL : DROPDOWN_NAV_ALL.filter((menu) => menu.key !== 'resources');
+const DROPDOWN_NAV = DROPDOWN_NAV_ALL;
 ---
 
 <header class="site-header" id="site-header" data-open="false">
@@ -280,7 +279,7 @@ const DROPDOWN_NAV = isMainSite ? DROPDOWN_NAV_ALL : DROPDOWN_NAV_ALL.filter((me
                       ))}
                     </div>
                   )}
-                  {'cards' in menu && menu.cards && 'consult' in menu && menu.consult && (
+                  {'cards' in menu && menu.cards && (
                     <div class="dm-cols dm-cols--services">
                       <section class="dm-col">
                         <h3 class="dm-head">服務項目</h3>
@@ -306,22 +305,6 @@ const DROPDOWN_NAV = isMainSite ? DROPDOWN_NAV_ALL : DROPDOWN_NAV_ALL.filter((me
                             </li>
                           ))}
                         </ul>
-                      </section>
-                      <section class="dm-col dm-col--consult">
-                        <h3 class="dm-head">諮詢</h3>
-                        <a
-                          class="service-menu-consult"
-                          href={menu.consult.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          data-ga-button={gaButton('header_services_consult')}
-                          data-ga-label={menu.consult.label}
-                          data-ga-location={gaLocation('header_services_dropdown')}
-                          data-ga-action="contact"
-                        >
-                          <img class="dm-consult-art" src="/images/consult-chat.svg" alt="" aria-hidden="true" width="448" height="412" loading="lazy" decoding="async" />
-                          <span class="dm-consult-btn">{menu.consult.label} <span aria-hidden="true">→</span></span>
-                        </a>
                       </section>
                     </div>
                   )}
@@ -424,15 +407,9 @@ const DROPDOWN_NAV = isMainSite ? DROPDOWN_NAV_ALL : DROPDOWN_NAV_ALL.filter((me
   .dm-card-copy strong { margin-bottom: 2px; font-size: 16px; font-weight: 600; line-height: 1.2; }
   .dm-card-copy span { color: var(--color-ink-3); font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
   .dm-card-copy span::before { content: '- '; }
-  /* 諮詢區（參考 Dean 右欄：標題下面一整塊填滿欄高，大按鈕放在裡面）：底色用 LINE 綠，沒有放圖 */
-  .dm-col--consult { display: flex; flex-direction: column; }
-  .mainnav .dm-col--consult .service-menu-consult { position: relative; display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: flex-end; gap: 12px; padding: 14px 16px; border-radius: 4px; background: #06c755; color: #fff; white-space: normal; overflow: hidden; }
-  .dm-consult-art { display: none; }
-  .dm-consult-btn { display: block; width: 100%; font-size: 15px; font-weight: 700; line-height: 1.3; text-align: center; }
   @media (hover: hover) and (pointer: fine) {
     .mainnav .dm-row:hover { color: var(--color-accent); }
     .mainnav .dm-card:hover { border-color: var(--color-accent-line-2); background: var(--color-accent-tint); }
-    .mainnav .dm-col--consult .service-menu-consult:hover { background: #05b34c; }
 
   }
   @media (min-width: 1024px) {
@@ -449,11 +426,11 @@ const DROPDOWN_NAV = isMainSite ? DROPDOWN_NAV_ALL : DROPDOWN_NAV_ALL.filter((me
     }
     .service-menu:has(.dm-cols) .service-menu-head { display: none; }
     .nav-js .mainnav .dm-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 0; }
-    .nav-js .mainnav .dm-cols--services { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .nav-js .mainnav .dm-cols--services { grid-template-columns: minmax(0, 1fr); }
+    .nav-js .mainnav .dm-cols--services .dm-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .dm-col { padding: 12px 12px 12px 11px; border-left: 1px solid transparent; }
     .dm-col:not(:nth-child(3n + 1)) { border-left: 1px solid var(--color-rule); }
     .dm-cols--services .dm-col:not(:nth-child(3n + 1)) { border-left-color: transparent; }
-    .dm-cols--services .dm-col--consult { border-left-color: var(--color-rule); }
     .dm-head { margin-bottom: 16px; color: var(--color-ink); font-size: 16px; font-weight: 600; line-height: 1.2; }
     .nav-js .mainnav .dm-rows { gap: 8px; }
     .mainnav .dm-row { padding: 0; font-size: 16px; }
@@ -467,22 +444,17 @@ const DROPDOWN_NAV = isMainSite ? DROPDOWN_NAV_ALL : DROPDOWN_NAV_ALL.filter((me
     .dm-card-img { display: block; }
     .dm-card-copy strong { font-size: 18px; }
     .dm-card-copy span { font-size: 14px; }
-    /* 桌機：手繪 SVG 插畫（深色底）鋪滿欄高，大按鈕疊在圖底部（參考 Dean 右欄） */
-    .mainnav .dm-col--consult .service-menu-consult { min-height: 300px; padding: 16px; background: #1d1b1a; }
-    .dm-consult-art { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-    .dm-consult-btn { position: relative; padding: 16px; border-radius: 4px; background: #06c755; color: #fff; font-size: 20px; box-shadow: 0 6px 18px rgb(0 0 0 / 35%); }
-    .mainnav .dm-col--consult .service-menu-consult:hover .dm-consult-btn { background: #05b34c; }
   }
 </style>
 
 <style is:global>
-  /* 服務站專用：頁首唯一的 CTA「聊聊需求」LINE 綠按鈕。
+  /* 服務站專用：頁首唯一的 CTA「聊聊需求」按鈕（站上主按鈕色）。
      .nav-js .mainnav a 會把所有導覽連結的左右內距歸零、字級設 18px，所以這裡選擇器要更具體，
      否則圖示與文字會貼到按鈕邊緣。桌機用固定 44px 高，手機展開選單時整列寬度撐滿。 */
-  .nav-js .mainnav .service-book, .mainnav .service-book { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 22px; border: 1px solid #06c755; border-radius: 6px; background: #06c755; color: #fff; font-size: 16px; font-weight: 650; line-height: 1.2; white-space: nowrap; transition: background-color .18s ease, border-color .18s ease; }
+  .nav-js .mainnav .service-book, .mainnav .service-book { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 22px; border: 1px solid var(--color-accent); border-radius: 6px; background: var(--color-accent); color: #fff; font-size: 16px; font-weight: 650; line-height: 1.2; white-space: nowrap; transition: background-color .18s ease, border-color .18s ease; }
   .service-book .service-book-icon { display: block; flex: none; width: 20px; height: 20px; }
   @media (hover: hover) and (pointer: fine) {
-    .mainnav .service-book:hover { border-color: #05b34c; background: #05b34c; color: #fff; }
+    .mainnav .service-book:hover { border-color: var(--color-accent-2, var(--color-accent)); background: var(--color-accent-2, var(--color-accent)); color: #fff; }
   }
   @media (max-width: 1023px) {
     .nav-js .mainnav .hd-book-item { padding: 12px 0 14px; }

@@ -100,4 +100,4 @@ export const FEEDBACK_DESK_RESOURCE = {
 };
 
 /** 需求分流卡「想先領取免費資源」列出的例子，順序即顯示順序 */
-export const RESOURCE_EXAMPLES = [GRILL_ME_RESOURCE.title, FEEDBACK_DESK_RESOURCE.nav.title, CODEX_RESOURCE.title];
+export const RESOURCE_EXAMPLES = [GRILL_ME_RESOURCE.title, FEEDBACK_DESK_RESOURCE.nav.title];
