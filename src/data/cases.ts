@@ -110,6 +110,13 @@ export interface DevCase {
   featured?: boolean;
 }
 
+/** 多個案例共用的截圖（同一張圖可同時放在題庫卡與 AI 卡的輪播，只定義一次） */
+const SHARED_IMAGES = {
+  recognition: { src: '/images/cases/ai-image-recognition.webp', alt: `題庫系統 Demo 的考卷匯入結果：左邊是手機拍的考卷照片，右邊是 AI 辨識出的題目`, featureTag: 'fileImport' },
+  generation: { src: '/images/cases/ai-question-generation.webp', alt: `題庫系統 Demo 的 AI 出題頁：選範本、設定、產生與審核三個步驟`, featureTag: 'contentGen' },
+  explanation: { src: '/images/cases/ai-explanation.webp', alt: `題庫系統 Demo 的 AI 詳解頁：一元二次方程式題目下方顯示答案、解題步驟與核心觀念`, featureTag: 'contentGen' },
+} satisfies Record<string, CaseImage>;
+
 const demoLink: DevLink = { href: DEVELOPMENT_SERVICE.demoUrl, label: '試用 Demo', external: true };
 
 export const DEV_CASES: DevCase[] = [
@@ -118,9 +125,12 @@ export const DEV_CASES: DevCase[] = [
     title: '數學題庫系統',
     summary: '補習班數學老師用來把考卷收進題庫、出卷，AI 辨識考卷、產生詳解。',
     summaryShort: '補習班數學老師用來把考卷收進題庫、出卷。',
-    categories: ['bank', 'admin'],
+    categories: ['bank', 'admin', 'ai'],
     images: [
       { src: '/images/cases/math-question-bank.webp', alt: `數學題庫系統 Demo 站的題目管理頁：題目列表、難易度與單元標籤、審核與啟用開關`, featureTag: 'content' },
+      SHARED_IMAGES.recognition,
+      SHARED_IMAGES.generation,
+      SHARED_IMAGES.explanation,
     ],
     link: demoLink,
     featured: true,
@@ -178,29 +188,19 @@ export const DEV_CASES: DevCase[] = [
     summaryShort: '上傳考卷照片，AI 拆成一題一題，老師對照原卷審核。',
     categories: ['ai'],
     images: [
-      { src: '/images/cases/ai-image-recognition.webp', alt: `題庫系統 Demo 的考卷匯入結果：左邊是手機拍的考卷照片，右邊是 AI 辨識出的題目`, featureTag: 'fileImport' },
+      SHARED_IMAGES.recognition,
     ],
     link: demoLink,
   },
   {
     key: 'ai_question_generation',
-    title: 'AI 出題',
-    summary: '從題庫挑範本題，AI 照出法產生類似題。Demo 可以先體驗，正式導入時依需求開發。',
-    summaryShort: 'AI 出題可以先在 Demo 體驗，正式導入時依需求開發。',
+    title: 'AI 出題與詳解',
+    summary: 'AI 依範本題產生類似題，也能替題目寫出答案與解題步驟，老師審核後才收進題庫。AI 出題可以先在 Demo 體驗，正式導入時依需求開發。',
+    summaryShort: 'AI 出題與 AI 詳解；AI 出題可以先在 Demo 體驗，正式導入時依需求開發。',
     categories: ['ai'],
     images: [
-      { src: '/images/cases/ai-question-generation.webp', alt: `題庫系統 Demo 的 AI 出題頁：選範本、設定、產生與審核三個步驟`, featureTag: 'contentGen' },
-    ],
-    link: demoLink,
-  },
-  {
-    key: 'ai_explanation',
-    title: 'AI 詳解',
-    summary: '按一下替題目寫出答案、解題步驟與核心觀念，老師審閱後再收進題庫。',
-    summaryShort: 'AI 產生詳解，老師確認後才收進題庫。',
-    categories: ['ai'],
-    images: [
-      { src: '/images/cases/ai-explanation.webp', alt: `題庫系統 Demo 的 AI 詳解頁：一元二次方程式題目下方顯示答案、解題步驟與核心觀念`, featureTag: 'contentGen' },
+      SHARED_IMAGES.generation,
+      SHARED_IMAGES.explanation,
     ],
     link: demoLink,
   },
@@ -250,7 +250,8 @@ export const DEV_CASES: DevCase[] = [
   },
 ];
 
-/** 卡片下方的功能標籤：各圖 featureTag 去重後取前 4 個 */
-export const caseFeatureTags = (item: DevCase): FeatureTagKey[] => [...new Set(item.images.map((image) => image.featureTag))].slice(0, 4);
+/** 卡片下方的功能標籤：各圖 featureTag 去重後取前幾個（類別徽章＋功能標籤合計約 5 個，320 寬也不超出兩行） */
+export const caseFeatureTags = (item: DevCase): FeatureTagKey[] =>
+  [...new Set(item.images.map((image) => image.featureTag))].slice(0, Math.max(2, Math.min(4, 5 - item.categories.length)));
 
 export const FEATURED_CASE = DEV_CASES.find((item) => item.featured) ?? DEV_CASES[0];

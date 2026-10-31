@@ -19,6 +19,8 @@ interface Props {
 
 const { location, headingId = 'dev-pick-h', kicker = '客製系統開發｜AI 導入', showCarousel = false } = Astro.props;
 // 首屏輪播：所有案例的截圖，標系統名＋功能標籤，點擊連到該案例類別篩選後的案例頁
+// 同一張圖可能被多個案例引用（例如 AI 截圖同時在題庫卡），首屏一輪只出現一次
+const seenHeroImages = new Set<string>();
 const heroSlides = DEV_CASES.flatMap((item) =>
   item.images.map((image) => ({
     src: image.src,
@@ -27,7 +29,7 @@ const heroSlides = DEV_CASES.flatMap((item) =>
     href: `/cases/?tag=${encodeURIComponent(devCategoryTitle(item.categories[0]))}`,
     group: item.key,
   })),
-);
+).filter((slide) => (seenHeroImages.has(slide.src) ? false : (seenHeroImages.add(slide.src), true)));
 
 const categories = DEV_CATEGORIES.map((item) => ({
   key: item.key,
