@@ -268,10 +268,35 @@ const jsonLd = {
             page_path: location.pathname,
           };
           window.gtag('event', 'article_link_click', parameters);
-          if (host === 'demo-question.aixwang.dev') {
-            window.gtag('event', 'demo_click', parameters);
-          }
           return parameters;
+        }
+
+
+        // Demo → 聊聊需求 轉換追蹤：點過題庫 Demo 就記一個旗標（不含個資），之後每次 LINE 事件帶 after_demo。
+        // 旗標寫成 .aixwang.dev 共用 Cookie（主站與服務站 localStorage 不互通），並同步寫 localStorage 當備援；讀寫都包 try/catch。
+        function hasClickedDemo() {
+          try { if (/(?:^|;\s*)aixwang_demo_clicked=1(?:;|$)/.test(document.cookie)) return true; } catch (e) {}
+          try { if (window.localStorage.getItem('aixwang_demo_clicked') === '1') return true; } catch (e) {}
+          return false;
+        }
+        function markDemoClicked() {
+          try { document.cookie = 'aixwang_demo_clicked=1; Max-Age=15552000; Path=/; Domain=.aixwang.dev; SameSite=Lax; Secure'; } catch (e) {}
+          try { window.localStorage.setItem('aixwang_demo_clicked', '1'); } catch (e) {}
+        }
+        function isDemoHref(href) {
+          try { return new URL(href, location.href).hostname === 'demo-question.aixwang.dev'; } catch (e) { return false; }
+        }
+        function isLineHref(href) {
+          return href.indexOf('line.me') !== -1 || href.indexOf('lin.ee') !== -1;
+        }
+        function trackDemoLink(a, control, extra) {
+          window.gtag('event', 'demo_click', Object.assign({
+            link_url: a.href || '',
+            button_id: control ? control.getAttribute('data-ga-button') || 'unknown' : 'none',
+            demo_location: control ? control.getAttribute('data-ga-location') || 'unknown' : 'other',
+            page_path: location.pathname,
+          }, extra || {}));
+          markDemoClicked();
         }
 
         // 自訂事件：追蹤按鈕與關鍵轉換點擊（LINE 諮詢 / YouTube）
@@ -288,9 +313,11 @@ const jsonLd = {
           // LINE 連結有兩種網域：line.me（加好友網址）與 lin.ee（LINE 後台的追蹤短網址）。
           // 帶 data-ga-button 的按鈕點了 LINE 連結時，上面先送 button_click，這裡再補送 line_click。
           // 文章內文的 LINE 連結另帶 link_location／link_index／section_heading，跟頁首、文末 CTA 的分開。
-          if (href.indexOf('line.me') !== -1 || href.indexOf('lin.ee') !== -1) {
+          if (isDemoHref(href)) {
+            trackDemoLink(a, control, bodyLink);
+          } else if (isLineHref(href)) {
             window.gtag('event', 'line_click', Object.assign(
-              { link_url: href, page_path: location.pathname, link_location: control ? control.getAttribute('data-ga-location') || 'button' : 'other' },
+              { link_url: href, page_path: location.pathname, link_location: control ? control.getAttribute('data-ga-location') || 'button' : 'other', button_id: control ? control.getAttribute('data-ga-button') || 'unknown' : 'none', after_demo: hasClickedDemo() },
               bodyLink || {}
             ));
           } else if (href.indexOf('/course') !== -1) {
