@@ -14,7 +14,7 @@ export const RESOURCES_INTRO =
 export const CODEX_RESOURCE = {
   heading: '第一步：先安裝 Claude Code 或 Codex',
   intro:
-    'Claude Code 和 Codex 都可以用，裝哪一個都行，後面安裝 Skills、執行開源工具與處理錯誤都從它進去。兩個都有安裝教學，Windows 新手建議從 VS Code 外掛或桌面版開始，不必一開始碰終端機。',
+    'Claude Code 和 Codex 都能用，擇一安裝即可，兩個都有安裝教學。後面安裝 Skills、執行開源工具都從它進去。Windows 新手從桌面版或 VS Code 外掛開始，不用先碰終端機。',
   articleHref: '/blog/codex-windows-wsl-install/',
   label: '新手先看',
   title: 'VS Code＋Codex 外掛版',
@@ -25,17 +25,17 @@ export const CODEX_RESOURCE = {
       name: 'Claude Code',
       thumbSlug: 'claude-code-install',
       alt: 'Claude Code 安裝教學縮圖',
-      description: 'Anthropic 的 AI 寫程式工具。教學涵蓋桌面版、VS Code、CLI 三種裝法。',
-      links: [{ slug: 'claude-code-install', label: 'Claude Code 安裝教學：桌面版、VS Code、CLI' }],
+      description: '桌面版、VS Code、CLI 三種裝法都有教。',
+      links: [{ slug: 'claude-code-install', label: 'Claude Code 安裝教學' }],
     },
     {
       name: 'Codex',
       thumbSlug: 'codex-windows-wsl-install',
       alt: 'Codex 安裝教學縮圖',
-      description: 'OpenAI 的 AI 寫程式工具。上篇是 VS Code 外掛版，不用碰終端機；下篇是 Windows 版 Codex CLI 與 WSL2 進階安裝。',
+      description: '上篇是 VS Code 外掛版，不用碰終端機；下篇是 Windows 版 CLI 與 WSL2，需要終端機時再看。',
       links: [
-        { slug: 'codex-windows-wsl-install', label: '安裝教學（上）：VS Code 外掛版' },
-        { slug: 'codex-cli-wsl2-windows', label: '安裝教學（下）：Codex CLI 與 WSL2' },
+        { slug: 'codex-windows-wsl-install', label: 'Codex 安裝教學（上）' },
+        { slug: 'codex-cli-wsl2-windows', label: 'Codex 安裝教學（下）' },
       ],
     },
   ],

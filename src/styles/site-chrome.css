@@ -1387,3 +1387,8 @@
           transition: none !important;
         }
       }
+
+/* 小螢幕：右下角有固定的 LINE 浮動按鈕，頁面底部留出按鈕的高度，頁尾最後一行才不會被壓住 */
+@media (max-width: 767px) {
+  body { padding-bottom: 72px; }
+}
