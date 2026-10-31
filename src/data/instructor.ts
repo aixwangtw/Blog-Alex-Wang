@@ -1,6 +1,6 @@
 // 講師經歷單一來源：關於頁經歷卡（cards）、給 AI 讀的 .md（text）都從這裡取。
 // 數字與單位只寫既有事實，不得加新宣稱。
-import { COMMUNITY_URLS, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL } from '../consts';
+import { OPENCLAW_COMMUNITY, COMMUNITY_URLS, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL } from '../consts';
 
 export interface ExperienceItem {
   key: string;
@@ -29,7 +29,7 @@ export const EXPERIENCE: ExperienceItem[] = [
   {
     key: 'community',
     title: '社群版主',
-    text: '21 萬人 OpenClaw 中文社群版主。',
+    text: `${OPENCLAW_COMMUNITY.members}人的 ${OPENCLAW_COMMUNITY.name}版主。`,
     href: COMMUNITY_URLS.openclaw,
     linkLabel: '看社團',
     external: true,

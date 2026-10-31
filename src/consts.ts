@@ -248,6 +248,11 @@ export function pickVariant(key: string, length: number): number {
 export const COMMUNITY_URLS = {
   openclaw: 'https://www.facebook.com/groups/3238547836318385',
 } as const;
+/** OpenClaw 社團名稱與成員數（依 2026-11-01 社團頁截圖：21.8 萬位成員） */
+export const OPENCLAW_COMMUNITY = {
+  name: 'OpenClaw / Hermes Agent 中文社群',
+  members: '21.8 萬',
+} as const;
 
 export const LINKS = {
   facebookGroup: COMMUNITY_URLS.openclaw,
