@@ -169,7 +169,7 @@ function resourcesBody(): string {
 
 ${codex.intro}
 
-- [${codex.title}](${absolute(codex.articleHref)})（${codex.label}）：${codex.description}
+${codex.tools.map((tool) => `- **${tool.name}**：${tool.description}\n${tool.links.map((link) => `  - [${link.label}](${absolute(`/blog/${link.slug}/`)})`).join('\n')}`).join('\n')}
 
 ### ${grillMe.heading}
 
@@ -208,6 +208,14 @@ ${feedbackDesk.installNote}
 ${faqMarkdown(RESOURCES_FAQS).replace(/^### /gm, '#### ')}`;
 }
 
+/** 主站首頁 .md：系統開發為主；教學與演講只留一句話加服務站連結 */
+const mainServiceLinks = () =>
+  [
+    `- [${AGENT_PAGES.development.title}](${AGENT_PAGES.development.htmlUrl})（Markdown：${AGENT_PAGES.development.markdownUrl}）：主要服務。聊完需求可先提供試用 Demo，看過再決定；依功能報價、分三期付款、一年保固。`,
+    `- 一對一教學與演講的介紹放在服務站：${SERVICE_SITE.url}/`,
+    `- [${AGENT_PAGES.resources.title}](${AGENT_PAGES.resources.htmlUrl})（Markdown：${AGENT_PAGES.resources.markdownUrl}）：開源工具與 Claude Code、Codex 安裝教學，全部免費。`,
+  ].join('\n');
+
 const serviceLinks = () =>
   [
     `- [${AGENT_PAGES.development.title}](${AGENT_PAGES.development.htmlUrl})（Markdown：${AGENT_PAGES.development.markdownUrl}）：主要服務。先免費做簡易 Demo，看過再決定；依功能報價、分三期付款、一年保固。`,
@@ -237,7 +245,7 @@ export async function agentPageMarkdown(key: AgentPageKey): Promise<string> {
       body = `${SERVICE_SITE.description}\n\n${serviceLinks()}`;
       break;
     default:
-      body = `${SITE.description}\n\n### 服務\n\n${serviceLinks()}\n\n### 常見問題\n\n${faqMarkdown(HOME_FAQS).replace(/^### /gm, '#### ')}`;
+      body = `${SITE.description}\n\n### 服務\n\n${mainServiceLinks()}`;
   }
   return `# ${page.title}
 

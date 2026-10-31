@@ -39,6 +39,12 @@ S334 講課照片改名「講課紀錄」、移至講師介紹下方、改雙欄
 Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>
 
+## LINE 入口規則（必須遵守）
+
+- 舊規則「LINE 入口只留右下角與服務站頁首」已於 2026-10-31 作廢。
+- 主站首頁 Hero 與結尾、服務站頁首、系統開發服務頁 Hero 的綠色（#06c755）「聊聊需求」LINE 按鈕是使用者明確要求，不得移除或改回非 LINE 按鈕。
+- 首頁、服務頁、CTA 附近要寫「聊完需求可以先提供試用 Demo」。
+
 ## Git 提交規則（必須遵守）
 
 - 不得自動提交；只有使用者明確要求提交時才能執行 `git commit`。

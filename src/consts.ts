@@ -6,7 +6,7 @@ export const SITE = {
   formerNames: ['AI新手教學', 'AI Beginner Blog'],
   url: 'https://aixwang.dev',
   description:
-    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發與 AI 導入，代表案例是補習班數學老師用的題庫系統。另提供 AI 一對一教學與演講。',
+    'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發與 AI 導入，代表案例是補習班數學老師用的題庫系統。一對一教學與演講的介紹在服務站 service.aixwang.dev。',
   // 頁尾顯示用：不帶「另提供 AI 教學與演講」，結構化資料仍用上面的 description
   footerDescription: 'Alex 是台灣的系統開發工程師，目前全職接案，和開發夥伴承接客製系統開發與 AI 導入，代表案例是補習班數學老師用的題庫系統。',
   locale: 'zh-TW',

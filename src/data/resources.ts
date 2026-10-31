@@ -9,16 +9,36 @@ import githubLogo from '../assets/github-logo.svg';
 const GRILL_ME_TAGLINE = '30 萬顆星，提升開發效率';
 const MATT_POCOCK_SKILLS_TITLE = `grill-me：${GRILL_ME_TAGLINE}`;
 export const RESOURCES_INTRO =
-  '不用急著付費。先把 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用。做完還是卡關，再決定要用右下角官方 LINE，還是到 Facebook 社團發問。';
+  '不用急著付費。先把 Claude Code 或 Codex 裝好，再把現成的 Skills 貼給 AI 安裝，就能直接開始使用。做完還是卡關，再決定要用右下角官方 LINE，還是到 Facebook 社團發問。';
 
 export const CODEX_RESOURCE = {
-  heading: '第一步：先安裝 Codex',
+  heading: '第一步：先安裝 Claude Code 或 Codex',
   intro:
-    'Codex 是後面安裝 Skills、執行開源工具與處理錯誤的入口。Windows 新手先用 VS Code 官方 Codex 外掛完成安裝、登入與第一次對話，不必一開始碰終端機或額外準備 Linux 環境。',
+    'Claude Code 和 Codex 都可以用，裝哪一個都行，後面安裝 Skills、執行開源工具與處理錯誤都從它進去。兩個都有安裝教學，Windows 新手建議從 VS Code 外掛或桌面版開始，不必一開始碰終端機。',
   articleHref: '/blog/codex-windows-wsl-install/',
   label: '新手先看',
   title: 'VS Code＋Codex 外掛版',
   description: '不用先碰終端機，完成安裝、登入與第一次對話。',
+  /** 免費資源頁與 .md 版：兩個工具各一行說明，連到主站安裝文章 */
+  tools: [
+    {
+      name: 'Claude Code',
+      thumbSlug: 'claude-code-install',
+      alt: 'Claude Code 安裝教學縮圖',
+      description: 'Anthropic 的 AI 寫程式工具。教學涵蓋桌面版、VS Code、CLI 三種裝法。',
+      links: [{ slug: 'claude-code-install', label: 'Claude Code 安裝教學：桌面版、VS Code、CLI' }],
+    },
+    {
+      name: 'Codex',
+      thumbSlug: 'codex-windows-wsl-install',
+      alt: 'Codex 安裝教學縮圖',
+      description: 'OpenAI 的 AI 寫程式工具。上篇是 VS Code 外掛版，不用碰終端機；下篇是 Windows 版 Codex CLI 與 WSL2 進階安裝。',
+      links: [
+        { slug: 'codex-windows-wsl-install', label: '安裝教學（上）：VS Code 外掛版' },
+        { slug: 'codex-cli-wsl2-windows', label: '安裝教學（下）：Codex CLI 與 WSL2' },
+      ],
+    },
+  ],
 };
 
 export const GRILL_ME_RESOURCE = {
