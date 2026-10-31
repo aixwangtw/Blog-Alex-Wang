@@ -20,7 +20,8 @@
 // 2026-10：Course 結構化資料已移除（它的內容是 Agent 安裝與自動發文課程，站上不再提供）；
 // FAQPage 仍不在首頁，/faq/ 已經有了。
 // ============================================================
-import { DEVELOPMENT_SERVICE, LINKS, pageBannerUrl, COURSE_SERVICE_URL } from '../consts';
+import { DEVELOPMENT_SERVICE, LINKS, pageBannerUrl, COURSE_SERVICE_URL, SPEAKING_SERVICE_URL } from '../consts';
+import DevCategoryPicker from '../components/DevCategoryPicker.astro';
 import { DEVELOPMENT_CAPABILITIES, DEVELOPMENT_CASE_FEATURES } from '../data/services';
 import LineIcon from '../components/LineIcon.astro';
 import { getCollection } from 'astro:content';
@@ -58,55 +59,32 @@ const latestPosts = allPosts.slice(0, 5);
   <div class="home" id="home-root">
 
     <div class="home-shell">
-      <!-- 1／Hero：開發接案為主，主 CTA 是 LINE「聊聊需求」，明寫聊完需求可先試用 Demo -->
-      <section class="dev-hero" aria-labelledby="hero-h">
-        <div class="dev-hero-copy">
-          <p class="service-kicker">客製系統開發｜AI 導入</p>
-          <h1 id="hero-h">把重複的工作，做成一套專屬系統</h1>
-          <p class="dev-hero-lead">我和開發夥伴承接客製系統開發：資料管理後台、LINE 與金流等 API 串接，以及讓 AI 讀文件、整理資料、產生報告。</p>
-          <p class="dev-hero-demo"><strong>聊完需求，可以先提供試用 Demo。</strong>看過再決定要不要簽約，不適合不用付費。</p>
-          <div class="dev-hero-actions">
-            <a class="dev-line-btn" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="home_hero_line" data-ga-label="聊聊需求" data-ga-location="home_hero" data-ga-action="external"><LineIcon class="dev-line-icon" /><span>聊聊需求</span></a>
-            <a class="service-link" href="#development-case" data-ga-button="home_hero_case" data-ga-label="看開發案例" data-ga-location="home_hero" data-ga-action="navigate">看開發案例 <span aria-hidden="true">↓</span></a>
-          </div>
-        </div>
-        <figure class="dev-hero-media">
-          <img src="/images/blog/math-teacher-question-bank/import-review.jpg" alt="題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目" width="1400" height="875" decoding="async" fetchpriority="high" />
-        </figure>
-      </section>
+      <!-- 1／首屏：直接問想做什麼系統，六個類別卡＋「聊聊需求」主按鈕（DevCategoryPicker 與服務站共用） -->
+      <DevCategoryPicker location="home_hero" headingId="hero-h" />
 
-      <!-- 2／開發案例：只放站上已有的真實案例 -->
+      <!-- 2／開發案例：只放站上已有的真實案例，一案一張同比例卡片，不放大圖 -->
       <section class="dev-case reveal" id="development-case" aria-labelledby="case-h">
         <p class="service-kicker">開發案例</p>
-        <h2 id="case-h">數學題庫系統</h2>
-        <div class="dev-case-grid">
-          <div class="dev-case-copy">
-            <p>幫補習班數學老師把瑣碎的出題流程自動化，不用再挑題挑到青光眼。</p>
-            <ul class="dev-list">
-              {DEVELOPMENT_CASE_FEATURES.map((item) => <li>{item}</li>)}
-            </ul>
-            <div class="development-links">
-              <a class="service-link" href={DEVELOPMENT_SERVICE.caseArticle} data-ga-button="home_case_article" data-ga-label="看題庫系統完整介紹" data-ga-location="home_case" data-ga-action="navigate">看完整介紹 <span aria-hidden="true">→</span></a>
-              <a class="service-link" href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" data-ga-button="home_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="home_case" data-ga-action="external">試用 Demo，免費不用註冊 <span aria-hidden="true">↗</span></a>
-            </div>
-            <p class="dev-case-more">另外做過 CRM、背書系統、健檢系統、預約系統、揪團平台等。</p>
-          </div>
-          <video
-            class="dev-case-video"
-            src="/videos/math-question-bank-reel.mp4"
-            poster="/images/math-question-bank-reel-poster.webp"
-            width="720"
-            height="1280"
-            controls
-            preload="metadata"
-            playsinline
-            aria-label="數學題庫系統介紹短影音：AI 辨識紙本考卷、AI 出題、AI 解析答案"
-          ></video>
-        </div>
-        <div class="dev-case-shots">
-          <figure><img src="/images/blog/math-teacher-question-bank/exam-export.jpg" alt="題庫系統的出卷頁：勾選題目、排序後直接匯出考卷" width="1400" height="972" loading="lazy" decoding="async" /><figcaption>出卷：勾選題目、排序後匯出考卷</figcaption></figure>
-          <figure><img src="/images/blog/math-teacher-question-bank/ai-explain.jpg" alt="題庫系統 Demo 的 AI 詳解：AI 寫好答與解，標示待審核，老師確認後才儲存" width="1400" height="1138" loading="lazy" decoding="async" /><figcaption>AI 詳解：老師確認後才儲存</figcaption></figure>
-        </div>
+        <h2 id="case-h">做過的系統</h2>
+        <ul class="case-cards">
+          <li>
+            <article class="case-card">
+              <img class="case-card-thumb" src="/images/blog/math-teacher-question-bank/import-review.jpg" alt="題庫系統的考卷匯入審核頁：左邊是原始考卷，右邊是 AI 辨識出來的題目" width="1400" height="875" loading="lazy" decoding="async" />
+              <div class="case-card-body">
+                <h3>數學題庫系統</h3>
+                <p>補習班數學老師用來把考卷收進題庫、出卷。</p>
+                <ul class="dev-list">
+                  {DEVELOPMENT_CASE_FEATURES.map((item) => <li>{item}</li>)}
+                </ul>
+                <div class="case-card-actions">
+                  <a class="service-link" href={DEVELOPMENT_SERVICE.caseArticle} data-ga-button="home_case_article" data-ga-label="看題庫系統完整介紹" data-ga-location="home_case" data-ga-action="navigate">看完整介紹 <span aria-hidden="true">→</span></a>
+                  <a class="service-link" href={DEVELOPMENT_SERVICE.demoUrl} target="_blank" rel="noreferrer" data-ga-button="home_case_demo" data-ga-label="試用題庫系統 Demo" data-ga-location="home_case" data-ga-action="external">試用 Demo，免費不用註冊 <span aria-hidden="true">↗</span></a>
+                </div>
+              </div>
+            </article>
+          </li>
+        </ul>
+        <p class="dev-case-more">另外做過 CRM、背書系統、健檢系統、預約系統、揪團平台等。</p>
       </section>
 
       <!-- 3／能做什麼 -->
@@ -124,7 +102,7 @@ const latestPosts = allPosts.slice(0, 5);
         <p class="service-kicker">合作流程</p>
         <h2 id="flow-h">合作流程怎麼走？</h2>
         <ol class="dev-flow-list">
-          <li><span class="dev-flow-no">01</span><strong>聊需求</strong><span>加 LINE 說你想解決的問題，可以免費評估。</span></li>
+          <li><span class="dev-flow-no">01</span><strong>聊需求</strong><span>加 LINE 說你想做的系統，可以免費評估。</span></li>
           <li><span class="dev-flow-no">02</span><strong>免費試用 Demo</strong><span>依需求做簡易 Demo，看過再決定要不要簽約。</span></li>
           <li><span class="dev-flow-no">03</span><strong>開發與驗收</strong><span>分階段開發，需求隨調隨改；改好的地方附調整說明，你確認才算完成。</span></li>
           <li><span class="dev-flow-no">04</span><strong>上線與維運</strong><span>上線並教你怎麼用，一年保固；保固結束後可簽維護合約。</span></li>
@@ -145,13 +123,7 @@ const latestPosts = allPosts.slice(0, 5);
         <a class="service-link" href="/blog/" data-ga-button="home_articles_all" data-ga-label="看全部文章" data-ga-location="home_articles" data-ga-action="navigate">看全部 {allPosts.length} 篇文章 <span aria-hidden="true">→</span></a>
       </section>
 
-      <!-- 6／其他：教學與演講在服務站，開源工具在主站 -->
-      <section class="dev-more reveal" aria-label="其他">
-        <a href={COURSE_SERVICE_URL} data-ga-button="home_more_course" data-ga-label="一對一教學與演講" data-ga-location="home_more" data-ga-action="navigate"><strong>一對一教學、演講</strong><span>介紹與報價放在服務站（service.aixwang.dev）</span></a>
-        <a href="/resources/" data-ga-button="home_more_opensource" data-ga-label="開源工具" data-ga-location="home_more" data-ga-action="navigate"><strong>開源工具</strong><span>feedback-desk 問題回報系統、grill-me Skill</span></a>
-      </section>
-
-      <!-- 7／常見問題 -->
+      <!-- 6／常見問題 -->
       <section class="home-faq reveal" aria-labelledby="home-faq-h">
         <p class="service-kicker">常見問題</p>
         <h2 id="home-faq-h">合作前最常問的三件事</h2>
@@ -159,11 +131,20 @@ const latestPosts = allPosts.slice(0, 5);
         <a class="service-link" href={`${DEVELOPMENT_SERVICE.url}#development-cost`} data-ga-button="home_faq_cost" data-ga-label="看時程與費用" data-ga-location="home_faq" data-ga-action="navigate">時程、付款與主機費用 <span aria-hidden="true">→</span></a>
       </section>
 
+      <!-- 7／其他：教學與演講在服務站，開源工具在主站；三張等寬等高小卡 -->
+      <section class="dev-more reveal" aria-label="其他服務與工具">
+        <ul class="dev-more-list">
+          <li><a href={COURSE_SERVICE_URL} data-ga-button="home_more_course" data-ga-label="一對一教學" data-ga-location="home_more" data-ga-action="navigate"><strong>AI 一對一教學</strong><span>用 Claude Code 寫系統、做網頁、做動畫影片，方案在服務站。</span><em>看教學方案 →</em></a></li>
+          <li><a href={SPEAKING_SERVICE_URL} data-ga-button="home_more_speaking" data-ga-label="演講邀約" data-ga-location="home_more" data-ga-action="navigate"><strong>演講邀約</strong><span>公開演講、企業內訓、工作坊。</span><em>看演講經歷 →</em></a></li>
+          <li><a href="/resources/" data-ga-button="home_more_opensource" data-ga-label="開源工具" data-ga-location="home_more" data-ga-action="navigate"><strong>開源工具</strong><span>feedback-desk 問題回報系統、grill-me Skill。</span><em>看開源工具 →</em></a></li>
+        </ul>
+      </section>
+
       <!-- 8／結尾 CTA -->
       <section class="closer" aria-labelledby="closer-h">
         <h2 class="q q--sec reveal" id="closer-h"><span class="nb">想聊聊你的需求嗎<span class="qt">？</span></span></h2>
         <div class="reveal" style="--d:70ms">
-          <p class="closer-p">加 LINE 說你想解決的問題，聊完之後先給你 Demo 試用。</p>
+          <p class="closer-p">加 LINE 說你想做的系統和手上的資料，聊完先拿 Demo 試用。</p>
           <div class="dev-hero-actions">
             <a class="dev-line-btn" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="home_closer_line" data-ga-label="聊聊需求" data-ga-location="home_closer" data-ga-action="external"><LineIcon class="dev-line-icon" /><span>聊聊需求</span></a>
             <a class="service-link" href={DEVELOPMENT_SERVICE.url} data-ga-button="home_closer_service" data-ga-label="了解系統開發服務" data-ga-location="home_closer" data-ga-action="navigate">了解系統開發服務 <span aria-hidden="true">→</span></a>
@@ -1594,11 +1575,26 @@ const latestPosts = allPosts.slice(0, 5);
     .dev-articles-list a { display: block; padding: 14px 0; color: var(--color-ink); font-size: 16px; line-height: 1.6; text-decoration: none; }
     .dev-articles-list a:hover { color: var(--color-accent); }
 
-    .dev-more { display: grid; gap: 14px; padding: clamp(28px, 4vw, 44px) 0; border-top: 1px solid var(--color-rule); }
-    @media (min-width: 768px) { .dev-more { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
-    .dev-more a { display: grid; gap: 4px; padding: 18px 20px; border: 1px solid var(--color-rule-2); color: var(--color-ink); text-decoration: none; }
-    .dev-more a:hover { border-color: var(--color-accent); }
-    .dev-more strong { font-size: 16px; }
-    .dev-more span { font-size: 14px; line-height: 1.6; color: var(--color-ink-3); }
+    .dev-more { padding: clamp(28px, 4vw, 44px) 0; border-top: 1px solid var(--color-rule); }
+    .dev-more-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
+    @media (max-width: 767px) { .dev-more-list { grid-template-columns: minmax(0, 1fr); gap: 12px; } }
+    .dev-more-list > li { display: flex; min-width: 0; }
+    .dev-more-list a { display: flex; flex: 1; flex-direction: column; gap: 6px; min-width: 0; padding: 18px 20px; border: 1px solid var(--color-rule-2); border-radius: 8px; color: var(--color-ink); text-decoration: none; }
+    @media (hover: hover) and (pointer: fine) { .dev-more-list a:hover { border-color: var(--color-accent); } }
+    .dev-more-list strong { font-size: 16px; }
+    .dev-more-list span { font-size: 14px; line-height: 1.7; color: var(--color-ink-3); }
+    .dev-more-list em { margin-top: auto; padding-top: 6px; font-style: normal; font-size: 14px; font-weight: 650; color: var(--color-accent); }
+
+    .case-cards { display: grid; gap: 20px; margin: 24px 0 0; padding: 0; list-style: none; }
+    .case-cards > li { display: flex; min-width: 0; }
+    .case-card { display: grid; flex: 1; grid-template-columns: minmax(0, 1fr); overflow: hidden; border: 1px solid var(--color-rule-2); border-radius: 8px; background: rgb(255 255 255 / 40%); }
+    @media (min-width: 768px) { .case-card { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
+    .case-card-thumb { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: left top; border-bottom: 1px solid var(--color-rule-2); }
+    @media (min-width: 768px) { .case-card-thumb { border-bottom: 0; border-right: 1px solid var(--color-rule-2); } }
+    .case-card-body { display: flex; flex-direction: column; min-width: 0; padding: 22px 24px; }
+    .case-card-body h3 { font-size: 20px; font-weight: 700; color: var(--color-ink); }
+    .case-card-body > p { margin-top: 8px; font-size: 15px; line-height: 1.8; color: var(--color-ink-2); }
+    .case-card-actions { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: auto; padding-top: 18px; }
+    .case-card-actions .service-link { margin-top: 0; }
   </style>
 </Base>
