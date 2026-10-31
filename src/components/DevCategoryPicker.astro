@@ -81,6 +81,14 @@ const icons: Record<string, string> = Object.fromEntries(DEV_CATEGORIES.map((ite
   .dev-pick-head--carousel { display: grid; gap: 20px; }
   .dev-pick-carousel { width: 100%; max-width: 460px; overflow: hidden; border: 1px solid var(--color-rule-2); border-radius: 8px; }
   @media (min-width: 1024px) { .dev-pick-head--carousel { grid-template-columns: minmax(0, 1fr) minmax(0, 400px); align-items: end; gap: 32px; } }
+  /* 767px 以下：輪播移到類別卡與「聊聊需求」下方，讓主要按鈕留在前面 */
+  @media (max-width: 767px) {
+    .dev-pick:has(.dev-pick-head--carousel) { display: flex; flex-direction: column; }
+    .dev-pick-head--carousel { display: contents; }
+    .dev-pick-head--carousel .dev-pick-carousel { order: 3; margin-top: 24px; }
+    .dev-pick:has(.dev-pick-head--carousel) .dev-pick-grid { order: 1; }
+    .dev-pick:has(.dev-pick-head--carousel) .dev-pick-actions { order: 2; }
+  }
   .dev-pick-kicker { color: var(--color-accent); font-size: 13px; font-weight: 700; letter-spacing: .08em; }
   .dev-pick h1 { margin-top: 14px; font-family: var(--font-serif, serif); font-size: clamp(32px, 4.6vw, 56px); line-height: 1.2; font-weight: 600; color: var(--color-ink); }
   .dev-pick-lead { margin-top: 16px; max-width: 60ch; font-size: 16px; line-height: 1.85; color: var(--color-ink-2); }
