@@ -109,7 +109,7 @@ const { slides, groupKey, gaLocation, autoplay = false, random = false, eager = 
   {slides.length > 1 && (
     <div class="cc-controls" data-cc-controls hidden>
       <button type="button" class="cc-btn cc-prev" data-cc-prev aria-label="上一張" data-ga-button={`${gaLocation}_prev`} data-ga-label="輪播上一張" data-ga-location={gaLocation} data-ga-action="carousel">‹</button>
-      <div class="cc-dots" data-cc-dots>
+      <div class="cc-dots" data-cc-dots hidden={slides.length > 12}>
         {slides.map((slide, index) => (
           <button type="button" class="cc-dot" data-cc-dot={index} aria-label={`第 ${index + 1} 張：${slide.label}`} aria-current={index === 0 ? 'true' : undefined} data-ga-button={`${gaLocation}_dot`} data-ga-label="輪播圓點" data-ga-location={gaLocation} data-ga-action="carousel"></button>
         ))}
@@ -141,6 +141,7 @@ const { slides, groupKey, gaLocation, autoplay = false, random = false, eager = 
   .cc-toggle { font-size: 10px; letter-spacing: -1px; }
   .lightbox-hint { display: none; }
   .cc-btn:focus-visible, .cc-dot:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .cc-dots[hidden] { display: none !important; }
   .cc-dots { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 999px; background: rgb(22 22 26 / 55%); pointer-events: auto; }
   .cc-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgb(255 255 255 / 55%); cursor: pointer; }
   .cc-dot[aria-current='true'] { background: #fff; }

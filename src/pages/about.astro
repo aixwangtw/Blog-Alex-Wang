@@ -1,12 +1,26 @@
 ---
 import { Image } from 'astro:assets';
 import instructorPortrait from '../assets/instructor-shirt.jpg';
-import CheckItem from '../components/CheckItem.astro';
-import Cta from '../components/Cta.astro';
+import CaseCarousel from '../components/CaseCarousel.astro';
+import LineIcon from '../components/LineIcon.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { ABOUT_SKILLS, AUTHOR, DEVELOPMENT_SERVICE, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
-import { EXPERIENCE } from '../data/instructor';
+import { ABOUT_SKILLS, AUTHOR, HERO_CTA_NOTE, LINKS, PAYMENT_TERMS, SECTION_NAMES, SITE, breadcrumbSchema, pageBannerUrl } from '../consts';
+import { heroCarouselSlides } from '../data/cases';
+import { EXPERIENCE_CARDS } from '../data/instructor';
+import ImageLightbox from '../components/ImageLightbox.astro';
+import taichungTalk from '../assets/taichung-talk.jpg';
+import teachingPhoto from '../assets/teaching-one-on-one.jpg';
+
+// 經歷卡圖片（16:10、可點放大）：社團截圖已把貼文作者換假名並打馬賽克
+const EXPERIENCE_IMAGES: Record<string, { src: string; alt: string }> = {
+  community: { src: '/images/about/openclaw-group.webp', alt: 'OpenClaw / Hermes Agent 中文社群 Facebook 公開社團首頁（貼文作者已馬賽克）' },
+  speaking: { src: taichungTalk.src, alt: 'Alex 在台中演講的現場' },
+  teaching: { src: teachingPhoto.src, alt: '一對一 AI 教學上課現場' },
+};
+
+// 關於頁的案例截圖輪播：與首頁首屏同一份資料，手動切換、點圖放大
+const caseSlides = heroCarouselSlides().map((slide) => ({ src: slide.src, alt: slide.alt, label: slide.label }));
 import Base from '../layouts/Base.astro';
 
 const schema = [
@@ -44,7 +58,7 @@ const schema = [
     </figure>
 
     <p class="mt-8 text-lg leading-9 text-ink">
-      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，用 AI 自動化整理資料、產出內容，代表案例是補習班數學老師用的題庫系統。我沒進過軟體業，是靠 AI 一步一步自學到全職接案的。
+      {AUTHOR.name}（本名王士麟，英文名 Alex Wang，網路上也叫艾克斯王）是系統開發工程師，目前全職接案，和開發夥伴承接<strong class="text-accent">客製系統開發</strong>，用 AI 自動化整理資料、產出內容，做過題庫、CRM、LINE LIFF、社群平台等系統。<a href="/cases/" class="whitespace-nowrap font-semibold text-accent no-underline" data-ga-button="about_cases" data-ga-label={`看全部${SECTION_NAMES.cases}`} data-ga-location="about_intro" data-ga-action="navigate">看全部{SECTION_NAMES.cases} →</a>
     </p>
     <a
       href="/blog/from-part-time-to-freelance/"
@@ -53,9 +67,30 @@ const schema = [
       閱讀我的轉職故事 →
     </a>
 
-    <SectionHeading size="md" class="mt-14">經歷與代表作品</SectionHeading>
-    <ul class="mt-6 space-y-4">
-      {EXPERIENCE.map((item) => <CheckItem>{item.text}</CheckItem>)}
+    <SectionHeading size="md" class="mt-14">{SECTION_NAMES.cases}截圖</SectionHeading>
+    <div class="about-cases mt-6">
+      <CaseCarousel slides={caseSlides} groupKey="about_cases" gaLocation="about_cases" />
+    </div>
+
+    <SectionHeading size="md" class="mt-14">經歷</SectionHeading>
+    <ul class="about-exp">
+      {EXPERIENCE_CARDS.map((item) => (
+        <li>
+          <article class="about-exp-card">
+            {EXPERIENCE_IMAGES[item.key] && <ImageLightbox src={EXPERIENCE_IMAGES[item.key].src} alt={EXPERIENCE_IMAGES[item.key].alt} width={1440} height={900} imgClass="about-exp-img" class="about-exp-media" gaLocation="about_experience" gaKey={item.key} group="about_experience" caption={item.title} />}
+            <div class="about-exp-body">
+            <svg class="about-exp-icon" viewBox="0 0 24 24" aria-hidden="true" set:html={item.icon} />
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+            {item.href ? (
+              <a class="about-exp-link" href={item.href} target={item.external ? '_blank' : undefined} rel={item.external ? 'noreferrer' : undefined} data-ga-button={`about_exp_${item.key}`} data-ga-label={item.linkLabel} data-ga-location="about_experience" data-ga-action={item.external ? 'external' : 'navigate'}>{item.linkLabel} <span aria-hidden="true">{item.external ? '↗' : '→'}</span></a>
+            ) : (
+              <span class="about-exp-link about-exp-link--empty" aria-hidden="true"></span>
+            )}
+            </div>
+          </article>
+        </li>
+      ))}
     </ul>
 
     <SectionHeading size="md" class="mt-14">專長領域</SectionHeading>
@@ -71,13 +106,33 @@ const schema = [
     </ul>
 
 
-    <Cta
-      title="對系統有疑問嗎？"
-      text="看系統開發服務的合作流程與費用怎麼算，也可以先看題庫系統的完整介紹。"
-      hint="想談合作或聊聊你的情況，右下角有官方 LINE"
-      href={DEVELOPMENT_SERVICE.url}
-      label={'了解系統\n開發服務'}
-      links={[{ href: DEVELOPMENT_SERVICE.caseArticle, label: '看題庫系統介紹' }]}
-    />
+    <section class="about-cta" aria-labelledby="about-cta-h">
+      <h2 id="about-cta-h">想做系統，先聊聊需求</h2>
+      <p>{HERO_CTA_NOTE}<strong>{PAYMENT_TERMS.text}</strong>。</p>
+      <a class="about-cta-btn" href={LINKS.line} target="_blank" rel="noreferrer" data-ga-button="about_line" data-ga-label="聊聊需求" data-ga-location="about_cta" data-ga-action="external"><LineIcon class="about-cta-icon" /><span>聊聊需求</span></a>
+    </section>
   </div>
 </Base>
+
+<style>
+  .about-cases { overflow: hidden; border: 1px solid var(--color-rule-2); border-radius: 8px; }
+  .about-exp { display: grid; grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1fr; gap: 16px; margin: 24px 0 0; padding: 0; list-style: none; }
+  @media (min-width: 768px) { .about-exp { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .about-exp > li { display: flex; min-width: 0; }
+  .about-exp-card { display: flex; flex: 1; flex-direction: column; overflow: hidden; padding: 0; border: 1px solid var(--color-rule-2); border-radius: 8px; background: rgb(255 255 255 / 40%); }
+  .about-exp-body { display: flex; flex: 1; flex-direction: column; padding: 18px 20px 14px; }
+  :global(.about-exp-media) { display: block; aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--color-rule-2); }
+  :global(.about-exp-img) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .about-exp-icon { width: 28px; height: 28px; fill: none; stroke: var(--color-accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .about-exp-card h3 { margin-top: 12px; font-size: 18px; font-weight: 700; color: var(--color-ink); }
+  .about-exp-card p { margin-top: 6px; line-height: 1.75; color: var(--color-ink-2); }
+  .about-exp-link { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-top: auto; padding-top: 8px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
+  .about-exp-link--empty { visibility: hidden; }
+  .about-cta { margin-top: 56px; padding: 28px 24px; border: 1px solid var(--color-rule-2); border-radius: 8px; background: rgb(255 255 255 / 40%); }
+  .about-cta h2 { font-size: 22px; font-weight: 700; color: var(--color-ink); }
+  .about-cta p { margin-top: 8px; line-height: 1.8; color: var(--color-ink-2); }
+  .about-cta p strong { color: var(--color-ink); }
+  .about-cta-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; margin-top: 16px; padding: 0 28px; border-radius: 6px; background: var(--color-accent); color: #fff; font-size: 17px; font-weight: 650; text-decoration: none; }
+  :global(.about-cta-icon) { display: block; width: 22px; height: 22px; }
+  @media (max-width: 767px) { .about-cta-btn { width: 100%; } }
+</style>

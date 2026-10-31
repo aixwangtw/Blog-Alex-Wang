@@ -106,11 +106,7 @@ export const AUTHOR = {
 export const ABOUT_SKILLS: { title: string; text: string }[] = [
   {
     title: '客製系統開發',
-    text: '後台管理系統、LINE LIFF 網頁、CRM 客戶管理系統、題庫系統、AI 客服與 AI 自動化。',
-  },
-  {
-    title: 'AI 動畫',
-    text: '跟 AI 對話，從腳本、剪輯、字幕、配音到封面圖，做出動畫影片。',
+    text: '後台管理系統、LINE LIFF 網頁、CRM 客戶管理系統、題庫系統、社群平台與 AI 自動化。',
   },
 ];
 
@@ -248,8 +244,13 @@ export function pickVariant(key: string, length: number): number {
   return h % length;
 }
 
+/** 社群網址：OpenClaw / Hermes Agent 中文社群（Facebook 公開社團，Alex 擔任版主） */
+export const COMMUNITY_URLS = {
+  openclaw: 'https://www.facebook.com/groups/3238547836318385',
+} as const;
+
 export const LINKS = {
-  facebookGroup: 'https://www.facebook.com/groups/3238547836318385',
+  facebookGroup: COMMUNITY_URLS.openclaw,
   threads: 'https://www.threads.com/@alex_wang.ai',
   instagram: 'https://www.instagram.com/alex_wang.ai/',
   youtube: 'https://www.youtube.com/channel/UCQUY_h3ic_oPmuoRJrLvE3g',

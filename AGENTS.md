@@ -259,3 +259,9 @@ Access 513k tokens of past work via get_observations([IDs]) or mem-search skill.
 13. **部署**：本機 push demo 分支 → 主機 `git pull --ff-only origin demo` → `migrate --force`、`optimize` →（必要時）`demo:reset` → 重啟 worker。`public/build` 不進版控，前端改動在本機 build 後傳上去。部署 Demo 不得動正式站目錄。
 14. **還原與關站**：改 nginx 前備份到主機 `/root/nginx-backup-<日期>/`；關站用 `artisan down --render=<關站頁>` 並停 worker 與 timer；重開反向操作。
 15. **隔離（建議）**：題庫 Demo 與正式站共用 php-fpm pool 與 www-data，Demo 目錄的 www-data 可取 GCE metadata（2026-10-19 查證，使用者 10/21 決定先不改）。新 Demo 建議用獨立系統帳號與獨立 php-fpm pool、目錄權限互不可讀，並封鎖 169.254.169.254。
+
+## 關於頁規則（2026-11-01 起）
+
+- 首段以開發為主：做過的系統依 `src/data/cases.ts` 現有案例寫，接「看全部案例」連 `/cases/`；不寫「沒進過軟體業、靠 AI 自學」的轉職說法（轉職故事另寫文章，保留「閱讀我的轉職故事」連結）。
+- 「經歷」做成等寬等高卡片（桌機 3 欄、767px 以下單欄）：社群版主、演講、教學三張，每張 16:10 圖（可點放大）、小圖示、短標題、一句說明、貼底連結；資料在 `src/data/instructor.ts` 的 `EXPERIENCE`（系統開發那條併入首段，不做卡）。社團網址引用 `COMMUNITY_URLS.openclaw`；社團截圖照案例截圖個資流程處理。
+- 案例截圖輪播重用 `CaseCarousel`，資料取 `heroCarouselSlides()`；頁尾用統一「聊聊需求」主按鈕，說明引用 `HERO_CTA_NOTE` 與 `PAYMENT_TERMS`。
